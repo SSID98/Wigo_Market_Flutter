@@ -1,0 +1,32 @@
+import 'package:flutter/material.dart';
+
+class AppColors {
+  // Primary Brand Color
+  static const Color primaryGreen = Color(0xffCEE7AF);
+  static const Color primaryDarkGreen = Color(0xff56862A);
+
+  // Accent for Warnings/Errors/Destructive actions
+  static const Color accentOrange = Color(0xFFFF5722);
+
+  // Accent for Selections/Alternative Highlights
+  static const Color accentLightBlue = Color(0xFFBBDEFB);
+  static const Color radioOrange = Color(0xffDD4619);
+  static const Color radioBlue = Color(0xff008CEF);
+
+  // Background Colors
+  static const Color backgroundLight = Color(0xFFF5F5F5);
+  static const Color backgroundWhite = Color(0xFFFFFFFF);
+  static const riderCardColor = Color(0xffEBF6FE);
+  static const sellerCardColor = Color(0xffFEF5EE);
+  static const buyerCardColor = Color(0xffF3FAEB);
+
+  // Text Colors (approximate)
+  static const Color textDarkGreen = Color(0xff436724);
+  static const Color textLightGreen = primaryDarkGreen;
+  static const Color textSuccess = primaryGreen;
+  static const Color textGrey = Color(0xff7F7F7F);
+  static const Color textBlackLight = Color(0xff333333);
+  static const Color textWhite = Color(0xffFFFFFF);
+  static const Color textDarkerGreen = Color(0xff314720);
+  static const Color textBlack = Color(0xff000000);
+}
