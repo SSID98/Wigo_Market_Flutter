@@ -80,23 +80,18 @@ class RoleCard extends StatelessWidget {
               Radio<bool>(
                 value: true,
                 groupValue: isSelected,
-                // Use isSelected as groupValue to control this specific radio button
                 onChanged: (bool? value) {
                   if (value == true) {
-                    // Only call onTap if it's being selected
                     onTap();
                   }
                 },
-                // fillColor controls the dot and outline
                 fillColor: WidgetStateProperty.resolveWith<Color>((
                   Set<WidgetState> states,
                 ) {
                   if (states.contains(WidgetState.selected)) {
-                    // When selected, use the calculated darker border color
                     return borderColor;
                   }
-                  // When unselected, use the same darker border color as the card's border
-                  return borderColor; // <--- THIS IS THE KEY CHANGE for unselected outline
+                  return borderColor;
                 }),
               ),
             ],

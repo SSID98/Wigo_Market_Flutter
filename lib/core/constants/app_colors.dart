@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 class AppColors {
   // Primary Brand Color
-  static const Color primaryGreen = Color(0xffCEE7AF);
+  static const Color primaryLightGreen = Color(0xffCEE7AF);
   static const Color primaryDarkGreen = Color(0xff56862A);
 
   // Accent for Warnings/Errors/Destructive actions
@@ -22,9 +22,9 @@ class AppColors {
 
   // Text Colors (approximate)
   static const Color textDarkGreen = Color(0xff436724);
-  static const Color textLightGreen = primaryDarkGreen;
-  static const Color textSuccess = primaryGreen;
-  static const Color textGrey = Color(0xff7F7F7F);
+  static const Color textVidaLoca = primaryDarkGreen;
+  static const Color textSuccess = primaryLightGreen;
+  static const Color textIconGrey = Color(0xff7F7F7F);
   static const Color textBlackLight = Color(0xff333333);
   static const Color textWhite = Color(0xffFFFFFF);
   static const Color textDarkerGreen = Color(0xff314720);
