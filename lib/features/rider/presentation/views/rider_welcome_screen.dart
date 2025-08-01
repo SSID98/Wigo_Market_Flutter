@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:wigo_flutter/shared/widgets/custom_button.dart';
 
@@ -38,7 +39,7 @@ class RiderWelcomeScreen extends ConsumerWidget {
           Padding(
             padding: const EdgeInsets.only(top: 148.0),
             child: Image.asset(
-              'assets/images/welcomeRiderAndriod.png',
+              'assets/images/welcomeRiderMobile.png',
               fit: BoxFit.contain,
             ),
           ),
@@ -93,7 +94,9 @@ class RiderWelcomeScreen extends ConsumerWidget {
                     const SizedBox(height: 65),
                     CustomButton(
                       text: 'Get Started',
-                      onPressed: () {},
+                      onPressed: () {
+                        context.go('/rider/onboarding');
+                      },
                       fontSize: 18,
                       fontWeight: FontWeight.w500,
                       borderRadius: 6.0,
@@ -122,7 +125,7 @@ class RiderWelcomeScreen extends ConsumerWidget {
         padding: const EdgeInsets.symmetric(vertical: 20.0, horizontal: 100.0),
         child: Row(
           children: [
-            // Left section: Image and Bottom Text
+            // Left section: Image
             Expanded(
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,

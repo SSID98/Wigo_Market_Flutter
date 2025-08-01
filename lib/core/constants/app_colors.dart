@@ -12,6 +12,7 @@ class AppColors {
   static const Color accentLightBlue = Color(0xFFBBDEFB);
   static const Color radioOrange = Color(0xffDD4619);
   static const Color radioBlue = Color(0xff008CEF);
+  static const Color sliderDotColor = Color(0xffD9D9D9);
 
   // Background Colors
   static const Color backgroundLight = Color(0xFFF5F5F5);
@@ -19,6 +20,7 @@ class AppColors {
   static const riderCardColor = Color(0xffEBF6FE);
   static const sellerCardColor = Color(0xffFEF5EE);
   static const buyerCardColor = Color(0xffF3FAEB);
+  static const backGroundOverlay = Color(0xffEDF7F2);
 
   // Text Colors (approximate)
   static const Color textDarkGreen = Color(0xff436724);

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import '../../core/constants/app_colors.dart';
@@ -18,11 +19,9 @@ class RoleSelectionScreen extends ConsumerWidget {
 
     return LayoutBuilder(
       builder: (context, constraints) {
-        if (constraints.maxWidth < 600) {
-          return _buildMobileLayout(context, ref, selectedRole, screenSize);
-        } else {
-          return _buildWebLayout(context, ref, selectedRole, screenSize);
-        }
+        return constraints.maxWidth < 600
+            ? _buildMobileLayout(context, ref, selectedRole, screenSize)
+            : _buildWebLayout(context, ref, selectedRole, screenSize);
       },
     );
   }
@@ -34,8 +33,18 @@ class RoleSelectionScreen extends ConsumerWidget {
     UserRole? selectedRole,
     Size screenSize,
   ) {
-    void onRoleSelected(UserRole role) {
+    Future<void> onRoleSelected(UserRole role) async {
       ref.read(selectedRoleProvider.notifier).state = role;
+      await Future.delayed(const Duration(milliseconds: 250));
+      if (context.mounted) {
+        if (role == UserRole.rider) {
+          context.go('/rider/welcome');
+        } else if (role == UserRole.buyer) {
+          context.go('/buyer/welcome');
+        } else if (role == UserRole.seller) {
+          context.go('/seller/welcome');
+        }
+      }
     }
 
     return SafeArea(
@@ -328,7 +337,6 @@ class RoleSelectionScreen extends ConsumerWidget {
       left: 0,
       right: 0,
       child: ClipRect(
-        // ClipRect to ensure blur doesn't go beyond boundaries
         child: Container(
           padding: const EdgeInsets.symmetric(vertical: 16.0, horizontal: 15.0),
           decoration: BoxDecoration(
