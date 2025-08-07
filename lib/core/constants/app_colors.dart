@@ -13,6 +13,7 @@ class AppColors {
   static const Color radioOrange = Color(0xffDD4619);
   static const Color radioBlue = Color(0xff008CEF);
   static const Color sliderDotColor = Color(0xffD9D9D9);
+  static const Color textFieldColor = Color(0xffF5F4F4);
 
   // Background Colors
   static const Color backgroundLight = Color(0xFFF5F5F5);

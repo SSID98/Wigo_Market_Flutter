@@ -1,35 +1,30 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:wigo_flutter/shared/widgets/custom_button.dart';
 
 import '../../../../core/constants/app_colors.dart';
 
-class RiderWelcomeScreen extends ConsumerWidget {
+class RiderWelcomeScreen extends StatelessWidget {
   const RiderWelcomeScreen({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  Widget build(BuildContext context) {
     final Size screenSize = MediaQuery.of(context).size;
 
     return LayoutBuilder(
       builder: (context, constraints) {
         if (constraints.maxWidth < 600) {
-          return _buildMobileLayout(context, ref, screenSize);
+          return _buildMobileLayout(context, screenSize);
         } else {
-          return _buildWebLayout(context, ref, screenSize);
+          return _buildWebLayout(context, screenSize);
         }
       },
     );
   }
 
   //Mobile Layout
-  Widget _buildMobileLayout(
-    BuildContext context,
-    WidgetRef ref,
-    Size screenSize,
-  ) {
+  Widget _buildMobileLayout(BuildContext context, Size screenSize) {
     final double contentContainerHeight = screenSize.height * 0.60;
 
     return Scaffold(
@@ -116,7 +111,7 @@ class RiderWelcomeScreen extends ConsumerWidget {
     );
   }
 
-  Widget _buildWebLayout(BuildContext context, WidgetRef ref, Size screenSize) {
+  Widget _buildWebLayout(BuildContext context, Size screenSize) {
     final double webContentWidth = screenSize.width * 0.70;
     final double webContentHeight = screenSize.height * 0.99;
 

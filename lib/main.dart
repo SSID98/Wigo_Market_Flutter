@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:wigo_flutter/core/constants/app_colors.dart';
 
 import 'core/routes/app_router.dart';
 
@@ -17,9 +18,9 @@ class WigoApp extends StatelessWidget {
       title: 'Wigo',
       routerConfig: appRouter,
       theme: ThemeData(
-        fontFamily: 'Poppins',
-        scaffoldBackgroundColor: Colors.white,
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.blue),
+        fontFamily: 'Hind',
+        scaffoldBackgroundColor: AppColors.backgroundWhite,
+        colorScheme: ColorScheme.fromSeed(seedColor: AppColors.radioBlue),
         useMaterial3: true,
       ),
     );
