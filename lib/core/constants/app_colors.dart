@@ -25,11 +25,14 @@ class AppColors {
 
   // Text Colors (approximate)
   static const Color textDarkGreen = Color(0xff436724);
-  static const Color textVidaLoca = primaryDarkGreen;
+  static const Color textVidaLocaGreen = primaryDarkGreen;
   static const Color textSuccess = primaryLightGreen;
   static const Color textIconGrey = Color(0xff7F7F7F);
   static const Color textBlackLight = Color(0xff333333);
   static const Color textWhite = Color(0xffFFFFFF);
   static const Color textDarkerGreen = Color(0xff314720);
   static const Color textBlack = Color(0xff000000);
+  static const Color textOrange = Color(0xffEB5A1C);
+  static const Color textVidaLocaWhite = Color(0xffF3FAEB);
+  static const Color textEdufacilisBlack = Color(0xff33334D);
 }

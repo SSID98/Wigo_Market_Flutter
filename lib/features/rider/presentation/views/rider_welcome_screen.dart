@@ -69,7 +69,7 @@ class RiderWelcomeScreen extends StatelessWidget {
                       'Earn by Making Deliverys',
                       style: GoogleFonts.hind(
                         textStyle: TextStyle(
-                          color: AppColors.textVidaLoca,
+                          color: AppColors.textVidaLocaGreen,
                           fontSize: 18,
                           fontWeight: FontWeight.w700,
                         ),
@@ -153,7 +153,7 @@ class RiderWelcomeScreen extends StatelessWidget {
                                 'Earn by Making Deliverys',
                                 style: GoogleFonts.hind(
                                   textStyle: TextStyle(
-                                    color: AppColors.textVidaLoca,
+                                    color: AppColors.textVidaLocaGreen,
                                     fontSize: 38,
                                     fontWeight: FontWeight.w700,
                                   ),

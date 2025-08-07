@@ -12,12 +12,12 @@ class CustomTextField extends ConsumerStatefulWidget {
   final Widget? suffixIcon;
   final String? helperText;
   final bool isPassword;
-  final double iconHeight, iconWidth;
+  final double? iconHeight, iconWidth;
   final TextInputType? keyboardType;
   final bool? readOnly;
   final Function()? onTap;
   final TextEditingController? controller;
-  final Color? hintTextColor;
+  final Color? hintTextColor, labelTextColor;
   final double? hintFontSize;
   final double? fontSize;
 
@@ -27,8 +27,8 @@ class CustomTextField extends ConsumerStatefulWidget {
     this.hintText,
     this.isPassword = false,
     this.helperText,
-    required this.iconHeight,
-    required this.iconWidth,
+    this.iconHeight,
+    this.iconWidth,
     this.prefixIcon,
     this.optionalPrefixIcon,
     this.suffixIcon,
@@ -39,6 +39,7 @@ class CustomTextField extends ConsumerStatefulWidget {
     this.hintTextColor,
     this.hintFontSize,
     this.fontSize,
+    this.labelTextColor,
   });
 
   @override
@@ -64,7 +65,7 @@ class _CustomTextFieldState extends ConsumerState<CustomTextField> {
           style: GoogleFonts.hind(
             fontWeight: FontWeight.w500,
             fontSize: 16.0,
-            color: AppColors.textBlack,
+            color: widget.labelTextColor ?? AppColors.textBlack,
           ),
         ),
         const SizedBox(height: 4),
