@@ -1,74 +1,29 @@
-import 'dart:ui';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:google_fonts/google_fonts.dart';
-import 'package:smooth_page_indicator/smooth_page_indicator.dart';
+import 'package:wigo_flutter/features/rider/presentation/widgets/rider_onboarding_pageview.dart';
+import 'package:wigo_flutter/features/rider/viewmodels/rider_onboarding_viewmodel.dart';
 
 import '../../../../core/constants/app_colors.dart';
 import '../../../../shared/widgets/custom_button.dart';
 
-class MyCustomScrollBehavior extends MaterialScrollBehavior {
-  @override
-  Set<PointerDeviceKind> get dragDevices => {
-    PointerDeviceKind.touch,
-    PointerDeviceKind.mouse,
-  };
-}
-
-class RiderOnboardingScreen extends ConsumerStatefulWidget {
+class RiderOnboardingScreen extends ConsumerWidget {
   const RiderOnboardingScreen({super.key});
 
   @override
-  ConsumerState<RiderOnboardingScreen> createState() =>
-      _RiderOnboardingScreenState();
-}
-
-class _RiderOnboardingScreenState extends ConsumerState<RiderOnboardingScreen> {
-  final PageController _pageController = PageController();
-  int _currentPage = 0;
-
-  final List<Map<String, String>> _onboardingData = [
-    {
-      'image': 'assets/images/onboarding1.png',
-      'title': 'Earn Easily with WIGOMARKET',
-      'description':
-          'Join a trusted network of campus riders helping students and vendors deliver fast, safe, and on time within your campus.',
-    },
-    {
-      'image': 'assets/images/onboarding2.png',
-      'title': 'Here’s What to Expect',
-      'description':
-          'Get delivery requests, pick up from vendors, and earn directly into your bank account, all while staying active on campus.',
-    },
-  ];
-
-  void _nextPage() {
-    if (_currentPage < _onboardingData.length - 1) {
-      _pageController.nextPage(
-        duration: Duration(milliseconds: 300),
-        curve: Curves.easeInOut,
-      );
-    } else {}
-  }
-
-  @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final viewModel = ref.watch(riderOnboardingViewModelProvider);
     final screenSize = MediaQuery.of(context).size;
-    return LayoutBuilder(
-      builder: (context, constraints) {
-        return constraints.maxWidth < 600
-            ? _buildMobileLayout(context, ref, screenSize)
-            : _buildWebLayout(context, ref, screenSize);
-      },
-    );
+    final isWeb = MediaQuery.of(context).size.width < 600;
+    return isWeb
+        ? _buildMobileLayout(context, viewModel, screenSize)
+        : _buildWebLayout(context, viewModel, screenSize);
   }
 
   //Mobile Layout
   Widget _buildMobileLayout(
     BuildContext context,
-    WidgetRef ref,
+    RiderOnboardingViewModel viewModel,
     Size screenSize,
   ) {
     return Scaffold(
@@ -112,79 +67,28 @@ class _RiderOnboardingScreenState extends ConsumerState<RiderOnboardingScreen> {
                           width: 143.86,
                         ),
                       ),
-                      SizedBox(
-                        height: screenSize.height * 0.38,
-                        child: PageView.builder(
-                          controller: _pageController,
-                          itemCount: _onboardingData.length,
-                          onPageChanged:
-                              (index) => setState(() => _currentPage = index),
-                          itemBuilder: (context, index) {
-                            final data = _onboardingData[index];
-                            return StreamBuilder<Object>(
-                              stream: null,
-                              builder: (context, snapshot) {
-                                return Column(
-                                  children: [
-                                    const SizedBox(height: 35),
-                                    Text(
-                                      data['title']!,
-                                      style: GoogleFonts.hind(
-                                        fontSize: 16,
-                                        fontWeight: FontWeight.w700,
-                                        color: AppColors.textBlackLight,
-                                      ),
-                                    ),
-                                    const SizedBox(height: 10),
-                                    Image.asset(
-                                      data['image']!,
-                                      height: 117,
-                                      width: 141,
-                                    ),
-                                    const SizedBox(height: 15),
-                                    SmoothPageIndicator(
-                                      controller: _pageController,
-                                      count: _onboardingData.length,
-                                      effect: ExpandingDotsEffect(
-                                        dotColor: AppColors.sliderDotColor,
-                                        activeDotColor: AppColors.accentOrange,
-                                        dotHeight: 5,
-                                        dotWidth: 5,
-                                        expansionFactor: 6.5,
-                                      ),
-                                    ),
-                                    const SizedBox(height: 20),
-                                    Padding(
-                                      padding: const EdgeInsets.symmetric(
-                                        horizontal: 60.0,
-                                      ),
-                                      child: Text(
-                                        data['description']!,
-                                        textAlign: TextAlign.center,
-                                        style: GoogleFonts.hind(
-                                          fontSize: 14,
-                                          fontWeight: FontWeight.w500,
-                                          color: AppColors.textBlackLight,
-                                        ),
-                                      ),
-                                    ),
-                                  ],
-                                );
-                              },
-                            );
-                          },
-                        ),
+                      RiderOnboardingPageView(
+                        screenSize: screenSize.height * 0.37,
+                        titleFontSize: 16,
+                        titleColor: AppColors.textBlackLight,
+                        imageWidth: 141,
+                        imageHeight: 117,
+                        dotHeight: 5,
+                        dotWidth: 5,
+                        expansionFactor: 6.5,
+                        padding: 60.0,
+                        descriptionFontSize: 14,
                       ),
                       CustomButton(
                         text: 'Next',
-                        onPressed: _nextPage,
+                        onPressed: viewModel.nextPage,
                         fontSize: 16,
                         fontWeight: FontWeight.w500,
                         borderRadius: 6.0,
                         height: 49,
                         width: 360,
                       ),
-                      const SizedBox(height: 35.0),
+                      const SizedBox(height: 65.0),
                     ],
                   ),
                 ),
@@ -196,7 +100,11 @@ class _RiderOnboardingScreenState extends ConsumerState<RiderOnboardingScreen> {
     );
   }
 
-  Widget _buildWebLayout(BuildContext context, WidgetRef ref, Size screenSize) {
+  Widget _buildWebLayout(
+    BuildContext context,
+    RiderOnboardingViewModel viewModel,
+    Size screenSize,
+  ) {
     return Scaffold(
       backgroundColor: AppColors.backgroundWhite,
       body: SafeArea(
@@ -230,76 +138,21 @@ class _RiderOnboardingScreenState extends ConsumerState<RiderOnboardingScreen> {
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      SizedBox(
-                        height: screenSize.height * 0.67,
-                        child: ScrollConfiguration(
-                          behavior: MyCustomScrollBehavior(),
-                          child: PageView.builder(
-                            controller: _pageController,
-                            itemCount: _onboardingData.length,
-                            onPageChanged:
-                                (index) => setState(() => _currentPage = index),
-                            itemBuilder: (context, index) {
-                              final data = _onboardingData[index];
-                              return StreamBuilder<Object>(
-                                stream: null,
-                                builder: (context, snapshot) {
-                                  return Column(
-                                    children: [
-                                      const SizedBox(height: 35),
-                                      Text(
-                                        data['title']!,
-                                        style: GoogleFonts.hind(
-                                          fontSize: 36,
-                                          fontWeight: FontWeight.w700,
-                                          color: AppColors.textDarkerGreen,
-                                        ),
-                                      ),
-                                      const SizedBox(height: 10),
-                                      Image.asset(
-                                        data['image']!,
-                                        height: 414,
-                                        width: 414,
-                                      ),
-                                      const SizedBox(height: 15),
-                                      SmoothPageIndicator(
-                                        controller: _pageController,
-                                        count: _onboardingData.length,
-                                        effect: ExpandingDotsEffect(
-                                          dotColor: AppColors.sliderDotColor,
-                                          activeDotColor:
-                                              AppColors.accentOrange,
-                                          dotHeight: 7,
-                                          dotWidth: 7,
-                                          expansionFactor: 9.5,
-                                        ),
-                                      ),
-                                      const SizedBox(height: 20),
-                                      Padding(
-                                        padding: const EdgeInsets.symmetric(
-                                          horizontal: 200.0,
-                                        ),
-                                        child: Text(
-                                          data['description']!,
-                                          textAlign: TextAlign.center,
-                                          style: GoogleFonts.hind(
-                                            fontSize: 20,
-                                            fontWeight: FontWeight.w500,
-                                            color: AppColors.textBlackLight,
-                                          ),
-                                        ),
-                                      ),
-                                    ],
-                                  );
-                                },
-                              );
-                            },
-                          ),
-                        ),
+                      RiderOnboardingPageView(
+                        screenSize: screenSize.height * 0.67,
+                        titleFontSize: 36.0,
+                        titleColor: AppColors.textDarkerGreen,
+                        imageWidth: 414,
+                        imageHeight: 414,
+                        dotHeight: 7,
+                        dotWidth: 7,
+                        expansionFactor: 9.5,
+                        padding: 200,
+                        descriptionFontSize: 20,
                       ),
                       CustomButton(
                         text: 'Next',
-                        onPressed: _nextPage,
+                        onPressed: viewModel.nextPage,
                         fontSize: 18,
                         fontWeight: FontWeight.w500,
                         borderRadius: 6.0,

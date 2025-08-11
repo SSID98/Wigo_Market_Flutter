@@ -6,9 +6,7 @@ import 'package:wigo_flutter/core/constants/app_colors.dart';
 
 class CustomTextField extends ConsumerStatefulWidget {
   final String label;
-  final String? hintText;
-  final String? prefixIcon;
-  final String? optionalPrefixIcon;
+  final String? hintText, prefixIcon, optionalPrefixIcon;
   final Widget? suffixIcon;
   final String? helperText;
   final bool isPassword;
@@ -18,8 +16,9 @@ class CustomTextField extends ConsumerStatefulWidget {
   final Function()? onTap;
   final TextEditingController? controller;
   final Color? hintTextColor, labelTextColor;
-  final double? hintFontSize;
-  final double? fontSize;
+  final double? hintFontSize, fontSize;
+  final String? Function(String?)? validator;
+  final double? suffixIconPadding;
 
   const CustomTextField({
     super.key,
@@ -40,6 +39,8 @@ class CustomTextField extends ConsumerStatefulWidget {
     this.hintFontSize,
     this.fontSize,
     this.labelTextColor,
+    this.validator,
+    this.suffixIconPadding,
   });
 
   @override
@@ -70,6 +71,7 @@ class _CustomTextFieldState extends ConsumerState<CustomTextField> {
         ),
         const SizedBox(height: 4),
         TextFormField(
+          validator: widget.validator,
           style: GoogleFonts.hind(
             fontWeight: FontWeight.w400,
             fontSize: widget.fontSize ?? 14.0,
@@ -142,7 +144,9 @@ class _CustomTextFieldState extends ConsumerState<CustomTextField> {
             suffixIcon:
                 widget.suffixIcon != null
                     ? Padding(
-                      padding: const EdgeInsets.only(right: 25.0),
+                      padding: EdgeInsets.only(
+                        right: widget.suffixIconPadding ?? 25.0,
+                      ),
                       // Check if it's a password field to decide which icon to show
                       child:
                           widget.isPassword

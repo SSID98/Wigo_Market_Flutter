@@ -1,52 +1,25 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:wigo_flutter/shared/widgets/role_selection_body.dart';
 
 import '../../core/constants/app_colors.dart';
-import '../../features/role_selection/viewmodel/role_selection_provider.dart';
-import '../models/user_role.dart';
-import '../widgets/role_card.dart';
 
 class RoleSelectionScreen extends ConsumerWidget {
   const RoleSelectionScreen({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final selectedRole = ref.watch(selectedRoleProvider);
     final Size screenSize = MediaQuery.of(context).size;
-
-    return LayoutBuilder(
-      builder: (context, constraints) {
-        return constraints.maxWidth < 600
-            ? _buildMobileLayout(context, ref, selectedRole, screenSize)
-            : _buildWebLayout(context, ref, selectedRole, screenSize);
-      },
-    );
+    final isWeb = MediaQuery.of(context).size.width > 600;
+    return isWeb
+        ? _buildWebLayout(context, screenSize)
+        : _buildMobileLayout(context, screenSize);
   }
 
   //Mobile Layout
-  Widget _buildMobileLayout(
-    BuildContext context,
-    WidgetRef ref,
-    UserRole? selectedRole,
-    Size screenSize,
-  ) {
-    Future<void> onRoleSelected(UserRole role) async {
-      ref.read(selectedRoleProvider.notifier).state = role;
-      await Future.delayed(const Duration(milliseconds: 250));
-      if (context.mounted) {
-        if (role == UserRole.rider) {
-          context.go('/rider/welcome');
-        } else if (role == UserRole.buyer) {
-          context.go('/buyer/welcome');
-        } else if (role == UserRole.seller) {
-          context.go('/seller/welcome');
-        }
-      }
-    }
-
+  Widget _buildMobileLayout(BuildContext context, Size screenSize) {
     return SafeArea(
       child: Scaffold(
         body: Stack(
@@ -75,70 +48,14 @@ class RoleSelectionScreen extends ConsumerWidget {
                         width: 143.86,
                       ),
                       const SizedBox(height: 30),
-                      Column(
-                        children: [
-                          Padding(
-                            padding: const EdgeInsets.symmetric(
-                              vertical: 0.0,
-                              horizontal: 35.0,
-                            ),
-                            child: Text(
-                              'How do you want to use the platform? Choose a role to continue.',
-                              textAlign: TextAlign.center,
-                              style: GoogleFonts.hind(
-                                textStyle: TextStyle(
-                                  color: AppColors.textBlackLight,
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.w600,
-                                ),
-                              ),
-                            ),
-                          ),
-                          const SizedBox(height: 10.0),
-                          RoleCard(
-                            title: 'Buyer',
-                            description:
-                                'Browse nearby stores, order what you need, and get it delivered or pick it up yourself.',
-                            icon: 'assets/icons/buyerIcon.svg',
-                            isSelected: selectedRole == UserRole.buyer,
-                            onTap: () => onRoleSelected(UserRole.buyer),
-                            backgroundColor: AppColors.buyerCardColor,
-                            radioColor: AppColors.primaryDarkGreen,
-                            iconHeight: 44.0,
-                            iconWidth: 44.0,
-                            descriptionTextSize: 10,
-                            titleTextSize: 14,
-                          ),
-                          RoleCard(
-                            title: 'Seller',
-                            description:
-                                'Own a shop or run a business? List your products and start selling to nearby students.',
-                            icon: 'assets/icons/sellerIcon.svg',
-                            isSelected: selectedRole == UserRole.seller,
-                            onTap: () => onRoleSelected(UserRole.seller),
-                            backgroundColor: AppColors.sellerCardColor,
-                            radioColor: AppColors.radioOrange,
-                            iconHeight: 44.0,
-                            iconWidth: 44.0,
-                            descriptionTextSize: 10,
-                            titleTextSize: 14,
-                          ),
-                          RoleCard(
-                            title: 'Delivery Agent',
-                            description:
-                                'Earn money delivering orders around campus. No experience needed!',
-                            icon: 'assets/icons/riderIcon.svg',
-                            isSelected: selectedRole == UserRole.rider,
-                            onTap: () => onRoleSelected(UserRole.rider),
-                            backgroundColor: AppColors.riderCardColor,
-                            radioColor: AppColors.radioBlue,
-                            iconHeight: 44.0,
-                            iconWidth: 44.0,
-                            descriptionTextSize: 10,
-                            titleTextSize: 14,
-                          ),
-                          const SizedBox(height: 20),
-                        ],
+                      RoleSelectionBody(
+                        titleTextSize: 14,
+                        descriptionTextSize: 10,
+                        textFontSize: 16,
+                        sizedBoxHeight1: 10,
+                        iconWidth: 44,
+                        iconHeight: 44,
+                        padding: 35.0,
                       ),
                     ],
                   ),
@@ -152,19 +69,10 @@ class RoleSelectionScreen extends ConsumerWidget {
     );
   }
 
-  Widget _buildWebLayout(
-    BuildContext context,
-    WidgetRef ref,
-    UserRole? selectedRole,
-    Size screenSize,
-  ) {
+  Widget _buildWebLayout(BuildContext context, Size screenSize) {
     final double webContentWidth = screenSize.width * 0.34;
     final double webContentHeight = screenSize.height * 0.95;
     final double imageBorderRadius = 15.0;
-
-    void onRoleSelected(UserRole role) {
-      ref.read(selectedRoleProvider.notifier).state = role;
-    }
 
     return SafeArea(
       child: Scaffold(
@@ -246,73 +154,15 @@ class RoleSelectionScreen extends ConsumerWidget {
                             child: Padding(
                               padding: const EdgeInsets.all(40.0),
                               child: SingleChildScrollView(
-                                child: Column(
-                                  children: [
-                                    Text(
-                                      'How do you want to use the platform? Choose a role to continue.',
-                                      textAlign: TextAlign.center,
-                                      style: GoogleFonts.hind(
-                                        textStyle: TextStyle(
-                                          color: AppColors.textBlackLight,
-                                          fontSize: 20.0,
-                                          fontWeight: FontWeight.w600,
-                                        ),
-                                      ),
-                                    ),
-                                    SizedBox(height: 35),
-                                    RoleCard(
-                                      title: 'Buyer',
-                                      description:
-                                          'Browse nearby stores, order what you need, and get it delivered or pick it up yourself.',
-                                      icon: 'assets/icons/buyerIcon.svg',
-                                      isSelected:
-                                          selectedRole == UserRole.buyer,
-                                      onTap:
-                                          () => onRoleSelected(UserRole.buyer),
-                                      backgroundColor: AppColors.buyerCardColor,
-                                      radioColor: AppColors.primaryDarkGreen,
-                                      iconHeight: 72.0,
-                                      iconWidth: 72.0,
-                                      descriptionTextSize: 14,
-                                      titleTextSize: 22,
-                                    ),
-                                    SizedBox(height: 10),
-                                    RoleCard(
-                                      title: 'Seller',
-                                      description:
-                                          'Own a shop or run a business? List your products and start selling to nearby students.',
-                                      icon: 'assets/icons/sellerIcon.svg',
-                                      isSelected:
-                                          selectedRole == UserRole.seller,
-                                      onTap:
-                                          () => onRoleSelected(UserRole.seller),
-                                      backgroundColor:
-                                          AppColors.sellerCardColor,
-                                      radioColor: AppColors.radioOrange,
-                                      iconHeight: 72.0,
-                                      iconWidth: 72.0,
-                                      descriptionTextSize: 14,
-                                      titleTextSize: 22,
-                                    ),
-                                    SizedBox(height: 10),
-                                    RoleCard(
-                                      title: 'Delivery Agent',
-                                      description:
-                                          'Earn money delivering orders around campus. No experience needed!',
-                                      icon: 'assets/icons/riderIcon.svg',
-                                      isSelected:
-                                          selectedRole == UserRole.rider,
-                                      onTap:
-                                          () => onRoleSelected(UserRole.rider),
-                                      backgroundColor: AppColors.riderCardColor,
-                                      radioColor: AppColors.radioBlue,
-                                      iconHeight: 72.0,
-                                      iconWidth: 72.0,
-                                      descriptionTextSize: 14,
-                                      titleTextSize: 22,
-                                    ),
-                                    const SizedBox(height: 20),
-                                  ],
+                                child: RoleSelectionBody(
+                                  titleTextSize: 22,
+                                  descriptionTextSize: 14,
+                                  textFontSize: 20,
+                                  sizedBoxHeight1: 35,
+                                  iconWidth: 72,
+                                  iconHeight: 72,
+                                  padding: 0.0,
+                                  sizedBoxHeight2: 10.0,
                                 ),
                               ),
                             ),

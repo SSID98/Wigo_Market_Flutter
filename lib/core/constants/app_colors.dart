@@ -14,6 +14,9 @@ class AppColors {
   static const Color radioBlue = Color(0xff008CEF);
   static const Color sliderDotColor = Color(0xffD9D9D9);
   static const Color textFieldColor = Color(0xffF5F4F4);
+  static const Color dividerColor = Color(0xffB0B0D0);
+  static const Color buttonLightGreen = primaryLightGreen;
+  static const Color buttonLighterGreen = Color(0xffF3FAEB);
 
   // Background Colors
   static const Color backgroundLight = Color(0xFFF5F5F5);

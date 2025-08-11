@@ -17,7 +17,7 @@ class CustomButton extends StatelessWidget {
   final double? height;
   final double? width;
   final EdgeInsetsGeometry? padding;
-  final String? icon;
+  final String? prefixIcon, suffixIcon;
   final double? iconHeight, iconWidth;
   final MainAxisAlignment? mainAxisAlignment;
 
@@ -32,13 +32,14 @@ class CustomButton extends StatelessWidget {
     this.height,
     this.width,
     this.padding,
-    this.icon,
     this.mainAxisAlignment = MainAxisAlignment.center,
     this.borderRadius,
     required this.fontSize,
     required this.fontWeight,
     this.iconHeight,
     this.iconWidth,
+    this.prefixIcon,
+    this.suffixIcon,
   });
 
   @override
@@ -65,25 +66,40 @@ class CustomButton extends StatelessWidget {
           minimumSize:
               (width == null && height == null) ? const Size(0, 0) : null,
         ),
-        child: Row(
-          mainAxisSize: MainAxisSize.min,
-          mainAxisAlignment: mainAxisAlignment!,
-          children: [
-            Text(
-              text,
-              style: GoogleFonts.hind(
-                textStyle: TextStyle(
-                  fontSize: fontSize,
-                  fontWeight: fontWeight,
-                  color: textColor ?? AppColors.textWhite,
+        child: FittedBox(
+          fit: BoxFit.scaleDown,
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            mainAxisAlignment: mainAxisAlignment!,
+            children: [
+              if (prefixIcon != null) ...[
+                SvgPicture.asset(
+                  prefixIcon!,
+                  height: iconHeight,
+                  width: iconWidth,
+                ),
+                const SizedBox(width: 8),
+              ],
+              Text(
+                text,
+                style: GoogleFonts.hind(
+                  textStyle: TextStyle(
+                    fontSize: fontSize,
+                    fontWeight: fontWeight,
+                    color: textColor ?? AppColors.textWhite,
+                  ),
                 ),
               ),
-            ),
-            if (icon != null) ...[
-              const SizedBox(width: 8),
-              SvgPicture.asset(icon!, height: iconHeight, width: iconWidth),
+              if (suffixIcon != null) ...[
+                const SizedBox(width: 8),
+                SvgPicture.asset(
+                  suffixIcon!,
+                  height: iconHeight,
+                  width: iconWidth,
+                ),
+              ],
             ],
-          ],
+          ),
         ),
       ),
     );

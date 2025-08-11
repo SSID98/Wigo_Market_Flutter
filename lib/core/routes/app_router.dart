@@ -2,12 +2,13 @@ import 'package:go_router/go_router.dart';
 import 'package:wigo_flutter/features/rider/presentation/views/rider_account_screen.dart';
 import 'package:wigo_flutter/features/rider/presentation/views/rider_onboarding_screen.dart';
 import 'package:wigo_flutter/shared/screens/email_verification_screen.dart';
+import 'package:wigo_flutter/shared/screens/login_screen.dart';
 
 import '../../features/rider/presentation/views/rider_welcome_screen.dart';
 import '../../shared/screens/role_selection_screen.dart';
 
 final appRouter = GoRouter(
-  initialLocation: '/verification',
+  initialLocation: '/login',
   routes: [
     GoRoute(
       path: '/',
@@ -29,5 +30,6 @@ final appRouter = GoRouter(
       path: '/verification',
       builder: (context, state) => const EmailVerificationScreen(),
     ),
+    GoRoute(path: '/login', builder: (context, state) => const LoginScreen()),
   ],
 );

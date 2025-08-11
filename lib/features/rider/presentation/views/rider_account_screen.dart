@@ -2,26 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:wigo_flutter/core/constants/app_colors.dart';
-import 'package:wigo_flutter/shared/models/location_data.dart';
+import 'package:wigo_flutter/features/rider/presentation/widgets/rider_forms_field.dart';
 import 'package:wigo_flutter/shared/widgets/custom_button.dart';
 
-import '../../../../shared/widgets/contact_text_field.dart';
-import '../../../../shared/widgets/custom_text_field.dart';
-
-class RiderAccountScreen extends ConsumerStatefulWidget {
+class RiderAccountScreen extends ConsumerWidget {
   const RiderAccountScreen({super.key});
 
   @override
-  ConsumerState<RiderAccountScreen> createState() => _RiderAccountScreenState();
-}
-
-class _RiderAccountScreenState extends ConsumerState<RiderAccountScreen> {
-  String? selectedState;
-  String? selectedCity;
-  List<String> filteredCities = [];
-
-  @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final screenSize = MediaQuery.of(context).size;
     final isWeb = MediaQuery.of(context).size.width > 600;
     return isWeb ? _buildWebLayout(screenSize) : _buildMobileLayout(screenSize);
@@ -66,7 +54,7 @@ class _RiderAccountScreenState extends ConsumerState<RiderAccountScreen> {
                         const SizedBox(height: 5),
                         _buildHeader(20.0, 14.0, 18.0, 12.0, 0.0),
                         const Divider(thickness: 1.3),
-                        ..._buildFormFields(
+                        RiderFormFields(
                           iconHeight: 20,
                           iconWidth: 20,
                           hintFontSize: 11,
@@ -142,11 +130,11 @@ class _RiderAccountScreenState extends ConsumerState<RiderAccountScreen> {
                               children: [
                                 const Divider(thickness: 1.3),
                                 const SizedBox(height: 15),
-                                ..._buildFormFields(
-                                  web: true,
+                                RiderFormFields(
                                   iconHeight: 20,
                                   iconWidth: 40,
                                   hintFontSize: 6,
+                                  web: true,
                                   suffixIcon: Icon(Icons.visibility_outlined),
                                 ),
                                 const SizedBox(height: 32),
@@ -261,144 +249,5 @@ class _RiderAccountScreenState extends ConsumerState<RiderAccountScreen> {
         ),
       ],
     );
-  }
-
-  List<Widget> _buildFormFields({
-    bool web = false,
-    required double iconHeight,
-    required double iconWidth,
-    required double hintFontSize,
-    Widget? suffixIcon,
-  }) {
-    final spacing = const SizedBox(height: 16);
-
-    return [
-      CustomTextField(
-        hintText: 'eg. John Doe',
-        label: 'Full Name',
-        prefixIcon: 'assets/icons/user.svg',
-        iconHeight: iconHeight,
-        iconWidth: iconWidth,
-      ),
-      spacing,
-      CustomTextField(
-        hintText: 'johndoe112@gmail.com',
-        label: 'Email address',
-        prefixIcon: 'assets/icons/mail.svg',
-        iconHeight: iconHeight,
-        iconWidth: iconWidth,
-      ),
-      spacing,
-      CustomTextField(
-        hintText: '●●●●●●●●●●●●●●',
-        hintFontSize: hintFontSize,
-        label: 'Password',
-        isPassword: true,
-        helperText:
-            'At least 8 character containing a capital letter, a lower letter and a numeric character',
-        prefixIcon: 'assets/icons/lock.svg',
-        iconHeight: iconHeight,
-        iconWidth: iconWidth,
-        suffixIcon: suffixIcon,
-      ),
-      spacing,
-      CustomPhoneNumberField(label: 'Phone Number'),
-      spacing,
-      CustomPhoneNumberField(label: 'Next of Kin Contact'),
-      spacing,
-      CustomDropdownField(
-        label: 'Gender',
-        hintText: 'Select your Gender',
-        items: const ['Male', 'Female'],
-        iconSize: 22,
-        prefixIcon: 'assets/icons/user.svg',
-        iconWidth: iconWidth,
-        iconHeight: iconHeight,
-      ),
-      spacing,
-      CustomTextField(
-        hintText: 'Enter residential address',
-        label: 'Residential Address',
-        prefixIcon: 'assets/icons/home.svg',
-        iconHeight: iconHeight,
-        iconWidth: iconWidth,
-        hintTextColor: AppColors.textIconGrey,
-      ),
-      spacing,
-      if (web)
-        Row(
-          children: [
-            Expanded(
-              child: CustomDropdownField(
-                label: 'State',
-                items: nigeriaStatesAndCities.keys.toList(),
-                iconSize: 22,
-                hintText: 'Select State',
-                onChanged: (value) {
-                  setState(() {
-                    selectedState = value;
-                    filteredCities = nigeriaStatesAndCities[value] ?? [];
-                    selectedCity = null;
-                  });
-                },
-              ),
-            ),
-            const SizedBox(width: 16.0),
-            Expanded(
-              child: CustomDropdownField(
-                label: 'City/ Town',
-                items: filteredCities,
-                iconSize: 22,
-                hintText: 'Select City',
-                value: selectedCity,
-                onChanged: (value) {
-                  setState(() {
-                    selectedCity = value;
-                  });
-                },
-              ),
-            ),
-          ],
-        )
-      else ...[
-        CustomDropdownField(
-          label: 'State',
-          items: nigeriaStatesAndCities.keys.toList(),
-          iconSize: 22,
-          hintText: 'Select State',
-          onChanged: (value) {
-            setState(() {
-              selectedState = value;
-              filteredCities = nigeriaStatesAndCities[value] ?? [];
-              selectedCity = null;
-            });
-          },
-        ),
-        spacing,
-        CustomDropdownField(
-          label: 'City/ Town',
-          items: filteredCities,
-          iconSize: 22,
-          hintText: 'Select City',
-          value: selectedCity,
-          onChanged: (value) {
-            setState(() {
-              selectedCity = value;
-            });
-          },
-        ),
-        spacing,
-      ],
-      spacing,
-      CustomDropdownField(
-        label: 'Means of Transportation',
-        items: const ['Motor Bike', 'Four Wheel'],
-        iconSize: 22,
-        hintText: 'Motor Bike',
-        prefixIcon: 'assets/icons/motorbike.svg',
-        iconHeight: iconHeight,
-        iconWidth: iconWidth,
-      ),
-    ];
   }
 }
