@@ -184,6 +184,7 @@ class CustomDropdownField extends ConsumerStatefulWidget {
   final double? iconHeight, iconWidth;
   final void Function(String?)? onChanged;
   final String? value;
+  final Color? hintTextColor, labelTextColor;
 
   const CustomDropdownField({
     super.key,
@@ -196,6 +197,8 @@ class CustomDropdownField extends ConsumerStatefulWidget {
     this.iconWidth,
     this.onChanged,
     this.value,
+    this.hintTextColor,
+    this.labelTextColor,
   });
 
   @override
@@ -223,7 +226,7 @@ class _CustomDropdownFieldState extends ConsumerState<CustomDropdownField> {
           style: GoogleFonts.hind(
             fontWeight: FontWeight.w500,
             fontSize: 16.0,
-            color: AppColors.textBlackLight,
+            color: widget.labelTextColor ?? AppColors.textBlackLight,
           ),
         ),
         const SizedBox(height: 4),
@@ -234,7 +237,7 @@ class _CustomDropdownFieldState extends ConsumerState<CustomDropdownField> {
             widget.hintText ?? '',
             style: GoogleFonts.hind(
               fontWeight: FontWeight.w400,
-              color: AppColors.textIconGrey,
+              color: widget.hintTextColor ?? AppColors.textIconGrey,
               fontSize: 14,
             ),
           ),
