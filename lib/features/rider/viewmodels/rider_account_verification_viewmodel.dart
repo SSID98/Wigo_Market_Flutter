@@ -1,11 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-class LoginViewModel extends ChangeNotifier {
+class RiderAccountVerificationViewmodel extends ChangeNotifier {
   final formKey = GlobalKey<FormState>();
-
-  final emailController = TextEditingController();
-  final passwordController = TextEditingController();
 
   bool agreeToTerms = false;
 
@@ -14,7 +11,7 @@ class LoginViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  void login(BuildContext context) {
+  void verify(BuildContext context) {
     if (formKey.currentState?.validate() ?? false) {
       if (agreeToTerms) {
       } else {
@@ -23,19 +20,11 @@ class LoginViewModel extends ChangeNotifier {
         ).showSnackBar(SnackBar(content: Text("You must agree to the terms.")));
       }
       // Perform login API call later
-      debugPrint("Email: ${emailController.text}");
-      debugPrint("Password: ${passwordController.text}");
     }
-  }
-
-  @override
-  void dispose() {
-    emailController.dispose();
-    passwordController.dispose();
-    super.dispose();
   }
 }
 
-final loginViewModelProvider = ChangeNotifierProvider<LoginViewModel>((ref) {
-  return LoginViewModel();
-});
+final riderAccountVerificationViewmodelProvider =
+    ChangeNotifierProvider<RiderAccountVerificationViewmodel>((ref) {
+      return RiderAccountVerificationViewmodel();
+    });

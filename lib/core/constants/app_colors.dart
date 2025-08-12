@@ -17,6 +17,7 @@ class AppColors {
   static const Color dividerColor = Color(0xffB0B0D0);
   static const Color buttonLightGreen = primaryLightGreen;
   static const Color buttonLighterGreen = Color(0xffF3FAEB);
+  static const Color darkPurple = Color(0xff141B34);
 
   // Background Colors
   static const Color backgroundLight = Color(0xFFF5F5F5);

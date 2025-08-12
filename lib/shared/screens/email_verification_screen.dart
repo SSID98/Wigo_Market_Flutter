@@ -1,3 +1,4 @@
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -239,29 +240,32 @@ class EmailVerificationScreen extends StatelessWidget {
           buttonColor: AppColors.primaryLightGreen,
         ),
         const SizedBox(height: 20.0),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Text(
-              "Didn't get a code?",
-              textAlign: TextAlign.center,
-              style: GoogleFonts.hind(
-                fontSize: footerTextFontSize,
-                fontWeight: FontWeight.w400,
-                color: AppColors.textBlack,
+        RichText(
+          text: TextSpan(
+            children: [
+              TextSpan(
+                text: "Didn't get a code? ",
+                style: GoogleFonts.hind(
+                  fontSize: footerTextFontSize,
+                  fontWeight: FontWeight.w400,
+                  color: AppColors.textBlack,
+                ),
               ),
-            ),
-            const SizedBox(width: 5),
-            Text(
-              'Resend OTP',
-              textAlign: TextAlign.center,
-              style: GoogleFonts.hind(
-                fontSize: footerTextFontSize,
-                fontWeight: FontWeight.w600,
-                color: AppColors.textOrange,
+              TextSpan(
+                text: 'Resend OTP',
+                style: GoogleFonts.hind(
+                  fontSize: footerTextFontSize,
+                  fontWeight: FontWeight.w600,
+                  color: AppColors.textOrange,
+                ),
+                recognizer:
+                    TapGestureRecognizer()
+                      ..onTap = () {
+                        // Handle privacy tap
+                      },
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ],
     );

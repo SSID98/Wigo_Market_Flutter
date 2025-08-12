@@ -44,36 +44,40 @@ class LoginScreen extends ConsumerWidget {
                     color: AppColors.backgroundWhite,
                     borderRadius: BorderRadius.circular(16.0),
                   ),
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Padding(
-                        padding: const EdgeInsets.only(top: 50.0),
-                        child: SvgPicture.asset(
-                          'assets/icons/logo.svg',
-                          height: 49,
-                          width: 143.86,
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 15.0),
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.only(top: 50.0),
+                          child: SvgPicture.asset(
+                            'assets/icons/logo.svg',
+                            height: 49,
+                            width: 143.86,
+                          ),
                         ),
-                      ),
-                      const SizedBox(height: 33),
-                      _buildBody(
-                        loginFontSize: 20.0,
-                        topPadding: 0.0,
-                        termsFont: 10.0,
-                        buttonHeight: 48.0,
-                        buttonWidth: 360.0,
-                        viewModel: viewModel,
-                        context: context,
-                        suffixIconPadding: 10.0,
-                        loginColor: AppColors.textDarkGreen,
-                        termsPadding: 0.0,
-                      ),
-                      _buildFooter(
-                        orSignupFont: 14.0,
-                        buttonWidth: 170.0,
-                        footerTextFontSize: 14.0,
-                      ),
-                    ],
+                        const SizedBox(height: 33),
+                        _buildBody(
+                          loginFontSize: 20.0,
+                          topPadding: 0.0,
+                          termsFont: 10.0,
+                          buttonHeight: 48.0,
+                          buttonWidth: 360.0,
+                          viewModel: viewModel,
+                          context: context,
+                          suffixIconPadding: 10.0,
+                          loginColor: AppColors.textDarkGreen,
+                          termsPadding: 0.0,
+                          sizedBoxHeight: 11.0,
+                        ),
+                        _buildFooter(
+                          orSignupFont: 14.0,
+                          buttonWidth: 170.0,
+                          footerTextFontSize: 14.0,
+                        ),
+                      ],
+                    ),
                   ),
                 ),
               ),
@@ -171,7 +175,8 @@ class LoginScreen extends ConsumerWidget {
                                   viewModel: viewModel,
                                   context: context,
                                   termsPadding: 12.0,
-                                  sizedBoxHeight: 34,
+                                  sizedBoxHeight: 11,
+                                  sizedBoxHeight1: 34,
                                   suffixIconPadding: 25,
                                   loginColor: AppColors.textVidaLocaGreen,
                                 ),
@@ -209,7 +214,8 @@ class LoginScreen extends ConsumerWidget {
     required suffixIconPadding,
     required Color loginColor,
     required double termsPadding,
-    double? sizedBoxHeight,
+    required double sizedBoxHeight,
+    double? sizedBoxHeight1,
   }) {
     return Form(
       key: viewModel.formKey,
@@ -225,42 +231,45 @@ class LoginScreen extends ConsumerWidget {
             ),
           ),
           const SizedBox(height: 10.0),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 15.0),
-            child: CustomTextField(
-              label: 'Email',
-              iconHeight: 15,
-              iconWidth: 15,
-              prefixIcon: 'assets/icons/mail.svg',
-              hintText: 'Enter your email',
-              hintTextColor: AppColors.textIconGrey,
-            ),
+          CustomTextField(
+            label: 'Email',
+            iconHeight: 15,
+            iconWidth: 15,
+            prefixIcon: 'assets/icons/mail.svg',
+            hintText: 'Enter your email',
+            hintTextColor: AppColors.textIconGrey,
           ),
           const SizedBox(height: 25.0),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 15.0),
-            child: CustomTextField(
-              label: 'Password',
-              isPassword: true,
-              iconHeight: 15,
-              iconWidth: 15,
-              prefixIcon: 'assets/icons/lock.svg',
-              hintText: 'Enter your password',
-              hintTextColor: AppColors.textIconGrey,
-              suffixIcon: Icon(Icons.visibility_outlined),
-              suffixIconPadding: suffixIconPadding,
-            ),
+          CustomTextField(
+            label: 'Password',
+            isPassword: true,
+            iconHeight: 15,
+            iconWidth: 15,
+            prefixIcon: 'assets/icons/lock.svg',
+            hintText: 'Enter your password',
+            hintTextColor: AppColors.textIconGrey,
+            suffixIcon: Icon(Icons.visibility_outlined),
+            suffixIconPadding: suffixIconPadding,
           ),
+          const SizedBox(height: 12),
           Padding(
             padding: EdgeInsets.all(termsPadding),
             child: Row(
               children: [
-                Checkbox(
-                  activeColor: AppColors.primaryDarkGreen,
-                  value: viewModel.agreeToTerms,
-                  onChanged: viewModel.toggleAgreeToTerms,
-                  side: BorderSide(color: AppColors.textIconGrey),
+                Transform.scale(
+                  scale: 0.8,
+                  child: SizedBox(
+                    height: sizedBoxHeight,
+                    width: 10,
+                    child: Checkbox(
+                      activeColor: AppColors.primaryDarkGreen,
+                      value: viewModel.agreeToTerms,
+                      onChanged: viewModel.toggleAgreeToTerms,
+                      side: BorderSide(color: AppColors.textIconGrey),
+                    ),
+                  ),
                 ),
+                const SizedBox(width: 14),
                 Expanded(
                   child: RichText(
                     text: TextSpan(
@@ -314,7 +323,7 @@ class LoginScreen extends ConsumerWidget {
               ],
             ),
           ),
-          SizedBox(height: 35.0),
+          SizedBox(height: 44.0),
           CustomButton(
             text: 'Login',
             onPressed: () => viewModel.login(context),
@@ -323,7 +332,7 @@ class LoginScreen extends ConsumerWidget {
             height: buttonHeight,
             width: buttonWidth,
           ),
-          SizedBox(height: sizedBoxHeight ?? 24),
+          SizedBox(height: sizedBoxHeight1 ?? 24),
         ],
       ),
     );
@@ -338,63 +347,57 @@ class LoginScreen extends ConsumerWidget {
   }) {
     return Column(
       children: [
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 15.0),
-          child: Row(
-            children: [
-              const Expanded(child: Divider(thickness: 1)),
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 22.0),
-                child: Text(
-                  "Or sign up with",
-                  style: GoogleFonts.hind(
-                    fontSize: orSignupFont,
-                    fontWeight: FontWeight.w500,
-                    color: AppColors.textBlackLight,
-                  ),
+        Row(
+          children: [
+            const Expanded(child: Divider(thickness: 1)),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 22.0),
+              child: Text(
+                "Or sign up with",
+                style: GoogleFonts.hind(
+                  fontSize: orSignupFont,
+                  fontWeight: FontWeight.w500,
+                  color: AppColors.textBlackLight,
                 ),
               ),
-              const Expanded(child: Divider(thickness: 1)),
-            ],
-          ),
+            ),
+            const Expanded(child: Divider(thickness: 1)),
+          ],
         ),
         SizedBox(height: sizedBoxHeight1 ?? 16),
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 15.0),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: [
-              CustomButton(
-                text: 'Google',
-                onPressed: () {},
-                fontSize: 16,
-                fontWeight: FontWeight.w500,
-                borderRadius: 6.0,
-                height: 50,
-                width: buttonWidth,
-                prefixIcon: 'assets/icons/google.svg',
-                textColor: AppColors.textBlackLight,
-                buttonColor: AppColors.buttonLighterGreen,
-                borderColor: AppColors.buttonLightGreen,
-                borderWidth: 1,
-              ),
-              const SizedBox(width: 10.0),
-              CustomButton(
-                text: 'Facebook',
-                onPressed: () {},
-                fontSize: 16,
-                fontWeight: FontWeight.w500,
-                borderRadius: 6.0,
-                height: 50,
-                width: buttonWidth,
-                prefixIcon: 'assets/icons/facebook.svg',
-                textColor: AppColors.textBlackLight,
-                buttonColor: AppColors.buttonLighterGreen,
-                borderColor: AppColors.buttonLightGreen,
-                borderWidth: 1,
-              ),
-            ],
-          ),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          children: [
+            CustomButton(
+              text: 'Google',
+              onPressed: () {},
+              fontSize: 16,
+              fontWeight: FontWeight.w500,
+              borderRadius: 6.0,
+              height: 50,
+              width: buttonWidth,
+              prefixIcon: 'assets/icons/google.svg',
+              textColor: AppColors.textBlackLight,
+              buttonColor: AppColors.buttonLighterGreen,
+              borderColor: AppColors.buttonLightGreen,
+              borderWidth: 1,
+            ),
+            const SizedBox(width: 10.0),
+            CustomButton(
+              text: 'Facebook',
+              onPressed: () {},
+              fontSize: 16,
+              fontWeight: FontWeight.w500,
+              borderRadius: 6.0,
+              height: 50,
+              width: buttonWidth,
+              prefixIcon: 'assets/icons/facebook.svg',
+              textColor: AppColors.textBlackLight,
+              buttonColor: AppColors.buttonLighterGreen,
+              borderColor: AppColors.buttonLightGreen,
+              borderWidth: 1,
+            ),
+          ],
         ),
         SizedBox(height: sizedBoxHeight2 ?? 15.0),
         Padding(
