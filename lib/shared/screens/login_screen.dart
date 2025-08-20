@@ -3,29 +3,46 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:wigo_flutter/core/utils/validation_utils.dart';
 import 'package:wigo_flutter/shared/widgets/custom_text_field.dart';
 
 import '../../core/constants/app_colors.dart';
-import '../viewmodel/login_view_model.dart';
+import '../viewmodels/login_state.dart';
+import '../viewmodels/login_view_model.dart';
 import '../widgets/custom_button.dart';
 
-class LoginScreen extends ConsumerWidget {
+class LoginScreen extends ConsumerStatefulWidget {
   const LoginScreen({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final viewModel = ref.watch(loginViewModelProvider);
+  ConsumerState<LoginScreen> createState() => _LoginScreenState();
+}
+
+class _LoginScreenState extends ConsumerState<LoginScreen> {
+  final formKey = GlobalKey<FormState>();
+  bool _emailHasError = false;
+  bool _passwordHasError = false;
+  final emailFieldKey = GlobalKey<FormFieldState<String>>();
+  final passwordFieldKey = GlobalKey<FormFieldState<String>>();
+
+  @override
+  Widget build(BuildContext context) {
+    final state = ref.watch(loginViewModelProvider);
+    final vm = ref.watch(loginViewModelProvider.notifier);
+    final notifier = ref.read(loginViewModelProvider.notifier);
     final screenSize = MediaQuery.of(context).size;
     final isWeb = MediaQuery.of(context).size.width > 600;
     return isWeb
-        ? _buildWebLayout(screenSize, viewModel, context)
-        : _buildMobileLayout(screenSize, viewModel, context);
+        ? _buildWebLayout(screenSize, vm, state, notifier, context)
+        : _buildMobileLayout(screenSize, vm, state, notifier, context);
   }
 
   //Mobile Layout
   Widget _buildMobileLayout(
     Size screenSize,
-    LoginViewModel viewModel,
+    LoginViewModel vm,
+    LoginState state,
+    LoginViewModel notifier,
     BuildContext context,
   ) {
     return SafeArea(
@@ -64,12 +81,16 @@ class LoginScreen extends ConsumerWidget {
                           termsFont: 10.0,
                           buttonHeight: 48.0,
                           buttonWidth: 360.0,
-                          viewModel: viewModel,
+                          vm: vm,
+                          state: state,
                           context: context,
                           suffixIconPadding: 10.0,
                           loginColor: AppColors.textDarkGreen,
                           termsPadding: 0.0,
                           sizedBoxHeight: 11.0,
+                          notifier: notifier,
+                          generalErrorFont: 15.0,
+                          errorPadding: 10.0,
                         ),
                         _buildFooter(
                           orSignupFont: 14.0,
@@ -90,7 +111,9 @@ class LoginScreen extends ConsumerWidget {
 
   Widget _buildWebLayout(
     Size screenSize,
-    LoginViewModel viewModel,
+    LoginViewModel vm,
+    LoginState state,
+    LoginViewModel notifier,
     BuildContext context,
   ) {
     final double webContentWidth = screenSize.width * 0.34;
@@ -172,13 +195,17 @@ class LoginScreen extends ConsumerWidget {
                                   termsFont: 16.0,
                                   buttonHeight: 50.0,
                                   buttonWidth: 500.0,
-                                  viewModel: viewModel,
+                                  vm: vm,
+                                  state: state,
                                   context: context,
                                   termsPadding: 12.0,
                                   sizedBoxHeight: 11,
                                   sizedBoxHeight1: 34,
                                   suffixIconPadding: 25,
                                   loginColor: AppColors.textVidaLocaGreen,
+                                  notifier: notifier,
+                                  generalErrorFont: 16.0,
+                                  errorPadding: 0.0,
                                 ),
                                 _buildFooter(
                                   orSignupFont: 16.0,
@@ -209,16 +236,20 @@ class LoginScreen extends ConsumerWidget {
     required double termsFont,
     required double buttonHeight,
     required double buttonWidth,
-    required LoginViewModel viewModel,
+    required LoginViewModel vm,
+    required LoginViewModel notifier,
     required BuildContext context,
     required suffixIconPadding,
     required Color loginColor,
     required double termsPadding,
     required double sizedBoxHeight,
+    required double generalErrorFont,
+    required LoginState state,
     double? sizedBoxHeight1,
+    required double errorPadding,
   }) {
     return Form(
-      key: viewModel.formKey,
+      key: formKey,
       child: Column(
         children: [
           Text(
@@ -232,15 +263,32 @@ class LoginScreen extends ConsumerWidget {
           ),
           const SizedBox(height: 10.0),
           CustomTextField(
+            fieldKey: emailFieldKey,
             label: 'Email',
             iconHeight: 15,
             iconWidth: 15,
             prefixIcon: 'assets/icons/mail.svg',
             hintText: 'Enter your email',
             hintTextColor: AppColors.textIconGrey,
+            controller: vm.emailController,
+            onFocusChange: (hasFocus) {
+              if (!hasFocus) {
+                final error = FormValidators.validateEmail(
+                  vm.emailController.text,
+                );
+
+                setState(() {
+                  _emailHasError = error != null;
+                });
+                emailFieldKey.currentState!.validate();
+              }
+            },
+            validator: FormValidators.validateEmail,
+            hasError: _emailHasError,
           ),
           const SizedBox(height: 25.0),
           CustomTextField(
+            fieldKey: passwordFieldKey,
             label: 'Password',
             isPassword: true,
             iconHeight: 15,
@@ -249,7 +297,21 @@ class LoginScreen extends ConsumerWidget {
             hintText: 'Enter your password',
             hintTextColor: AppColors.textIconGrey,
             suffixIcon: Icon(Icons.visibility_outlined),
+            controller: vm.passwordController,
             suffixIconPadding: suffixIconPadding,
+            hasError: _passwordHasError,
+            onFocusChange: (hasFocus) {
+              if (!hasFocus) {
+                final error = FormValidators.validatePassword(
+                  vm.passwordController.text,
+                );
+                setState(() {
+                  _passwordHasError = error != null;
+                });
+                passwordFieldKey.currentState!.validate();
+              }
+            },
+            validator: FormValidators.validatePassword,
           ),
           const SizedBox(height: 12),
           Padding(
@@ -263,8 +325,8 @@ class LoginScreen extends ConsumerWidget {
                     width: 10,
                     child: Checkbox(
                       activeColor: AppColors.primaryDarkGreen,
-                      value: viewModel.agreeToTerms,
-                      onChanged: viewModel.toggleAgreeToTerms,
+                      value: state.agreeToTerms,
+                      onChanged: vm.toggleAgreeToTerms,
                       side: BorderSide(color: AppColors.textIconGrey),
                     ),
                   ),
@@ -323,10 +385,35 @@ class LoginScreen extends ConsumerWidget {
               ],
             ),
           ),
-          SizedBox(height: 44.0),
+          if (state.generalError != null)
+            Padding(
+              padding: EdgeInsets.only(top: errorPadding),
+              child: Text(
+                state.generalError!,
+                style: GoogleFonts.hind(
+                  fontSize: generalErrorFont,
+                  fontWeight: FontWeight.w400,
+                  color: AppColors.accentRed,
+                ),
+              ),
+            ),
+          const SizedBox(height: 44.0),
           CustomButton(
             text: 'Login',
-            onPressed: () => viewModel.login(context),
+            onPressed: () {
+              final emailHasError = FormValidators.validateEmail(
+                vm.emailController.text,
+              );
+              final passwordHasError = FormValidators.validatePassword(
+                vm.passwordController.text,
+              );
+              setState(() {
+                state.generalError = null;
+                _emailHasError = emailHasError != null;
+                _passwordHasError = passwordHasError != null;
+              });
+              vm.login(formKey);
+            },
             fontSize: 18,
             fontWeight: FontWeight.w500,
             height: buttonHeight,

@@ -5,6 +5,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:wigo_flutter/core/constants/app_colors.dart';
 
 class CustomTextField extends ConsumerStatefulWidget {
+  final GlobalKey<FormFieldState<String>>? fieldKey;
   final String label;
   final String? hintText, prefixIcon, optionalPrefixIcon;
   final Widget? suffixIcon;
@@ -19,11 +20,16 @@ class CustomTextField extends ConsumerStatefulWidget {
   final double? hintFontSize, fontSize;
   final String? Function(String?)? validator;
   final double? suffixIconPadding;
+  final Color? prefixIconColor, fillColor;
+  final void Function(String)? onChanged;
+  final void Function(bool)? onFocusChange;
+  final bool hasError;
 
   const CustomTextField({
     super.key,
     required this.label,
     this.hintText,
+    this.fieldKey,
     this.isPassword = false,
     this.helperText,
     this.iconHeight,
@@ -41,6 +47,11 @@ class CustomTextField extends ConsumerStatefulWidget {
     this.labelTextColor,
     this.validator,
     this.suffixIconPadding,
+    this.prefixIconColor,
+    this.fillColor,
+    this.onChanged,
+    this.onFocusChange,
+    this.hasError = false,
   });
 
   @override
@@ -49,6 +60,16 @@ class CustomTextField extends ConsumerStatefulWidget {
 
 class _CustomTextFieldState extends ConsumerState<CustomTextField> {
   late bool _obscureText;
+
+  ColorFilter? _resolvePrefixIconColor() {
+    if (widget.hasError) {
+      return const ColorFilter.mode(AppColors.accentRed, BlendMode.srcIn);
+    }
+    if (widget.prefixIconColor != null) {
+      return ColorFilter.mode(widget.prefixIconColor!, BlendMode.srcIn);
+    }
+    return null; //
+  }
 
   @override
   void initState() {
@@ -70,104 +91,112 @@ class _CustomTextFieldState extends ConsumerState<CustomTextField> {
           ),
         ),
         const SizedBox(height: 4),
-        TextFormField(
-          validator: widget.validator,
-          style: GoogleFonts.hind(
-            fontWeight: FontWeight.w400,
-            fontSize: widget.fontSize ?? 14.0,
-            color: AppColors.textBlack,
-          ),
-          cursorColor: AppColors.textBlackLight,
-          controller: widget.controller,
-          readOnly: widget.readOnly ?? false,
-          onTap: widget.onTap,
-          keyboardType: widget.keyboardType,
-          obscureText: _obscureText,
-          obscuringCharacter: '•',
-          decoration: InputDecoration(
-            contentPadding: EdgeInsets.symmetric(vertical: 10),
-            prefixIconConstraints: BoxConstraints(),
-            filled: true,
-            fillColor: AppColors.textFieldColor,
-            enabledBorder: OutlineInputBorder(
-              borderSide: BorderSide(color: Colors.transparent, width: 0),
-              borderRadius: BorderRadius.circular(8.0),
-            ),
-            focusedBorder: OutlineInputBorder(
-              borderSide: BorderSide(color: Colors.transparent),
-              borderRadius: BorderRadius.circular(8.0),
-            ),
-            errorBorder: OutlineInputBorder(
-              borderSide: BorderSide(color: AppColors.accentOrange, width: 1.0),
-              borderRadius: BorderRadius.circular(8.0),
-            ),
-            prefixIcon:
-                (widget.prefixIcon != null || widget.optionalPrefixIcon != null)
-                    ? Padding(
-                      padding: const EdgeInsets.only(
-                        left: 17.0,
-                        right: 3.0,
-                        bottom: 1.9,
-                      ),
-                      child: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          if (widget.prefixIcon != null)
-                            SvgPicture.asset(
-                              widget.prefixIcon!,
-                              height: widget.iconHeight,
-                              width: widget.iconWidth,
-                            ),
-                          if (widget.optionalPrefixIcon != null)
-                            SvgPicture.asset(
-                              widget.optionalPrefixIcon!,
-                              height: widget.iconHeight,
-                              width: widget.iconWidth,
-                            ),
-                        ],
-                      ),
-                    )
-                    : null,
-            hintText: widget.hintText,
-            hintStyle: GoogleFonts.hind(
+        Focus(
+          onFocusChange: widget.onFocusChange,
+          child: TextFormField(
+            validator: widget.validator,
+            style: GoogleFonts.hind(
               fontWeight: FontWeight.w400,
-              fontSize: widget.hintFontSize ?? 14.0,
-              color: widget.hintTextColor ?? AppColors.textBlackLight,
+              fontSize: widget.fontSize ?? 14.0,
+              color: AppColors.textBlack,
             ),
-            helperText: widget.helperText,
-            helperMaxLines: 2,
-            helperStyle: GoogleFonts.hind(
-              fontWeight: FontWeight.w400,
-              fontSize: 15.12,
-              color: AppColors.textBlackLight,
+            cursorColor: AppColors.textBlackLight,
+            key: widget.fieldKey,
+            controller: widget.controller,
+            onChanged: widget.onChanged,
+            readOnly: widget.readOnly ?? false,
+            onTap: widget.onTap,
+            keyboardType: widget.keyboardType,
+            obscureText: _obscureText,
+            obscuringCharacter: '•',
+            decoration: InputDecoration(
+              contentPadding: EdgeInsets.symmetric(vertical: 15),
+              prefixIconConstraints: BoxConstraints(),
+              filled: true,
+              fillColor:
+                  widget.hasError
+                      ? AppColors.accentLightRed
+                      : (widget.fillColor ?? AppColors.textFieldColor),
+              enabledBorder: OutlineInputBorder(
+                borderSide: BorderSide(color: Colors.transparent, width: 0),
+                borderRadius: BorderRadius.circular(8.0),
+              ),
+              focusedBorder: OutlineInputBorder(
+                borderSide: BorderSide(color: Colors.transparent),
+                borderRadius: BorderRadius.circular(8.0),
+              ),
+              errorBorder: OutlineInputBorder(
+                borderSide: BorderSide(color: AppColors.accentRed, width: 1.0),
+                borderRadius: BorderRadius.circular(8.0),
+              ),
+              prefixIcon:
+                  (widget.prefixIcon != null ||
+                          widget.optionalPrefixIcon != null)
+                      ? Padding(
+                        padding: const EdgeInsets.only(
+                          left: 17.0,
+                          right: 3.0,
+                          bottom: 1.9,
+                        ),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            if (widget.prefixIcon != null)
+                              SvgPicture.asset(
+                                widget.prefixIcon!,
+                                height: widget.iconHeight,
+                                width: widget.iconWidth,
+                                colorFilter: _resolvePrefixIconColor(),
+                              ),
+                            if (widget.optionalPrefixIcon != null)
+                              SvgPicture.asset(
+                                widget.optionalPrefixIcon!,
+                                height: widget.iconHeight,
+                                width: widget.iconWidth,
+                              ),
+                          ],
+                        ),
+                      )
+                      : null,
+              hintText: widget.hintText,
+              hintStyle: GoogleFonts.hind(
+                fontWeight: FontWeight.w400,
+                fontSize: widget.hintFontSize ?? 14.0,
+                color: widget.hintTextColor ?? AppColors.textBlackLight,
+              ),
+              helperText: widget.helperText,
+              helperMaxLines: 2,
+              helperStyle: GoogleFonts.hind(
+                fontWeight: FontWeight.w400,
+                fontSize: 15.12,
+                color: AppColors.textBlackLight,
+              ),
+              suffixIcon:
+                  widget.suffixIcon != null
+                      ? Padding(
+                        padding: EdgeInsets.only(
+                          right: widget.suffixIconPadding ?? 25.0,
+                        ),
+                        child:
+                            widget.isPassword
+                                ? IconButton(
+                                  icon: Icon(
+                                    _obscureText
+                                        ? Icons.visibility_off_outlined
+                                        : Icons.visibility_outlined,
+                                    color: AppColors.textIconGrey,
+                                    size: 22,
+                                  ),
+                                  onPressed: () {
+                                    setState(() {
+                                      _obscureText = !_obscureText;
+                                    });
+                                  },
+                                )
+                                : widget.suffixIcon,
+                      )
+                      : null,
             ),
-            suffixIcon:
-                widget.suffixIcon != null
-                    ? Padding(
-                      padding: EdgeInsets.only(
-                        right: widget.suffixIconPadding ?? 25.0,
-                      ),
-                      // Check if it's a password field to decide which icon to show
-                      child:
-                          widget.isPassword
-                              ? IconButton(
-                                icon: Icon(
-                                  _obscureText
-                                      ? Icons.visibility_outlined
-                                      : Icons.visibility_off_outlined,
-                                  color: AppColors.textIconGrey,
-                                  size: 22,
-                                ),
-                                onPressed: () {
-                                  setState(() {
-                                    _obscureText = !_obscureText;
-                                  });
-                                },
-                              )
-                              : widget
-                                  .suffixIcon, // Show the user-provided icon
-                    )
-                    : null, // If suffixIcon is null, show nothing
           ),
         ),
       ],

@@ -7,6 +7,8 @@ class AppColors {
 
   // Accent for Warnings/Errors/Destructive actions
   static const Color accentOrange = Color(0xFFFF5722);
+  static const Color accentRed = Color(0xffDC2626);
+  static const Color accentLightRed = Color(0xffFCEAEA);
 
   // Accent for Selections/Alternative Highlights
   static const Color accentLightBlue = Color(0xFFBBDEFB);

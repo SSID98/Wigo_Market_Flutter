@@ -5,8 +5,8 @@ import 'package:wigo_flutter/core/constants/app_colors.dart';
 import 'package:wigo_flutter/shared/widgets/role_card.dart';
 
 import '../models/user_role.dart';
-import '../viewmodel/role_selection/role_selection_provider.dart';
-import '../viewmodel/role_selection/role_selection_view_model.dart';
+import '../viewmodels/role_selection/role_selection_provider.dart';
+import '../viewmodels/role_selection/role_selection_view_model.dart';
 
 class RoleSelectionBody extends ConsumerWidget {
   final double sizedBoxHeight1, padding;

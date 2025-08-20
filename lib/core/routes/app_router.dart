@@ -11,7 +11,7 @@ import '../../features/rider/presentation/views/rider_welcome_screen.dart';
 import '../../shared/screens/role_selection_screen.dart';
 
 final appRouter = GoRouter(
-  initialLocation: '/rider/successful',
+  initialLocation: '/login',
   routes: [
     GoRoute(
       path: '/',
