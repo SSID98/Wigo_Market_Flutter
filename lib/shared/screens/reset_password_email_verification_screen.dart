@@ -1,0 +1,164 @@
+import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_svg/svg.dart';
+import 'package:wigo_flutter/shared/widgets/bottom_text.dart';
+
+import '../../core/constants/app_colors.dart';
+import '../../core/utils/masked_email.dart';
+import '../widgets/otp_widget.dart';
+
+class ResetPasswordEmailVerificationScreen extends StatelessWidget {
+  final String email;
+
+  const ResetPasswordEmailVerificationScreen({super.key, required this.email});
+
+  @override
+  Widget build(BuildContext context) {
+    final String displayEmail = kDebugMode ? 'chu******osy@gmail.com' : email;
+    final String maskedEmail = MaskedEmail.maskEmail(displayEmail);
+    final screenSize = MediaQuery.of(context).size;
+    final isWeb = MediaQuery.of(context).size.width > 600;
+    return isWeb
+        ? _buildWebLayout(screenSize, maskedEmail)
+        : _buildMobileLayout(screenSize, maskedEmail);
+  }
+
+  //Mobile Layout
+  Widget _buildMobileLayout(Size screenSize, String maskedEmail) {
+    return SafeArea(
+      child: Scaffold(
+        body: Stack(
+          fit: StackFit.expand,
+          children: [
+            Image.asset('assets/images/login.png', fit: BoxFit.cover),
+            BottomTextBuilder.buildMobileBottomText(),
+            Center(
+              child: SingleChildScrollView(
+                child: Container(
+                  width: screenSize.width * 0.95,
+                  constraints: BoxConstraints(maxWidth: 400),
+                  decoration: BoxDecoration(
+                    color: AppColors.backgroundWhite,
+                    borderRadius: BorderRadius.circular(16.0),
+                  ),
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 15.0),
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.only(top: 30.0),
+                          child: SvgPicture.asset(
+                            'assets/icons/logo.svg',
+                            height: 49,
+                            width: 143.86,
+                          ),
+                        ),
+                        const SizedBox(height: 5.0),
+                        OtpWidgetBuilder.buildMobileBody(email: maskedEmail),
+                        const SizedBox(height: 33),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildWebLayout(Size screenSize, String maskedEmail) {
+    final double webContentWidth = screenSize.width * 0.34;
+    final double webContentHeight = screenSize.height * 0.95;
+    final double imageBorderRadius = 15.0;
+
+    return SafeArea(
+      child: Scaffold(
+        body: Padding(
+          padding: const EdgeInsets.symmetric(
+            vertical: 20.0,
+            horizontal: 100.0,
+          ),
+          child: Row(
+            children: [
+              // Left section: Image and Bottom Text
+              Expanded(
+                child: Container(
+                  color: AppColors.backgroundWhite,
+                  child: Center(
+                    child: Container(
+                      width: webContentWidth,
+                      height: webContentHeight,
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(imageBorderRadius),
+                        image: DecorationImage(
+                          image: AssetImage('assets/images/login.png'),
+                          fit: BoxFit.cover,
+                        ),
+                      ),
+                      child: Stack(
+                        children: [
+                          Positioned(
+                            bottom: 0,
+                            left: 0,
+                            right: 0,
+                            child: ClipRRect(
+                              borderRadius: BorderRadius.circular(
+                                imageBorderRadius,
+                              ),
+                              child: BottomTextBuilder.buildWebBottomText(),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+              // Right form section
+              Expanded(
+                child: Padding(
+                  padding: const EdgeInsets.only(top: 100),
+                  child: Column(
+                    children: [
+                      SvgPicture.asset(
+                        'assets/icons/logo.svg',
+                        height: 78,
+                        width: 229.86,
+                      ),
+                      SizedBox(height: 30),
+                      Center(
+                        child: Container(
+                          constraints: BoxConstraints(
+                            maxWidth: 500,
+                            maxHeight: screenSize.height * 0.70,
+                          ),
+                          decoration: BoxDecoration(
+                            color: AppColors.backgroundWhite,
+                            borderRadius: BorderRadius.circular(16.0),
+                          ),
+                          child: SingleChildScrollView(
+                            child: Column(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                OtpWidgetBuilder.buildWebBody(
+                                  email: maskedEmail,
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}

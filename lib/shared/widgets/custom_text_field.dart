@@ -19,11 +19,12 @@ class CustomTextField extends ConsumerStatefulWidget {
   final Color? hintTextColor, labelTextColor;
   final double? hintFontSize, fontSize;
   final String? Function(String?)? validator;
-  final double? suffixIconPadding;
+  final double? suffixIconPadding, prefixIconPadding;
   final Color? prefixIconColor, fillColor;
   final void Function(String)? onChanged;
   final void Function(bool)? onFocusChange;
   final bool hasError;
+  final EdgeInsetsGeometry? contentPadding;
 
   const CustomTextField({
     super.key,
@@ -51,6 +52,8 @@ class CustomTextField extends ConsumerStatefulWidget {
     this.fillColor,
     this.onChanged,
     this.onFocusChange,
+    this.prefixIconPadding,
+    this.contentPadding,
     this.hasError = false,
   });
 
@@ -110,7 +113,8 @@ class _CustomTextFieldState extends ConsumerState<CustomTextField> {
             obscureText: _obscureText,
             obscuringCharacter: '•',
             decoration: InputDecoration(
-              contentPadding: EdgeInsets.symmetric(vertical: 15),
+              contentPadding:
+                  widget.contentPadding ?? EdgeInsets.symmetric(vertical: 15),
               prefixIconConstraints: BoxConstraints(),
               filled: true,
               fillColor:
@@ -133,8 +137,8 @@ class _CustomTextFieldState extends ConsumerState<CustomTextField> {
                   (widget.prefixIcon != null ||
                           widget.optionalPrefixIcon != null)
                       ? Padding(
-                        padding: const EdgeInsets.only(
-                          left: 17.0,
+                        padding: EdgeInsets.only(
+                          left: widget.prefixIconPadding ?? 17.0,
                           right: 3.0,
                           bottom: 1.9,
                         ),
