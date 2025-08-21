@@ -1,30 +1,22 @@
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:wigo_flutter/shared/widgets/bottom_text.dart';
 
 import '../../core/constants/app_colors.dart';
-import '../../core/utils/masked_email.dart';
 import '../widgets/verification_widget.dart';
 
-class ResetPasswordEmailVerificationScreen extends StatelessWidget {
-  final String email;
-
-  const ResetPasswordEmailVerificationScreen({super.key, required this.email});
+class ResetPasswordEnterEmailScreen extends StatelessWidget {
+  const ResetPasswordEnterEmailScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
-    final String displayEmail = kDebugMode ? 'chu******osy@gmail.com' : email;
-    final String maskedEmail = MaskedEmail.maskEmail(displayEmail);
     final screenSize = MediaQuery.of(context).size;
     final isWeb = MediaQuery.of(context).size.width > 600;
-    return isWeb
-        ? _buildWebLayout(screenSize, maskedEmail)
-        : _buildMobileLayout(screenSize, maskedEmail);
+    return isWeb ? _buildWebLayout(screenSize) : _buildMobileLayout(screenSize);
   }
 
   //Mobile Layout
-  Widget _buildMobileLayout(Size screenSize, String maskedEmail) {
+  Widget _buildMobileLayout(Size screenSize) {
     return SafeArea(
       child: Scaffold(
         body: Stack(
@@ -56,7 +48,20 @@ class ResetPasswordEmailVerificationScreen extends StatelessWidget {
                         ),
                         const SizedBox(height: 5.0),
                         VerificationWidgetBuilder.buildMobileBody(
-                          email: maskedEmail,
+                          titleText: 'Kindly Verify Your Email Address',
+                          bodyText:
+                              "Enter the email address linked to your wiGO MARKET account. We'll send you a reset link.",
+                          textFieldLabel: 'Email',
+                          textFieldHint: 'Please enter your email address',
+                          textFieldIcon: 'assets/icons/mail.svg',
+                          buttonText: 'Send Code',
+                          buttonColor: AppColors.primaryDarkGreen,
+                          buttonTextColor: AppColors.textWhite,
+                          hintTextSize: 14,
+                          labelTextColor: AppColors.textBlack,
+                          labelTextFontWeight: FontWeight.w600,
+                          showFooter: false,
+                          buttonTextFontSize: 18.0,
                         ),
                         const SizedBox(height: 33),
                       ],
@@ -71,7 +76,7 @@ class ResetPasswordEmailVerificationScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildWebLayout(Size screenSize, String maskedEmail) {
+  Widget _buildWebLayout(Size screenSize) {
     final double webContentWidth = screenSize.width * 0.34;
     final double webContentHeight = screenSize.height * 0.95;
     final double imageBorderRadius = 15.0;
@@ -122,7 +127,7 @@ class ResetPasswordEmailVerificationScreen extends StatelessWidget {
               // Right form section
               Expanded(
                 child: Padding(
-                  padding: const EdgeInsets.only(top: 100),
+                  padding: const EdgeInsets.only(top: 200),
                   child: Column(
                     children: [
                       SvgPicture.asset(
@@ -146,7 +151,20 @@ class ResetPasswordEmailVerificationScreen extends StatelessWidget {
                               mainAxisSize: MainAxisSize.min,
                               children: [
                                 VerificationWidgetBuilder.buildWebBody(
-                                  email: maskedEmail,
+                                  titleText: 'Kindly Verify Your Email Address',
+                                  bodyText:
+                                      "Enter the email address linked to your wiGO MARKET account. We'll send you a reset link.",
+                                  textFieldLabel: 'Email',
+                                  textFieldHint:
+                                      'Please enter your email address',
+                                  textFieldIcon: 'assets/icons/mail.svg',
+                                  buttonText: 'Send Code',
+                                  buttonColor: AppColors.primaryDarkGreen,
+                                  buttonTextColor: AppColors.textWhite,
+                                  hintTextSize: 14,
+                                  labelTextColor: AppColors.textBlack,
+                                  labelTextFontWeight: FontWeight.w600,
+                                  showFooter: false,
                                 ),
                               ],
                             ),

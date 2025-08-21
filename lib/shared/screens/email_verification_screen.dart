@@ -4,7 +4,7 @@ import 'package:flutter_svg/svg.dart';
 import 'package:wigo_flutter/core/utils/masked_email.dart';
 
 import '../../../../core/constants/app_colors.dart';
-import '../widgets/otp_widget.dart';
+import '../widgets/verification_widget.dart';
 
 class EmailVerificationScreen extends StatelessWidget {
   final String email;
@@ -67,7 +67,9 @@ class EmailVerificationScreen extends StatelessWidget {
                           height: 49,
                           width: 143.86,
                         ),
-                        OtpWidgetBuilder.buildMobileBody(email: maskedEmail),
+                        VerificationWidgetBuilder.buildMobileBody(
+                          email: maskedEmail,
+                        ),
                         const SizedBox(height: 35.0),
                       ],
                     ),
@@ -126,7 +128,9 @@ class EmailVerificationScreen extends StatelessWidget {
                           ),
                         ),
                         const SizedBox(height: 25),
-                        OtpWidgetBuilder.buildWebBody(email: maskedEmail),
+                        VerificationWidgetBuilder.buildWebBody(
+                          email: maskedEmail,
+                        ),
                         const SizedBox(height: 50.0),
                       ],
                     ),

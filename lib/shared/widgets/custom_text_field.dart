@@ -25,6 +25,7 @@ class CustomTextField extends ConsumerStatefulWidget {
   final void Function(bool)? onFocusChange;
   final bool hasError;
   final EdgeInsetsGeometry? contentPadding;
+  final FontWeight? labelFontWeight;
 
   const CustomTextField({
     super.key,
@@ -54,6 +55,7 @@ class CustomTextField extends ConsumerStatefulWidget {
     this.onFocusChange,
     this.prefixIconPadding,
     this.contentPadding,
+    this.labelFontWeight,
     this.hasError = false,
   });
 
@@ -88,7 +90,7 @@ class _CustomTextFieldState extends ConsumerState<CustomTextField> {
         Text(
           widget.label,
           style: GoogleFonts.hind(
-            fontWeight: FontWeight.w500,
+            fontWeight: widget.labelFontWeight ?? FontWeight.w500,
             fontSize: 16.0,
             color: widget.labelTextColor ?? AppColors.textBlack,
           ),
