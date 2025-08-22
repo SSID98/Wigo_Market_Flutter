@@ -1,0 +1,350 @@
+import 'package:flutter/gestures.dart';
+import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'package:wigo_flutter/shared/viewmodels/change_password_viewmodel.dart';
+
+import '../../core/constants/app_colors.dart';
+import '../../core/utils/validation_utils.dart';
+import '../viewmodels/login_state.dart';
+import '../viewmodels/login_view_model.dart';
+import 'custom_button.dart';
+import 'custom_text_field.dart';
+
+class LoginResetPasswordWidgetBuilder {
+  static Widget _buildBody({
+    required double loginFontSize,
+    required double topPadding,
+    required double termsFont,
+    termsFont2,
+    required double buttonHeight,
+    LoginViewModel? vm,
+    ChangePasswordViewmodel? cvm,
+    required suffixIconPadding,
+    required EdgeInsetsGeometry termsPadding,
+    required double sizedBoxHeight,
+    required double generalErrorFont,
+    required LoginState state,
+    required EdgeInsetsGeometry? contentPadding1,
+    contentPadding2,
+    double? sizedBoxHeight1,
+    void Function(bool)? onFocusChange1,
+    void Function(bool)? onFocusChange2,
+    required void Function() onPressed,
+    required double errorPadding,
+    required GlobalKey<FormState> formKey,
+    required GlobalKey<FormFieldState<String>> fieldKey1,
+    required GlobalKey<FormFieldState<String>> fieldKey2,
+    void Function(bool?)? termsOnChanged,
+    TextEditingController? controller1,
+    TextEditingController? controller2,
+    String? Function(String?)? validator,
+    bool firstFieldHasError = false,
+    bool secondFieldHasError = false,
+    Widget? suffixIcon,
+    String? titleText,
+    labelText1,
+    labelText2,
+    hintText1,
+    hintText2,
+    bool isPassword = false,
+    bool showRichText = true,
+    buttonText,
+    textFieldIcon,
+  }) {
+    return Form(
+      key: formKey,
+      child: Column(
+        children: [
+          Text(
+            titleText ?? 'Login',
+            textAlign: TextAlign.center,
+            style: GoogleFonts.hind(
+              fontSize: loginFontSize,
+              fontWeight: FontWeight.w700,
+              color: AppColors.textVidaLocaGreen,
+            ),
+          ),
+          const SizedBox(height: 20.0),
+          CustomTextField(
+            fieldKey: fieldKey1,
+            label: labelText1 ?? 'Email',
+            iconHeight: 18,
+            iconWidth: 18,
+            prefixIcon: textFieldIcon ?? 'assets/icons/mail.svg',
+            hintText: hintText1 ?? 'Enter your email',
+            hintTextColor: AppColors.textIconGrey,
+            controller: controller1,
+            onFocusChange: onFocusChange1,
+            validator: validator,
+            hasError: firstFieldHasError,
+            suffixIcon: suffixIcon,
+            isPassword: isPassword,
+            labelFontWeight: FontWeight.w600,
+            suffixIconPadding: suffixIconPadding,
+            contentPadding: contentPadding1,
+          ),
+          const SizedBox(height: 25.0),
+          CustomTextField(
+            fieldKey: fieldKey2,
+            label: labelText2 ?? 'Password',
+            isPassword: true,
+            iconHeight: 18,
+            iconWidth: 18,
+            prefixIcon: 'assets/icons/lock.svg',
+            hintText: hintText2 ?? 'Enter your password',
+            hintTextColor: AppColors.textIconGrey,
+            suffixIcon: Icon(Icons.visibility_outlined),
+            controller: controller2,
+            suffixIconPadding: suffixIconPadding,
+            hasError: secondFieldHasError,
+            onFocusChange: onFocusChange2,
+            labelFontWeight: FontWeight.w600,
+            validator: FormValidators.validatePassword,
+            contentPadding: contentPadding2,
+          ),
+          SizedBox(height: 12.0),
+          Padding(
+            padding: termsPadding,
+            child: Row(
+              children: [
+                Transform.scale(
+                  scale: 0.8,
+                  child: SizedBox(
+                    height: sizedBoxHeight,
+                    width: 10,
+                    child: Checkbox(
+                      activeColor: AppColors.primaryDarkGreen,
+                      value: state.agreeToTerms,
+                      onChanged: termsOnChanged,
+                      side: BorderSide(color: AppColors.textIconGrey),
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 14),
+                showRichText
+                    ? Expanded(
+                      child: RichText(
+                        text: TextSpan(
+                          children: [
+                            TextSpan(
+                              text: "I agree to wiGO MARKET ",
+                              style: GoogleFonts.hind(
+                                fontSize: termsFont,
+                                fontWeight: FontWeight.w400,
+                                color: AppColors.textBlackLight,
+                              ),
+                            ),
+                            TextSpan(
+                              text: "Terms of services",
+                              style: GoogleFonts.hind(
+                                fontSize: termsFont,
+                                fontWeight: FontWeight.w600,
+                                color: AppColors.textOrange,
+                              ),
+                              recognizer:
+                                  TapGestureRecognizer()
+                                    ..onTap = () {
+                                      // Handle terms tap
+                                    },
+                            ),
+                            TextSpan(
+                              text: " and ",
+                              style: GoogleFonts.hind(
+                                fontSize: termsFont,
+                                fontWeight: FontWeight.w400,
+                                color: AppColors.textBlackLight,
+                              ),
+                            ),
+                            TextSpan(
+                              text: "Privacy Policy",
+                              style: GoogleFonts.hind(
+                                fontSize: termsFont,
+                                fontWeight: FontWeight.w600,
+                                color: AppColors.textOrange,
+                              ),
+                              recognizer:
+                                  TapGestureRecognizer()
+                                    ..onTap = () {
+                                      // Handle privacy tap
+                                    },
+                            ),
+                          ],
+                        ),
+                      ),
+                    )
+                    : Expanded(
+                      child: Text(
+                        "Remember me",
+                        style: GoogleFonts.hind(
+                          fontSize: termsFont2,
+                          fontWeight: FontWeight.w400,
+                          color: AppColors.textBlackGrey,
+                        ),
+                      ),
+                    ),
+              ],
+            ),
+          ),
+          if (state.generalError != null)
+            Padding(
+              padding: EdgeInsets.only(top: errorPadding),
+              child: Text(
+                state.generalError!,
+                style: GoogleFonts.hind(
+                  fontSize: generalErrorFont,
+                  fontWeight: FontWeight.w400,
+                  color: AppColors.accentRed,
+                ),
+              ),
+            ),
+          const SizedBox(height: 44.0),
+          CustomButton(
+            text: buttonText ?? 'Login',
+            onPressed: onPressed,
+            fontSize: 18,
+            fontWeight: FontWeight.w500,
+            height: buttonHeight,
+            width: double.infinity,
+            padding: EdgeInsets.zero,
+          ),
+          SizedBox(height: sizedBoxHeight1 ?? 24),
+        ],
+      ),
+    );
+  }
+
+  static Widget buildMobileBody({
+    required LoginState state,
+    required void Function() onPressed,
+    required EdgeInsetsGeometry contentPadding1,
+    void Function(bool)? onFocusChange1,
+    void Function(bool)? onFocusChange2,
+    bool firstFieldHasError = false,
+    bool secondFieldHasError = false,
+    required GlobalKey<FormState> formKey,
+    required GlobalKey<FormFieldState<String>> fieldKey1,
+    required GlobalKey<FormFieldState<String>> fieldKey2,
+    ChangePasswordViewmodel? cvm,
+    LoginViewModel? vm,
+    void Function(bool?)? termsOnChanged,
+    String? Function(String?)? validator,
+    TextEditingController? controller1,
+    TextEditingController? controller2,
+    Widget? suffixIcon,
+    String? titleText,
+    labelText1,
+    labelText2,
+    hintText1,
+    hintText2,
+    bool isPassword = false,
+    bool showRichText = true,
+    buttonText,
+    textFieldIcon,
+  }) => _buildBody(
+    loginFontSize: 20.0,
+    topPadding: 0.0,
+    termsFont: 10.0,
+    buttonHeight: 45.0,
+    suffixIconPadding: 10.0,
+    termsPadding: EdgeInsets.zero,
+    sizedBoxHeight: 11.0,
+    generalErrorFont: 15.0,
+    errorPadding: 10.0,
+    termsFont2: 12.0,
+    contentPadding1: contentPadding1,
+    contentPadding2: EdgeInsets.only(top: 13.8),
+    vm: vm,
+    state: state,
+    validator: validator,
+    onPressed: onPressed,
+    onFocusChange1: onFocusChange1,
+    onFocusChange2: onFocusChange2,
+    firstFieldHasError: firstFieldHasError,
+    secondFieldHasError: secondFieldHasError,
+    fieldKey1: fieldKey1,
+    fieldKey2: fieldKey2,
+    controller1: controller1,
+    controller2: controller2,
+    formKey: formKey,
+    suffixIcon: suffixIcon,
+    hintText1: hintText1,
+    hintText2: hintText2,
+    titleText: titleText,
+    labelText1: labelText1,
+    labelText2: labelText2,
+    showRichText: showRichText,
+    isPassword: isPassword,
+    buttonText: buttonText,
+    termsOnChanged: termsOnChanged,
+    textFieldIcon: textFieldIcon,
+    cvm: cvm,
+  );
+
+  static Widget buildWebBody({
+    required LoginState state,
+    required void Function() onPressed,
+    void Function(bool)? onFocusChange1,
+    void Function(bool)? onFocusChange2,
+    bool firstFieldHasError = false,
+    bool secondFieldHasError = false,
+    required GlobalKey<FormState> formKey,
+    required GlobalKey<FormFieldState<String>> fieldKey1,
+    required GlobalKey<FormFieldState<String>> fieldKey2,
+    required EdgeInsetsGeometry? contentPadding1,
+    ChangePasswordViewmodel? cvm,
+    LoginViewModel? vm,
+    void Function(bool?)? termsOnChanged,
+    String? Function(String?)? validator,
+    TextEditingController? controller1,
+    TextEditingController? controller2,
+    Widget? suffixIcon,
+    String? titleText,
+    labelText1,
+    labelText2,
+    hintText1,
+    hintText2,
+    bool isPassword = false,
+    bool showRichText = true,
+    buttonText,
+    textFieldIcon,
+  }) => _buildBody(
+    loginFontSize: 36.0,
+    topPadding: 0.0,
+    termsFont: 16.0,
+    buttonHeight: 50.0,
+    vm: vm,
+    cvm: cvm,
+    state: state,
+    termsPadding: EdgeInsets.only(left: 5.0),
+    sizedBoxHeight: 11.0,
+    sizedBoxHeight1: 34.0,
+    termsFont2: 16.0,
+    suffixIconPadding: 25.0,
+    generalErrorFont: 16.0,
+    errorPadding: 0.0,
+    contentPadding1: contentPadding1,
+    contentPadding2: EdgeInsets.only(top: 14.0),
+    onPressed: onPressed,
+    onFocusChange1: onFocusChange1,
+    onFocusChange2: onFocusChange2,
+    firstFieldHasError: firstFieldHasError,
+    secondFieldHasError: secondFieldHasError,
+    fieldKey1: fieldKey1,
+    fieldKey2: fieldKey2,
+    controller1: controller1,
+    controller2: controller2,
+    validator: validator,
+    formKey: formKey,
+    suffixIcon: suffixIcon,
+    hintText1: hintText1,
+    hintText2: hintText2,
+    titleText: titleText,
+    labelText1: labelText1,
+    labelText2: labelText2,
+    showRichText: showRichText,
+    isPassword: isPassword,
+    buttonText: buttonText,
+    textFieldIcon: textFieldIcon,
+    termsOnChanged: termsOnChanged,
+  );
+}

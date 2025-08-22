@@ -10,10 +10,11 @@ import 'package:wigo_flutter/shared/screens/reset_password_email_verification_sc
 import 'package:wigo_flutter/shared/screens/reset_password_enter_email_screen.dart';
 
 import '../../features/rider/presentation/views/rider_welcome_screen.dart';
+import '../../shared/screens/change_password_screen.dart';
 import '../../shared/screens/role_selection_screen.dart';
 
 final appRouter = GoRouter(
-  initialLocation: '/resetPassword/enterEmail',
+  initialLocation: '/changePassword',
   routes: [
     GoRoute(
       path: '/',
@@ -57,6 +58,10 @@ final appRouter = GoRouter(
     GoRoute(
       path: '/resetPassword/enterEmail',
       builder: (context, state) => const ResetPasswordEnterEmailScreen(),
+    ),
+    GoRoute(
+      path: '/changePassword',
+      builder: (context, state) => const ChangePasswordScreen(),
     ),
   ],
 );

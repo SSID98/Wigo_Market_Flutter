@@ -119,6 +119,7 @@ class _CustomTextFieldState extends ConsumerState<CustomTextField> {
                   widget.contentPadding ?? EdgeInsets.symmetric(vertical: 15),
               prefixIconConstraints: BoxConstraints(),
               filled: true,
+              constraints: BoxConstraints(),
               fillColor:
                   widget.hasError
                       ? AppColors.accentLightRed

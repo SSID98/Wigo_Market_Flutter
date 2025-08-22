@@ -1,34 +1,33 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:google_fonts/google_fonts.dart';
-import 'package:wigo_flutter/core/utils/validation_utils.dart';
-import 'package:wigo_flutter/shared/widgets/login_reset_password_body.dart';
+import 'package:wigo_flutter/shared/widgets/bottom_text.dart';
 
 import '../../core/constants/app_colors.dart';
+import '../../core/utils/validation_utils.dart';
+import '../viewmodels/change_password_viewmodel.dart';
 import '../viewmodels/login_state.dart';
-import '../viewmodels/login_view_model.dart';
-import '../widgets/bottom_text.dart';
-import '../widgets/custom_button.dart';
+import '../widgets/login_reset_password_body.dart';
 
-class LoginScreen extends ConsumerStatefulWidget {
-  const LoginScreen({super.key});
+class ChangePasswordScreen extends ConsumerStatefulWidget {
+  const ChangePasswordScreen({super.key});
 
   @override
-  ConsumerState<LoginScreen> createState() => _LoginScreenState();
+  ConsumerState<ChangePasswordScreen> createState() =>
+      _ChangePasswordScreenState();
 }
 
-class _LoginScreenState extends ConsumerState<LoginScreen> {
+class _ChangePasswordScreenState extends ConsumerState<ChangePasswordScreen> {
   final formKey = GlobalKey<FormState>();
-  bool _emailHasError = false;
   bool _passwordHasError = false;
-  final emailFieldKey = GlobalKey<FormFieldState<String>>();
+  bool _confirmPasswordHasError = false;
   final passwordFieldKey = GlobalKey<FormFieldState<String>>();
+  final confirmPasswordFieldKey = GlobalKey<FormFieldState<String>>();
 
   @override
   Widget build(BuildContext context) {
-    final state = ref.watch(loginViewModelProvider);
-    final vm = ref.watch(loginViewModelProvider.notifier);
+    final state = ref.watch(changePasswordViewModelProvider);
+    final vm = ref.watch(changePasswordViewModelProvider.notifier);
     final screenSize = MediaQuery.of(context).size;
     final isWeb = MediaQuery.of(context).size.width > 600;
     return isWeb
@@ -39,7 +38,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
   //Mobile Layout
   Widget _buildMobileLayout(
     Size screenSize,
-    LoginViewModel vm,
+    ChangePasswordViewmodel vm,
     LoginState state,
     BuildContext context,
   ) {
@@ -65,36 +64,34 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                       mainAxisSize: MainAxisSize.min,
                       children: [
                         Padding(
-                          padding: const EdgeInsets.only(top: 50.0),
+                          padding: const EdgeInsets.only(top: 30.0),
                           child: SvgPicture.asset(
                             'assets/icons/logo.svg',
                             height: 49,
                             width: 143.86,
                           ),
                         ),
-                        const SizedBox(height: 33),
+                        const SizedBox(height: 30.0),
                         LoginResetPasswordWidgetBuilder.buildMobileBody(
-                          controller1: vm.emailController,
-                          controller2: vm.passwordController,
-                          termsOnChanged: vm.toggleAgreeToTerms,
-                          vm: vm,
+                          suffixIcon: Icon(Icons.visibility_outlined),
+                          isPassword: true,
+                          contentPadding1: EdgeInsets.only(top: 13.8),
+                          titleText: 'Create a New Password',
+                          labelText1: 'New Password',
+                          hintText1: 'Enter New password',
+                          labelText2: 'Confirm Password',
+                          hintText2: 'Enter Confirm password',
+                          showRichText: false,
+                          textFieldIcon: 'assets/icons/lock.svg',
+                          validator: FormValidators.validatePassword,
+                          termsOnChanged: vm.toggleRememberMe,
+                          buttonText: 'Continue',
                           state: state,
-                          firstFieldHasError: _emailHasError,
-                          secondFieldHasError: _passwordHasError,
-                          validator: FormValidators.validateEmail,
+                          controller1: vm.passwordController,
+                          controller2: vm.confirmPasswordController,
+                          firstFieldHasError: _passwordHasError,
+                          secondFieldHasError: _confirmPasswordHasError,
                           onFocusChange1: (hasFocus) {
-                            if (!hasFocus) {
-                              final error = FormValidators.validateEmail(
-                                vm.emailController.text,
-                              );
-
-                              setState(() {
-                                _emailHasError = error != null;
-                              });
-                              emailFieldKey.currentState!.validate();
-                            }
-                          },
-                          onFocusChange2: (hasFocus) {
                             if (!hasFocus) {
                               final error = FormValidators.validatePassword(
                                 vm.passwordController.text,
@@ -105,31 +102,38 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                               passwordFieldKey.currentState!.validate();
                             }
                           },
+                          onFocusChange2: (hasFocus) {
+                            if (!hasFocus) {
+                              final error = FormValidators.validatePassword(
+                                vm.confirmPasswordController.text,
+                              );
+                              setState(() {
+                                _confirmPasswordHasError = error != null;
+                              });
+                              confirmPasswordFieldKey.currentState!.validate();
+                            }
+                          },
                           onPressed: () {
-                            final emailHasError = FormValidators.validateEmail(
-                              vm.emailController.text,
-                            );
                             final passwordHasError =
                                 FormValidators.validatePassword(
                                   vm.passwordController.text,
                                 );
+                            final confirmPasswordHasError =
+                                FormValidators.validatePassword(
+                                  vm.confirmPasswordController.text,
+                                );
                             setState(() {
-                              state.generalError = null;
-                              _emailHasError = emailHasError != null;
                               _passwordHasError = passwordHasError != null;
+                              _confirmPasswordHasError =
+                                  confirmPasswordHasError != null;
                             });
-                            vm.login(formKey);
+                            vm.submit(formKey);
                           },
                           formKey: formKey,
-                          fieldKey1: emailFieldKey,
-                          fieldKey2: passwordFieldKey,
-                          contentPadding1: EdgeInsets.only(top: 0.0),
+                          fieldKey1: passwordFieldKey,
+                          fieldKey2: confirmPasswordFieldKey,
                         ),
-                        _buildFooter(
-                          orSignupFont: 14.0,
-                          buttonWidth: 170.0,
-                          footerTextFontSize: 14.0,
-                        ),
+                        const SizedBox(height: 33),
                       ],
                     ),
                   ),
@@ -144,7 +148,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
 
   Widget _buildWebLayout(
     Size screenSize,
-    LoginViewModel vm,
+    ChangePasswordViewmodel vm,
     LoginState state,
     BuildContext context,
   ) {
@@ -198,7 +202,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
               // Right form section
               Expanded(
                 child: Padding(
-                  padding: const EdgeInsets.only(top: 100),
+                  padding: const EdgeInsets.only(top: 200),
                   child: Column(
                     children: [
                       SvgPicture.asset(
@@ -206,11 +210,11 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                         height: 78,
                         width: 229.86,
                       ),
-                      SizedBox(height: 24),
+                      SizedBox(height: 30),
                       Center(
                         child: Container(
                           constraints: BoxConstraints(
-                            maxWidth: 525,
+                            maxWidth: 500,
                             maxHeight: screenSize.height * 0.70,
                           ),
                           decoration: BoxDecoration(
@@ -222,27 +226,26 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                               mainAxisSize: MainAxisSize.min,
                               children: [
                                 LoginResetPasswordWidgetBuilder.buildWebBody(
-                                  termsOnChanged: vm.toggleAgreeToTerms,
-                                  controller1: vm.emailController,
-                                  controller2: vm.passwordController,
-                                  vm: vm,
+                                  suffixIcon: Icon(Icons.visibility_outlined),
+                                  isPassword: true,
+                                  titleText: 'Create a New Password',
+                                  labelText1: 'New Password',
+                                  hintText1: 'Enter New password',
+                                  labelText2: 'Confirm Password',
+                                  hintText2: 'Enter Confirm password',
+                                  showRichText: false,
+                                  textFieldIcon: 'assets/icons/lock.svg',
+                                  buttonText: 'Continue',
+                                  controller1: vm.passwordController,
+                                  controller2: vm.confirmPasswordController,
+                                  validator: FormValidators.validatePassword,
+                                  termsOnChanged: vm.toggleRememberMe,
+                                  cvm: vm,
                                   state: state,
-                                  firstFieldHasError: _emailHasError,
-                                  secondFieldHasError: _passwordHasError,
+                                  contentPadding1: EdgeInsets.only(top: 14.0),
+                                  firstFieldHasError: _passwordHasError,
+                                  secondFieldHasError: _confirmPasswordHasError,
                                   onFocusChange1: (hasFocus) {
-                                    if (!hasFocus) {
-                                      final error =
-                                          FormValidators.validateEmail(
-                                            vm.emailController.text,
-                                          );
-
-                                      setState(() {
-                                        _emailHasError = error != null;
-                                      });
-                                      emailFieldKey.currentState!.validate();
-                                    }
-                                  },
-                                  onFocusChange2: (hasFocus) {
                                     if (!hasFocus) {
                                       final error =
                                           FormValidators.validatePassword(
@@ -254,35 +257,40 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                                       passwordFieldKey.currentState!.validate();
                                     }
                                   },
+                                  onFocusChange2: (hasFocus) {
+                                    if (!hasFocus) {
+                                      final error =
+                                          FormValidators.validatePassword(
+                                            vm.confirmPasswordController.text,
+                                          );
+                                      setState(() {
+                                        _confirmPasswordHasError =
+                                            error != null;
+                                      });
+                                      confirmPasswordFieldKey.currentState!
+                                          .validate();
+                                    }
+                                  },
                                   onPressed: () {
-                                    final emailHasError =
-                                        FormValidators.validateEmail(
-                                          vm.emailController.text,
-                                        );
                                     final passwordHasError =
                                         FormValidators.validatePassword(
                                           vm.passwordController.text,
                                         );
+                                    final confirmPasswordHasError =
+                                        FormValidators.validatePassword(
+                                          vm.confirmPasswordController.text,
+                                        );
                                     setState(() {
-                                      state.generalError = null;
-                                      _emailHasError = emailHasError != null;
                                       _passwordHasError =
                                           passwordHasError != null;
+                                      _confirmPasswordHasError =
+                                          confirmPasswordHasError != null;
                                     });
-                                    vm.login(formKey);
+                                    vm.submit(formKey);
                                   },
-                                  validator: FormValidators.validateEmail,
                                   formKey: formKey,
-                                  fieldKey1: emailFieldKey,
-                                  fieldKey2: passwordFieldKey,
-                                  contentPadding1: EdgeInsets.only(top: 4.0),
-                                ),
-                                _buildFooter(
-                                  orSignupFont: 16.0,
-                                  buttonWidth: screenSize.width * 0.126,
-                                  footerTextFontSize: 16.0,
-                                  sizedBoxHeight1: 35,
-                                  sizedBoxHeight2: 25,
+                                  fieldKey1: passwordFieldKey,
+                                  fieldKey2: confirmPasswordFieldKey,
                                 ),
                               ],
                             ),
@@ -297,83 +305,6 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
           ),
         ),
       ),
-    );
-  }
-
-  Widget _buildFooter({
-    required double orSignupFont,
-    required double buttonWidth,
-    required double footerTextFontSize,
-    double? sizedBoxHeight1,
-    double? sizedBoxHeight2,
-  }) {
-    return Column(
-      children: [
-        Row(
-          children: [
-            const Expanded(child: Divider(thickness: 1)),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 22.0),
-              child: Text(
-                "Or sign up with",
-                style: GoogleFonts.hind(
-                  fontSize: orSignupFont,
-                  fontWeight: FontWeight.w500,
-                  color: AppColors.textBlackLight,
-                ),
-              ),
-            ),
-            const Expanded(child: Divider(thickness: 1)),
-          ],
-        ),
-        SizedBox(height: sizedBoxHeight1 ?? 16),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-          children: [
-            CustomButton(
-              text: 'Google',
-              onPressed: () {},
-              fontSize: 16,
-              fontWeight: FontWeight.w500,
-              borderRadius: 6.0,
-              height: 50,
-              width: buttonWidth,
-              prefixIcon: 'assets/icons/google.svg',
-              textColor: AppColors.textBlackLight,
-              buttonColor: AppColors.buttonLighterGreen,
-              borderColor: AppColors.buttonLightGreen,
-              borderWidth: 1,
-            ),
-            const SizedBox(width: 10.0),
-            CustomButton(
-              text: 'Facebook',
-              onPressed: () {},
-              fontSize: 16,
-              fontWeight: FontWeight.w500,
-              borderRadius: 6.0,
-              height: 50,
-              width: buttonWidth,
-              prefixIcon: 'assets/icons/facebook.svg',
-              textColor: AppColors.textBlackLight,
-              buttonColor: AppColors.buttonLighterGreen,
-              borderColor: AppColors.buttonLightGreen,
-              borderWidth: 1,
-            ),
-          ],
-        ),
-        SizedBox(height: sizedBoxHeight2 ?? 15.0),
-        Padding(
-          padding: const EdgeInsets.only(bottom: 60.0),
-          child: Text(
-            "Forgot Password?",
-            style: GoogleFonts.hind(
-              fontSize: footerTextFontSize,
-              fontWeight: FontWeight.w400,
-              color: AppColors.textOrange,
-            ),
-          ),
-        ),
-      ],
     );
   }
 }
