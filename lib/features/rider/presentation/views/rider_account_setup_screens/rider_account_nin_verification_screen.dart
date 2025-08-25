@@ -3,13 +3,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:wigo_flutter/features/rider/viewmodels/rider_account_verification_viewmodel.dart';
 
-import '../../../../core/constants/app_colors.dart';
-import '../../../../shared/widgets/custom_button.dart';
+import '../../../../../core/constants/app_colors.dart';
+import '../../../../../shared/widgets/custom_button.dart';
+import '../../../viewmodels/account_setup_viewmodels/rider_account_nin_verification_viewmodel.dart';
 
-class RiderAccountVerificationScreen extends ConsumerWidget {
-  const RiderAccountVerificationScreen({super.key});
+class RiderAccountNinVerificationScreen extends ConsumerWidget {
+  const RiderAccountNinVerificationScreen({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -23,7 +23,7 @@ class RiderAccountVerificationScreen extends ConsumerWidget {
 
   Widget _buildMobileLayout(
     Size screenSize,
-    RiderAccountVerificationViewmodel viewModel,
+    RiderAccountNinVerificationViewmodel viewModel,
   ) {
     return Scaffold(
       backgroundColor: AppColors.backgroundWhite,
@@ -94,7 +94,7 @@ class RiderAccountVerificationScreen extends ConsumerWidget {
 
   Widget _buildWebLayout(
     Size screenSize,
-    RiderAccountVerificationViewmodel viewModel,
+    RiderAccountNinVerificationViewmodel viewModel,
   ) {
     return Scaffold(
       backgroundColor: AppColors.backgroundWhite,
@@ -206,7 +206,7 @@ class RiderAccountVerificationScreen extends ConsumerWidget {
     required double fontSize1,
     required double fontSize2,
     required double containerWidth,
-    required RiderAccountVerificationViewmodel viewModel,
+    required RiderAccountNinVerificationViewmodel viewModel,
     required double sizedBoxHeight,
     bool web = false,
   }) {

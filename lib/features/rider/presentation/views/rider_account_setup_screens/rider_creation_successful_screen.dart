@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-import '../../../../core/constants/app_colors.dart';
-import '../../../../shared/widgets/custom_button.dart';
+import '../../../../../core/constants/app_colors.dart';
+import '../../../../../shared/widgets/custom_button.dart';
 
 class RiderCreationSuccessfulScreen extends StatelessWidget {
   const RiderCreationSuccessfulScreen({super.key});

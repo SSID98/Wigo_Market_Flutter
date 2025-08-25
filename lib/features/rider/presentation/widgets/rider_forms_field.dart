@@ -5,7 +5,7 @@ import 'package:wigo_flutter/shared/models/location_data.dart';
 import 'package:wigo_flutter/shared/widgets/custom_text_field.dart';
 
 import '../../../../shared/widgets/contact_text_field.dart';
-import '../../viewmodels/rider_account_viewmodel.dart';
+import '../../viewmodels/account_setup_viewmodels/rider_account_creation_viewmodel.dart';
 
 class RiderFormFields extends ConsumerWidget {
   final bool web;

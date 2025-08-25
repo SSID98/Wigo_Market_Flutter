@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-class RiderAccountVerificationViewmodel extends ChangeNotifier {
+class RiderAccountNinVerificationViewmodel extends ChangeNotifier {
   final formKey = GlobalKey<FormState>();
 
   bool agreeToTerms = false;
@@ -25,6 +25,6 @@ class RiderAccountVerificationViewmodel extends ChangeNotifier {
 }
 
 final riderAccountVerificationViewmodelProvider =
-    ChangeNotifierProvider<RiderAccountVerificationViewmodel>((ref) {
-      return RiderAccountVerificationViewmodel();
+    ChangeNotifierProvider<RiderAccountNinVerificationViewmodel>((ref) {
+      return RiderAccountNinVerificationViewmodel();
     });

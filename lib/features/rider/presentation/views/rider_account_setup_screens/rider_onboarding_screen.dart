@@ -4,8 +4,8 @@ import 'package:flutter_svg/svg.dart';
 import 'package:wigo_flutter/features/rider/presentation/widgets/rider_onboarding_pageview.dart';
 import 'package:wigo_flutter/features/rider/viewmodels/rider_onboarding_viewmodel.dart';
 
-import '../../../../core/constants/app_colors.dart';
-import '../../../../shared/widgets/custom_button.dart';
+import '../../../../../core/constants/app_colors.dart';
+import '../../../../../shared/widgets/custom_button.dart';
 
 class RiderOnboardingScreen extends ConsumerWidget {
   const RiderOnboardingScreen({super.key});

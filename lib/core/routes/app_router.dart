@@ -1,14 +1,14 @@
 import 'package:go_router/go_router.dart';
-import 'package:wigo_flutter/features/rider/presentation/views/rider_account_screen.dart';
-import 'package:wigo_flutter/features/rider/presentation/views/rider_account_setup_screen.dart';
-import 'package:wigo_flutter/features/rider/presentation/views/rider_account_verification_screen.dart';
-import 'package:wigo_flutter/features/rider/presentation/views/rider_creation_successful_screen.dart';
-import 'package:wigo_flutter/features/rider/presentation/views/rider_onboarding_screen.dart';
 import 'package:wigo_flutter/shared/screens/email_verification_screen.dart';
 import 'package:wigo_flutter/shared/screens/login_screen.dart';
 import 'package:wigo_flutter/shared/screens/reset_password_email_verification_screen.dart';
 import 'package:wigo_flutter/shared/screens/reset_password_enter_email_screen.dart';
 
+import '../../features/rider/presentation/views/rider_account_setup_screens/rider_account_creation_screen.dart';
+import '../../features/rider/presentation/views/rider_account_setup_screens/rider_account_nin_verification_screen.dart';
+import '../../features/rider/presentation/views/rider_account_setup_screens/rider_creation_successful_screen.dart';
+import '../../features/rider/presentation/views/rider_account_setup_screens/rider_onboarding_screen.dart';
+import '../../features/rider/presentation/views/rider_account_setup_screens/rider_payment_method_setup_screen.dart';
 import '../../features/rider/presentation/views/rider_welcome_screen.dart';
 import '../../shared/screens/change_password_screen.dart';
 import '../../shared/screens/role_selection_screen.dart';
@@ -30,7 +30,7 @@ final appRouter = GoRouter(
     ),
     GoRoute(
       path: '/rider/account',
-      builder: (context, state) => const RiderAccountScreen(),
+      builder: (context, state) => const RiderAccountCreationScreen(),
     ),
     GoRoute(
       path: '/verification',
@@ -39,11 +39,11 @@ final appRouter = GoRouter(
     GoRoute(path: '/login', builder: (context, state) => const LoginScreen()),
     GoRoute(
       path: '/rider/verification',
-      builder: (context, state) => const RiderAccountVerificationScreen(),
+      builder: (context, state) => const RiderAccountNinVerificationScreen(),
     ),
     GoRoute(
       path: '/rider/account/setup',
-      builder: (context, state) => const RiderAccountSetupScreen(),
+      builder: (context, state) => const RiderPaymentMethodSetupScreen(),
     ),
     GoRoute(
       path: '/rider/successful',

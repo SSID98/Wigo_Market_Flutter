@@ -2,13 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-import '../../../../core/constants/app_colors.dart';
-import '../../../../shared/widgets/custom_button.dart';
-import '../../../../shared/widgets/custom_text_field.dart';
-import '../../viewmodels/rider_account_setup_viewmodel.dart';
+import '../../../../../core/constants/app_colors.dart';
+import '../../../../../shared/widgets/custom_button.dart';
+import '../../../../../shared/widgets/custom_text_field.dart';
+import '../../../viewmodels/account_setup_viewmodels/rider_payment_method_setup_viewmodel.dart';
 
-class RiderAccountSetupScreen extends ConsumerWidget {
-  const RiderAccountSetupScreen({super.key});
+class RiderPaymentMethodSetupScreen extends ConsumerWidget {
+  const RiderPaymentMethodSetupScreen({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {

@@ -5,8 +5,8 @@ import 'package:wigo_flutter/core/constants/app_colors.dart';
 import 'package:wigo_flutter/features/rider/presentation/widgets/rider_forms_field.dart';
 import 'package:wigo_flutter/shared/widgets/custom_button.dart';
 
-class RiderAccountScreen extends ConsumerWidget {
-  const RiderAccountScreen({super.key});
+class RiderAccountCreationScreen extends ConsumerWidget {
+  const RiderAccountCreationScreen({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
