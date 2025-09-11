@@ -4,9 +4,9 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:wigo_flutter/core/constants/app_colors.dart';
 import 'package:wigo_flutter/shared/widgets/custom_button.dart';
 
-import '../../../../gen/assets.gen.dart';
-import '../../../../shared/widgets/dashboard_widgets/delivery_table.dart';
-import '../../viewmodels/rider_dashboard_viewmodel.dart';
+import '../../../../../gen/assets.gen.dart';
+import '../../../../../shared/widgets/dashboard_widgets/delivery_table.dart';
+import '../../../viewmodels/rider_dashboard_viewmodel.dart';
 
 class RecentDeliveriesWidget extends ConsumerWidget {
   const RecentDeliveriesWidget({super.key});

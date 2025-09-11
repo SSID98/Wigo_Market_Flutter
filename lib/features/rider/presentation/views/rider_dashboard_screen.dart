@@ -3,16 +3,16 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:wigo_flutter/features/rider/models/rider_dashboard_state.dart';
-import 'package:wigo_flutter/features/rider/presentation/widgets/current_location_widget.dart';
-import 'package:wigo_flutter/features/rider/presentation/widgets/earning_history_widget.dart';
+import 'package:wigo_flutter/features/rider/presentation/widgets/dashboard_screen_widgets/earning_history_widget.dart';
 import 'package:wigo_flutter/features/rider/presentation/widgets/switch.dart';
 import 'package:wigo_flutter/features/rider/viewmodels/rider_dashboard_viewmodel.dart';
 
 import '../../../../../core/constants/app_colors.dart';
 import '../../../../gen/assets.gen.dart';
-import '../widgets/account_setup_status_widget.dart';
-import '../widgets/earning_overview_widget.dart';
-import '../widgets/recent_deliveries_widget.dart';
+import '../widgets/dashboard_screen_widgets/account_setup_status_widget.dart';
+import '../widgets/dashboard_screen_widgets/current_location_widget.dart';
+import '../widgets/dashboard_screen_widgets/earning_overview_widget.dart';
+import '../widgets/dashboard_screen_widgets/recent_deliveries_widget.dart';
 
 class RiderDashboardScreen extends ConsumerWidget {
   RiderDashboardScreen({super.key});

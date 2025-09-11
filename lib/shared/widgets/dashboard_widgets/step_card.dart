@@ -5,7 +5,7 @@ import 'package:wigo_flutter/shared/widgets/dashboard_widgets/status_chip.dart';
 
 import '../../../core/constants/app_colors.dart';
 import '../../../core/constants/dashboard_helpers.dart';
-import '../../../features/rider/presentation/widgets/account_setup_status_widget.dart';
+import '../../../features/rider/presentation/widgets/dashboard_screen_widgets/account_setup_status_widget.dart';
 
 class StepCard extends StatelessWidget {
   final AccountSetupStep step;

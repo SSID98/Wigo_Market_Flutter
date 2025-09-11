@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:wigo_flutter/gen/assets.gen.dart';
 
-import '../../features/rider/presentation/widgets/account_setup_status_widget.dart';
+import '../../features/rider/presentation/widgets/dashboard_screen_widgets/account_setup_status_widget.dart';
 import 'app_colors.dart';
 
 String statusText(SetupStatus s) {

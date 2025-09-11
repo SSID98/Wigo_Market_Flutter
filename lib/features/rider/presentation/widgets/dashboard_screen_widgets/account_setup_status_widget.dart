@@ -4,7 +4,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:wigo_flutter/shared/widgets/dashboard_widgets/progress_card.dart';
 import 'package:wigo_flutter/shared/widgets/dashboard_widgets/step_card.dart';
 
-import '../../../../../core/constants/app_colors.dart';
+import '../../../../../../core/constants/app_colors.dart';
 
 enum SetupStatus { pending, completed }
 

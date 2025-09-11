@@ -3,8 +3,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:wigo_flutter/gen/assets.gen.dart';
 
-import '../../../../core/constants/app_colors.dart';
-import '../../viewmodels/rider_dashboard_viewmodel.dart';
+import '../../../../../core/constants/app_colors.dart';
+import '../../../viewmodels/rider_dashboard_viewmodel.dart';
 
 class CurrentLocationWidget extends ConsumerWidget {
   const CurrentLocationWidget({super.key});

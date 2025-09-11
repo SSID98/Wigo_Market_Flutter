@@ -3,9 +3,9 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:wigo_flutter/core/constants/app_colors.dart';
 
-import '../../../../gen/assets.gen.dart';
-import '../../../../shared/widgets/dashboard_widgets/earning_card.dart';
-import '../../viewmodels/rider_dashboard_viewmodel.dart';
+import '../../../../../gen/assets.gen.dart';
+import '../../../../../shared/widgets/dashboard_widgets/earning_card.dart';
+import '../../../viewmodels/rider_dashboard_viewmodel.dart';
 
 class EarningOverviewWidget extends ConsumerWidget {
   const EarningOverviewWidget({super.key});

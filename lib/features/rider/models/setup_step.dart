@@ -1,4 +1,4 @@
-import '../presentation/widgets/account_setup_status_widget.dart';
+import '../presentation/widgets/dashboard_screen_widgets/account_setup_status_widget.dart';
 
 class SetupStep {
   final String id;

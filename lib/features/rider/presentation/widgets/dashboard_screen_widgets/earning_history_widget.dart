@@ -5,8 +5,8 @@ import 'package:wigo_flutter/core/constants/dashboard_helpers.dart';
 import 'package:wigo_flutter/gen/assets.gen.dart';
 import 'package:wigo_flutter/shared/widgets/dashboard_widgets/status_chip.dart';
 
-import '../../../../core/constants/app_colors.dart';
-import '../../viewmodels/rider_dashboard_viewmodel.dart';
+import '../../../../../core/constants/app_colors.dart';
+import '../../../viewmodels/rider_dashboard_viewmodel.dart';
 
 class EarningHistoryWidget extends ConsumerWidget {
   const EarningHistoryWidget({super.key});
