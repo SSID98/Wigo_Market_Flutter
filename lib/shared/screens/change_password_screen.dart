@@ -5,6 +5,7 @@ import 'package:wigo_flutter/shared/widgets/bottom_text.dart';
 
 import '../../core/constants/app_colors.dart';
 import '../../core/utils/validation_utils.dart';
+import '../../gen/assets.gen.dart';
 import '../viewmodels/change_password_viewmodel.dart';
 import '../viewmodels/login_state.dart';
 import '../widgets/login_reset_password_body.dart';
@@ -47,7 +48,7 @@ class _ChangePasswordScreenState extends ConsumerState<ChangePasswordScreen> {
         body: Stack(
           fit: StackFit.expand,
           children: [
-            Image.asset('assets/images/login.png', fit: BoxFit.cover),
+            Image.asset(AppAssets.images.login.path, fit: BoxFit.cover),
             BottomTextBuilder.buildMobileBottomText(),
             Center(
               child: SingleChildScrollView(
@@ -55,7 +56,7 @@ class _ChangePasswordScreenState extends ConsumerState<ChangePasswordScreen> {
                   width: screenSize.width * 0.95,
                   constraints: BoxConstraints(maxWidth: 400),
                   decoration: BoxDecoration(
-                    color: AppColors.backgroundWhite,
+                    color: AppColors.backgroundLight,
                     borderRadius: BorderRadius.circular(16.0),
                   ),
                   child: Padding(
@@ -66,7 +67,7 @@ class _ChangePasswordScreenState extends ConsumerState<ChangePasswordScreen> {
                         Padding(
                           padding: const EdgeInsets.only(top: 30.0),
                           child: SvgPicture.asset(
-                            'assets/icons/logo.svg',
+                            AppAssets.icons.logo.path,
                             height: 49,
                             width: 143.86,
                           ),
@@ -82,7 +83,7 @@ class _ChangePasswordScreenState extends ConsumerState<ChangePasswordScreen> {
                           labelText2: 'Confirm Password',
                           hintText2: 'Enter Confirm password',
                           showRichText: false,
-                          textFieldIcon: 'assets/icons/lock.svg',
+                          textFieldIcon: AppAssets.icons.lock.path,
                           validator: FormValidators.validatePassword,
                           termsOnChanged: vm.toggleRememberMe,
                           buttonText: 'Continue',
@@ -168,7 +169,7 @@ class _ChangePasswordScreenState extends ConsumerState<ChangePasswordScreen> {
               // Left section: Image and Bottom Text
               Expanded(
                 child: Container(
-                  color: AppColors.backgroundWhite,
+                  color: AppColors.backgroundLight,
                   child: Center(
                     child: Container(
                       width: webContentWidth,
@@ -176,7 +177,7 @@ class _ChangePasswordScreenState extends ConsumerState<ChangePasswordScreen> {
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(imageBorderRadius),
                         image: DecorationImage(
-                          image: AssetImage('assets/images/login.png'),
+                          image: AssetImage(AppAssets.images.login.path),
                           fit: BoxFit.cover,
                         ),
                       ),
@@ -206,7 +207,7 @@ class _ChangePasswordScreenState extends ConsumerState<ChangePasswordScreen> {
                   child: Column(
                     children: [
                       SvgPicture.asset(
-                        'assets/icons/logo.svg',
+                        AppAssets.icons.logo.path,
                         height: 78,
                         width: 229.86,
                       ),
@@ -218,7 +219,7 @@ class _ChangePasswordScreenState extends ConsumerState<ChangePasswordScreen> {
                             maxHeight: screenSize.height * 0.70,
                           ),
                           decoration: BoxDecoration(
-                            color: AppColors.backgroundWhite,
+                            color: AppColors.backgroundLight,
                             borderRadius: BorderRadius.circular(16.0),
                           ),
                           child: SingleChildScrollView(
@@ -234,7 +235,7 @@ class _ChangePasswordScreenState extends ConsumerState<ChangePasswordScreen> {
                                   labelText2: 'Confirm Password',
                                   hintText2: 'Enter Confirm password',
                                   showRichText: false,
-                                  textFieldIcon: 'assets/icons/lock.svg',
+                                  textFieldIcon: AppAssets.icons.lock.path,
                                   buttonText: 'Continue',
                                   controller1: vm.passwordController,
                                   controller2: vm.confirmPasswordController,

@@ -4,6 +4,7 @@ import 'package:wigo_flutter/core/constants/app_colors.dart';
 import 'package:wigo_flutter/shared/models/location_data.dart';
 import 'package:wigo_flutter/shared/widgets/custom_text_field.dart';
 
+import '../../../../gen/assets.gen.dart';
 import '../../../../shared/widgets/contact_text_field.dart';
 import '../../viewmodels/account_setup_viewmodels/rider_account_creation_viewmodel.dart';
 
@@ -33,7 +34,7 @@ class RiderFormFields extends ConsumerWidget {
         CustomTextField(
           hintText: 'eg. John Doe',
           label: 'Full Name',
-          prefixIcon: 'assets/icons/user.svg',
+          prefixIcon: AppAssets.icons.user.path,
           iconHeight: iconHeight,
           iconWidth: iconWidth,
         ),
@@ -41,7 +42,7 @@ class RiderFormFields extends ConsumerWidget {
         CustomTextField(
           hintText: 'johndoe112@gmail.com',
           label: 'Email address',
-          prefixIcon: 'assets/icons/mail.svg',
+          prefixIcon: AppAssets.icons.mail.path,
           iconHeight: iconHeight,
           iconWidth: iconWidth,
         ),
@@ -53,7 +54,7 @@ class RiderFormFields extends ConsumerWidget {
           isPassword: true,
           helperText:
               'At least 8 character containing a capital letter, a lower letter and a numeric character',
-          prefixIcon: 'assets/icons/lock.svg',
+          prefixIcon: AppAssets.icons.lock.path,
           iconHeight: iconHeight,
           iconWidth: iconWidth,
           suffixIcon: suffixIcon,
@@ -68,15 +69,16 @@ class RiderFormFields extends ConsumerWidget {
           hintText: 'Select your Gender',
           items: const ['Male', 'Female'],
           iconSize: 22,
-          prefixIcon: 'assets/icons/user.svg',
-          iconWidth: iconWidth,
-          iconHeight: iconHeight,
+          prefixIcon: AppAssets.icons.user.svg(
+            width: iconWidth,
+            height: iconHeight,
+          ),
         ),
         spacing,
         CustomTextField(
           hintText: 'Enter residential address',
           label: 'Residential Address',
-          prefixIcon: 'assets/icons/home.svg',
+          prefixIcon: AppAssets.icons.home.path,
           iconHeight: iconHeight,
           iconWidth: iconWidth,
           hintTextColor: AppColors.textIconGrey,
@@ -133,9 +135,10 @@ class RiderFormFields extends ConsumerWidget {
           items: const ['Motor Bike', 'Four Wheel'],
           iconSize: 22,
           hintText: 'Motor Bike',
-          prefixIcon: 'assets/icons/motorbike.svg',
-          iconHeight: iconHeight,
-          iconWidth: iconWidth,
+          prefixIcon: AppAssets.icons.motorbike.svg(
+            height: iconHeight,
+            width: iconWidth,
+          ),
         ),
       ],
     );

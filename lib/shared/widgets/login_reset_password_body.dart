@@ -5,6 +5,7 @@ import 'package:wigo_flutter/shared/viewmodels/change_password_viewmodel.dart';
 
 import '../../core/constants/app_colors.dart';
 import '../../core/utils/validation_utils.dart';
+import '../../gen/assets.gen.dart';
 import '../viewmodels/login_state.dart';
 import '../viewmodels/login_view_model.dart';
 import 'custom_button.dart';
@@ -70,7 +71,7 @@ class LoginResetPasswordWidgetBuilder {
             label: labelText1 ?? 'Email',
             iconHeight: 18,
             iconWidth: 18,
-            prefixIcon: textFieldIcon ?? 'assets/icons/mail.svg',
+            prefixIcon: textFieldIcon ?? AppAssets.icons.mail.path,
             hintText: hintText1 ?? 'Enter your email',
             hintTextColor: AppColors.textIconGrey,
             controller: controller1,
@@ -90,7 +91,7 @@ class LoginResetPasswordWidgetBuilder {
             isPassword: true,
             iconHeight: 18,
             iconWidth: 18,
-            prefixIcon: 'assets/icons/lock.svg',
+            prefixIcon: AppAssets.icons.lock.path,
             hintText: hintText2 ?? 'Enter your password',
             hintTextColor: AppColors.textIconGrey,
             suffixIcon: Icon(Icons.visibility_outlined),
@@ -131,7 +132,7 @@ class LoginResetPasswordWidgetBuilder {
                               style: GoogleFonts.hind(
                                 fontSize: termsFont,
                                 fontWeight: FontWeight.w400,
-                                color: AppColors.textBlackLight,
+                                color: AppColors.textBodyText,
                               ),
                             ),
                             TextSpan(
@@ -152,7 +153,7 @@ class LoginResetPasswordWidgetBuilder {
                               style: GoogleFonts.hind(
                                 fontSize: termsFont,
                                 fontWeight: FontWeight.w400,
-                                color: AppColors.textBlackLight,
+                                color: AppColors.textBodyText,
                               ),
                             ),
                             TextSpan(

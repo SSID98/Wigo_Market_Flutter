@@ -5,6 +5,7 @@ import 'package:wigo_flutter/features/rider/presentation/widgets/rider_onboardin
 import 'package:wigo_flutter/features/rider/viewmodels/rider_onboarding_viewmodel.dart';
 
 import '../../../../../core/constants/app_colors.dart';
+import '../../../../../gen/assets.gen.dart';
 import '../../../../../shared/widgets/custom_button.dart';
 
 class RiderOnboardingScreen extends ConsumerWidget {
@@ -27,12 +28,12 @@ class RiderOnboardingScreen extends ConsumerWidget {
     Size screenSize,
   ) {
     return Scaffold(
-      backgroundColor: AppColors.backgroundWhite,
+      backgroundColor: AppColors.backgroundLight,
       body: SafeArea(
         child: Stack(
           children: [
             Image.asset(
-              'assets/images/onboardingRiderMobile.png',
+              AppAssets.images.onboardingRiderMobile.path,
               fit: BoxFit.cover,
               color: AppColors.backGroundOverlay,
               colorBlendMode: BlendMode.overlay,
@@ -45,7 +46,7 @@ class RiderOnboardingScreen extends ConsumerWidget {
                   width: screenSize.width * 0.95,
                   constraints: BoxConstraints(maxWidth: 400),
                   decoration: BoxDecoration(
-                    color: AppColors.backgroundWhite,
+                    color: AppColors.backgroundLight,
                     borderRadius: BorderRadius.circular(16.0),
                     boxShadow: [
                       BoxShadow(
@@ -62,7 +63,7 @@ class RiderOnboardingScreen extends ConsumerWidget {
                       Padding(
                         padding: const EdgeInsets.only(top: 30.0),
                         child: SvgPicture.asset(
-                          'assets/icons/logo.svg',
+                          AppAssets.icons.logo.path,
                           height: 49,
                           width: 143.86,
                         ),
@@ -70,7 +71,7 @@ class RiderOnboardingScreen extends ConsumerWidget {
                       RiderOnboardingPageView(
                         screenSize: screenSize.height * 0.37,
                         titleFontSize: 16,
-                        titleColor: AppColors.textBlackLight,
+                        titleColor: AppColors.textBodyText,
                         imageWidth: 141,
                         imageHeight: 117,
                         dotHeight: 5,
@@ -106,12 +107,12 @@ class RiderOnboardingScreen extends ConsumerWidget {
     Size screenSize,
   ) {
     return Scaffold(
-      backgroundColor: AppColors.backgroundWhite,
+      backgroundColor: AppColors.backgroundLight,
       body: SafeArea(
         child: Stack(
           children: [
             Image.asset(
-              'assets/images/onboardingRiderWeb.png',
+              AppAssets.images.onboardingRiderWeb.path,
               fit: BoxFit.cover,
               color: AppColors.backGroundOverlay,
               colorBlendMode: BlendMode.overlay,
@@ -124,7 +125,7 @@ class RiderOnboardingScreen extends ConsumerWidget {
                   width: screenSize.width * 0.95,
                   constraints: BoxConstraints(maxWidth: 1005),
                   decoration: BoxDecoration(
-                    color: AppColors.backgroundWhite,
+                    color: AppColors.backgroundLight,
                     borderRadius: BorderRadius.circular(16.0),
                     boxShadow: [
                       BoxShadow(

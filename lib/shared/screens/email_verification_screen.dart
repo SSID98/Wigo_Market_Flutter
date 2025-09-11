@@ -4,6 +4,7 @@ import 'package:flutter_svg/svg.dart';
 import 'package:wigo_flutter/core/utils/masked_email.dart';
 
 import '../../../../core/constants/app_colors.dart';
+import '../../gen/assets.gen.dart';
 import '../widgets/verification_widget.dart';
 
 class EmailVerificationScreen extends StatelessWidget {
@@ -24,12 +25,12 @@ class EmailVerificationScreen extends StatelessWidget {
 
   Widget _buildMobileLayout(Size screenSize, String maskedEmail) {
     return Scaffold(
-      backgroundColor: AppColors.backgroundWhite,
+      backgroundColor: AppColors.backgroundLight,
       body: SafeArea(
         child: Stack(
           children: [
             Image.asset(
-              'assets/images/onboardingRiderMobile.png',
+              AppAssets.images.onboardingRiderMobile.path,
               fit: BoxFit.cover,
               color: AppColors.backGroundOverlay,
               colorBlendMode: BlendMode.overlay,
@@ -42,7 +43,7 @@ class EmailVerificationScreen extends StatelessWidget {
                   width: screenSize.width * 0.95,
                   constraints: BoxConstraints(maxWidth: 400),
                   decoration: BoxDecoration(
-                    color: AppColors.backgroundWhite,
+                    color: AppColors.backgroundLight,
                     borderRadius: BorderRadius.circular(16.0),
                     boxShadow: [
                       BoxShadow(
@@ -63,7 +64,7 @@ class EmailVerificationScreen extends StatelessWidget {
                       mainAxisSize: MainAxisSize.min,
                       children: [
                         SvgPicture.asset(
-                          'assets/icons/logo.svg',
+                          AppAssets.icons.logo.path,
                           height: 49,
                           width: 143.86,
                         ),
@@ -85,12 +86,12 @@ class EmailVerificationScreen extends StatelessWidget {
 
   Widget _buildWebLayout(Size screenSize, String maskedEmail) {
     return Scaffold(
-      backgroundColor: AppColors.backgroundWhite,
+      backgroundColor: AppColors.backgroundLight,
       body: SafeArea(
         child: Stack(
           children: [
             Image.asset(
-              'assets/images/onboardingRiderWeb.png',
+              AppAssets.images.onboardingRiderWeb.path,
               fit: BoxFit.cover,
               color: AppColors.backGroundOverlay,
               colorBlendMode: BlendMode.overlay,
@@ -103,7 +104,7 @@ class EmailVerificationScreen extends StatelessWidget {
                   width: screenSize.width * 0.95,
                   constraints: BoxConstraints(maxWidth: 1005),
                   decoration: BoxDecoration(
-                    color: AppColors.backgroundWhite,
+                    color: AppColors.backgroundLight,
                     borderRadius: BorderRadius.circular(16.0),
                     boxShadow: [
                       BoxShadow(
@@ -122,7 +123,7 @@ class EmailVerificationScreen extends StatelessWidget {
                         Padding(
                           padding: const EdgeInsets.only(top: 60.0),
                           child: SvgPicture.asset(
-                            'assets/icons/logo.svg',
+                            AppAssets.icons.logo.path,
                             height: 78,
                             width: 229,
                           ),

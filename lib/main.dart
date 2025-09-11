@@ -19,7 +19,7 @@ class WigoApp extends StatelessWidget {
       routerConfig: appRouter,
       theme: ThemeData(
         fontFamily: 'Hind',
-        scaffoldBackgroundColor: AppColors.backgroundWhite,
+        scaffoldBackgroundColor: AppColors.backgroundLight,
         colorScheme: ColorScheme.fromSeed(seedColor: AppColors.radioBlue),
         useMaterial3: true,
       ),

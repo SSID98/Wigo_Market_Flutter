@@ -6,6 +6,7 @@ import 'package:wigo_flutter/core/utils/validation_utils.dart';
 import 'package:wigo_flutter/shared/widgets/login_reset_password_body.dart';
 
 import '../../core/constants/app_colors.dart';
+import '../../gen/assets.gen.dart';
 import '../viewmodels/login_state.dart';
 import '../viewmodels/login_view_model.dart';
 import '../widgets/bottom_text.dart';
@@ -48,7 +49,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
         body: Stack(
           fit: StackFit.expand,
           children: [
-            Image.asset('assets/images/login.png', fit: BoxFit.cover),
+            Image.asset(AppAssets.images.login.path, fit: BoxFit.cover),
             BottomTextBuilder.buildMobileBottomText(),
             Center(
               child: SingleChildScrollView(
@@ -56,7 +57,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                   width: screenSize.width * 0.95,
                   constraints: BoxConstraints(maxWidth: 400),
                   decoration: BoxDecoration(
-                    color: AppColors.backgroundWhite,
+                    color: AppColors.backgroundLight,
                     borderRadius: BorderRadius.circular(16.0),
                   ),
                   child: Padding(
@@ -67,7 +68,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                         Padding(
                           padding: const EdgeInsets.only(top: 50.0),
                           child: SvgPicture.asset(
-                            'assets/icons/logo.svg',
+                            AppAssets.icons.logo.path,
                             height: 49,
                             width: 143.86,
                           ),
@@ -164,7 +165,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
               // Left section: Image and Bottom Text
               Expanded(
                 child: Container(
-                  color: AppColors.backgroundWhite,
+                  color: AppColors.backgroundLight,
                   child: Center(
                     child: Container(
                       width: webContentWidth,
@@ -172,7 +173,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(imageBorderRadius),
                         image: DecorationImage(
-                          image: AssetImage('assets/images/login.png'),
+                          image: AssetImage(AppAssets.images.login.path),
                           fit: BoxFit.cover,
                         ),
                       ),
@@ -202,7 +203,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                   child: Column(
                     children: [
                       SvgPicture.asset(
-                        'assets/icons/logo.svg',
+                        AppAssets.icons.logo.path,
                         height: 78,
                         width: 229.86,
                       ),
@@ -214,7 +215,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                             maxHeight: screenSize.height * 0.70,
                           ),
                           decoration: BoxDecoration(
-                            color: AppColors.backgroundWhite,
+                            color: AppColors.backgroundLight,
                             borderRadius: BorderRadius.circular(16.0),
                           ),
                           child: SingleChildScrollView(
@@ -319,7 +320,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                 style: GoogleFonts.hind(
                   fontSize: orSignupFont,
                   fontWeight: FontWeight.w500,
-                  color: AppColors.textBlackLight,
+                  color: AppColors.textBodyText,
                 ),
               ),
             ),
@@ -338,8 +339,8 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
               borderRadius: 6.0,
               height: 50,
               width: buttonWidth,
-              prefixIcon: 'assets/icons/google.svg',
-              textColor: AppColors.textBlackLight,
+              prefixIcon: AppAssets.icons.google.svg(),
+              textColor: AppColors.textBodyText,
               buttonColor: AppColors.buttonLighterGreen,
               borderColor: AppColors.buttonLightGreen,
               borderWidth: 1,
@@ -353,8 +354,8 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
               borderRadius: 6.0,
               height: 50,
               width: buttonWidth,
-              prefixIcon: 'assets/icons/facebook.svg',
-              textColor: AppColors.textBlackLight,
+              prefixIcon: AppAssets.icons.facebook.svg(),
+              textColor: AppColors.textBodyText,
               buttonColor: AppColors.buttonLighterGreen,
               borderColor: AppColors.buttonLightGreen,
               borderWidth: 1,

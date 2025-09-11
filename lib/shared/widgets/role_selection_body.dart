@@ -4,6 +4,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:wigo_flutter/core/constants/app_colors.dart';
 import 'package:wigo_flutter/shared/widgets/role_card.dart';
 
+import '../../gen/assets.gen.dart';
 import '../models/user_role.dart';
 import '../viewmodels/role_selection/role_selection_provider.dart';
 import '../viewmodels/role_selection/role_selection_view_model.dart';
@@ -40,7 +41,7 @@ class RoleSelectionBody extends ConsumerWidget {
             textAlign: TextAlign.center,
             style: GoogleFonts.hind(
               textStyle: TextStyle(
-                color: AppColors.textBlackLight,
+                color: AppColors.textBodyText,
                 fontSize: textFontSize,
                 fontWeight: FontWeight.w600,
               ),
@@ -52,7 +53,7 @@ class RoleSelectionBody extends ConsumerWidget {
           title: 'Buyer',
           description:
               'Browse nearby stores, order what you need, and get it delivered or pick it up yourself.',
-          icon: 'assets/icons/buyerIcon.svg',
+          icon: AppAssets.icons.buyerIcon.path,
           isSelected: selectedRole == UserRole.buyer,
           onTap: () {
             viewModel.selectRole(UserRole.buyer);
@@ -70,7 +71,7 @@ class RoleSelectionBody extends ConsumerWidget {
           title: 'Seller',
           description:
               'Own a shop or run a business? List your products and start selling to nearby students.',
-          icon: 'assets/icons/sellerIcon.svg',
+          icon: AppAssets.icons.sellerIcon.path,
           isSelected: selectedRole == UserRole.seller,
           onTap: () {
             viewModel.selectRole(UserRole.seller);
@@ -88,7 +89,7 @@ class RoleSelectionBody extends ConsumerWidget {
           title: 'Delivery Agent',
           description:
               'Earn money delivering orders around campus. No experience needed!',
-          icon: 'assets/icons/riderIcon.svg',
+          icon: AppAssets.icons.riderIcon.path,
           isSelected: selectedRole == UserRole.rider,
           onTap: () {
             viewModel.selectRole(UserRole.rider);

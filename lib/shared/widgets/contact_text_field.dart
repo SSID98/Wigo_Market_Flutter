@@ -84,7 +84,7 @@ class _CustomPhoneNumberFieldState extends State<CustomPhoneNumberField> {
                         style: GoogleFonts.hind(
                           fontSize: 15.12,
                           fontWeight: FontWeight.w400,
-                          color: AppColors.textBlackLight,
+                          color: AppColors.textBodyText,
                         ),
                       ),
                     ],
@@ -96,7 +96,7 @@ class _CustomPhoneNumberFieldState extends State<CustomPhoneNumberField> {
                   style: GoogleFonts.hind(
                     fontSize: 15.11,
                     fontWeight: FontWeight.w400,
-                    color: AppColors.textBlackLight,
+                    color: AppColors.textBodyText,
                   ),
                   controller: widget.controller,
                   keyboardType: TextInputType.phone,
@@ -110,7 +110,7 @@ class _CustomPhoneNumberFieldState extends State<CustomPhoneNumberField> {
                     hintStyle: GoogleFonts.hind(
                       fontSize: 15.11,
                       fontWeight: FontWeight.w400,
-                      color: AppColors.textBlackLight,
+                      color: AppColors.textBodyText,
                     ),
                     border: InputBorder.none,
                   ),

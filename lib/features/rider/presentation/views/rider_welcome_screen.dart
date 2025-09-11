@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:wigo_flutter/gen/assets.gen.dart';
 import 'package:wigo_flutter/shared/widgets/custom_button.dart';
 
 import '../../../../core/constants/app_colors.dart';
@@ -33,8 +34,7 @@ class RiderWelcomeScreen extends StatelessWidget {
         children: [
           Padding(
             padding: const EdgeInsets.only(top: 148.0),
-            child: Image.asset(
-              'assets/images/welcomeRiderMobile.png',
+            child: AppAssets.images.welcomeRiderMobile.image(
               fit: BoxFit.contain,
             ),
           ),
@@ -45,7 +45,7 @@ class RiderWelcomeScreen extends StatelessWidget {
             height: contentContainerHeight,
             child: Container(
               constraints: BoxConstraints(),
-              decoration: BoxDecoration(color: AppColors.backgroundWhite),
+              decoration: BoxDecoration(color: AppColors.backgroundLight),
               child: Padding(
                 padding: const EdgeInsets.all(20.0),
                 child: Column(
@@ -80,7 +80,7 @@ class RiderWelcomeScreen extends StatelessWidget {
                       'Join hundreds of riders delivering items, food, and more fast, safe, and student-friendly. You’ll get delivery requests around your campus. Accept orders, track deliveries, and get paid weekly.',
                       style: GoogleFonts.hind(
                         textStyle: TextStyle(
-                          color: AppColors.textBlackLight,
+                          color: AppColors.textBodyText,
                           fontSize: 14,
                           fontWeight: FontWeight.w400,
                         ),
@@ -95,7 +95,7 @@ class RiderWelcomeScreen extends StatelessWidget {
                       fontSize: 18,
                       fontWeight: FontWeight.w500,
                       borderRadius: 6.0,
-                      suffixIcon: 'assets/icons/arrowRight.svg',
+                      suffixIcon: AppAssets.icons.arrowRight.svg(),
                       iconWidth: 20,
                       iconHeight: 20,
                       height: 56,
@@ -164,7 +164,7 @@ class RiderWelcomeScreen extends StatelessWidget {
                                 'Join hundreds of riders delivering items, food, and more fast, safe, and student-friendly. You’ll get delivery requests around your campus. Accept orders, track deliveries, and get paid weekly.',
                                 style: GoogleFonts.hind(
                                   textStyle: TextStyle(
-                                    color: AppColors.textBlackLight,
+                                    color: AppColors.textBodyText,
                                     fontSize: 19,
                                     fontWeight: FontWeight.w400,
                                   ),
@@ -177,7 +177,7 @@ class RiderWelcomeScreen extends StatelessWidget {
                                 fontSize: 18,
                                 fontWeight: FontWeight.w500,
                                 borderRadius: 6.0,
-                                suffixIcon: 'assets/icons/arrowRight.svg',
+                                suffixIcon: AppAssets.icons.arrowRight.svg(),
                                 iconWidth: 20,
                                 iconHeight: 20,
                                 height: 56,
@@ -198,9 +198,7 @@ class RiderWelcomeScreen extends StatelessWidget {
                 child: SizedBox(
                   width: webContentWidth,
                   height: webContentHeight,
-                  child: Image(
-                    image: AssetImage('assets/images/welcomeRiderWeb.png'),
-                  ),
+                  child: AppAssets.images.welcomeRiderWeb.image(),
                 ),
               ),
             ),

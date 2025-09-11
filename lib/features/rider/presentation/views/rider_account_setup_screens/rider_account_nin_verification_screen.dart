@@ -1,8 +1,8 @@
 import 'package:dotted_border/dotted_border.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_svg/svg.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:wigo_flutter/gen/assets.gen.dart';
 
 import '../../../../../core/constants/app_colors.dart';
 import '../../../../../shared/widgets/custom_button.dart';
@@ -26,12 +26,11 @@ class RiderAccountNinVerificationScreen extends ConsumerWidget {
     RiderAccountNinVerificationViewmodel viewModel,
   ) {
     return Scaffold(
-      backgroundColor: AppColors.backgroundWhite,
+      backgroundColor: AppColors.backgroundLight,
       body: SafeArea(
         child: Stack(
           children: [
-            Image.asset(
-              'assets/images/onboardingRiderMobile.png',
+            AppAssets.images.onboardingRiderMobile.image(
               fit: BoxFit.cover,
               color: AppColors.backGroundOverlay,
               colorBlendMode: BlendMode.overlay,
@@ -44,7 +43,7 @@ class RiderAccountNinVerificationScreen extends ConsumerWidget {
                   width: screenSize.width * 0.95,
                   constraints: BoxConstraints(maxWidth: 400),
                   decoration: BoxDecoration(
-                    color: AppColors.backgroundWhite,
+                    color: AppColors.backgroundLight,
                     borderRadius: BorderRadius.circular(16.0),
                     boxShadow: [
                       BoxShadow(
@@ -97,12 +96,11 @@ class RiderAccountNinVerificationScreen extends ConsumerWidget {
     RiderAccountNinVerificationViewmodel viewModel,
   ) {
     return Scaffold(
-      backgroundColor: AppColors.backgroundWhite,
+      backgroundColor: AppColors.backgroundLight,
       body: SafeArea(
         child: Stack(
           children: [
-            Image.asset(
-              'assets/images/onboardingRiderWeb.png',
+            AppAssets.images.onboardingRiderWeb.image(
               fit: BoxFit.cover,
               color: AppColors.backGroundOverlay,
               colorBlendMode: BlendMode.overlay,
@@ -115,7 +113,7 @@ class RiderAccountNinVerificationScreen extends ConsumerWidget {
                   width: screenSize.width * 0.95,
                   constraints: BoxConstraints(maxWidth: 1005),
                   decoration: BoxDecoration(
-                    color: AppColors.backgroundWhite,
+                    color: AppColors.backgroundLight,
                     borderRadius: BorderRadius.circular(16.0),
                     boxShadow: [
                       BoxShadow(
@@ -194,7 +192,7 @@ class RiderAccountNinVerificationScreen extends ConsumerWidget {
           style: GoogleFonts.hind(
             fontSize: descriptionFontSize,
             fontWeight: FontWeight.w500,
-            color: AppColors.textBlackLight,
+            color: AppColors.textBodyText,
           ),
         ),
       ],
@@ -222,7 +220,7 @@ class RiderAccountNinVerificationScreen extends ConsumerWidget {
             style: GoogleFonts.hind(
               fontSize: fontSize1,
               fontWeight: FontWeight.w700,
-              color: AppColors.textBlackLight,
+              color: AppColors.textBodyText,
             ),
           ),
           const Divider(thickness: 1),
@@ -251,7 +249,7 @@ class RiderAccountNinVerificationScreen extends ConsumerWidget {
                 children: [
                   Padding(
                     padding: const EdgeInsets.only(left: 18.0),
-                    child: SvgPicture.asset('assets/icons/cloud.svg'),
+                    child: AppAssets.icons.cloud.svg(),
                   ),
                   if (web)
                     Padding(
@@ -261,7 +259,7 @@ class RiderAccountNinVerificationScreen extends ConsumerWidget {
                         onPressed: () {},
                         fontSize: 10,
                         fontWeight: FontWeight.w500,
-                        prefixIcon: 'assets/icons/cloudWhite.svg',
+                        prefixIcon: AppAssets.icons.cloud.svg(),
                         height: 30.0,
                         width: 84.0,
                         padding: EdgeInsets.zero,
@@ -332,7 +330,7 @@ class RiderAccountNinVerificationScreen extends ConsumerWidget {
         CustomButton(
           text: 'Skip',
           onPressed: () {},
-          suffixIcon: 'assets/icons/arrowRight2.svg',
+          suffixIcon: AppAssets.icons.arrowRight2.svg(),
           fontSize: 18,
           fontWeight: FontWeight.w500,
           borderRadius: 6.0,

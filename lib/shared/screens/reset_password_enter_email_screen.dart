@@ -3,6 +3,7 @@ import 'package:flutter_svg/svg.dart';
 import 'package:wigo_flutter/shared/widgets/bottom_text.dart';
 
 import '../../core/constants/app_colors.dart';
+import '../../gen/assets.gen.dart';
 import '../widgets/verification_widget.dart';
 
 class ResetPasswordEnterEmailScreen extends StatelessWidget {
@@ -22,7 +23,7 @@ class ResetPasswordEnterEmailScreen extends StatelessWidget {
         body: Stack(
           fit: StackFit.expand,
           children: [
-            Image.asset('assets/images/login.png', fit: BoxFit.cover),
+            AppAssets.images.login.image(fit: BoxFit.cover),
             BottomTextBuilder.buildMobileBottomText(),
             Center(
               child: SingleChildScrollView(
@@ -30,7 +31,7 @@ class ResetPasswordEnterEmailScreen extends StatelessWidget {
                   width: screenSize.width * 0.95,
                   constraints: BoxConstraints(maxWidth: 400),
                   decoration: BoxDecoration(
-                    color: AppColors.backgroundWhite,
+                    color: AppColors.backgroundLight,
                     borderRadius: BorderRadius.circular(16.0),
                   ),
                   child: Padding(
@@ -41,7 +42,7 @@ class ResetPasswordEnterEmailScreen extends StatelessWidget {
                         Padding(
                           padding: const EdgeInsets.only(top: 30.0),
                           child: SvgPicture.asset(
-                            'assets/icons/logo.svg',
+                            AppAssets.icons.logo.path,
                             height: 49,
                             width: 143.86,
                           ),
@@ -53,7 +54,7 @@ class ResetPasswordEnterEmailScreen extends StatelessWidget {
                               "Enter the email address linked to your wiGO MARKET account. We'll send you a reset link.",
                           textFieldLabel: 'Email',
                           textFieldHint: 'Please enter your email address',
-                          textFieldIcon: 'assets/icons/mail.svg',
+                          textFieldIcon: AppAssets.icons.mail.path,
                           buttonText: 'Send Code',
                           buttonColor: AppColors.primaryDarkGreen,
                           buttonTextColor: AppColors.textWhite,
@@ -93,7 +94,7 @@ class ResetPasswordEnterEmailScreen extends StatelessWidget {
               // Left section: Image and Bottom Text
               Expanded(
                 child: Container(
-                  color: AppColors.backgroundWhite,
+                  color: AppColors.backgroundLight,
                   child: Center(
                     child: Container(
                       width: webContentWidth,
@@ -101,7 +102,7 @@ class ResetPasswordEnterEmailScreen extends StatelessWidget {
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(imageBorderRadius),
                         image: DecorationImage(
-                          image: AssetImage('assets/images/login.png'),
+                          image: AssetImage(AppAssets.images.login.path),
                           fit: BoxFit.cover,
                         ),
                       ),
@@ -131,7 +132,7 @@ class ResetPasswordEnterEmailScreen extends StatelessWidget {
                   child: Column(
                     children: [
                       SvgPicture.asset(
-                        'assets/icons/logo.svg',
+                        AppAssets.icons.logo.path,
                         height: 78,
                         width: 229.86,
                       ),
@@ -143,7 +144,7 @@ class ResetPasswordEnterEmailScreen extends StatelessWidget {
                             maxHeight: screenSize.height * 0.70,
                           ),
                           decoration: BoxDecoration(
-                            color: AppColors.backgroundWhite,
+                            color: AppColors.backgroundLight,
                             borderRadius: BorderRadius.circular(16.0),
                           ),
                           child: SingleChildScrollView(
@@ -157,7 +158,7 @@ class ResetPasswordEnterEmailScreen extends StatelessWidget {
                                   textFieldLabel: 'Email',
                                   textFieldHint:
                                       'Please enter your email address',
-                                  textFieldIcon: 'assets/icons/mail.svg',
+                                  textFieldIcon: AppAssets.icons.mail.path,
                                   buttonText: 'Send Code',
                                   buttonColor: AppColors.primaryDarkGreen,
                                   buttonTextColor: AppColors.textWhite,

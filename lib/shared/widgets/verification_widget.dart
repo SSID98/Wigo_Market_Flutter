@@ -1,9 +1,9 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/gestures.dart';
-import 'package:flutter_svg/svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import '../../core/constants/app_colors.dart';
+import '../../gen/assets.gen.dart';
 import 'custom_button.dart';
 import 'custom_text_field.dart';
 
@@ -42,11 +42,12 @@ class VerificationWidgetBuilder {
           mainAxisSize: MainAxisSize.min,
           children: [
             const SizedBox(height: 13),
-            SvgPicture.asset(
-              'assets/icons/emailVerifica.svg',
+
+            AppAssets.icons.emailVerifica.svg(
               height: imageHeight,
               width: imageWidth,
             ),
+
             const SizedBox(height: 20),
             Text(
               titleText ?? 'OTP Sent to your Email',
@@ -77,7 +78,7 @@ class VerificationWidgetBuilder {
                 label: textFieldLabel ?? 'OTP',
                 iconHeight: 15,
                 iconWidth: 15,
-                prefixIcon: textFieldIcon ?? 'assets/icons/otp.svg',
+                prefixIcon: textFieldIcon ?? AppAssets.icons.otp.path,
                 hintText: textFieldHint ?? 'Enter OTP',
                 prefixIconPadding: 24,
                 contentPadding: EdgeInsets.symmetric(vertical: 12),

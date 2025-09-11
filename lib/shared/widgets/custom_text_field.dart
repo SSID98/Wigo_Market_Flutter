@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:wigo_flutter/core/constants/app_colors.dart';
+import 'package:wigo_flutter/gen/assets.gen.dart';
 
 class CustomTextField extends ConsumerStatefulWidget {
   final GlobalKey<FormFieldState<String>>? fieldKey;
@@ -105,7 +106,7 @@ class _CustomTextFieldState extends ConsumerState<CustomTextField> {
               fontSize: widget.fontSize ?? 14.0,
               color: AppColors.textBlack,
             ),
-            cursorColor: AppColors.textBlackLight,
+            cursorColor: AppColors.textBodyText,
             key: widget.fieldKey,
             controller: widget.controller,
             onChanged: widget.onChanged,
@@ -169,14 +170,14 @@ class _CustomTextFieldState extends ConsumerState<CustomTextField> {
               hintStyle: GoogleFonts.hind(
                 fontWeight: FontWeight.w400,
                 fontSize: widget.hintFontSize ?? 14.0,
-                color: widget.hintTextColor ?? AppColors.textBlackLight,
+                color: widget.hintTextColor ?? AppColors.textBodyText,
               ),
               helperText: widget.helperText,
               helperMaxLines: 2,
               helperStyle: GoogleFonts.hind(
                 fontWeight: FontWeight.w400,
                 fontSize: 15.12,
-                color: AppColors.textBlackLight,
+                color: AppColors.textBodyText,
               ),
               suffixIcon:
                   widget.suffixIcon != null
@@ -216,8 +217,7 @@ class CustomDropdownField extends ConsumerStatefulWidget {
   final List<String> items;
   final double iconSize;
   final String? hintText;
-  final String? prefixIcon;
-  final double? iconHeight, iconWidth;
+  final Widget? prefixIcon;
   final void Function(String?)? onChanged;
   final String? value;
   final Color? hintTextColor, labelTextColor;
@@ -229,8 +229,6 @@ class CustomDropdownField extends ConsumerStatefulWidget {
     this.hintText,
     required this.iconSize,
     this.prefixIcon,
-    this.iconHeight,
-    this.iconWidth,
     this.onChanged,
     this.value,
     this.hintTextColor,
@@ -244,7 +242,7 @@ class CustomDropdownField extends ConsumerStatefulWidget {
 
 class _CustomDropdownFieldState extends ConsumerState<CustomDropdownField> {
   String? selectedItem;
-  String? currentPrefixIcon;
+  Widget? currentPrefixIcon;
 
   @override
   void initState() {
@@ -262,7 +260,7 @@ class _CustomDropdownFieldState extends ConsumerState<CustomDropdownField> {
           style: GoogleFonts.hind(
             fontWeight: FontWeight.w500,
             fontSize: 16.0,
-            color: widget.labelTextColor ?? AppColors.textBlackLight,
+            color: widget.labelTextColor ?? AppColors.textBodyText,
           ),
         ),
         const SizedBox(height: 4),
@@ -284,11 +282,7 @@ class _CustomDropdownFieldState extends ConsumerState<CustomDropdownField> {
                 currentPrefixIcon != null
                     ? Padding(
                       padding: const EdgeInsets.only(left: 17.0, right: 3.0),
-                      child: SvgPicture.asset(
-                        currentPrefixIcon!,
-                        height: widget.iconHeight,
-                        width: widget.iconWidth,
-                      ),
+                      child: currentPrefixIcon!,
                     )
                     : null,
             border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
@@ -328,9 +322,9 @@ class _CustomDropdownFieldState extends ConsumerState<CustomDropdownField> {
             setState(() {
               selectedItem = val;
               if (val == 'Motor Bike') {
-                currentPrefixIcon = 'assets/icons/motorbike.svg';
+                currentPrefixIcon = AppAssets.icons.motorbike.svg();
               } else if (val == 'Four Wheel') {
-                currentPrefixIcon = 'assets/icons/car.svg';
+                currentPrefixIcon = AppAssets.icons.car.svg();
               }
             });
             widget.onChanged?.call(val);

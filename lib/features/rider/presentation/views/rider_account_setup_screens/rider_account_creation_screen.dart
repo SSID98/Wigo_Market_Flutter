@@ -5,6 +5,8 @@ import 'package:wigo_flutter/core/constants/app_colors.dart';
 import 'package:wigo_flutter/features/rider/presentation/widgets/rider_forms_field.dart';
 import 'package:wigo_flutter/shared/widgets/custom_button.dart';
 
+import '../../../../../gen/assets.gen.dart';
+
 class RiderAccountCreationScreen extends ConsumerWidget {
   const RiderAccountCreationScreen({super.key});
 
@@ -21,7 +23,7 @@ class RiderAccountCreationScreen extends ConsumerWidget {
         body: Stack(
           children: [
             Image.asset(
-              'assets/images/onboardingRiderMobile.png',
+              AppAssets.images.onboardingRiderMobile.path,
               fit: BoxFit.cover,
               color: AppColors.backGroundOverlay,
               colorBlendMode: BlendMode.overlay,
@@ -35,7 +37,7 @@ class RiderAccountCreationScreen extends ConsumerWidget {
                   width: screenSize.width * 0.95,
                   constraints: BoxConstraints(maxWidth: 400),
                   decoration: BoxDecoration(
-                    color: AppColors.backgroundWhite,
+                    color: AppColors.backgroundLight,
                     borderRadius: BorderRadius.circular(16.0),
                     boxShadow: [
                       BoxShadow(
@@ -88,7 +90,7 @@ class RiderAccountCreationScreen extends ConsumerWidget {
       body: Stack(
         children: [
           Image.asset(
-            'assets/images/onboardingRiderWeb.png',
+            AppAssets.images.onboardingRiderWeb.path,
             fit: BoxFit.cover,
             color: AppColors.backGroundOverlay,
             colorBlendMode: BlendMode.overlay,
@@ -102,7 +104,7 @@ class RiderAccountCreationScreen extends ConsumerWidget {
                 height: screenSize.height * 0.85,
                 constraints: BoxConstraints(maxWidth: 1005),
                 decoration: BoxDecoration(
-                  color: AppColors.backgroundWhite,
+                  color: AppColors.backgroundLight,
                   borderRadius: BorderRadius.circular(16.0),
                   boxShadow: [
                     BoxShadow(
@@ -200,7 +202,7 @@ class RiderAccountCreationScreen extends ConsumerWidget {
                   style: GoogleFonts.hind(
                     fontWeight: FontWeight.w500,
                     fontSize: fontSize2,
-                    color: AppColors.textBlackLight,
+                    color: AppColors.textBodyText,
                   ),
                 ),
               ),
@@ -216,7 +218,7 @@ class RiderAccountCreationScreen extends ConsumerWidget {
               style: GoogleFonts.hind(
                 fontWeight: FontWeight.w500,
                 fontSize: fontSize2,
-                color: AppColors.textBlackLight,
+                color: AppColors.textBodyText,
               ),
             ),
           ),
@@ -232,7 +234,7 @@ class RiderAccountCreationScreen extends ConsumerWidget {
                 style: GoogleFonts.hind(
                   fontWeight: FontWeight.w700,
                   fontSize: fontSize3,
-                  color: AppColors.textBlackLight,
+                  color: AppColors.textBodyText,
                 ),
               ),
               const SizedBox(height: 12),
@@ -241,7 +243,7 @@ class RiderAccountCreationScreen extends ConsumerWidget {
                 style: GoogleFonts.hind(
                   fontWeight: FontWeight.w500,
                   fontSize: fontSize4,
-                  color: AppColors.textBlackLight,
+                  color: AppColors.textBodyText,
                 ),
               ),
             ],

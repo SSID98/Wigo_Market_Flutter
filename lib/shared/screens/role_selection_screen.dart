@@ -5,6 +5,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:wigo_flutter/shared/widgets/role_selection_body.dart';
 
 import '../../core/constants/app_colors.dart';
+import '../../gen/assets.gen.dart';
 
 class RoleSelectionScreen extends ConsumerWidget {
   const RoleSelectionScreen({super.key});
@@ -25,7 +26,7 @@ class RoleSelectionScreen extends ConsumerWidget {
         body: Stack(
           fit: StackFit.expand,
           children: [
-            Image.asset('assets/images/login.png', fit: BoxFit.cover),
+            AppAssets.images.login.image(fit: BoxFit.cover),
             Center(
               child: Container(
                 width: screenSize.width * 0.95,
@@ -34,7 +35,7 @@ class RoleSelectionScreen extends ConsumerWidget {
                   maxHeight: screenSize.height * 0.8,
                 ),
                 decoration: BoxDecoration(
-                  color: AppColors.backgroundWhite,
+                  color: AppColors.backgroundLight,
                   borderRadius: BorderRadius.circular(16.0),
                 ),
                 child: Padding(
@@ -43,7 +44,7 @@ class RoleSelectionScreen extends ConsumerWidget {
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       SvgPicture.asset(
-                        'assets/icons/logo.svg',
+                        AppAssets.icons.logo.path,
                         height: 49,
                         width: 143.86,
                       ),
@@ -86,7 +87,7 @@ class RoleSelectionScreen extends ConsumerWidget {
               // Left section: Image and Bottom Text
               Expanded(
                 child: Container(
-                  color: AppColors.backgroundWhite,
+                  color: AppColors.backgroundLight,
                   child: Center(
                     child: Container(
                       width: webContentWidth,
@@ -94,7 +95,7 @@ class RoleSelectionScreen extends ConsumerWidget {
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(imageBorderRadius),
                         image: DecorationImage(
-                          image: AssetImage('assets/images/login.png'),
+                          image: AssetImage(AppAssets.images.login.path),
                           fit: BoxFit.cover,
                         ),
                       ),
@@ -124,7 +125,7 @@ class RoleSelectionScreen extends ConsumerWidget {
                   child: Column(
                     children: [
                       SvgPicture.asset(
-                        'assets/icons/logo.svg',
+                        AppAssets.icons.logo.path,
                         height: 78,
                         width: 229.86,
                       ),
@@ -148,7 +149,7 @@ class RoleSelectionScreen extends ConsumerWidget {
                               maxHeight: screenSize.height * 0.70,
                             ),
                             decoration: BoxDecoration(
-                              color: AppColors.backgroundWhite,
+                              color: AppColors.backgroundLight,
                               borderRadius: BorderRadius.circular(16.0),
                             ),
                             child: Padding(

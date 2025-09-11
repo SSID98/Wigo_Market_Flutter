@@ -3,6 +3,7 @@ import 'package:flutter_svg/svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import '../../../../../core/constants/app_colors.dart';
+import '../../../../../gen/assets.gen.dart';
 import '../../../../../shared/widgets/custom_button.dart';
 
 class RiderCreationSuccessfulScreen extends StatelessWidget {
@@ -17,12 +18,12 @@ class RiderCreationSuccessfulScreen extends StatelessWidget {
 
   Widget _buildMobileLayout(Size screenSize) {
     return Scaffold(
-      backgroundColor: AppColors.backgroundWhite,
+      backgroundColor: AppColors.backgroundLight,
       body: SafeArea(
         child: Stack(
           children: [
             Image.asset(
-              'assets/images/onboardingRiderMobile.png',
+              AppAssets.images.onboardingRiderMobile.path,
               fit: BoxFit.cover,
               color: AppColors.backGroundOverlay,
               colorBlendMode: BlendMode.overlay,
@@ -35,7 +36,7 @@ class RiderCreationSuccessfulScreen extends StatelessWidget {
                   width: screenSize.width * 0.95,
                   constraints: BoxConstraints(maxWidth: 400),
                   decoration: BoxDecoration(
-                    color: AppColors.backgroundWhite,
+                    color: AppColors.backgroundLight,
                     borderRadius: BorderRadius.circular(16.0),
                     boxShadow: [
                       BoxShadow(
@@ -56,7 +57,7 @@ class RiderCreationSuccessfulScreen extends StatelessWidget {
                       children: [
                         const SizedBox(height: 50.0),
                         SvgPicture.asset(
-                          'assets/icons/logo.svg',
+                          AppAssets.icons.logo.path,
                           height: 49,
                           width: 143.86,
                         ),
@@ -83,12 +84,12 @@ class RiderCreationSuccessfulScreen extends StatelessWidget {
 
   Widget _buildWebLayout(Size screenSize) {
     return Scaffold(
-      backgroundColor: AppColors.backgroundWhite,
+      backgroundColor: AppColors.backgroundLight,
       body: SafeArea(
         child: Stack(
           children: [
             Image.asset(
-              'assets/images/onboardingRiderWeb.png',
+              AppAssets.images.onboardingRiderWeb.path,
               fit: BoxFit.cover,
               color: AppColors.backGroundOverlay,
               colorBlendMode: BlendMode.overlay,
@@ -101,7 +102,7 @@ class RiderCreationSuccessfulScreen extends StatelessWidget {
                   width: screenSize.width * 0.95,
                   constraints: BoxConstraints(maxWidth: 1005),
                   decoration: BoxDecoration(
-                    color: AppColors.backgroundWhite,
+                    color: AppColors.backgroundLight,
                     borderRadius: BorderRadius.circular(16.0),
                     boxShadow: [
                       BoxShadow(
@@ -160,7 +161,7 @@ class RiderCreationSuccessfulScreen extends StatelessWidget {
         children: [
           const SizedBox(height: 20),
           Image.asset(
-            'assets/images/successful.png',
+            AppAssets.images.successful.path,
             height: imageSize,
             width: imageSize,
           ),

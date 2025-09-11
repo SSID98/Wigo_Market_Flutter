@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:wigo_flutter/gen/assets.gen.dart';
 
 import '../../../../../core/constants/app_colors.dart';
 import '../../../../../shared/widgets/custom_button.dart';
@@ -25,12 +26,11 @@ class RiderPaymentMethodSetupScreen extends ConsumerWidget {
     RiderAccountSetupViewmodel viewModel,
   ) {
     return Scaffold(
-      backgroundColor: AppColors.backgroundWhite,
+      backgroundColor: AppColors.backgroundLight,
       body: SafeArea(
         child: Stack(
           children: [
-            Image.asset(
-              'assets/images/onboardingRiderMobile.png',
+            AppAssets.images.onboardingRiderMobile.image(
               fit: BoxFit.cover,
               color: AppColors.backGroundOverlay,
               colorBlendMode: BlendMode.overlay,
@@ -43,7 +43,7 @@ class RiderPaymentMethodSetupScreen extends ConsumerWidget {
                   width: screenSize.width * 0.95,
                   constraints: BoxConstraints(maxWidth: 400),
                   decoration: BoxDecoration(
-                    color: AppColors.backgroundWhite,
+                    color: AppColors.backgroundLight,
                     borderRadius: BorderRadius.circular(16.0),
                     boxShadow: [
                       BoxShadow(
@@ -92,12 +92,11 @@ class RiderPaymentMethodSetupScreen extends ConsumerWidget {
     RiderAccountSetupViewmodel viewModel,
   ) {
     return Scaffold(
-      backgroundColor: AppColors.backgroundWhite,
+      backgroundColor: AppColors.backgroundLight,
       body: SafeArea(
         child: Stack(
           children: [
-            Image.asset(
-              'assets/images/onboardingRiderWeb.png',
+            AppAssets.images.onboardingRiderWeb.image(
               fit: BoxFit.cover,
               color: AppColors.backGroundOverlay,
               colorBlendMode: BlendMode.overlay,
@@ -110,7 +109,7 @@ class RiderPaymentMethodSetupScreen extends ConsumerWidget {
                   width: screenSize.width * 0.95,
                   constraints: BoxConstraints(maxWidth: 1005),
                   decoration: BoxDecoration(
-                    color: AppColors.backgroundWhite,
+                    color: AppColors.backgroundLight,
                     borderRadius: BorderRadius.circular(16.0),
                     boxShadow: [
                       BoxShadow(
@@ -192,7 +191,7 @@ class RiderPaymentMethodSetupScreen extends ConsumerWidget {
             style: GoogleFonts.hind(
               fontSize: descriptionFontSize,
               fontWeight: FontWeight.w500,
-              color: AppColors.textBlackLight,
+              color: AppColors.textBodyText,
             ),
           ),
         ),
@@ -237,7 +236,7 @@ class RiderPaymentMethodSetupScreen extends ConsumerWidget {
             labelTextColor: AppColors.textBlackGrey,
             items: [],
             iconSize: 20,
-            prefixIcon: 'assets/icons/bank.svg',
+            prefixIcon: AppAssets.icons.bank.svg(),
             hintText: 'Select your bank',
             hintTextColor: AppColors.textBodyText,
           ),
@@ -245,7 +244,7 @@ class RiderPaymentMethodSetupScreen extends ConsumerWidget {
           CustomTextField(
             label: 'Account Number',
             labelTextColor: AppColors.textBlackGrey,
-            prefixIcon: 'assets/icons/group.svg',
+            prefixIcon: AppAssets.icons.group.path,
             hintText: 'Enter 10 digit account Number',
             hintTextColor: AppColors.textBodyText,
           ),
@@ -253,7 +252,7 @@ class RiderPaymentMethodSetupScreen extends ConsumerWidget {
           CustomTextField(
             label: 'Account Name',
             labelTextColor: AppColors.textBlackGrey,
-            prefixIcon: 'assets/icons/user.svg',
+            prefixIcon: AppAssets.icons.user.path,
             hintText: 'Enter account name',
             hintTextColor: AppColors.textBodyText,
           ),
@@ -292,7 +291,7 @@ class RiderPaymentMethodSetupScreen extends ConsumerWidget {
         CustomButton(
           text: 'Skip',
           onPressed: () {},
-          suffixIcon: 'assets/icons/arrowRight2.svg',
+          suffixIcon: AppAssets.icons.arrowRight2.svg(),
           fontSize: 18,
           fontWeight: FontWeight.w500,
           borderRadius: 6.0,

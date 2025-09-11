@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import '../../core/constants/app_colors.dart';
@@ -13,9 +12,9 @@ class CustomButton extends StatelessWidget {
   final double? borderRadius;
   final double? borderWidth;
   final double? height;
-  final double? width;
+  final double? width, prefixIconWidth;
   final EdgeInsetsGeometry? padding;
-  final String? prefixIcon, suffixIcon;
+  final Widget? prefixIcon, suffixIcon;
   final double? iconHeight, iconWidth;
   final MainAxisAlignment? mainAxisAlignment;
 
@@ -38,6 +37,7 @@ class CustomButton extends StatelessWidget {
     this.iconWidth,
     this.prefixIcon,
     this.suffixIcon,
+    this.prefixIconWidth,
   });
 
   @override
@@ -71,12 +71,8 @@ class CustomButton extends StatelessWidget {
             mainAxisAlignment: mainAxisAlignment!,
             children: [
               if (prefixIcon != null) ...[
-                SvgPicture.asset(
-                  prefixIcon!,
-                  height: iconHeight,
-                  width: iconWidth,
-                ),
-                const SizedBox(width: 8),
+                prefixIcon!,
+                SizedBox(width: prefixIconWidth ?? 8),
               ],
               Text(
                 text,
@@ -90,11 +86,7 @@ class CustomButton extends StatelessWidget {
               ),
               if (suffixIcon != null) ...[
                 const SizedBox(width: 8),
-                SvgPicture.asset(
-                  suffixIcon!,
-                  height: iconHeight,
-                  width: iconWidth,
-                ),
+                suffixIcon!,
               ],
             ],
           ),
