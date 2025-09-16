@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:wigo_flutter/features/rider/presentation/views/rider_settings_screens/profile_account_screen.dart';
 import 'package:wigo_flutter/features/rider/presentation/views/rider_settings_screens/vehicle_documents_screen.dart';
 
 import '../../../../../core/constants/app_colors.dart';
@@ -260,6 +261,8 @@ class RiderSettingsMainScreen extends ConsumerWidget {
 
   Widget _buildDetailScreen(int index) {
     switch (index) {
+      case 0:
+        return const ProfileAndAccountScreen();
       case 1:
         return const VehicleAndDocumentsScreen();
       default:

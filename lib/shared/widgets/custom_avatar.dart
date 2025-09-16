@@ -7,7 +7,7 @@ class CustomAvatar extends StatelessWidget {
   final double padding;
   final TextStyle? profileNameStyle, profileEmailStyle;
   final bool showEmail, showBottomText, showLeftTexts;
-  final MainAxisAlignment mainAxisAlignment;
+  final MainAxisAlignment mainAxisAlignment, avatarAlign;
   final CrossAxisAlignment crossAxisAlignment;
 
   const CustomAvatar({
@@ -21,6 +21,7 @@ class CustomAvatar extends StatelessWidget {
     this.showLeftTexts = true,
     this.mainAxisAlignment = MainAxisAlignment.start,
     this.crossAxisAlignment = CrossAxisAlignment.start,
+    this.avatarAlign = MainAxisAlignment.start,
   });
 
   @override
@@ -32,8 +33,7 @@ class CustomAvatar extends StatelessWidget {
         crossAxisAlignment: crossAxisAlignment,
         children: [
           Row(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            mainAxisAlignment: MainAxisAlignment.start,
+            mainAxisAlignment: avatarAlign,
             children: [
               CircleAvatar(
                 radius: radius ?? 20.0,
@@ -78,14 +78,17 @@ class CustomAvatar extends StatelessWidget {
             ],
           ),
           if (showBottomText) ...[
-            const SizedBox(height: 3.0),
-            Text(
-              "Upload Photo",
-              style: GoogleFonts.hind(
-                fontSize: 12,
-                fontWeight: FontWeight.w400,
-                height: 14.52 / 12,
-                color: AppColors.primaryDarkGreen,
+            const SizedBox(height: 10.0),
+            Padding(
+              padding: const EdgeInsets.only(right: 10.0),
+              child: Text(
+                "Upload Photo",
+                style: GoogleFonts.hind(
+                  fontSize: 12,
+                  fontWeight: FontWeight.w400,
+                  height: 14.52 / 12,
+                  color: AppColors.primaryDarkGreen,
+                ),
               ),
             ),
           ],

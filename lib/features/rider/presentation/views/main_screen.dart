@@ -21,6 +21,9 @@ class _RiderMainScreenState extends ConsumerState<RiderMainScreen> {
   final List<GlobalKey<NavigatorState>> _navigatorKeys = [
     GlobalKey<NavigatorState>(), // Dashboard tab
     GlobalKey<NavigatorState>(), // Settings tab
+    GlobalKey<NavigatorState>(),
+    GlobalKey<NavigatorState>(),
+    GlobalKey<NavigatorState>(),
   ];
 
   @override
@@ -64,7 +67,11 @@ class _RiderMainScreenState extends ConsumerState<RiderMainScreen> {
                               index: navState.currentIndex,
                               children: [
                                 _buildNavigator(0, RiderDashboardScreen()),
-                                _buildNavigator(1, RiderSettingsMainScreen()),
+                                _buildNavigator(1, Placeholder()),
+                                // or some other screen
+                                _buildNavigator(2, Placeholder()),
+                                _buildNavigator(3, Placeholder()),
+                                _buildNavigator(4, RiderSettingsMainScreen()),
                               ],
                             ),
                           ),
@@ -77,7 +84,10 @@ class _RiderMainScreenState extends ConsumerState<RiderMainScreen> {
                   index: navState.currentIndex,
                   children: [
                     _buildNavigator(0, RiderDashboardScreen()),
-                    _buildNavigator(1, RiderSettingsMainScreen()),
+                    _buildNavigator(1, Placeholder()), // or some other screen
+                    _buildNavigator(2, Placeholder()),
+                    _buildNavigator(3, Placeholder()),
+                    _buildNavigator(4, RiderSettingsMainScreen()),
                   ],
                 ),
 
@@ -113,11 +123,8 @@ class _RiderMainScreenState extends ConsumerState<RiderMainScreen> {
       children: [
         BottomNavigationBar(
           type: BottomNavigationBarType.fixed,
-
           backgroundColor: AppColors.backgroundWhite,
-
           currentIndex: navState.currentIndex,
-
           onTap: (value) {
             if (value < _navigatorKeys.length) {
               // same-index tap -> pop inner navigator to root
