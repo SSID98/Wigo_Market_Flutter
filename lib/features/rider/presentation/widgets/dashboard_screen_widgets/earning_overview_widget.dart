@@ -81,7 +81,7 @@ class EarningOverviewWidget extends ConsumerWidget {
               gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                 crossAxisCount: isWeb ? 4 : 2,
                 childAspectRatio: isWeb ? 1.8 : 1.9,
-                crossAxisSpacing: isWeb ? 24 : 24,
+                crossAxisSpacing: 24,
                 mainAxisSpacing: isWeb ? 24 : 20,
               ),
               itemBuilder: (context, index) {

@@ -49,10 +49,7 @@ class CustomButton extends StatelessWidget {
         onPressed: onPressed,
         style: ElevatedButton.styleFrom(
           backgroundColor: buttonColor ?? AppColors.primaryDarkGreen,
-          padding:
-              padding ??
-              const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
-          // Default padding
+          padding: padding,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(borderRadius ?? 8.0),
             side: BorderSide(

@@ -1,5 +1,6 @@
 import 'package:go_router/go_router.dart';
 import 'package:wigo_flutter/features/rider/presentation/views/main_screen.dart';
+import 'package:wigo_flutter/features/rider/presentation/views/rider_settings_screens/rider_settings_main_screen.dart';
 import 'package:wigo_flutter/shared/screens/email_verification_screen.dart';
 import 'package:wigo_flutter/shared/screens/login_screen.dart';
 import 'package:wigo_flutter/shared/screens/reset_password_email_verification_screen.dart';
@@ -10,7 +11,6 @@ import '../../features/rider/presentation/views/rider_account_setup_screens/ride
 import '../../features/rider/presentation/views/rider_account_setup_screens/rider_creation_successful_screen.dart';
 import '../../features/rider/presentation/views/rider_account_setup_screens/rider_onboarding_screen.dart';
 import '../../features/rider/presentation/views/rider_account_setup_screens/rider_payment_method_setup_screen.dart';
-import '../../features/rider/presentation/views/rider_dashboard_screen.dart';
 import '../../features/rider/presentation/views/rider_welcome_screen.dart';
 import '../../shared/screens/change_password_screen.dart';
 import '../../shared/screens/role_selection_screen.dart';
@@ -70,8 +70,8 @@ final appRouter = GoRouter(
       builder: (context, state) => RiderMainScreen(),
     ),
     GoRoute(
-      path: '/riderDashboard',
-      builder: (context, state) => RiderDashboardScreen(),
+      path: '/riderSettingsMainScreen',
+      builder: (context, state) => RiderSettingsMainScreen(),
     ),
   ],
 );

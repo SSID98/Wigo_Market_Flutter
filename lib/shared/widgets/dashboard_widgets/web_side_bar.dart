@@ -4,7 +4,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import '../../../core/constants/app_colors.dart';
-import '../../../features/rider/viewmodels/global_navigation_view_model.dart';
+import '../../../features/rider/viewmodels/global_navigation_viewmodel.dart';
 import '../../../gen/assets.gen.dart';
 
 class WebSideBar extends ConsumerWidget {
@@ -95,9 +95,7 @@ class WebSideBar extends ConsumerWidget {
                       fontWeight: FontWeight.w600,
                     ),
                   ),
-                  // selected: true,
-                  // selectedTileColor: AppColors.tableHeader,
-                  onTap: () => navNotifier.updateIndex(index),
+                  onTap: () => navNotifier.setIndex(index),
                 ),
               ),
             );

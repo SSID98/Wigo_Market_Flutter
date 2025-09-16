@@ -235,7 +235,6 @@ class RiderPaymentMethodSetupScreen extends ConsumerWidget {
             label: 'Bank Name',
             labelTextColor: AppColors.textBlackGrey,
             items: [],
-            iconSize: 20,
             prefixIcon: AppAssets.icons.bank.svg(),
             hintText: 'Select your bank',
             hintTextColor: AppColors.textBodyText,

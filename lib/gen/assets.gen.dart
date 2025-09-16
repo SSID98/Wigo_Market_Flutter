@@ -20,6 +20,9 @@ class $AssetsIconsGen {
   /// File path: assets/icons/arrowDown.svg
   SvgGenImage get arrowDown => const SvgGenImage('assets/icons/arrowDown.svg');
 
+  /// File path: assets/icons/arrowLeft.svg
+  SvgGenImage get arrowLeft => const SvgGenImage('assets/icons/arrowLeft.svg');
+
   /// File path: assets/icons/arrowRight.svg
   SvgGenImage get arrowRight =>
       const SvgGenImage('assets/icons/arrowRight.svg');
@@ -30,6 +33,12 @@ class $AssetsIconsGen {
 
   /// File path: assets/icons/bank.svg
   SvgGenImage get bank => const SvgGenImage('assets/icons/bank.svg');
+
+  /// File path: assets/icons/bicycle.svg
+  SvgGenImage get bicycle => const SvgGenImage('assets/icons/bicycle.svg');
+
+  /// File path: assets/icons/bus.svg
+  SvgGenImage get bus => const SvgGenImage('assets/icons/bus.svg');
 
   /// File path: assets/icons/buyerIcon.svg
   SvgGenImage get buyerIcon => const SvgGenImage('assets/icons/buyerIcon.svg');
@@ -77,6 +86,9 @@ class $AssetsIconsGen {
   /// File path: assets/icons/fileValidation.svg
   SvgGenImage get fileValidation =>
       const SvgGenImage('assets/icons/fileValidation.svg');
+
+  /// File path: assets/icons/foot.svg
+  SvgGenImage get foot => const SvgGenImage('assets/icons/foot.svg');
 
   /// File path: assets/icons/google.svg
   SvgGenImage get google => const SvgGenImage('assets/icons/google.svg');
@@ -198,8 +210,14 @@ class $AssetsIconsGen {
   /// File path: assets/icons/upload.svg
   SvgGenImage get upload => const SvgGenImage('assets/icons/upload.svg');
 
+  /// File path: assets/icons/uploaded.svg
+  SvgGenImage get uploaded => const SvgGenImage('assets/icons/uploaded.svg');
+
   /// File path: assets/icons/user.svg
   SvgGenImage get user => const SvgGenImage('assets/icons/user.svg');
+
+  /// File path: assets/icons/user2.svg
+  SvgGenImage get user2 => const SvgGenImage('assets/icons/user2.svg');
 
   /// File path: assets/icons/vehicleDoc.svg
   SvgGenImage get vehicleDoc =>
@@ -215,9 +233,12 @@ class $AssetsIconsGen {
   /// List of all assets
   List<SvgGenImage> get values => [
     arrowDown,
+    arrowLeft,
     arrowRight,
     arrowRight2,
     bank,
+    bicycle,
+    bus,
     buyerIcon,
     calender,
     car,
@@ -232,6 +253,7 @@ class $AssetsIconsGen {
     emailVerifica,
     facebook,
     fileValidation,
+    foot,
     google,
     group,
     home,
@@ -268,7 +290,9 @@ class $AssetsIconsGen {
     totalEarning,
     totalEarningWeb,
     upload,
+    uploaded,
     user,
+    user2,
     vehicleDoc,
     wallet,
     webLogoutButton,

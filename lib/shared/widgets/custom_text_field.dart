@@ -215,7 +215,7 @@ class _CustomTextFieldState extends ConsumerState<CustomTextField> {
 class CustomDropdownField extends ConsumerStatefulWidget {
   final String label;
   final List<String> items;
-  final double iconSize;
+  final double? iconHeight, iconWidth;
   final String? hintText;
   final Widget? prefixIcon;
   final void Function(String?)? onChanged;
@@ -227,7 +227,8 @@ class CustomDropdownField extends ConsumerStatefulWidget {
     required this.label,
     required this.items,
     this.hintText,
-    required this.iconSize,
+    this.iconWidth,
+    this.iconHeight,
     this.prefixIcon,
     this.onChanged,
     this.value,
@@ -265,8 +266,11 @@ class _CustomDropdownFieldState extends ConsumerState<CustomDropdownField> {
         ),
         const SizedBox(height: 4),
         DropdownButtonFormField<String>(
-          value: widget.value,
-          icon: Icon(Icons.keyboard_arrow_down_rounded, size: widget.iconSize),
+          initialValue: widget.value,
+          icon: AppAssets.icons.arrowDown.svg(
+            height: widget.iconHeight ?? 20,
+            width: widget.iconWidth ?? 20,
+          ),
           hint: Text(
             widget.hintText ?? '',
             style: GoogleFonts.hind(
@@ -323,7 +327,7 @@ class _CustomDropdownFieldState extends ConsumerState<CustomDropdownField> {
               selectedItem = val;
               if (val == 'Motor Bike') {
                 currentPrefixIcon = AppAssets.icons.motorbike.svg();
-              } else if (val == 'Four Wheel') {
+              } else if (val == 'Car') {
                 currentPrefixIcon = AppAssets.icons.car.svg();
               }
             });

@@ -68,7 +68,8 @@ class RiderFormFields extends ConsumerWidget {
           label: 'Gender',
           hintText: 'Select your Gender',
           items: const ['Male', 'Female'],
-          iconSize: 22,
+          iconWidth: 22,
+          iconHeight: 22,
           prefixIcon: AppAssets.icons.user.svg(
             width: iconWidth,
             height: iconHeight,
@@ -91,7 +92,6 @@ class RiderFormFields extends ConsumerWidget {
                 child: CustomDropdownField(
                   label: 'State',
                   items: nigeriaStatesAndCities.keys.toList(),
-                  iconSize: 22,
                   hintText: 'Select State',
                   value: viewModel.selectedState,
                   onChanged: viewModel.setStateValue,
@@ -102,7 +102,6 @@ class RiderFormFields extends ConsumerWidget {
                 child: CustomDropdownField(
                   label: 'City/ Town',
                   items: viewModel.filteredCities,
-                  iconSize: 22,
                   hintText: 'Select City',
                   value: viewModel.selectedCity,
                   onChanged: viewModel.setCityValue,
@@ -114,7 +113,6 @@ class RiderFormFields extends ConsumerWidget {
           CustomDropdownField(
             label: 'State',
             items: nigeriaStatesAndCities.keys.toList(),
-            iconSize: 22,
             hintText: 'Select State',
             onChanged: viewModel.setStateValue,
           ),
@@ -122,7 +120,6 @@ class RiderFormFields extends ConsumerWidget {
           CustomDropdownField(
             label: 'City/ Town',
             items: viewModel.filteredCities,
-            iconSize: 22,
             hintText: 'Select City',
             value: viewModel.selectedCity,
             onChanged: viewModel.setCityValue,
@@ -132,8 +129,7 @@ class RiderFormFields extends ConsumerWidget {
         spacing,
         CustomDropdownField(
           label: 'Means of Transportation',
-          items: const ['Motor Bike', 'Four Wheel'],
-          iconSize: 22,
+          items: const ['Motor Bike', 'Car'],
           hintText: 'Motor Bike',
           prefixIcon: AppAssets.icons.motorbike.svg(
             height: iconHeight,
