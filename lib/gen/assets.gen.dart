@@ -31,11 +31,27 @@ class $AssetsIconsGen {
   SvgGenImage get arrowRight2 =>
       const SvgGenImage('assets/icons/arrowRight2.svg');
 
+  /// File path: assets/icons/arrowsBack.svg
+  SvgGenImage get arrowsBack =>
+      const SvgGenImage('assets/icons/arrowsBack.svg');
+
+  /// File path: assets/icons/arrowsFoward.svg
+  SvgGenImage get arrowsFoward =>
+      const SvgGenImage('assets/icons/arrowsFoward.svg');
+
   /// File path: assets/icons/bank.svg
   SvgGenImage get bank => const SvgGenImage('assets/icons/bank.svg');
 
   /// File path: assets/icons/bicycle.svg
   SvgGenImage get bicycle => const SvgGenImage('assets/icons/bicycle.svg');
+
+  /// File path: assets/icons/blueWallet.svg
+  SvgGenImage get blueWallet =>
+      const SvgGenImage('assets/icons/blueWallet.svg');
+
+  /// File path: assets/icons/brownWallet.svg
+  SvgGenImage get brownWallet =>
+      const SvgGenImage('assets/icons/brownWallet.svg');
 
   /// File path: assets/icons/bus.svg
   SvgGenImage get bus => const SvgGenImage('assets/icons/bus.svg');
@@ -45,6 +61,9 @@ class $AssetsIconsGen {
 
   /// File path: assets/icons/calender.svg
   SvgGenImage get calender => const SvgGenImage('assets/icons/calender.svg');
+
+  /// File path: assets/icons/cancelled.svg
+  SvgGenImage get cancelled => const SvgGenImage('assets/icons/cancelled.svg');
 
   /// File path: assets/icons/car.svg
   SvgGenImage get car => const SvgGenImage('assets/icons/car.svg');
@@ -65,6 +84,21 @@ class $AssetsIconsGen {
   /// File path: assets/icons/customerService.svg
   SvgGenImage get customerService =>
       const SvgGenImage('assets/icons/customerService.svg');
+
+  /// File path: assets/icons/defaultContainer.svg
+  SvgGenImage get defaultContainer =>
+      const SvgGenImage('assets/icons/defaultContainer.svg');
+
+  /// File path: assets/icons/delivered.svg
+  SvgGenImage get delivered => const SvgGenImage('assets/icons/delivered.svg');
+
+  /// File path: assets/icons/deliveryContact.svg
+  SvgGenImage get deliveryContact =>
+      const SvgGenImage('assets/icons/deliveryContact.svg');
+
+  /// File path: assets/icons/doubleTickSuccessful.svg
+  SvgGenImage get doubleTickSuccessful =>
+      const SvgGenImage('assets/icons/doubleTickSuccessful.svg');
 
   /// File path: assets/icons/earningHistory.svg
   SvgGenImage get earningHistory =>
@@ -93,6 +127,10 @@ class $AssetsIconsGen {
   /// File path: assets/icons/google.svg
   SvgGenImage get google => const SvgGenImage('assets/icons/google.svg');
 
+  /// File path: assets/icons/greenWallet.svg
+  SvgGenImage get greenWallet =>
+      const SvgGenImage('assets/icons/greenWallet.svg');
+
   /// File path: assets/icons/group.svg
   SvgGenImage get group => const SvgGenImage('assets/icons/group.svg');
 
@@ -120,6 +158,10 @@ class $AssetsIconsGen {
   /// File path: assets/icons/menu.svg
   SvgGenImage get menu => const SvgGenImage('assets/icons/menu.svg');
 
+  /// File path: assets/icons/mobileFilter.svg
+  SvgGenImage get mobileFilter =>
+      const SvgGenImage('assets/icons/mobileFilter.svg');
+
   /// File path: assets/icons/mobileMenu.svg
   SvgGenImage get mobileMenu =>
       const SvgGenImage('assets/icons/mobileMenu.svg');
@@ -134,6 +176,14 @@ class $AssetsIconsGen {
   /// File path: assets/icons/motorbike.svg
   SvgGenImage get motorbike => const SvgGenImage('assets/icons/motorbike.svg');
 
+  /// File path: assets/icons/newRequest.svg
+  SvgGenImage get newRequest =>
+      const SvgGenImage('assets/icons/newRequest.svg');
+
+  /// File path: assets/icons/noDeliveryTask.svg
+  SvgGenImage get noDeliveryTask =>
+      const SvgGenImage('assets/icons/noDeliveryTask.svg');
+
   /// File path: assets/icons/note.svg
   SvgGenImage get note => const SvgGenImage('assets/icons/note.svg');
 
@@ -141,8 +191,14 @@ class $AssetsIconsGen {
   SvgGenImage get notification =>
       const SvgGenImage('assets/icons/notification.svg');
 
+  /// File path: assets/icons/onTheWay.svg
+  SvgGenImage get onTheWay => const SvgGenImage('assets/icons/onTheWay.svg');
+
   /// File path: assets/icons/otp.svg
   SvgGenImage get otp => const SvgGenImage('assets/icons/otp.svg');
+
+  /// File path: assets/icons/package.svg
+  SvgGenImage get package => const SvgGenImage('assets/icons/package.svg');
 
   /// File path: assets/icons/payInfo.svg
   SvgGenImage get payInfo => const SvgGenImage('assets/icons/payInfo.svg');
@@ -163,6 +219,9 @@ class $AssetsIconsGen {
   /// File path: assets/icons/recentDeliveries.svg
   SvgGenImage get recentDeliveries =>
       const SvgGenImage('assets/icons/recentDeliveries.svg');
+
+  /// File path: assets/icons/recycle.svg
+  SvgGenImage get recycle => const SvgGenImage('assets/icons/recycle.svg');
 
   /// File path: assets/icons/rejected.svg
   SvgGenImage get rejected => const SvgGenImage('assets/icons/rejected.svg');
@@ -194,6 +253,10 @@ class $AssetsIconsGen {
 
   /// File path: assets/icons/thisWeek.svg
   SvgGenImage get thisWeek => const SvgGenImage('assets/icons/thisWeek.svg');
+
+  /// File path: assets/icons/tickDouble.svg
+  SvgGenImage get tickDouble =>
+      const SvgGenImage('assets/icons/tickDouble.svg');
 
   /// File path: assets/icons/todayEarning.svg
   SvgGenImage get todayEarning =>
@@ -236,17 +299,26 @@ class $AssetsIconsGen {
     arrowLeft,
     arrowRight,
     arrowRight2,
+    arrowsBack,
+    arrowsFoward,
     bank,
     bicycle,
+    blueWallet,
+    brownWallet,
     bus,
     buyerIcon,
     calender,
+    cancelled,
     car,
     cash,
     cloud,
     cloudWhite,
     completed,
     customerService,
+    defaultContainer,
+    delivered,
+    deliveryContact,
+    doubleTickSuccessful,
     earningHistory,
     edit,
     ellipse,
@@ -255,6 +327,7 @@ class $AssetsIconsGen {
     fileValidation,
     foot,
     google,
+    greenWallet,
     group,
     home,
     home2,
@@ -264,19 +337,25 @@ class $AssetsIconsGen {
     mail,
     map,
     menu,
+    mobileFilter,
     mobileMenu,
     mobileSearch,
     moneyBag,
     motorbike,
+    newRequest,
+    noDeliveryTask,
     note,
     notification,
+    onTheWay,
     otp,
+    package,
     payInfo,
     pending,
     pendingPayout,
     privacy,
     received,
     recentDeliveries,
+    recycle,
     rejected,
     riderIcon,
     search,
@@ -286,6 +365,7 @@ class $AssetsIconsGen {
     statusChip1,
     statusChip2,
     thisWeek,
+    tickDouble,
     todayEarning,
     totalEarning,
     totalEarningWeb,

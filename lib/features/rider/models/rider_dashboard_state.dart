@@ -2,7 +2,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:wigo_flutter/features/rider/models/transaction.dart';
 
 import 'current_location.dart';
-import 'delivery.dart';
 
 class RiderDashboardState {
   // Individual AsyncValues for each specific earning metric
@@ -11,7 +10,6 @@ class RiderDashboardState {
   final AsyncValue<String> thisWeekEarnings;
   final AsyncValue<String> pendingPayout;
   final AsyncValue<String> todaysEarnings;
-  final AsyncValue<List<Delivery>> recentDeliveries;
   final AsyncValue<CurrentLocation?> currentLocation;
   final AsyncValue<List<Transaction>> earningHistory;
 
@@ -21,7 +19,6 @@ class RiderDashboardState {
     this.thisWeekEarnings = const AsyncValue.loading(),
     this.pendingPayout = const AsyncValue.loading(),
     this.todaysEarnings = const AsyncValue.loading(),
-    this.recentDeliveries = const AsyncValue.loading(),
     this.currentLocation = const AsyncValue.loading(),
     this.earningHistory = const AsyncValue.loading(),
   });
@@ -32,7 +29,6 @@ class RiderDashboardState {
     AsyncValue<String>? thisWeekEarnings,
     AsyncValue<String>? pendingPayout,
     AsyncValue<String>? todaysEarnings,
-    AsyncValue<List<Delivery>>? recentDeliveries,
     AsyncValue<CurrentLocation?>? currentLocation,
     AsyncValue<List<Transaction>>? earningHistory,
   }) {
@@ -41,7 +37,6 @@ class RiderDashboardState {
       thisWeekEarnings: thisWeekEarnings ?? this.thisWeekEarnings,
       pendingPayout: pendingPayout ?? this.pendingPayout,
       todaysEarnings: todaysEarnings ?? this.todaysEarnings,
-      recentDeliveries: recentDeliveries ?? this.recentDeliveries,
       isAvailable: isAvailable ?? this.isAvailable,
       currentLocation: currentLocation ?? this.currentLocation,
       earningHistory: earningHistory ?? this.earningHistory,

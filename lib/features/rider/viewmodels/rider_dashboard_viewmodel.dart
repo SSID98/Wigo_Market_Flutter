@@ -1,7 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../models/current_location.dart';
-import '../models/delivery.dart';
 import '../models/rider_dashboard_state.dart';
 import '../models/transaction.dart';
 
@@ -15,7 +14,6 @@ class RiderDashboardViewModel extends StateNotifier<RiderDashboardState> {
     _fetchThisWeekEarnings();
     _fetchPendingPayout();
     _fetchTotalEarnings();
-    _fetchRecentDeliveries();
     _fetchCurrentLocation();
     _fetchEarningHistory();
   }
@@ -65,52 +63,6 @@ class RiderDashboardViewModel extends StateNotifier<RiderDashboardState> {
       state = state.copyWith(totalEarnings: AsyncValue.data(value));
     } catch (e, st) {
       state = state.copyWith(totalEarnings: AsyncValue.error(e, st));
-    }
-  }
-
-  Future<void> _fetchRecentDeliveries() async {
-    state = state.copyWith(recentDeliveries: const AsyncValue.loading());
-    try {
-      await Future.delayed(const Duration(seconds: 1));
-      final List<Delivery> fetchedDeliveries = [
-        // Delivery(
-        //   orderId: "#WM1201",
-        //   date: DateTime.now().subtract(const Duration(hours: 2)),
-        //   customer: "John Doe",
-        //   items: "3 items",
-        //   fee: 2500,
-        //   status: "On-going",
-        // ),
-        // Delivery(
-        //   orderId: "#WM1201",
-        //   date: DateTime.now().subtract(const Duration(days: 1)),
-        //   customer: "Jane Smith",
-        //   items: "1 item",
-        //   fee: 5000,
-        //   status: "Delivered",
-        // ),
-        // Delivery(
-        //   orderId: "#WM1201",
-        //   date: DateTime.now().subtract(const Duration(days: 1)),
-        //   customer: "John Smith",
-        //   items: "34 items",
-        //   fee: 20000,
-        //   status: "Canceled",
-        // ),
-        // Delivery(
-        //   orderId: "#WM1201",
-        //   date: DateTime.now().subtract(const Duration(days: 1)),
-        //   customer: "Jane Doe",
-        //   items: "1 item",
-        //   fee: 2000,
-        //   status: "Pending",
-        // ),
-      ];
-      state = state.copyWith(
-        recentDeliveries: AsyncValue.data(fetchedDeliveries),
-      );
-    } catch (e, st) {
-      state = state.copyWith(recentDeliveries: AsyncValue.error(e, st));
     }
   }
 

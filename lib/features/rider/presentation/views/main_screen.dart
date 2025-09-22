@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:wigo_flutter/features/rider/presentation/views/delivery_task_screen.dart';
 import 'package:wigo_flutter/features/rider/presentation/views/rider_dashboard_screen.dart';
 import 'package:wigo_flutter/features/rider/presentation/views/rider_settings_screens/rider_settings_main_screen.dart';
 
@@ -19,8 +20,8 @@ class RiderMainScreen extends ConsumerStatefulWidget {
 
 class _RiderMainScreenState extends ConsumerState<RiderMainScreen> {
   final List<GlobalKey<NavigatorState>> _navigatorKeys = [
-    GlobalKey<NavigatorState>(), // Dashboard tab
-    GlobalKey<NavigatorState>(), // Settings tab
+    GlobalKey<NavigatorState>(),
+    GlobalKey<NavigatorState>(),
     GlobalKey<NavigatorState>(),
     GlobalKey<NavigatorState>(),
     GlobalKey<NavigatorState>(),
@@ -31,7 +32,7 @@ class _RiderMainScreenState extends ConsumerState<RiderMainScreen> {
     final navState = ref.watch(globalNavigationViewModelProvider);
     final navNotifier = ref.read(globalNavigationViewModelProvider.notifier);
     final isWeb = MediaQuery.of(context).size.width > 600;
-    const hiddenAppBarIndices = [1];
+    const hiddenAppBarIndices = [4];
 
     return PopScope(
       canPop: false,
@@ -42,7 +43,6 @@ class _RiderMainScreenState extends ConsumerState<RiderMainScreen> {
           currentNavigator.pop();
           return;
         }
-        // if inner navigator couldn't pop, let the viewmodel handle tab-stack pop
         final shouldExit = navNotifier.popIndexStack();
         if (shouldExit) {
           Navigator.of(context).maybePop();
@@ -67,8 +67,7 @@ class _RiderMainScreenState extends ConsumerState<RiderMainScreen> {
                               index: navState.currentIndex,
                               children: [
                                 _buildNavigator(0, RiderDashboardScreen()),
-                                _buildNavigator(1, Placeholder()),
-                                // or some other screen
+                                _buildNavigator(1, DeliveryTaskScreen()),
                                 _buildNavigator(2, Placeholder()),
                                 _buildNavigator(3, Placeholder()),
                                 _buildNavigator(4, RiderSettingsMainScreen()),
@@ -84,7 +83,7 @@ class _RiderMainScreenState extends ConsumerState<RiderMainScreen> {
                   index: navState.currentIndex,
                   children: [
                     _buildNavigator(0, RiderDashboardScreen()),
-                    _buildNavigator(1, Placeholder()), // or some other screen
+                    _buildNavigator(1, DeliveryTaskScreen()),
                     _buildNavigator(2, Placeholder()),
                     _buildNavigator(3, Placeholder()),
                     _buildNavigator(4, RiderSettingsMainScreen()),
@@ -127,11 +126,9 @@ class _RiderMainScreenState extends ConsumerState<RiderMainScreen> {
           currentIndex: navState.currentIndex,
           onTap: (value) {
             if (value < _navigatorKeys.length) {
-              // same-index tap -> pop inner navigator to root
               if (navState.currentIndex == value) {
                 _navigatorKeys[value].currentState?.popUntil((r) => r.isFirst);
               } else {
-                // change tab via viewmodel
                 ref
                     .read(globalNavigationViewModelProvider.notifier)
                     .setIndex(value);

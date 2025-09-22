@@ -184,7 +184,7 @@ class DeliveryTable extends StatelessWidget {
                   SizedBox(
                     width: isWeb ? 170.0 : 120.0,
                     child: Text(
-                      d.customer,
+                      d.customerName,
                       style: _getStyle(
                         isHeader: false,
                         color: AppColors.textBlackGrey,

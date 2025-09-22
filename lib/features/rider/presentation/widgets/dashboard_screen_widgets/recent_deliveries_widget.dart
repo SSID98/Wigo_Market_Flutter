@@ -2,11 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:wigo_flutter/core/constants/app_colors.dart';
+import 'package:wigo_flutter/features/rider/viewmodels/delivery_task_viewmodel.dart';
 import 'package:wigo_flutter/shared/widgets/custom_button.dart';
 
 import '../../../../../gen/assets.gen.dart';
 import '../../../../../shared/widgets/dashboard_widgets/delivery_table.dart';
-import '../../../viewmodels/rider_dashboard_viewmodel.dart';
 
 class RecentDeliveriesWidget extends ConsumerWidget {
   const RecentDeliveriesWidget({super.key});
@@ -14,9 +14,9 @@ class RecentDeliveriesWidget extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final isWeb = MediaQuery.of(context).size.width > 600;
-    final dashboardState = ref.watch(riderDashboardViewModelProvider);
+    final deliveryTaskState = ref.watch(deliveryTaskProvider);
 
-    return dashboardState.recentDeliveries.when(
+    return deliveryTaskState.deliveries.when(
       data: (deliveries) {
         final double cardHeight =
             deliveries.isEmpty

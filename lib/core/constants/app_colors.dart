@@ -27,6 +27,7 @@ class AppColors {
   static const Color clampBgColor = Color(0xffE6F2D5);
   static const Color shadowColor = Color(0xffB0B0D0);
   static const Color borderColor = Color(0xffE4E4E4);
+  static const Color borderColor1 = Color(0xffD1D1D6);
 
   // Background Colors
   static const Color backgroundWhitish = Color(0xFFF5F5F5);
@@ -39,6 +40,7 @@ class AppColors {
   static const Color buttonOrange = Color(0xffF08047);
   static const Color tableHeader = Color(0xffF3FAEB);
   static const Color darkerGreen = Color(0xff314720);
+  static const Color containerGreen = Color(0xff8FC457);
 
   // Text Colors (approximate)
   static const Color textDarkGreen = Color(0xff436724);
@@ -48,6 +50,7 @@ class AppColors {
   static const Color textBodyText = Color(0xff626262);
   static const Color textWhite = Color(0xffFFFFFF);
   static const Color textDarkerGreen = Color(0xff314720);
+  static const Color textDarkDarkerGreen = Color(0xff17260D);
   static const Color textBlack = Color(0xff000000);
   static const Color textOrange = Color(0xffEB5A1C);
   static const Color textVidaLocaWhite = Color(0xffF3FAEB);
@@ -61,4 +64,5 @@ class AppColors {
   static const Color textRed = Color(0xffDC2626);
   static const Color textStatusGreen = Color(0xff367C59);
   static const Color webTotalEarningGreen = Color(0xff40862A);
+  static const Color textDeliveryFee = Color(0xff007AFF);
 }
