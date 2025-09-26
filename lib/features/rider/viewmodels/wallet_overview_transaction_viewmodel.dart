@@ -3,12 +3,12 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../models/delivery.dart';
 import '../models/delivery_task_state.dart';
 
-class DeliveryTaskViewModel extends StateNotifier<DeliveryTaskState> {
-  DeliveryTaskViewModel() : super(const DeliveryTaskState()) {
+class WalletOverviewTransactionViewModel
+    extends StateNotifier<DeliveryTaskState> {
+  WalletOverviewTransactionViewModel() : super(const DeliveryTaskState()) {
     _loadDeliveries();
   }
 
-  final int _pageSize = 3;
   late final List<Delivery> _allDeliveries;
 
   Future<void> _loadDeliveries() async {
@@ -16,26 +16,10 @@ class DeliveryTaskViewModel extends StateNotifier<DeliveryTaskState> {
     try {
       await Future.delayed(const Duration(milliseconds: 500));
       _allDeliveries = _mockDeliveries;
-      _updateCounts();
       _applyFilterAndPagination();
     } catch (e, st) {
       state = state.copyWith(deliveries: AsyncValue.error(e, st));
     }
-  }
-
-  void _updateCounts() {
-    final Map<DeliveryFilter, int> newCounts = {
-      DeliveryFilter.all: _allDeliveries.length,
-      DeliveryFilter.newRequest:
-          _allDeliveries.where((d) => d.status == "New Request").length,
-      DeliveryFilter.ongoing:
-          _allDeliveries.where((d) => d.status == "On-going").length,
-      DeliveryFilter.completed:
-          _allDeliveries.where((d) => d.status == "Delivered").length,
-      DeliveryFilter.cancelled:
-          _allDeliveries.where((d) => d.status == "Cancelled").length,
-    };
-    state = state.copyWith(deliveryCounts: newCounts);
   }
 
   void _applyFilterAndPagination() {
@@ -55,8 +39,9 @@ class DeliveryTaskViewModel extends StateNotifier<DeliveryTaskState> {
           }
         }).toList();
 
-    final startIndex = state.currentPage * _pageSize;
-    final endIndex = (state.currentPage + 1) * _pageSize;
+    final rowsPerPage = state.rowsPerPage;
+    final startIndex = state.currentPage * rowsPerPage;
+    final endIndex = (state.currentPage + 1) * rowsPerPage;
     final paginated = filtered.sublist(
       startIndex,
       endIndex > filtered.length ? filtered.length : endIndex,
@@ -68,14 +53,14 @@ class DeliveryTaskViewModel extends StateNotifier<DeliveryTaskState> {
     );
   }
 
-  void setFilter(DeliveryFilter filter) {
-    state = state.copyWith(selectedFilter: filter, currentPage: 0);
-    _applyFilterAndPagination();
-  }
+  // void setFilter(DeliveryFilter filter) {
+  //   state = state.copyWith(selectedFilter: filter, currentPage: 0);
+  //   _applyFilterAndPagination();
+  // }
 
   void goToPage(int page) {
     if (page >= 0 &&
-        page <= (state.totalDeliveriesCount / _pageSize).ceil() - 1) {
+        page <= (state.totalDeliveriesCount / state.rowsPerPage).ceil() - 1) {
       state = state.copyWith(currentPage: page);
       _applyFilterAndPagination();
     }
@@ -83,6 +68,11 @@ class DeliveryTaskViewModel extends StateNotifier<DeliveryTaskState> {
 
   void setWalletScreenState(WalletScreenState screenState) {
     state = state.copyWith(walletScreenState: screenState);
+  }
+
+  void setRowsPerPage(int count) {
+    state = state.copyWith(rowsPerPage: count, currentPage: 0);
+    _applyFilterAndPagination();
   }
 
   final _mockDeliveries = <Delivery>[
@@ -199,7 +189,7 @@ class DeliveryTaskViewModel extends StateNotifier<DeliveryTaskState> {
   ];
 }
 
-final deliveryTaskProvider =
-    StateNotifierProvider<DeliveryTaskViewModel, DeliveryTaskState>(
-      (ref) => DeliveryTaskViewModel(),
-    );
+final walletOverviewTransactionProvider = StateNotifierProvider<
+  WalletOverviewTransactionViewModel,
+  DeliveryTaskState
+>((ref) => WalletOverviewTransactionViewModel());

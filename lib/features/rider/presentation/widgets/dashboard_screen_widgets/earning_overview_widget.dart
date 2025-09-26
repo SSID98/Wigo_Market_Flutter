@@ -2,13 +2,16 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:wigo_flutter/core/constants/app_colors.dart';
+import 'package:wigo_flutter/shared/widgets/custom_button.dart';
 
 import '../../../../../gen/assets.gen.dart';
 import '../../../../../shared/widgets/dashboard_widgets/earning_card.dart';
 import '../../../viewmodels/rider_dashboard_viewmodel.dart';
 
 class EarningOverviewWidget extends ConsumerWidget {
-  const EarningOverviewWidget({super.key});
+  const EarningOverviewWidget({super.key, this.isWallet = false});
+
+  final bool isWallet;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -28,8 +31,8 @@ class EarningOverviewWidget extends ConsumerWidget {
             ),
         loading:
             () => SizedBox(
-              width: 50, // Match expected text width
-              height: 20, // Match expected text height
+              width: 50,
+              height: 20,
               child: LinearProgressIndicator(
                 backgroundColor: color.withValues(alpha: 0.3),
                 valueColor: AlwaysStoppedAnimation(color),
@@ -74,6 +77,7 @@ class EarningOverviewWidget extends ConsumerWidget {
               ),
             ),
             SizedBox(height: isWeb ? 24 : 5),
+            if (isWallet) const SizedBox(height: 15),
             GridView.builder(
               shrinkWrap: true,
               physics: const NeverScrollableScrollPhysics(),
@@ -81,7 +85,7 @@ class EarningOverviewWidget extends ConsumerWidget {
               gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                 crossAxisCount: isWeb ? 4 : 2,
                 childAspectRatio: isWeb ? 1.8 : 1.9,
-                crossAxisSpacing: 24,
+                crossAxisSpacing: isWallet ? 20 : 24,
                 mainAxisSpacing: isWeb ? 24 : 20,
               ),
               itemBuilder: (context, index) {
@@ -183,6 +187,17 @@ class EarningOverviewWidget extends ConsumerWidget {
                 }
               },
             ),
+            if (!isWeb && isWallet) SizedBox(height: 15),
+            if (!isWeb && isWallet)
+              CustomButton(
+                text: 'Withdraw',
+                onPressed: () {},
+                fontSize: 12,
+                fontWeight: FontWeight.w500,
+                prefixIcon: AppAssets.icons.download.svg(width: 17, height: 17),
+                width: double.infinity,
+                height: 41,
+              ),
           ],
         ),
       ),

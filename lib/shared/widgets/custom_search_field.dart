@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 import '../../core/constants/app_colors.dart';
+import '../../gen/assets.gen.dart';
 
 class CustomSearchField extends StatelessWidget {
   final TextEditingController? searchController;
@@ -8,6 +10,9 @@ class CustomSearchField extends StatelessWidget {
   final Widget? leading;
   final Iterable<Widget>? trailing;
   final Color? borderColor;
+  final WidgetStateProperty<TextStyle?>? hintStyle;
+  final double? height, padding;
+  final Color? backgroundColor;
 
   const CustomSearchField({
     super.key,
@@ -16,19 +21,40 @@ class CustomSearchField extends StatelessWidget {
     this.leading,
     this.trailing,
     this.borderColor,
+    this.hintStyle,
+    this.height,
+    this.backgroundColor,
+    this.padding,
   });
 
   @override
   Widget build(BuildContext context) {
+    final isWeb = MediaQuery.of(context).size.width > 800;
     return SizedBox(
-      height: 40,
+      height: height ?? 40,
       child: SearchBar(
         controller: searchController,
-        leading: leading,
+        leading:
+            leading ??
+            Padding(
+              padding: EdgeInsets.only(left: padding ?? 20.0),
+              child: AppAssets.icons.search.svg(),
+            ),
         trailing: trailing,
         hintText: hintText,
+        hintStyle:
+            hintStyle ??
+            WidgetStateProperty.all(
+              GoogleFonts.hind(
+                fontSize: isWeb ? 14 : 12,
+                fontWeight: FontWeight.w400,
+                color: AppColors.textBlackGrey,
+              ),
+            ),
         // padding: WidgetStatePropertyAll(EdgeInsets.only(left: 20)),
-        backgroundColor: const WidgetStatePropertyAll(AppColors.textFieldColor),
+        backgroundColor: WidgetStatePropertyAll(
+          backgroundColor ?? AppColors.textFieldColor,
+        ),
         elevation: const WidgetStatePropertyAll(0),
         shape: WidgetStatePropertyAll(
           RoundedRectangleBorder(

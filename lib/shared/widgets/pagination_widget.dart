@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:wigo_flutter/features/rider/viewmodels/wallet_overview_transaction_viewmodel.dart';
 
 import '../../../../core/constants/app_colors.dart';
 import '../../../../gen/assets.gen.dart';
 
-class PaginationWidget extends StatelessWidget {
+class PaginationWidget extends ConsumerWidget {
   const PaginationWidget({
     super.key,
     required this.totalPages,
@@ -26,11 +28,12 @@ class PaginationWidget extends StatelessWidget {
   final bool isEarning, isDeliveries;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     if (count == 0) {
       return const SizedBox.shrink();
     }
-
+    final state = ref.watch(walletOverviewTransactionProvider);
+    final notifier = ref.read(walletOverviewTransactionProvider.notifier);
     final isWeb = MediaQuery.of(context).size.width > 800;
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 5.0, horizontal: 12),
@@ -46,13 +49,87 @@ class PaginationWidget extends StatelessWidget {
               ),
             ),
           if (isEarning)
-            Text(
-              "Rows per page",
-              style: GoogleFonts.hind(
-                fontSize: isWeb ? 16 : 12,
-                fontWeight: FontWeight.w500,
-                color: AppColors.textEdufacilisBlack,
-              ),
+            Row(
+              children: [
+                Text(
+                  "Rows per page",
+                  style: GoogleFonts.hind(
+                    fontSize: isWeb ? 16 : 12,
+                    fontWeight: FontWeight.w500,
+                    color: AppColors.textEdufacilisBlack,
+                  ),
+                ),
+                const SizedBox(width: 15),
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 8),
+                  decoration: BoxDecoration(
+                    color: AppColors.backgroundWhite,
+                    borderRadius: BorderRadius.circular(5),
+                    border: Border.all(color: AppColors.borderColor1, width: 1),
+                  ),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      // Current value
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 4.0),
+                        child: Text(
+                          state.rowsPerPage.toString(),
+                          style: GoogleFonts.hind(
+                            fontSize: isWeb ? 16 : 12,
+                            fontWeight: FontWeight.w500,
+                            color: AppColors.textEdufacilisBlack,
+                          ),
+                        ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.only(bottom: 4.0),
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            SizedBox(
+                              height: 9,
+                              width: 13,
+                              child: InkWell(
+                                onTap:
+                                    state.rowsPerPage < 10
+                                        ? () => notifier.setRowsPerPage(
+                                          state.rowsPerPage + 1,
+                                        )
+                                        : null,
+                                borderRadius: BorderRadius.circular(4),
+                                child: Icon(
+                                  Icons.keyboard_arrow_up,
+                                  size: 16,
+                                  color: AppColors.textBlackGrey,
+                                ),
+                              ),
+                            ),
+                            SizedBox(
+                              height: 9,
+                              width: 13,
+                              child: InkWell(
+                                onTap:
+                                    state.rowsPerPage > 1
+                                        ? () => notifier.setRowsPerPage(
+                                          state.rowsPerPage - 1,
+                                        )
+                                        : null,
+                                borderRadius: BorderRadius.circular(4),
+                                child: Icon(
+                                  Icons.keyboard_arrow_down,
+                                  size: 16,
+                                  color: AppColors.textBlackGrey,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
             ),
           const Spacer(),
           if (isWeb && isEarning)

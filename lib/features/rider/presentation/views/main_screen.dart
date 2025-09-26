@@ -4,6 +4,7 @@ import 'package:flutter_svg/svg.dart';
 import 'package:wigo_flutter/features/rider/presentation/views/delivery_task_screen.dart';
 import 'package:wigo_flutter/features/rider/presentation/views/rider_dashboard_screen.dart';
 import 'package:wigo_flutter/features/rider/presentation/views/rider_settings_screens/rider_settings_main_screen.dart';
+import 'package:wigo_flutter/features/rider/presentation/views/rider_wallet_screens/wallet_main_screen.dart';
 
 import '../../../../core/constants/app_colors.dart';
 import '../../../../gen/assets.gen.dart';
@@ -69,7 +70,7 @@ class _RiderMainScreenState extends ConsumerState<RiderMainScreen> {
                                 _buildNavigator(0, RiderDashboardScreen()),
                                 _buildNavigator(1, DeliveryTaskScreen()),
                                 _buildNavigator(2, Placeholder()),
-                                _buildNavigator(3, Placeholder()),
+                                _buildNavigator(3, WalletMainScreen()),
                                 _buildNavigator(4, RiderSettingsMainScreen()),
                               ],
                             ),
@@ -85,7 +86,7 @@ class _RiderMainScreenState extends ConsumerState<RiderMainScreen> {
                     _buildNavigator(0, RiderDashboardScreen()),
                     _buildNavigator(1, DeliveryTaskScreen()),
                     _buildNavigator(2, Placeholder()),
-                    _buildNavigator(3, Placeholder()),
+                    _buildNavigator(3, WalletMainScreen()),
                     _buildNavigator(4, RiderSettingsMainScreen()),
                   ],
                 ),

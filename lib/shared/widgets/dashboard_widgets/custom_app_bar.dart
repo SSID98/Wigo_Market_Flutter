@@ -24,15 +24,7 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
               ? Row(
                 children: [
                   const SizedBox(width: 400),
-                  Expanded(
-                    child: CustomSearchField(
-                      leading: Padding(
-                        padding: const EdgeInsets.only(left: 20.0),
-                        child: AppAssets.icons.search.svg(),
-                      ),
-                      hintText: 'search',
-                    ),
-                  ),
+                  Expanded(child: CustomSearchField(hintText: 'search')),
                 ],
               )
               : CustomAvatar(),

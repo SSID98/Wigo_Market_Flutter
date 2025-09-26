@@ -27,6 +27,7 @@ class CustomTextField extends ConsumerStatefulWidget {
   final bool hasError;
   final EdgeInsetsGeometry? contentPadding;
   final FontWeight? labelFontWeight;
+  final double? height;
 
   const CustomTextField({
     super.key,
@@ -58,6 +59,7 @@ class CustomTextField extends ConsumerStatefulWidget {
     this.contentPadding,
     this.labelFontWeight,
     this.hasError = false,
+    this.height,
   });
 
   @override
@@ -97,113 +99,119 @@ class _CustomTextFieldState extends ConsumerState<CustomTextField> {
           ),
         ),
         const SizedBox(height: 4),
-        Focus(
-          onFocusChange: widget.onFocusChange,
-          child: TextFormField(
-            validator: widget.validator,
-            style: GoogleFonts.hind(
-              fontWeight: FontWeight.w400,
-              fontSize: widget.fontSize ?? 14.0,
-              color: AppColors.textBlack,
-            ),
-            cursorColor: AppColors.textBodyText,
-            key: widget.fieldKey,
-            controller: widget.controller,
-            onChanged: widget.onChanged,
-            readOnly: widget.readOnly ?? false,
-            onTap: widget.onTap,
-            keyboardType: widget.keyboardType,
-            obscureText: _obscureText,
-            obscuringCharacter: '•',
-            decoration: InputDecoration(
-              contentPadding:
-                  widget.contentPadding ?? EdgeInsets.symmetric(vertical: 15),
-              prefixIconConstraints: BoxConstraints(),
-              filled: true,
-              constraints: BoxConstraints(),
-              fillColor:
-                  widget.hasError
-                      ? AppColors.accentLightRed
-                      : (widget.fillColor ?? AppColors.textFieldColor),
-              enabledBorder: OutlineInputBorder(
-                borderSide: BorderSide(color: Colors.transparent, width: 0),
-                borderRadius: BorderRadius.circular(8.0),
-              ),
-              focusedBorder: OutlineInputBorder(
-                borderSide: BorderSide(color: Colors.transparent),
-                borderRadius: BorderRadius.circular(8.0),
-              ),
-              errorBorder: OutlineInputBorder(
-                borderSide: BorderSide(color: AppColors.accentRed, width: 1.0),
-                borderRadius: BorderRadius.circular(8.0),
-              ),
-              prefixIcon:
-                  (widget.prefixIcon != null ||
-                          widget.optionalPrefixIcon != null)
-                      ? Padding(
-                        padding: EdgeInsets.only(
-                          left: widget.prefixIconPadding ?? 17.0,
-                          right: 3.0,
-                          bottom: 1.9,
-                        ),
-                        child: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            if (widget.prefixIcon != null)
-                              SvgPicture.asset(
-                                widget.prefixIcon!,
-                                height: widget.iconHeight,
-                                width: widget.iconWidth,
-                                colorFilter: _resolvePrefixIconColor(),
-                              ),
-                            if (widget.optionalPrefixIcon != null)
-                              SvgPicture.asset(
-                                widget.optionalPrefixIcon!,
-                                height: widget.iconHeight,
-                                width: widget.iconWidth,
-                              ),
-                          ],
-                        ),
-                      )
-                      : null,
-              hintText: widget.hintText,
-              hintStyle: GoogleFonts.hind(
+        SizedBox(
+          height: widget.height,
+          child: Focus(
+            onFocusChange: widget.onFocusChange,
+            child: TextFormField(
+              validator: widget.validator,
+              style: GoogleFonts.hind(
                 fontWeight: FontWeight.w400,
-                fontSize: widget.hintFontSize ?? 14.0,
-                color: widget.hintTextColor ?? AppColors.textBodyText,
+                fontSize: widget.fontSize ?? 14.0,
+                color: AppColors.textBlack,
               ),
-              helperText: widget.helperText,
-              helperMaxLines: 2,
-              helperStyle: GoogleFonts.hind(
-                fontWeight: FontWeight.w400,
-                fontSize: 15.12,
-                color: AppColors.textBodyText,
+              cursorColor: AppColors.textBodyText,
+              key: widget.fieldKey,
+              controller: widget.controller,
+              onChanged: widget.onChanged,
+              readOnly: widget.readOnly ?? false,
+              onTap: widget.onTap,
+              keyboardType: widget.keyboardType,
+              obscureText: _obscureText,
+              obscuringCharacter: '•',
+              decoration: InputDecoration(
+                contentPadding:
+                    widget.contentPadding ?? EdgeInsets.symmetric(vertical: 15),
+                prefixIconConstraints: BoxConstraints(),
+                filled: true,
+                constraints: BoxConstraints(),
+                fillColor:
+                    widget.hasError
+                        ? AppColors.accentLightRed
+                        : (widget.fillColor ?? AppColors.textFieldColor),
+                enabledBorder: OutlineInputBorder(
+                  borderSide: BorderSide(color: Colors.transparent, width: 0),
+                  borderRadius: BorderRadius.circular(8.0),
+                ),
+                focusedBorder: OutlineInputBorder(
+                  borderSide: BorderSide(color: Colors.transparent),
+                  borderRadius: BorderRadius.circular(8.0),
+                ),
+                errorBorder: OutlineInputBorder(
+                  borderSide: BorderSide(
+                    color: AppColors.accentRed,
+                    width: 1.0,
+                  ),
+                  borderRadius: BorderRadius.circular(8.0),
+                ),
+                prefixIcon:
+                    (widget.prefixIcon != null ||
+                            widget.optionalPrefixIcon != null)
+                        ? Padding(
+                          padding: EdgeInsets.only(
+                            left: widget.prefixIconPadding ?? 17.0,
+                            right: 3.0,
+                            bottom: 1.9,
+                          ),
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              if (widget.prefixIcon != null)
+                                SvgPicture.asset(
+                                  widget.prefixIcon!,
+                                  height: widget.iconHeight,
+                                  width: widget.iconWidth,
+                                  colorFilter: _resolvePrefixIconColor(),
+                                ),
+                              if (widget.optionalPrefixIcon != null)
+                                SvgPicture.asset(
+                                  widget.optionalPrefixIcon!,
+                                  height: widget.iconHeight,
+                                  width: widget.iconWidth,
+                                ),
+                            ],
+                          ),
+                        )
+                        : null,
+                hintText: widget.hintText,
+                hintStyle: GoogleFonts.hind(
+                  fontWeight: FontWeight.w400,
+                  fontSize: widget.hintFontSize ?? 14.0,
+                  color: widget.hintTextColor ?? AppColors.textBodyText,
+                ),
+                helperText: widget.helperText,
+                helperMaxLines: 2,
+                helperStyle: GoogleFonts.hind(
+                  fontWeight: FontWeight.w400,
+                  fontSize: 15.12,
+                  color: AppColors.textBodyText,
+                ),
+                suffixIcon:
+                    widget.suffixIcon != null
+                        ? Padding(
+                          padding: EdgeInsets.only(
+                            right: widget.suffixIconPadding ?? 25.0,
+                          ),
+                          child:
+                              widget.isPassword
+                                  ? IconButton(
+                                    icon: Icon(
+                                      _obscureText
+                                          ? Icons.visibility_off_outlined
+                                          : Icons.visibility_outlined,
+                                      color: AppColors.textIconGrey,
+                                      size: 22,
+                                    ),
+                                    onPressed: () {
+                                      setState(() {
+                                        _obscureText = !_obscureText;
+                                      });
+                                    },
+                                  )
+                                  : widget.suffixIcon,
+                        )
+                        : null,
               ),
-              suffixIcon:
-                  widget.suffixIcon != null
-                      ? Padding(
-                        padding: EdgeInsets.only(
-                          right: widget.suffixIconPadding ?? 25.0,
-                        ),
-                        child:
-                            widget.isPassword
-                                ? IconButton(
-                                  icon: Icon(
-                                    _obscureText
-                                        ? Icons.visibility_off_outlined
-                                        : Icons.visibility_outlined,
-                                    color: AppColors.textIconGrey,
-                                    size: 22,
-                                  ),
-                                  onPressed: () {
-                                    setState(() {
-                                      _obscureText = !_obscureText;
-                                    });
-                                  },
-                                )
-                                : widget.suffixIcon,
-                      )
-                      : null,
             ),
           ),
         ),
@@ -215,16 +223,27 @@ class _CustomTextFieldState extends ConsumerState<CustomTextField> {
 class CustomDropdownField extends ConsumerStatefulWidget {
   final String label;
   final List<String> items;
-  final double? iconHeight, iconWidth;
+  final double? iconHeight,
+      iconWidth,
+      height,
+      hintFontSize,
+      radius,
+      itemsFontSize;
   final String? hintText;
   final Widget? prefixIcon;
   final void Function(String?)? onChanged;
   final String? value;
-  final Color? hintTextColor, labelTextColor;
+  final Color? hintTextColor,
+      labelTextColor,
+      fillColor,
+      enabledBorderColor,
+      focusedBorderColor,
+      itemTextColor;
+  final ColorFilter? colorFilter;
 
   const CustomDropdownField({
     super.key,
-    required this.label,
+    this.label = '',
     required this.items,
     this.hintText,
     this.iconWidth,
@@ -234,6 +253,15 @@ class CustomDropdownField extends ConsumerStatefulWidget {
     this.value,
     this.hintTextColor,
     this.labelTextColor,
+    this.height,
+    this.hintFontSize,
+    this.fillColor,
+    this.enabledBorderColor,
+    this.focusedBorderColor,
+    this.radius,
+    this.itemsFontSize,
+    this.itemTextColor,
+    this.colorFilter,
   });
 
   @override
@@ -256,83 +284,97 @@ class _CustomDropdownFieldState extends ConsumerState<CustomDropdownField> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(
-          widget.label,
-          style: GoogleFonts.hind(
-            fontWeight: FontWeight.w500,
-            fontSize: 16.0,
-            color: widget.labelTextColor ?? AppColors.textBodyText,
-          ),
-        ),
-        const SizedBox(height: 4),
-        DropdownButtonFormField<String>(
-          initialValue: widget.value,
-          icon: AppAssets.icons.arrowDown.svg(
-            height: widget.iconHeight ?? 20,
-            width: widget.iconWidth ?? 20,
-          ),
-          hint: Text(
-            widget.hintText ?? '',
+        if (widget.label.isNotEmpty) ...[
+          Text(
+            widget.label,
             style: GoogleFonts.hind(
-              fontWeight: FontWeight.w400,
-              color: widget.hintTextColor ?? AppColors.textIconGrey,
-              fontSize: 14,
+              fontWeight: FontWeight.w500,
+              fontSize: 16.0,
+              color: widget.labelTextColor ?? AppColors.textBodyText,
             ),
           ),
-          decoration: InputDecoration(
-            contentPadding: EdgeInsets.symmetric(vertical: 10, horizontal: 17),
-            prefixIconConstraints: BoxConstraints(),
-            prefixIcon:
-                currentPrefixIcon != null
-                    ? Padding(
-                      padding: const EdgeInsets.only(left: 17.0, right: 3.0),
-                      child: currentPrefixIcon!,
-                    )
-                    : null,
-            border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
-            fillColor: AppColors.textFieldColor,
-            filled: true,
-            enabledBorder: OutlineInputBorder(
-              borderSide: BorderSide(color: Colors.transparent, width: 0),
-              // Green border when enabled
-              borderRadius: BorderRadius.circular(8.0),
+          const SizedBox(height: 4),
+        ],
+        SizedBox(
+          height: widget.height,
+          child: DropdownButtonFormField<String>(
+            iconSize: 0,
+            isExpanded: true,
+            initialValue: widget.value,
+            icon: AppAssets.icons.arrowDown.svg(
+              height: widget.iconHeight ?? 20,
+              width: widget.iconWidth ?? 20,
+              colorFilter: widget.colorFilter,
             ),
-            focusedBorder: OutlineInputBorder(
-              borderSide: BorderSide(color: Colors.transparent),
-              // Blue border when focused
-              borderRadius: BorderRadius.circular(8.0),
+            hint: Text(
+              widget.hintText ?? '',
+              style: GoogleFonts.hind(
+                fontWeight: FontWeight.w400,
+                color: widget.hintTextColor ?? AppColors.textIconGrey,
+                fontSize: widget.hintFontSize ?? 14,
+              ),
             ),
-          ),
-          items:
-              widget.items
-                  .map(
-                    (e) => DropdownMenuItem<String>(
-                      value: e,
-                      child: Padding(
-                        padding: const EdgeInsets.only(top: 4.0),
-                        child: Text(
-                          e,
-                          style: GoogleFonts.hind(
-                            fontWeight: FontWeight.w400,
-                            color: AppColors.textBlack,
-                            fontSize: 14,
+            decoration: InputDecoration(
+              contentPadding: EdgeInsets.symmetric(horizontal: 8),
+              prefixIconConstraints: BoxConstraints(),
+              prefixIcon:
+                  currentPrefixIcon != null
+                      ? Padding(
+                        padding: const EdgeInsets.only(left: 17.0, right: 3.0),
+                        child: currentPrefixIcon!,
+                      )
+                      : null,
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(8),
+              ),
+              fillColor: widget.fillColor ?? AppColors.textFieldColor,
+              filled: true,
+              enabledBorder: OutlineInputBorder(
+                borderSide: BorderSide(
+                  color: widget.enabledBorderColor ?? Colors.transparent,
+                ),
+                borderRadius: BorderRadius.circular(widget.radius ?? 8.0),
+              ),
+              focusedBorder: OutlineInputBorder(
+                borderSide: BorderSide(
+                  color: widget.focusedBorderColor ?? Colors.transparent,
+                ),
+                borderRadius: BorderRadius.circular(widget.radius ?? 8.0),
+              ),
+            ),
+            items:
+                widget.items
+                    .map(
+                      (e) => DropdownMenuItem<String>(
+                        value: e,
+                        child: Padding(
+                          padding: const EdgeInsets.only(top: 4.0),
+                          child: Text(
+                            e,
+                            overflow: TextOverflow.ellipsis,
+                            style: GoogleFonts.hind(
+                              fontWeight: FontWeight.w400,
+                              color:
+                                  widget.itemTextColor ?? AppColors.textBlack,
+                              fontSize: widget.itemsFontSize ?? 14,
+                            ),
                           ),
                         ),
                       ),
-                    ),
-                  )
-                  .toList(),
-          onChanged: (val) {
-            setState(() {
-              selectedItem = val;
-              if (val == 'Motor Bike') {
-                currentPrefixIcon = AppAssets.icons.motorbike.svg();
-              } else if (val == 'Car') {
-                currentPrefixIcon = AppAssets.icons.car.svg();
-              }
-            });
-            widget.onChanged?.call(val);
-          },
+                    )
+                    .toList(),
+            onChanged: (val) {
+              setState(() {
+                selectedItem = val;
+                if (val == 'Motor Bike') {
+                  currentPrefixIcon = AppAssets.icons.motorbike.svg();
+                } else if (val == 'Car') {
+                  currentPrefixIcon = AppAssets.icons.car.svg();
+                }
+              });
+              widget.onChanged?.call(val);
+            },
+          ),
         ),
       ],
     );

@@ -4,12 +4,22 @@ import 'delivery.dart';
 
 enum DeliveryFilter { all, newRequest, ongoing, completed, cancelled }
 
+enum WalletScreenState {
+  overview,
+  transactions,
+  paymentMethods,
+  setupPin,
+  pinSuccess,
+}
+
 class DeliveryTaskState {
   final AsyncValue<List<Delivery>> deliveries;
   final DeliveryFilter selectedFilter;
   final int currentPage;
   final int totalDeliveriesCount;
   final Map<DeliveryFilter, int> deliveryCounts;
+  final WalletScreenState walletScreenState;
+  final int rowsPerPage;
 
   const DeliveryTaskState({
     this.deliveries = const AsyncValue.data([]),
@@ -17,6 +27,8 @@ class DeliveryTaskState {
     this.currentPage = 0,
     this.totalDeliveriesCount = 0,
     this.deliveryCounts = const {},
+    this.walletScreenState = WalletScreenState.overview,
+    this.rowsPerPage = 10,
   });
 
   DeliveryTaskState copyWith({
@@ -25,6 +37,8 @@ class DeliveryTaskState {
     int? currentPage,
     int? totalDeliveriesCount,
     Map<DeliveryFilter, int>? deliveryCounts,
+    WalletScreenState? walletScreenState,
+    int? rowsPerPage,
   }) {
     return DeliveryTaskState(
       deliveries: deliveries ?? this.deliveries,
@@ -32,6 +46,8 @@ class DeliveryTaskState {
       currentPage: currentPage ?? this.currentPage,
       totalDeliveriesCount: totalDeliveriesCount ?? this.totalDeliveriesCount,
       deliveryCounts: deliveryCounts ?? this.deliveryCounts,
+      walletScreenState: walletScreenState ?? this.walletScreenState,
+      rowsPerPage: rowsPerPage ?? this.rowsPerPage,
     );
   }
 }

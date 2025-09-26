@@ -100,6 +100,9 @@ class $AssetsIconsGen {
   SvgGenImage get doubleTickSuccessful =>
       const SvgGenImage('assets/icons/doubleTickSuccessful.svg');
 
+  /// File path: assets/icons/download.svg
+  SvgGenImage get download => const SvgGenImage('assets/icons/download.svg');
+
   /// File path: assets/icons/earningHistory.svg
   SvgGenImage get earningHistory =>
       const SvgGenImage('assets/icons/earningHistory.svg');
@@ -319,6 +322,7 @@ class $AssetsIconsGen {
     delivered,
     deliveryContact,
     doubleTickSuccessful,
+    download,
     earningHistory,
     edit,
     ellipse,
