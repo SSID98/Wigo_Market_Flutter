@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:wigo_flutter/gen/assets.gen.dart';
+import 'package:wigo_flutter/shared/widgets/custom_checkbox_widget.dart';
 
 import '../../../../../core/constants/app_colors.dart';
 import '../../../../../shared/widgets/custom_button.dart';
@@ -277,18 +278,10 @@ class RiderAccountNinVerificationScreen extends ConsumerWidget {
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Transform.scale(
-                scale: 0.8,
-                child: SizedBox(
-                  height: sizedBoxHeight,
-                  width: 10,
-                  child: Checkbox(
-                    activeColor: AppColors.primaryDarkGreen,
-                    value: viewModel.agreeToTerms,
-                    onChanged: viewModel.toggleAgreeToTerms,
-                    side: BorderSide(color: AppColors.textIconGrey),
-                  ),
-                ),
+              CustomCheckBox(
+                value: viewModel.agreeToTerms,
+                onChanged: viewModel.toggleAgreeToTerms,
+                sizedBoxHeight: sizedBoxHeight,
               ),
               const SizedBox(width: 14),
               Expanded(

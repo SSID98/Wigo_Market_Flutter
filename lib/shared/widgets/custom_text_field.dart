@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -18,7 +19,7 @@ class CustomTextField extends ConsumerStatefulWidget {
   final Function()? onTap;
   final TextEditingController? controller;
   final Color? hintTextColor, labelTextColor;
-  final double? hintFontSize, fontSize;
+  final double? hintFontSize, fontSize, labelFontSize;
   final String? Function(String?)? validator;
   final double? suffixIconPadding, prefixIconPadding;
   final Color? prefixIconColor, fillColor;
@@ -28,6 +29,9 @@ class CustomTextField extends ConsumerStatefulWidget {
   final EdgeInsetsGeometry? contentPadding;
   final FontWeight? labelFontWeight;
   final double? height;
+  final int? maxLength;
+  final Color? enabledBorderColor, focusedBorderColor;
+  final List<TextInputFormatter>? inputFormatters;
 
   const CustomTextField({
     super.key,
@@ -60,6 +64,11 @@ class CustomTextField extends ConsumerStatefulWidget {
     this.labelFontWeight,
     this.hasError = false,
     this.height,
+    this.maxLength,
+    this.labelFontSize,
+    this.focusedBorderColor,
+    this.enabledBorderColor,
+    this.inputFormatters,
   });
 
   @override
@@ -94,7 +103,7 @@ class _CustomTextFieldState extends ConsumerState<CustomTextField> {
           widget.label,
           style: GoogleFonts.hind(
             fontWeight: widget.labelFontWeight ?? FontWeight.w500,
-            fontSize: 16.0,
+            fontSize: widget.labelFontSize ?? 16.0,
             color: widget.labelTextColor ?? AppColors.textBlack,
           ),
         ),
@@ -111,6 +120,7 @@ class _CustomTextFieldState extends ConsumerState<CustomTextField> {
                 color: AppColors.textBlack,
               ),
               cursorColor: AppColors.textBodyText,
+              inputFormatters: widget.inputFormatters,
               key: widget.fieldKey,
               controller: widget.controller,
               onChanged: widget.onChanged,
@@ -119,6 +129,7 @@ class _CustomTextFieldState extends ConsumerState<CustomTextField> {
               keyboardType: widget.keyboardType,
               obscureText: _obscureText,
               obscuringCharacter: '•',
+              maxLength: widget.maxLength,
               decoration: InputDecoration(
                 contentPadding:
                     widget.contentPadding ?? EdgeInsets.symmetric(vertical: 15),
@@ -130,11 +141,16 @@ class _CustomTextFieldState extends ConsumerState<CustomTextField> {
                         ? AppColors.accentLightRed
                         : (widget.fillColor ?? AppColors.textFieldColor),
                 enabledBorder: OutlineInputBorder(
-                  borderSide: BorderSide(color: Colors.transparent, width: 0),
+                  borderSide: BorderSide(
+                    color: widget.enabledBorderColor ?? Colors.transparent,
+                    width: 0,
+                  ),
                   borderRadius: BorderRadius.circular(8.0),
                 ),
                 focusedBorder: OutlineInputBorder(
-                  borderSide: BorderSide(color: Colors.transparent),
+                  borderSide: BorderSide(
+                    color: widget.focusedBorderColor ?? Colors.transparent,
+                  ),
                   borderRadius: BorderRadius.circular(8.0),
                 ),
                 errorBorder: OutlineInputBorder(
@@ -228,8 +244,9 @@ class CustomDropdownField extends ConsumerStatefulWidget {
       height,
       hintFontSize,
       radius,
-      itemsFontSize;
-  final String? hintText;
+      itemsFontSize,
+      labelFontSize;
+  final String? hintText, validatorText;
   final Widget? prefixIcon;
   final void Function(String?)? onChanged;
   final String? value;
@@ -240,6 +257,8 @@ class CustomDropdownField extends ConsumerStatefulWidget {
       focusedBorderColor,
       itemTextColor;
   final ColorFilter? colorFilter;
+  final FontWeight? labelFontWeight;
+  final EdgeInsetsGeometry? padding;
 
   const CustomDropdownField({
     super.key,
@@ -262,6 +281,10 @@ class CustomDropdownField extends ConsumerStatefulWidget {
     this.itemsFontSize,
     this.itemTextColor,
     this.colorFilter,
+    this.validatorText,
+    this.labelFontSize,
+    this.labelFontWeight,
+    this.padding,
   });
 
   @override
@@ -288,8 +311,8 @@ class _CustomDropdownFieldState extends ConsumerState<CustomDropdownField> {
           Text(
             widget.label,
             style: GoogleFonts.hind(
-              fontWeight: FontWeight.w500,
-              fontSize: 16.0,
+              fontWeight: widget.labelFontWeight ?? FontWeight.w500,
+              fontSize: widget.labelFontSize ?? 16.0,
               color: widget.labelTextColor ?? AppColors.textBodyText,
             ),
           ),
@@ -348,7 +371,7 @@ class _CustomDropdownFieldState extends ConsumerState<CustomDropdownField> {
                       (e) => DropdownMenuItem<String>(
                         value: e,
                         child: Padding(
-                          padding: const EdgeInsets.only(top: 4.0),
+                          padding: widget.padding ?? EdgeInsets.only(top: 4.0),
                           child: Text(
                             e,
                             overflow: TextOverflow.ellipsis,
@@ -373,6 +396,12 @@ class _CustomDropdownFieldState extends ConsumerState<CustomDropdownField> {
                 }
               });
               widget.onChanged?.call(val);
+            },
+            validator: (value) {
+              if (value == null || value.isEmpty) {
+                return widget.validatorText;
+              }
+              return null;
             },
           ),
         ),

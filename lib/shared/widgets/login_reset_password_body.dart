@@ -2,6 +2,7 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:wigo_flutter/shared/viewmodels/change_password_viewmodel.dart';
+import 'package:wigo_flutter/shared/widgets/custom_checkbox_widget.dart';
 
 import '../../core/constants/app_colors.dart';
 import '../../core/utils/validation_utils.dart';
@@ -108,18 +109,10 @@ class LoginResetPasswordWidgetBuilder {
             padding: termsPadding,
             child: Row(
               children: [
-                Transform.scale(
-                  scale: 0.8,
-                  child: SizedBox(
-                    height: sizedBoxHeight,
-                    width: 10,
-                    child: Checkbox(
-                      activeColor: AppColors.primaryDarkGreen,
-                      value: state.agreeToTerms,
-                      onChanged: termsOnChanged,
-                      side: BorderSide(color: AppColors.textIconGrey),
-                    ),
-                  ),
+                CustomCheckBox(
+                  sizedBoxHeight: sizedBoxHeight,
+                  value: state.agreeToTerms,
+                  onChanged: termsOnChanged,
                 ),
                 const SizedBox(width: 14),
                 showRichText

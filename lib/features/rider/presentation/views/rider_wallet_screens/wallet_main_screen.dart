@@ -1,14 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:wigo_flutter/features/rider/presentation/views/rider_wallet_screens/wallet_add_bank_account_screen.dart';
+import 'package:wigo_flutter/features/rider/presentation/views/rider_wallet_screens/wallet_edit_bank_account_screen.dart';
 import 'package:wigo_flutter/features/rider/presentation/views/rider_wallet_screens/wallet_overview_transactions_screen.dart';
 import 'package:wigo_flutter/features/rider/presentation/views/rider_wallet_screens/wallet_payment_methods_screen.dart';
+import 'package:wigo_flutter/features/rider/viewmodels/edit_bank_account_viewmodel.dart';
 import 'package:wigo_flutter/shared/widgets/custom_button.dart';
 
 import '../../../../../core/constants/app_colors.dart';
 import '../../../../../gen/assets.gen.dart';
-import '../../../models/delivery_task_state.dart';
-import '../../../viewmodels/delivery_task_viewmodel.dart';
+import '../../../models/wallet_state.dart';
 
 enum EarningFilter { overview, transactions, paymentMethods }
 
@@ -17,8 +19,8 @@ class WalletMainScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final state = ref.watch(deliveryTaskProvider);
-    final notifier = ref.read(deliveryTaskProvider.notifier);
+    final state = ref.watch(editBankAccountProvider);
+    final notifier = ref.read(editBankAccountProvider.notifier);
     final isWeb = MediaQuery.of(context).size.width > 800;
 
     return Scaffold(
@@ -26,17 +28,22 @@ class WalletMainScreen extends ConsumerWidget {
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          _buildHeader(notifier, isWeb, state),
+          _buildHeader(notifier, isWeb, state, ref),
           _buildBody(state, notifier, isWeb),
         ],
       ),
     );
   }
 
+  void _navigateBackToList(WidgetRef ref) {
+    ref.read(editBankAccountProvider.notifier).cancelEditBankAccount();
+  }
+
   Widget _buildHeader(
-    DeliveryTaskViewModel notifier,
+    EditBankAccountViewModel notifier,
     bool isWeb,
-    DeliveryTaskState state,
+    WalletState state,
+    WidgetRef ref,
   ) {
     return Padding(
       padding: EdgeInsets.symmetric(horizontal: isWeb ? 40 : 15),
@@ -44,6 +51,33 @@ class WalletMainScreen extends ConsumerWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           const SizedBox(height: 10),
+          if (state.walletScreenState == WalletScreenState.editBankAccount &&
+              !isWeb)
+            Padding(
+              padding: const EdgeInsets.only(top: 10.0, left: 5.0),
+              child: Row(
+                children: [
+                  InkWell(
+                    onTap: () {
+                      _navigateBackToList(ref);
+                    },
+                    child: AppAssets.icons.arrowLeft.svg(),
+                  ),
+                  const SizedBox(width: 5),
+                  Text(
+                    'Back',
+                    style: GoogleFonts.hind(
+                      fontWeight: FontWeight.w400,
+                      fontSize: 18,
+                      color: AppColors.textBlackGrey,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          if (state.walletScreenState == WalletScreenState.editBankAccount &&
+              !isWeb)
+            Divider(color: AppColors.dividerColor.withValues(alpha: 0.2)),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
@@ -80,7 +114,7 @@ class WalletMainScreen extends ConsumerWidget {
     );
   }
 
-  Widget _buildFilterBar(DeliveryTaskViewModel notifier, bool isWeb) {
+  Widget _buildFilterBar(EditBankAccountViewModel notifier, bool isWeb) {
     final filters = EarningFilter.values;
     final filterNames = {
       EarningFilter.overview: "Overview",
@@ -104,12 +138,12 @@ class WalletMainScreen extends ConsumerWidget {
   Widget _buildFilterTab(
     EarningFilter filter,
     String name,
-    DeliveryTaskViewModel notifier,
+    EditBankAccountViewModel notifier,
     bool isWeb,
   ) {
     return Consumer(
       builder: (context, ref, child) {
-        final state = ref.watch(deliveryTaskProvider);
+        final state = ref.watch(editBankAccountProvider);
         final isSelected = _getEarningFilter(state) == filter;
         return GestureDetector(
           onTap: () {
@@ -139,7 +173,7 @@ class WalletMainScreen extends ConsumerWidget {
     );
   }
 
-  EarningFilter _getEarningFilter(DeliveryTaskState state) {
+  EarningFilter _getEarningFilter(WalletState state) {
     if (state.walletScreenState == WalletScreenState.overview) {
       return EarningFilter.overview;
     } else if (state.walletScreenState == WalletScreenState.transactions) {
@@ -156,13 +190,13 @@ class WalletMainScreen extends ConsumerWidget {
       case EarningFilter.transactions:
         return WalletScreenState.transactions;
       case EarningFilter.paymentMethods:
-        return WalletScreenState.paymentMethods;
+        return WalletScreenState.editBankAccount;
     }
   }
 
   Widget _buildBody(
-    DeliveryTaskState state,
-    DeliveryTaskViewModel notifier,
+    WalletState state,
+    EditBankAccountViewModel notifier,
     bool isWeb,
   ) {
     switch (state.walletScreenState) {
@@ -177,6 +211,17 @@ class WalletMainScreen extends ConsumerWidget {
       case WalletScreenState.setupPin:
       case WalletScreenState.pinSuccess:
         return PaymentMethodScreen(isWeb: isWeb);
+      case WalletScreenState.addBankAccount:
+        return AddBankAccountScreen(isWeb: isWeb);
+      case WalletScreenState.editBankAccount:
+        final bankToEdit = state.selectedBankDetails;
+        if (bankToEdit == null) {
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            notifier.setWalletScreenState(WalletScreenState.addBankAccount);
+          });
+          return const Center(child: CircularProgressIndicator());
+        }
+        return EditBankAccountScreen(isWeb: isWeb, bankDetails: bankToEdit);
     }
   }
 }

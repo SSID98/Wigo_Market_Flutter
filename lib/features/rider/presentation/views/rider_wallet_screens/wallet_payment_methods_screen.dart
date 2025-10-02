@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:wigo_flutter/features/rider/viewmodels/edit_bank_account_viewmodel.dart';
 import 'package:wigo_flutter/shared/widgets/custom_button.dart';
 import 'package:wigo_flutter/shared/widgets/custom_text_field.dart';
 
 import '../../../../../core/constants/app_colors.dart';
 import '../../../../../gen/assets.gen.dart';
-import '../../../models/delivery_task_state.dart';
-import '../../../viewmodels/delivery_task_viewmodel.dart';
+import '../../../models/wallet_state.dart';
 
 class PaymentMethodScreen extends ConsumerStatefulWidget {
   const PaymentMethodScreen({super.key, required this.isWeb});
@@ -30,8 +30,7 @@ class _PaymentMethodScreenState extends ConsumerState<PaymentMethodScreen> {
 
   @override
   Widget build(BuildContext context) {
-    // final state = ref.watch(deliveryTaskProvider);
-    final notifier = ref.read(deliveryTaskProvider.notifier);
+    final notifier = ref.read(editBankAccountProvider.notifier);
     final isWeb = MediaQuery.of(context).size.width > 800;
 
     return Expanded(
@@ -54,17 +53,17 @@ class _PaymentMethodScreenState extends ConsumerState<PaymentMethodScreen> {
                 Center(
                   child: Container(
                     margin: EdgeInsets.only(top: 5.0),
-                    padding: EdgeInsets.symmetric(
-                      vertical: 8,
-                      horizontal: isWeb ? 310 : 86,
-                    ),
+                    width: double.infinity,
+                    height: isWeb ? 54 : 34,
                     color: AppColors.buttonLighterGreen,
-                    child: Text(
-                      "Setting Up withdrawal Pin",
-                      style: GoogleFonts.hind(
-                        fontWeight: FontWeight.w600,
-                        fontSize: widget.isWeb ? 16 : 14,
-                        color: AppColors.textBlackGrey,
+                    child: Center(
+                      child: Text(
+                        "Setting Up withdrawal Pin",
+                        style: GoogleFonts.hind(
+                          fontWeight: FontWeight.w600,
+                          fontSize: widget.isWeb ? 16 : 14,
+                          color: AppColors.textBlackGrey,
+                        ),
                       ),
                     ),
                   ),
@@ -113,19 +112,19 @@ class _PaymentMethodScreenState extends ConsumerState<PaymentMethodScreen> {
                       child: CustomButton(
                         text: 'Cancel',
                         onPressed: () {
-                          if (_pinController.text.length == 4) {
-                            notifier.setWalletScreenState(
-                              WalletScreenState.pinSuccess,
-                            );
-                          } else {
-                            // You can add your own validation logic here
-                            // e.g., show an error message
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(
-                                content: Text("PIN must be 4 digits long."),
-                              ),
-                            );
-                          }
+                          // if (_pinController.text.length == 4) {
+                          //   notifier.setWalletScreenState(
+                          //     WalletScreenState.pinSuccess,
+                          //   );
+                          // } else {
+                          //   // You can add your own validation logic here
+                          //   // e.g., show an error message
+                          //   ScaffoldMessenger.of(context).showSnackBar(
+                          //     const SnackBar(
+                          //       content: Text("PIN must be 4 digits long."),
+                          //     ),
+                          //   );
+                          // }
                         },
                         fontSize: isWeb ? 18 : 16,
                         fontWeight: FontWeight.w500,
@@ -138,12 +137,9 @@ class _PaymentMethodScreenState extends ConsumerState<PaymentMethodScreen> {
                     Expanded(
                       child: CustomButton(
                         text: 'Continue',
-                        onPressed: () async {
+                        onPressed: () {
                           if (_pinController.text.length == 4) {
-                            notifier.setWalletScreenState(
-                              WalletScreenState.pinSuccess,
-                            );
-                            await _buildSuccessOverlay(context, isWeb);
+                            _showSuccessDialog(context, notifier);
                           } else {
                             // You can add your own validation logic here
                             // e.g., show an error message
@@ -169,15 +165,20 @@ class _PaymentMethodScreenState extends ConsumerState<PaymentMethodScreen> {
     );
   }
 
-  Future<void> _buildSuccessOverlay(BuildContext context, bool isWeb) async {
+  Future<void> _showSuccessDialog(
+    BuildContext context,
+    EditBankAccountViewModel notifier,
+  ) async {
+    final isWeb = widget.isWeb;
     return showDialog(
       context: context,
-      barrierDismissible: false, // prevent closing by tapping outside
-      builder: (_) {
+      barrierDismissible: false,
+      builder: (dialogContext) {
         return AlertDialog(
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(10),
           ),
+          backgroundColor: AppColors.backgroundWhite,
           titlePadding: EdgeInsets.zero,
           title: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -186,7 +187,12 @@ class _PaymentMethodScreenState extends ConsumerState<PaymentMethodScreen> {
               IconButton(
                 padding: EdgeInsets.only(right: isWeb ? 0 : 25),
                 icon: const Icon(Icons.close),
-                onPressed: () => Navigator.of(context).pop(),
+                onPressed: () {
+                  Navigator.of(dialogContext).pop();
+                  notifier.setWalletScreenState(
+                    WalletScreenState.addBankAccount,
+                  );
+                },
               ),
             ],
           ),
@@ -220,10 +226,10 @@ class _PaymentMethodScreenState extends ConsumerState<PaymentMethodScreen> {
                 CustomButton(
                   text: 'Continue',
                   onPressed: () {
-                    Navigator.of(context).pop();
-                    ref
-                        .read(deliveryTaskProvider.notifier)
-                        .setWalletScreenState(WalletScreenState.paymentMethods);
+                    Navigator.of(dialogContext).pop();
+                    notifier.setWalletScreenState(
+                      WalletScreenState.addBankAccount,
+                    );
                   },
                   fontSize: isWeb ? 18 : 12,
                   height: isWeb ? 48 : 45,

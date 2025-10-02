@@ -2,6 +2,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../models/delivery.dart';
 import '../models/delivery_task_state.dart';
+import '../models/wallet_state.dart';
 
 class WalletOverviewTransactionViewModel
     extends StateNotifier<DeliveryTaskState> {

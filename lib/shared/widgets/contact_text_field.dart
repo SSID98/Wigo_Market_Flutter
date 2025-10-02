@@ -9,12 +9,32 @@ class CustomPhoneNumberField extends StatefulWidget {
   final TextEditingController? controller;
   final String hintText;
   final String label;
+  final double? height;
+  final double? labelFontSize,
+      inputFontSize,
+      hintTextFontSize,
+      dialCodeFontSize;
+  final Color borderColor;
+  final FontWeight? labelFontWeight, inputFontWeight;
+  final EdgeInsetsGeometry? padding, contentPadding;
+  final Color? inputColor;
 
   const CustomPhoneNumberField({
     super.key,
     this.controller,
+    this.height,
     this.hintText = '8080982606',
     required this.label,
+    this.labelFontWeight,
+    this.labelFontSize,
+    this.padding,
+    this.contentPadding,
+    this.inputColor,
+    this.inputFontSize,
+    this.inputFontWeight,
+    this.borderColor = Colors.transparent,
+    this.hintTextFontSize,
+    this.dialCodeFontSize,
   });
 
   @override
@@ -36,18 +56,24 @@ class _CustomPhoneNumberFieldState extends State<CustomPhoneNumberField> {
         Text(
           widget.label,
           style: GoogleFonts.hind(
-            fontWeight: FontWeight.w500,
-            fontSize: 16.0,
+            fontWeight: widget.labelFontWeight ?? FontWeight.w500,
+            fontSize: widget.labelFontSize ?? 16.0,
             color: AppColors.textBlack,
           ),
         ),
         const SizedBox(height: 4),
         Container(
+          height: widget.height,
           decoration: BoxDecoration(
             color: AppColors.textFieldColor,
             borderRadius: BorderRadius.circular(10),
+            border: BoxBorder.fromBorderSide(
+              BorderSide(color: widget.borderColor),
+            ),
           ),
-          padding: const EdgeInsets.symmetric(horizontal: 17, vertical: 12),
+          padding:
+              widget.padding ??
+              EdgeInsets.symmetric(horizontal: 17, vertical: 12),
           child: Row(
             children: [
               CountryCodePicker(
@@ -82,7 +108,7 @@ class _CustomPhoneNumberFieldState extends State<CustomPhoneNumberField> {
                       Text(
                         country.dialCode!,
                         style: GoogleFonts.hind(
-                          fontSize: 15.12,
+                          fontSize: widget.dialCodeFontSize ?? 15.12,
                           fontWeight: FontWeight.w400,
                           color: AppColors.textBodyText,
                         ),
@@ -94,9 +120,9 @@ class _CustomPhoneNumberFieldState extends State<CustomPhoneNumberField> {
               Expanded(
                 child: TextFormField(
                   style: GoogleFonts.hind(
-                    fontSize: 15.11,
-                    fontWeight: FontWeight.w400,
-                    color: AppColors.textBodyText,
+                    fontSize: widget.inputFontSize ?? 15.11,
+                    fontWeight: widget.inputFontWeight ?? FontWeight.w400,
+                    color: widget.inputColor ?? AppColors.textBodyText,
                   ),
                   controller: widget.controller,
                   keyboardType: TextInputType.phone,
@@ -104,11 +130,12 @@ class _CustomPhoneNumberFieldState extends State<CustomPhoneNumberField> {
                     FilteringTextInputFormatter.digitsOnly,
                   ],
                   decoration: InputDecoration(
-                    contentPadding: EdgeInsets.only(bottom: 0),
+                    contentPadding:
+                        widget.contentPadding ?? EdgeInsets.only(bottom: 0),
                     isCollapsed: true,
                     hintText: widget.hintText,
                     hintStyle: GoogleFonts.hind(
-                      fontSize: 15.11,
+                      fontSize: widget.hintTextFontSize ?? 15.11,
                       fontWeight: FontWeight.w400,
                       color: AppColors.textBodyText,
                     ),

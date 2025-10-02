@@ -2,6 +2,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../models/delivery.dart';
 import '../models/delivery_task_state.dart';
+import '../models/wallet_state.dart';
 
 class DeliveryTaskViewModel extends StateNotifier<DeliveryTaskState> {
   DeliveryTaskViewModel() : super(const DeliveryTaskState()) {
