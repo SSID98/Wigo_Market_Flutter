@@ -65,4 +65,5 @@ class AppColors {
   static const Color textStatusGreen = Color(0xff367C59);
   static const Color webTotalEarningGreen = Color(0xff40862A);
   static const Color textDeliveryFee = Color(0xff007AFF);
+  static const Color textNeutral950 = Color(0xff292929);
 }

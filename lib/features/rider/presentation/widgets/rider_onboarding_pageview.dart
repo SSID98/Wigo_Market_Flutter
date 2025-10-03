@@ -95,7 +95,7 @@ class RiderOnboardingPageView extends ConsumerWidget {
                         style: GoogleFonts.hind(
                           fontSize: descriptionFontSize,
                           fontWeight: FontWeight.w500,
-                          color: AppColors.textBodyText,
+                          color: AppColors.textBlackGrey,
                         ),
                       ),
                     ),

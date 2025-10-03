@@ -1,6 +1,7 @@
 import 'package:dotted_border/dotted_border.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:wigo_flutter/gen/assets.gen.dart';
 import 'package:wigo_flutter/shared/widgets/custom_checkbox_widget.dart';
@@ -18,16 +19,17 @@ class RiderAccountNinVerificationScreen extends ConsumerWidget {
     final screenSize = MediaQuery.of(context).size;
     final isWeb = MediaQuery.of(context).size.width > 600;
     return isWeb
-        ? _buildWebLayout(screenSize, viewModel)
-        : _buildMobileLayout(screenSize, viewModel);
+        ? _buildWebLayout(screenSize, viewModel, context)
+        : _buildMobileLayout(screenSize, viewModel, context);
   }
 
   Widget _buildMobileLayout(
     Size screenSize,
     RiderAccountNinVerificationViewmodel viewModel,
+    BuildContext context,
   ) {
     return Scaffold(
-      backgroundColor: AppColors.backgroundLight,
+      backgroundColor: AppColors.backgroundWhite,
       body: SafeArea(
         child: Stack(
           children: [
@@ -44,7 +46,7 @@ class RiderAccountNinVerificationScreen extends ConsumerWidget {
                   width: screenSize.width * 0.95,
                   constraints: BoxConstraints(maxWidth: 400),
                   decoration: BoxDecoration(
-                    color: AppColors.backgroundLight,
+                    color: AppColors.backgroundWhite,
                     borderRadius: BorderRadius.circular(16.0),
                     boxShadow: [
                       BoxShadow(
@@ -77,7 +79,7 @@ class RiderAccountNinVerificationScreen extends ConsumerWidget {
                         ),
                         _buildFooter(
                           buttonTextFontSize: 16.0,
-                          buttonWidth: 350.0,
+                          context: context,
                         ),
                         const SizedBox(height: 35.0),
                       ],
@@ -95,9 +97,10 @@ class RiderAccountNinVerificationScreen extends ConsumerWidget {
   Widget _buildWebLayout(
     Size screenSize,
     RiderAccountNinVerificationViewmodel viewModel,
+    BuildContext context,
   ) {
     return Scaffold(
-      backgroundColor: AppColors.backgroundLight,
+      backgroundColor: AppColors.backgroundWhite,
       body: SafeArea(
         child: Stack(
           children: [
@@ -114,7 +117,7 @@ class RiderAccountNinVerificationScreen extends ConsumerWidget {
                   width: screenSize.width * 0.95,
                   constraints: BoxConstraints(maxWidth: 1005),
                   decoration: BoxDecoration(
-                    color: AppColors.backgroundLight,
+                    color: AppColors.backgroundWhite,
                     borderRadius: BorderRadius.circular(16.0),
                     boxShadow: [
                       BoxShadow(
@@ -154,8 +157,8 @@ class RiderAccountNinVerificationScreen extends ConsumerWidget {
                           padding: const EdgeInsets.symmetric(horizontal: 30.0),
                           child: _buildFooter(
                             buttonTextFontSize: 18.0,
-                            buttonWidth: 610.0,
                             web: true,
+                            context: context,
                           ),
                         ),
                         const SizedBox(height: 75.0),
@@ -193,7 +196,7 @@ class RiderAccountNinVerificationScreen extends ConsumerWidget {
           style: GoogleFonts.hind(
             fontSize: descriptionFontSize,
             fontWeight: FontWeight.w500,
-            color: AppColors.textBodyText,
+            color: AppColors.textBlackGrey,
           ),
         ),
       ],
@@ -221,7 +224,7 @@ class RiderAccountNinVerificationScreen extends ConsumerWidget {
             style: GoogleFonts.hind(
               fontSize: fontSize1,
               fontWeight: FontWeight.w700,
-              color: AppColors.textBodyText,
+              color: AppColors.textBlackGrey,
             ),
           ),
           const Divider(thickness: 1),
@@ -303,21 +306,23 @@ class RiderAccountNinVerificationScreen extends ConsumerWidget {
 
   Widget _buildFooter({
     required double buttonTextFontSize,
-    required double buttonWidth,
     bool web = false,
+    required BuildContext context,
   }) {
     return Column(
       children: [
         CustomButton(
           text: 'Verify',
-          onPressed: () {},
+          onPressed: () {
+            context.push('/rider/account/setup');
+          },
           fontSize: buttonTextFontSize,
           fontWeight: FontWeight.w500,
           borderRadius: 6.0,
           height: 50,
           textColor: AppColors.textVidaLocaWhite,
           buttonColor: AppColors.primaryLightGreen,
-          width: buttonWidth,
+          width: double.infinity,
         ),
         if (web) SizedBox(height: 60) else ...[],
         CustomButton(

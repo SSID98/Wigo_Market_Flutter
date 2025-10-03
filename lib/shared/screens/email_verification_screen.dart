@@ -1,6 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:go_router/go_router.dart';
 import 'package:wigo_flutter/core/utils/masked_email.dart';
 
 import '../../../../core/constants/app_colors.dart';
@@ -20,12 +21,16 @@ class EmailVerificationScreen extends StatelessWidget {
     final isWeb = MediaQuery.of(context).size.width > 600;
     return isWeb
         ? _buildWebLayout(screenSize, maskedEmail)
-        : _buildMobileLayout(screenSize, maskedEmail);
+        : _buildMobileLayout(screenSize, maskedEmail, context);
   }
 
-  Widget _buildMobileLayout(Size screenSize, String maskedEmail) {
+  Widget _buildMobileLayout(
+    Size screenSize,
+    String maskedEmail,
+    BuildContext context,
+  ) {
     return Scaffold(
-      backgroundColor: AppColors.backgroundLight,
+      backgroundColor: AppColors.backgroundWhite,
       body: SafeArea(
         child: Stack(
           children: [
@@ -43,7 +48,7 @@ class EmailVerificationScreen extends StatelessWidget {
                   width: screenSize.width * 0.95,
                   constraints: BoxConstraints(maxWidth: 400),
                   decoration: BoxDecoration(
-                    color: AppColors.backgroundLight,
+                    color: AppColors.backgroundWhite,
                     borderRadius: BorderRadius.circular(16.0),
                     boxShadow: [
                       BoxShadow(
@@ -70,6 +75,9 @@ class EmailVerificationScreen extends StatelessWidget {
                         ),
                         VerificationWidgetBuilder.buildMobileBody(
                           email: maskedEmail,
+                          onPressed: () {
+                            context.push('/rider/verification');
+                          },
                         ),
                         const SizedBox(height: 35.0),
                       ],
@@ -86,7 +94,7 @@ class EmailVerificationScreen extends StatelessWidget {
 
   Widget _buildWebLayout(Size screenSize, String maskedEmail) {
     return Scaffold(
-      backgroundColor: AppColors.backgroundLight,
+      backgroundColor: AppColors.backgroundWhite,
       body: SafeArea(
         child: Stack(
           children: [
@@ -104,7 +112,7 @@ class EmailVerificationScreen extends StatelessWidget {
                   width: screenSize.width * 0.95,
                   constraints: BoxConstraints(maxWidth: 1005),
                   decoration: BoxDecoration(
-                    color: AppColors.backgroundLight,
+                    color: AppColors.backgroundWhite,
                     borderRadius: BorderRadius.circular(16.0),
                     boxShadow: [
                       BoxShadow(

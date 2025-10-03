@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../../../../core/constants/app_colors.dart';
+import '../../../../../core/local/local_storage_service.dart';
 import '../../../../../gen/assets.gen.dart';
 import '../../../../../shared/widgets/custom_button.dart';
 
@@ -13,12 +16,14 @@ class RiderCreationSuccessfulScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final screenSize = MediaQuery.of(context).size;
     final isWeb = MediaQuery.of(context).size.width > 600;
-    return isWeb ? _buildWebLayout(screenSize) : _buildMobileLayout(screenSize);
+    return isWeb
+        ? _buildWebLayout(screenSize, context)
+        : _buildMobileLayout(screenSize, context);
   }
 
-  Widget _buildMobileLayout(Size screenSize) {
+  Widget _buildMobileLayout(Size screenSize, BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.backgroundLight,
+      backgroundColor: AppColors.backgroundWhite,
       body: SafeArea(
         child: Stack(
           children: [
@@ -36,7 +41,7 @@ class RiderCreationSuccessfulScreen extends StatelessWidget {
                   width: screenSize.width * 0.95,
                   constraints: BoxConstraints(maxWidth: 400),
                   decoration: BoxDecoration(
-                    color: AppColors.backgroundLight,
+                    color: AppColors.backgroundWhite,
                     borderRadius: BorderRadius.circular(16.0),
                     boxShadow: [
                       BoxShadow(
@@ -68,7 +73,7 @@ class RiderCreationSuccessfulScreen extends StatelessWidget {
                           fontWeight1: FontWeight.w700,
                           fontWeight2: FontWeight.w500,
                           fontSize2: 14,
-                          buttonWidth: 350.0,
+                          context: context,
                         ),
                       ],
                     ),
@@ -82,9 +87,9 @@ class RiderCreationSuccessfulScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildWebLayout(Size screenSize) {
+  Widget _buildWebLayout(Size screenSize, BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.backgroundLight,
+      backgroundColor: AppColors.backgroundWhite,
       body: SafeArea(
         child: Stack(
           children: [
@@ -102,7 +107,7 @@ class RiderCreationSuccessfulScreen extends StatelessWidget {
                   width: screenSize.width * 0.95,
                   constraints: BoxConstraints(maxWidth: 1005),
                   decoration: BoxDecoration(
-                    color: AppColors.backgroundLight,
+                    color: AppColors.backgroundWhite,
                     borderRadius: BorderRadius.circular(16.0),
                     boxShadow: [
                       BoxShadow(
@@ -129,8 +134,8 @@ class RiderCreationSuccessfulScreen extends StatelessWidget {
                           fontWeight1: FontWeight.w600,
                           fontWeight2: FontWeight.w400,
                           fontSize2: 24,
-                          buttonWidth: 670.0,
                           web: true,
+                          context: context,
                         ),
                         const SizedBox(height: 20.0),
                       ],
@@ -152,7 +157,7 @@ class RiderCreationSuccessfulScreen extends StatelessWidget {
     required FontWeight fontWeight1,
     required FontWeight fontWeight2,
     required double fontSize2,
-    required double buttonWidth,
+    required BuildContext context,
     bool web = false,
   }) {
     return SizedBox(
@@ -191,14 +196,20 @@ class RiderCreationSuccessfulScreen extends StatelessWidget {
           ],
           CustomButton(
             text: 'Continue',
-            onPressed: () {},
+            onPressed: () async {
+              final prefs = await SharedPreferences.getInstance();
+              final storage = LocalStorageService(prefs);
+              await storage.setAccountCreationCompleted();
+              if (!context.mounted) return;
+              context.go('/login');
+            },
             fontSize: 18,
             fontWeight: FontWeight.w500,
             borderRadius: 6.0,
             height: 50,
             textColor: AppColors.textWhite,
             buttonColor: AppColors.primaryDarkGreen,
-            width: buttonWidth,
+            width: double.infinity,
           ),
         ],
       ),

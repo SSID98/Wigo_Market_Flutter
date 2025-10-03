@@ -17,11 +17,11 @@ class VerificationWidgetBuilder {
     required FontWeight fontWeight1,
     required FontWeight fontWeight2,
     required double topPadding,
+    void Function()? onPressed,
     bottomPadding,
     horizontalPadding,
     double? buttonTextFontSize,
     required double footerTextFontSize,
-
     String? titleText,
     bodyText,
     textFieldLabel,
@@ -92,7 +92,7 @@ class VerificationWidgetBuilder {
         ),
         CustomButton(
           text: buttonText ?? 'Verify',
-          onPressed: () {},
+          onPressed: onPressed ?? () {},
           fontSize: buttonTextFontSize ?? 16,
           fontWeight: FontWeight.w500,
           borderRadius: 6.0,
@@ -145,6 +145,7 @@ class VerificationWidgetBuilder {
     buttonTextFontSize,
     FontWeight? labelTextFontWeight,
     showFooter = true,
+    void Function()? onPressed,
   }) => _buildBody(
     email: email,
     titleText: titleText,
@@ -170,6 +171,7 @@ class VerificationWidgetBuilder {
     buttonTextFontSize: buttonTextFontSize,
     footerTextFontSize: 12.0,
     horizontalPadding: 0.0,
+    onPressed: onPressed,
   );
 
   static Widget buildWebBody({
@@ -186,6 +188,7 @@ class VerificationWidgetBuilder {
     double? hintTextSize,
     FontWeight? labelTextFontWeight,
     showFooter = true,
+    void Function()? onPressed,
   }) => _buildBody(
     email: email,
     titleText: titleText,
@@ -211,5 +214,6 @@ class VerificationWidgetBuilder {
     buttonTextFontSize: 18.0,
     footerTextFontSize: 14.0,
     horizontalPadding: 65.0,
+    onPressed: onPressed,
   );
 }

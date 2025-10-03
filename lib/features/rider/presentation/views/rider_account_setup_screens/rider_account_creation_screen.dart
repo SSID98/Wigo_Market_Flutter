@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:wigo_flutter/core/constants/app_colors.dart';
 import 'package:wigo_flutter/features/rider/presentation/widgets/rider_forms_field.dart';
@@ -12,14 +13,22 @@ class RiderAccountCreationScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final screenSize = MediaQuery.of(context).size;
-    final isWeb = MediaQuery.of(context).size.width > 600;
-    return isWeb ? _buildWebLayout(screenSize) : _buildMobileLayout(screenSize);
+    final screenSize = MediaQuery
+        .of(context)
+        .size;
+    final isWeb = MediaQuery
+        .of(context)
+        .size
+        .width > 600;
+    return isWeb
+        ? _buildWebLayout(screenSize)
+        : _buildMobileLayout(screenSize, context);
   }
 
-  Widget _buildMobileLayout(Size screenSize) {
+  Widget _buildMobileLayout(Size screenSize, BuildContext context) {
     return SafeArea(
       child: Scaffold(
+        backgroundColor: AppColors.backgroundWhite,
         body: Stack(
           children: [
             Image.asset(
@@ -37,7 +46,7 @@ class RiderAccountCreationScreen extends ConsumerWidget {
                   width: screenSize.width * 0.95,
                   constraints: BoxConstraints(maxWidth: 400),
                   decoration: BoxDecoration(
-                    color: AppColors.backgroundLight,
+                    color: AppColors.backgroundWhite,
                     borderRadius: BorderRadius.circular(16.0),
                     boxShadow: [
                       BoxShadow(
@@ -48,27 +57,33 @@ class RiderAccountCreationScreen extends ConsumerWidget {
                       ),
                     ],
                   ),
-                  child: SingleChildScrollView(
-                    padding: const EdgeInsets.all(16),
+                  child: Padding(
+                    padding: const EdgeInsets.all(16.0),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         const SizedBox(height: 5),
                         _buildHeader(20.0, 14.0, 18.0, 12.0, 0.0),
                         const Divider(thickness: 1.3),
-                        RiderFormFields(
-                          iconHeight: 20,
-                          iconWidth: 20,
-                          hintFontSize: 11,
+                        Expanded(
+                          child: SingleChildScrollView(
+                            child: RiderFormFields(
+                              iconHeight: 20,
+                              iconWidth: 20,
+                              hintFontSize: 11,
+                            ),
+                          ),
                         ),
                         const SizedBox(height: 24),
                         Center(
                           child: CustomButton(
                             text: 'Continue',
-                            onPressed: () {},
+                            onPressed: () {
+                              context.push('/verification');
+                            },
                             fontSize: 18,
                             fontWeight: FontWeight.w500,
-                            width: 380,
+                            width: double.infinity,
                             height: 50,
                             borderRadius: 6.0,
                           ),
@@ -104,7 +119,7 @@ class RiderAccountCreationScreen extends ConsumerWidget {
                 height: screenSize.height * 0.85,
                 constraints: BoxConstraints(maxWidth: 1005),
                 decoration: BoxDecoration(
-                  color: AppColors.backgroundLight,
+                  color: AppColors.backgroundWhite,
                   borderRadius: BorderRadius.circular(16.0),
                   boxShadow: [
                     BoxShadow(
@@ -170,14 +185,13 @@ class RiderAccountCreationScreen extends ConsumerWidget {
     );
   }
 
-  Widget _buildHeader(
-    double fontSize1,
-    fontSize2,
-    fontSize3,
-    fontSize4,
-    headerPadding, {
-    bool web = false,
-  }) {
+  Widget _buildHeader(double fontSize1,
+      fontSize2,
+      fontSize3,
+      fontSize4,
+      headerPadding, {
+        bool web = false,
+      }) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -202,27 +216,28 @@ class RiderAccountCreationScreen extends ConsumerWidget {
                   style: GoogleFonts.hind(
                     fontWeight: FontWeight.w500,
                     fontSize: fontSize2,
-                    color: AppColors.textBodyText,
+                    color: AppColors.textBlackGrey,
                   ),
                 ),
               ),
               SizedBox(height: 19),
             ],
           )
-        else ...[
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 40),
-            child: Text(
-              textAlign: TextAlign.center,
-              "Let's get you set up to start delivering and earning with wiGO MARKET.",
-              style: GoogleFonts.hind(
-                fontWeight: FontWeight.w500,
-                fontSize: fontSize2,
-                color: AppColors.textBodyText,
+        else
+          ...[
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 40),
+              child: Text(
+                textAlign: TextAlign.center,
+                "Let's get you set up to start delivering and earning with wiGO MARKET.",
+                style: GoogleFonts.hind(
+                  fontWeight: FontWeight.w500,
+                  fontSize: fontSize2,
+                  color: AppColors.textBlackGrey,
+                ),
               ),
             ),
-          ),
-        ],
+          ],
         const SizedBox(height: 20),
         Padding(
           padding: EdgeInsets.symmetric(horizontal: headerPadding),
@@ -234,7 +249,7 @@ class RiderAccountCreationScreen extends ConsumerWidget {
                 style: GoogleFonts.hind(
                   fontWeight: FontWeight.w700,
                   fontSize: fontSize3,
-                  color: AppColors.textBodyText,
+                  color: AppColors.textBlackGrey,
                 ),
               ),
               const SizedBox(height: 12),
@@ -243,7 +258,7 @@ class RiderAccountCreationScreen extends ConsumerWidget {
                 style: GoogleFonts.hind(
                   fontWeight: FontWeight.w500,
                   fontSize: fontSize4,
-                  color: AppColors.textBodyText,
+                  color: AppColors.textBlackGrey,
                 ),
               ),
             ],

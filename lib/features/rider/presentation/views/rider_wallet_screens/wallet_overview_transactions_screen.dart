@@ -5,6 +5,8 @@ import 'package:wigo_flutter/features/rider/presentation/widgets/dashboard_scree
 import 'package:wigo_flutter/features/rider/viewmodels/wallet_overview_transaction_viewmodel.dart';
 
 import '../../../../../core/constants/app_colors.dart';
+import '../../../../../gen/assets.gen.dart';
+import '../../../../../shared/widgets/custom_button.dart';
 import '../../../../../shared/widgets/custom_search_field.dart';
 import '../../../../../shared/widgets/custom_text_field.dart';
 import '../../../../../shared/widgets/dashboard_widgets/delivery_table.dart';
@@ -96,82 +98,122 @@ class WalletOverviewAndTransactionsScreen extends ConsumerWidget {
               ),
             ),
             const SizedBox(height: 10),
-            SingleChildScrollView(
-              scrollDirection: Axis.horizontal,
-              child: Row(
-                children: [
-                  SizedBox(
-                    width: isWeb ? 294 : 225,
-                    child: CustomSearchField(
-                      hintText: 'Search by order ID or Dates...',
-                      backgroundColor: Colors.transparent,
-                      padding: 10,
-                      height: 37,
-                    ),
-                  ),
-                  const SizedBox(width: 50),
-                  SizedBox(
-                    width: isWeb ? 92 : 79,
-                    child: CustomDropdownField(
-                      radius: 4,
-                      colorFilter: ColorFilter.mode(
-                        AppColors.primaryDarkGreen,
-                        BlendMode.srcIn,
+            if (deliveries.isEmpty)
+              Padding(
+                padding: EdgeInsets.symmetric(horizontal: isWeb ? 350 : 40),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    AppAssets.icons.recentDeliveries.svg(),
+                    const SizedBox(height: 10.0),
+                    Text(
+                      "No Active Deliveries yet",
+                      style: GoogleFonts.hind(
+                        fontWeight: FontWeight.w600,
+                        fontSize: 18,
+                        color: AppColors.textBlackGrey,
                       ),
-                      itemTextColor: AppColors.primaryDarkGreen,
-                      fillColor: Colors.transparent,
-                      enabledBorderColor: AppColors.primaryDarkGreen,
-                      focusedBorderColor: AppColors.primaryDarkGreen,
-                      hintFontSize: isWeb ? 14 : 12,
-                      hintTextColor: AppColors.primaryDarkGreen,
-                      height: 37,
-                      iconHeight: 14,
-                      iconWidth: 14,
-                      itemsFontSize: isWeb ? 14 : 12,
-                      hintText: 'Month',
-                      items: const [
-                        'Month',
-                        'January',
-                        'February',
-                        'March',
-                        'April',
-                        'May',
-                        'June',
-                        'July',
-                        'August',
-                        'September',
-                        'October',
-                        'November',
-                        'December',
-                      ],
                     ),
-                  ),
-                  const SizedBox(width: 10),
-                  SizedBox(
-                    width: isWeb ? 92 : 72,
-                    child: CustomDropdownField(
-                      radius: 4,
-                      colorFilter: ColorFilter.mode(
-                        AppColors.primaryDarkGreen,
-                        BlendMode.srcIn,
+                    const SizedBox(height: 8.0),
+                    Text(
+                      'Your recent deliveries will show up here once you start accepting orders. Stay ready, opportunities are always around the corner!',
+                      textAlign: TextAlign.center,
+                      style: GoogleFonts.hind(
+                        fontWeight: FontWeight.w400,
+                        fontSize: 14,
+                        color: AppColors.textBodyText,
                       ),
-                      itemTextColor: AppColors.primaryDarkGreen,
-                      itemsFontSize: isWeb ? 14 : 12,
-                      fillColor: Colors.transparent,
-                      enabledBorderColor: AppColors.primaryDarkGreen,
-                      focusedBorderColor: AppColors.primaryDarkGreen,
-                      hintFontSize: isWeb ? 14 : 12,
-                      hintTextColor: AppColors.primaryDarkGreen,
-                      height: 37,
-                      iconHeight: 14,
-                      iconWidth: 14,
-                      hintText: 'Year',
-                      items: const ['Year', '2024', '2023', '2022'],
                     ),
-                  ),
-                ],
+                    const SizedBox(height: 25.0),
+                    CustomButton(
+                      text: 'View Active Deliveries',
+                      onPressed: () {},
+                      fontSize: 16.0,
+                      fontWeight: FontWeight.w500,
+                      height: 36.0,
+                      padding: EdgeInsets.zero,
+                      width: 251,
+                    ),
+                  ],
+                ),
+              )
+            else
+              SingleChildScrollView(
+                scrollDirection: Axis.horizontal,
+                child: Row(
+                  children: [
+                    SizedBox(
+                      width: isWeb ? 294 : 225,
+                      child: CustomSearchField(
+                        hintText: 'Search by order ID or Dates...',
+                        backgroundColor: Colors.transparent,
+                        padding: 10,
+                        height: 37,
+                      ),
+                    ),
+                    const SizedBox(width: 50),
+                    SizedBox(
+                      width: isWeb ? 92 : 79,
+                      child: CustomDropdownField(
+                        radius: 4,
+                        colorFilter: ColorFilter.mode(
+                          AppColors.primaryDarkGreen,
+                          BlendMode.srcIn,
+                        ),
+                        itemTextColor: AppColors.primaryDarkGreen,
+                        fillColor: Colors.transparent,
+                        enabledBorderColor: AppColors.primaryDarkGreen,
+                        focusedBorderColor: AppColors.primaryDarkGreen,
+                        hintFontSize: isWeb ? 14 : 12,
+                        hintTextColor: AppColors.primaryDarkGreen,
+                        height: 37,
+                        iconHeight: 14,
+                        iconWidth: 14,
+                        itemsFontSize: isWeb ? 14 : 12,
+                        hintText: 'Month',
+                        items: const [
+                          'Month',
+                          'January',
+                          'February',
+                          'March',
+                          'April',
+                          'May',
+                          'June',
+                          'July',
+                          'August',
+                          'September',
+                          'October',
+                          'November',
+                          'December',
+                        ],
+                      ),
+                    ),
+                    const SizedBox(width: 10),
+                    SizedBox(
+                      width: isWeb ? 92 : 72,
+                      child: CustomDropdownField(
+                        radius: 4,
+                        colorFilter: ColorFilter.mode(
+                          AppColors.primaryDarkGreen,
+                          BlendMode.srcIn,
+                        ),
+                        itemTextColor: AppColors.primaryDarkGreen,
+                        itemsFontSize: isWeb ? 14 : 12,
+                        fillColor: Colors.transparent,
+                        enabledBorderColor: AppColors.primaryDarkGreen,
+                        focusedBorderColor: AppColors.primaryDarkGreen,
+                        hintFontSize: isWeb ? 14 : 12,
+                        hintTextColor: AppColors.primaryDarkGreen,
+                        height: 37,
+                        iconHeight: 14,
+                        iconWidth: 14,
+                        hintText: 'Year',
+                        items: const ['Year', '2024', '2023', '2022'],
+                      ),
+                    ),
+                  ],
+                ),
               ),
-            ),
             const SizedBox(height: 10),
             SizedBox(
               height: 400,

@@ -28,7 +28,7 @@ class RiderOnboardingScreen extends ConsumerWidget {
     Size screenSize,
   ) {
     return Scaffold(
-      backgroundColor: AppColors.backgroundLight,
+      backgroundColor: AppColors.backgroundWhite,
       body: SafeArea(
         child: Stack(
           children: [
@@ -46,7 +46,7 @@ class RiderOnboardingScreen extends ConsumerWidget {
                   width: screenSize.width * 0.95,
                   constraints: BoxConstraints(maxWidth: 400),
                   decoration: BoxDecoration(
-                    color: AppColors.backgroundLight,
+                    color: AppColors.backgroundWhite,
                     borderRadius: BorderRadius.circular(16.0),
                     boxShadow: [
                       BoxShadow(
@@ -57,40 +57,43 @@ class RiderOnboardingScreen extends ConsumerWidget {
                       ),
                     ],
                   ),
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Padding(
-                        padding: const EdgeInsets.only(top: 30.0),
-                        child: SvgPicture.asset(
-                          AppAssets.icons.logo.path,
-                          height: 49,
-                          width: 143.86,
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.only(top: 30.0),
+                          child: SvgPicture.asset(
+                            AppAssets.icons.logo.path,
+                            height: 49,
+                            width: 143.86,
+                          ),
                         ),
-                      ),
-                      RiderOnboardingPageView(
-                        screenSize: screenSize.height * 0.37,
-                        titleFontSize: 16,
-                        titleColor: AppColors.textBodyText,
-                        imageWidth: 141,
-                        imageHeight: 117,
-                        dotHeight: 5,
-                        dotWidth: 5,
-                        expansionFactor: 6.5,
-                        padding: 60.0,
-                        descriptionFontSize: 14,
-                      ),
-                      CustomButton(
-                        text: 'Next',
-                        onPressed: viewModel.nextPage,
-                        fontSize: 16,
-                        fontWeight: FontWeight.w500,
-                        borderRadius: 6.0,
-                        height: 49,
-                        width: 360,
-                      ),
-                      const SizedBox(height: 65.0),
-                    ],
+                        RiderOnboardingPageView(
+                          screenSize: screenSize.height * 0.37,
+                          titleFontSize: 16,
+                          titleColor: AppColors.textBlackGrey,
+                          imageWidth: 141,
+                          imageHeight: 117,
+                          dotHeight: 5,
+                          dotWidth: 5,
+                          expansionFactor: 6.5,
+                          padding: 40.0,
+                          descriptionFontSize: 14,
+                        ),
+                        CustomButton(
+                          text: 'Next',
+                          onPressed: () => viewModel.nextPage(context),
+                          fontSize: 16,
+                          fontWeight: FontWeight.w500,
+                          borderRadius: 6.0,
+                          height: 48,
+                          width: double.infinity,
+                        ),
+                        const SizedBox(height: 65.0),
+                      ],
+                    ),
                   ),
                 ),
               ),
@@ -107,7 +110,7 @@ class RiderOnboardingScreen extends ConsumerWidget {
     Size screenSize,
   ) {
     return Scaffold(
-      backgroundColor: AppColors.backgroundLight,
+      backgroundColor: AppColors.backgroundWhite,
       body: SafeArea(
         child: Stack(
           children: [
@@ -125,7 +128,7 @@ class RiderOnboardingScreen extends ConsumerWidget {
                   width: screenSize.width * 0.95,
                   constraints: BoxConstraints(maxWidth: 1005),
                   decoration: BoxDecoration(
-                    color: AppColors.backgroundLight,
+                    color: AppColors.backgroundWhite,
                     borderRadius: BorderRadius.circular(16.0),
                     boxShadow: [
                       BoxShadow(
@@ -153,7 +156,7 @@ class RiderOnboardingScreen extends ConsumerWidget {
                       ),
                       CustomButton(
                         text: 'Next',
-                        onPressed: viewModel.nextPage,
+                        onPressed: () => viewModel.nextPage(context),
                         fontSize: 18,
                         fontWeight: FontWeight.w500,
                         borderRadius: 6.0,

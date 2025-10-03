@@ -87,7 +87,7 @@ class DeliveryTable extends StatelessWidget {
                   ),
                 ),
                 SizedBox(
-                  width: isWeb ? 170.0 : 120.0,
+                  width: isWeb ? 200.0 : 150.0,
                   child: Text(
                     "Customer",
                     style: _getStyle(
@@ -182,7 +182,7 @@ class DeliveryTable extends StatelessWidget {
                     ),
                   ),
                   SizedBox(
-                    width: isWeb ? 170.0 : 120.0,
+                    width: isWeb ? 200.0 : 150.0,
                     child: Text(
                       d.customerName,
                       style: _getStyle(

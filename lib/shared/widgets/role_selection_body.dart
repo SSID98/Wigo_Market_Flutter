@@ -41,7 +41,7 @@ class RoleSelectionBody extends ConsumerWidget {
             textAlign: TextAlign.center,
             style: GoogleFonts.hind(
               textStyle: TextStyle(
-                color: AppColors.textBodyText,
+                color: AppColors.textBlackGrey,
                 fontSize: textFontSize,
                 fontWeight: FontWeight.w600,
               ),

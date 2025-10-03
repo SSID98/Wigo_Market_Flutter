@@ -1,5 +1,9 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+
+import '../../../core/local/local_storage_service.dart';
 
 class RiderOnboardingViewModel extends ChangeNotifier {
   final PageController pageController = PageController();
@@ -10,23 +14,29 @@ class RiderOnboardingViewModel extends ChangeNotifier {
       'image': 'assets/images/onboarding1.png',
       'title': 'Earn Easily with WIGOMARKET',
       'description':
-          'Join a trusted network of campus riders helping students and vendors deliver fast, safe, and on time within your campus.',
+      'Join a trusted network of campus riders helping students and vendors deliver fast, safe, and on time within your campus.',
     },
     {
       'image': 'assets/images/onboarding2.png',
       'title': 'Here’s What to Expect',
       'description':
-          'Get delivery requests, pick up from vendors, and earn directly into your bank account, all while staying active on campus.',
+      'Get delivery requests, pick up from vendors, and earn directly into your bank account, all while staying active on campus.',
     },
   ];
 
-  void nextPage() {
+  Future<void> nextPage(BuildContext context) async {
     if (currentPage < onboardingData.length - 1) {
       pageController.nextPage(
         duration: Duration(milliseconds: 300),
         curve: Curves.easeInOut,
       );
-    } else {}
+    } else {
+      final prefs = await SharedPreferences.getInstance();
+      final storage = LocalStorageService(prefs);
+      await storage.setOnboardingCompleted();
+      if (!context.mounted) return;
+      context.go('/rider/account');
+    }
   }
 
   void onPageChanged(int index) {
@@ -36,5 +46,5 @@ class RiderOnboardingViewModel extends ChangeNotifier {
 }
 
 final riderOnboardingViewModelProvider = ChangeNotifierProvider(
-  (ref) => RiderOnboardingViewModel(),
+      (ref) => RiderOnboardingViewModel(),
 );

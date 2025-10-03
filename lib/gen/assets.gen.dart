@@ -17,6 +17,10 @@ import 'package:vector_graphics/vector_graphics.dart' as _vg;
 class $AssetsIconsGen {
   const $AssetsIconsGen();
 
+  /// File path: assets/icons/actionFailed.svg
+  SvgGenImage get actionFailed =>
+      const SvgGenImage('assets/icons/actionFailed.svg');
+
   /// File path: assets/icons/arrowDown.svg
   SvgGenImage get arrowDown => const SvgGenImage('assets/icons/arrowDown.svg');
 
@@ -95,6 +99,10 @@ class $AssetsIconsGen {
   /// File path: assets/icons/deliveryContact.svg
   SvgGenImage get deliveryContact =>
       const SvgGenImage('assets/icons/deliveryContact.svg');
+
+  /// File path: assets/icons/doubleTickOrange.svg
+  SvgGenImage get doubleTickOrange =>
+      const SvgGenImage('assets/icons/doubleTickOrange.svg');
 
   /// File path: assets/icons/doubleTickSuccessful.svg
   SvgGenImage get doubleTickSuccessful =>
@@ -178,6 +186,9 @@ class $AssetsIconsGen {
 
   /// File path: assets/icons/motorbike.svg
   SvgGenImage get motorbike => const SvgGenImage('assets/icons/motorbike.svg');
+
+  /// File path: assets/icons/naira.svg
+  SvgGenImage get naira => const SvgGenImage('assets/icons/naira.svg');
 
   /// File path: assets/icons/newRequest.svg
   SvgGenImage get newRequest =>
@@ -298,6 +309,7 @@ class $AssetsIconsGen {
 
   /// List of all assets
   List<SvgGenImage> get values => [
+    actionFailed,
     arrowDown,
     arrowLeft,
     arrowRight,
@@ -321,6 +333,7 @@ class $AssetsIconsGen {
     defaultContainer,
     delivered,
     deliveryContact,
+    doubleTickOrange,
     doubleTickSuccessful,
     download,
     earningHistory,
@@ -346,6 +359,7 @@ class $AssetsIconsGen {
     mobileSearch,
     moneyBag,
     motorbike,
+    naira,
     newRequest,
     noDeliveryTask,
     note,

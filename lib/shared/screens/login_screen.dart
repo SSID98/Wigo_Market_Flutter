@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:wigo_flutter/core/utils/validation_utils.dart';
 import 'package:wigo_flutter/shared/widgets/login_reset_password_body.dart';
@@ -57,7 +58,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                   width: screenSize.width * 0.95,
                   constraints: BoxConstraints(maxWidth: 400),
                   decoration: BoxDecoration(
-                    color: AppColors.backgroundLight,
+                    color: AppColors.backgroundWhite,
                     borderRadius: BorderRadius.circular(16.0),
                   ),
                   child: Padding(
@@ -119,7 +120,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                               _emailHasError = emailHasError != null;
                               _passwordHasError = passwordHasError != null;
                             });
-                            vm.login(formKey);
+                            vm.login(formKey, context);
                           },
                           formKey: formKey,
                           fieldKey1: emailFieldKey,
@@ -165,7 +166,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
               // Left section: Image and Bottom Text
               Expanded(
                 child: Container(
-                  color: AppColors.backgroundLight,
+                  color: AppColors.backgroundWhite,
                   child: Center(
                     child: Container(
                       width: webContentWidth,
@@ -215,7 +216,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                             maxHeight: screenSize.height * 0.70,
                           ),
                           decoration: BoxDecoration(
-                            color: AppColors.backgroundLight,
+                            color: AppColors.backgroundWhite,
                             borderRadius: BorderRadius.circular(16.0),
                           ),
                           child: SingleChildScrollView(
@@ -270,7 +271,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                                       _passwordHasError =
                                           passwordHasError != null;
                                     });
-                                    vm.login(formKey);
+                                    vm.login(formKey, context);
                                   },
                                   validator: FormValidators.validateEmail,
                                   formKey: formKey,
@@ -320,7 +321,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                 style: GoogleFonts.hind(
                   fontSize: orSignupFont,
                   fontWeight: FontWeight.w500,
-                  color: AppColors.textBodyText,
+                  color: AppColors.textBlackGrey,
                 ),
               ),
             ),
@@ -331,46 +332,55 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: [
-            CustomButton(
-              text: 'Google',
-              onPressed: () {},
-              fontSize: 16,
-              fontWeight: FontWeight.w500,
-              borderRadius: 6.0,
-              height: 50,
-              width: buttonWidth,
-              prefixIcon: AppAssets.icons.google.svg(),
-              textColor: AppColors.textBodyText,
-              buttonColor: AppColors.buttonLighterGreen,
-              borderColor: AppColors.buttonLightGreen,
-              borderWidth: 1,
+            Expanded(
+              child: CustomButton(
+                text: 'Google',
+                onPressed: () {},
+                fontSize: 16,
+                fontWeight: FontWeight.w500,
+                borderRadius: 6.0,
+                height: 50,
+                width: double.infinity,
+                prefixIcon: AppAssets.icons.google.svg(),
+                textColor: AppColors.textBlackGrey,
+                buttonColor: AppColors.buttonLighterGreen,
+                borderColor: AppColors.buttonLightGreen,
+                borderWidth: 1,
+              ),
             ),
-            const SizedBox(width: 10.0),
-            CustomButton(
-              text: 'Facebook',
-              onPressed: () {},
-              fontSize: 16,
-              fontWeight: FontWeight.w500,
-              borderRadius: 6.0,
-              height: 50,
-              width: buttonWidth,
-              prefixIcon: AppAssets.icons.facebook.svg(),
-              textColor: AppColors.textBodyText,
-              buttonColor: AppColors.buttonLighterGreen,
-              borderColor: AppColors.buttonLightGreen,
-              borderWidth: 1,
+            const SizedBox(width: 15.0),
+            Expanded(
+              child: CustomButton(
+                text: 'Facebook',
+                onPressed: () {},
+                fontSize: 16,
+                fontWeight: FontWeight.w500,
+                borderRadius: 6.0,
+                height: 50,
+                width: double.infinity,
+                prefixIcon: AppAssets.icons.facebook.svg(),
+                textColor: AppColors.textBlackGrey,
+                buttonColor: AppColors.buttonLighterGreen,
+                borderColor: AppColors.buttonLightGreen,
+                borderWidth: 1,
+              ),
             ),
           ],
         ),
         SizedBox(height: sizedBoxHeight2 ?? 15.0),
         Padding(
           padding: const EdgeInsets.only(bottom: 60.0),
-          child: Text(
-            "Forgot Password?",
-            style: GoogleFonts.hind(
-              fontSize: footerTextFontSize,
-              fontWeight: FontWeight.w400,
-              color: AppColors.textOrange,
+          child: InkWell(
+            onTap: () {
+              context.push('/resetPassword/enterEmail');
+            },
+            child: Text(
+              "Forgot Password?",
+              style: GoogleFonts.hind(
+                fontSize: footerTextFontSize,
+                fontWeight: FontWeight.w400,
+                color: AppColors.textOrange,
+              ),
             ),
           ),
         ),

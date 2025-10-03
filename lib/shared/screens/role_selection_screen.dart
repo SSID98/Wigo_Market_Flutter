@@ -35,7 +35,7 @@ class RoleSelectionScreen extends ConsumerWidget {
                   maxHeight: screenSize.height * 0.8,
                 ),
                 decoration: BoxDecoration(
-                  color: AppColors.backgroundLight,
+                  color: AppColors.backgroundWhite,
                   borderRadius: BorderRadius.circular(16.0),
                 ),
                 child: Padding(

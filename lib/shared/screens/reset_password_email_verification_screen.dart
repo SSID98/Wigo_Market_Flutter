@@ -1,6 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:go_router/go_router.dart';
 import 'package:wigo_flutter/shared/widgets/bottom_text.dart';
 
 import '../../core/constants/app_colors.dart';
@@ -21,11 +22,15 @@ class ResetPasswordEmailVerificationScreen extends StatelessWidget {
     final isWeb = MediaQuery.of(context).size.width > 600;
     return isWeb
         ? _buildWebLayout(screenSize, maskedEmail)
-        : _buildMobileLayout(screenSize, maskedEmail);
+        : _buildMobileLayout(screenSize, maskedEmail, context);
   }
 
   //Mobile Layout
-  Widget _buildMobileLayout(Size screenSize, String maskedEmail) {
+  Widget _buildMobileLayout(
+    Size screenSize,
+    String maskedEmail,
+    BuildContext context,
+  ) {
     return SafeArea(
       child: Scaffold(
         body: Stack(
@@ -39,7 +44,7 @@ class ResetPasswordEmailVerificationScreen extends StatelessWidget {
                   width: screenSize.width * 0.95,
                   constraints: BoxConstraints(maxWidth: 400),
                   decoration: BoxDecoration(
-                    color: AppColors.backgroundLight,
+                    color: AppColors.backgroundWhite,
                     borderRadius: BorderRadius.circular(16.0),
                   ),
                   child: Padding(
@@ -58,6 +63,9 @@ class ResetPasswordEmailVerificationScreen extends StatelessWidget {
                         const SizedBox(height: 5.0),
                         VerificationWidgetBuilder.buildMobileBody(
                           email: maskedEmail,
+                          onPressed: () {
+                            context.go('/changePassword');
+                          },
                         ),
                         const SizedBox(height: 33),
                       ],
@@ -89,7 +97,7 @@ class ResetPasswordEmailVerificationScreen extends StatelessWidget {
               // Left section: Image and Bottom Text
               Expanded(
                 child: Container(
-                  color: AppColors.backgroundLight,
+                  color: AppColors.backgroundWhite,
                   child: Center(
                     child: Container(
                       width: webContentWidth,
@@ -139,7 +147,7 @@ class ResetPasswordEmailVerificationScreen extends StatelessWidget {
                             maxHeight: screenSize.height * 0.70,
                           ),
                           decoration: BoxDecoration(
-                            color: AppColors.backgroundLight,
+                            color: AppColors.backgroundWhite,
                             borderRadius: BorderRadius.circular(16.0),
                           ),
                           child: SingleChildScrollView(

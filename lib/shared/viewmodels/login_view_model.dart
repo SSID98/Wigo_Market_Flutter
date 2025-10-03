@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 
 import 'login_state.dart';
 
@@ -24,14 +25,14 @@ class LoginViewModel extends StateNotifier<LoginState> {
     state = state.copyWith(isLoading: isLoading);
   }
 
-  Future<void> login(GlobalKey<FormState> formKey) async {
+  Future<void> login(GlobalKey<FormState> formKey, BuildContext context) async {
     if (formKey.currentState!.validate()) {
       if (!state.agreeToTerms) {
         state = state.copyWith(generalError: 'You must agree to the terms.');
         return;
       }
       setLoading(true);
-
+      context.push('/riderMainScreen');
       await Future.delayed(const Duration(milliseconds: 500));
       setLoading(false);
       debugPrint("Email: $state.email");

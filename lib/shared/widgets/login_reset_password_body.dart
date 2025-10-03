@@ -125,7 +125,7 @@ class LoginResetPasswordWidgetBuilder {
                               style: GoogleFonts.hind(
                                 fontSize: termsFont,
                                 fontWeight: FontWeight.w400,
-                                color: AppColors.textBodyText,
+                                color: AppColors.textBlackGrey,
                               ),
                             ),
                             TextSpan(
@@ -146,7 +146,7 @@ class LoginResetPasswordWidgetBuilder {
                               style: GoogleFonts.hind(
                                 fontSize: termsFont,
                                 fontWeight: FontWeight.w400,
-                                color: AppColors.textBodyText,
+                                color: AppColors.textBlackGrey,
                               ),
                             ),
                             TextSpan(

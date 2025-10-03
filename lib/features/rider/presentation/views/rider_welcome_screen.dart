@@ -45,7 +45,7 @@ class RiderWelcomeScreen extends StatelessWidget {
             height: contentContainerHeight,
             child: Container(
               constraints: BoxConstraints(),
-              decoration: BoxDecoration(color: AppColors.backgroundLight),
+              decoration: BoxDecoration(color: AppColors.backgroundWhite),
               child: Padding(
                 padding: const EdgeInsets.all(20.0),
                 child: Column(
@@ -80,7 +80,7 @@ class RiderWelcomeScreen extends StatelessWidget {
                       'Join hundreds of riders delivering items, food, and more fast, safe, and student-friendly. You’ll get delivery requests around your campus. Accept orders, track deliveries, and get paid weekly.',
                       style: GoogleFonts.hind(
                         textStyle: TextStyle(
-                          color: AppColors.textBodyText,
+                          color: AppColors.textBlackGrey,
                           fontSize: 14,
                           fontWeight: FontWeight.w400,
                         ),
@@ -98,8 +98,8 @@ class RiderWelcomeScreen extends StatelessWidget {
                       suffixIcon: AppAssets.icons.arrowRight.svg(),
                       iconWidth: 20,
                       iconHeight: 20,
-                      height: 56,
-                      width: 480,
+                      height: 49,
+                      width: double.infinity,
                     ),
                   ],
                 ),
@@ -164,7 +164,7 @@ class RiderWelcomeScreen extends StatelessWidget {
                                 'Join hundreds of riders delivering items, food, and more fast, safe, and student-friendly. You’ll get delivery requests around your campus. Accept orders, track deliveries, and get paid weekly.',
                                 style: GoogleFonts.hind(
                                   textStyle: TextStyle(
-                                    color: AppColors.textBodyText,
+                                    color: AppColors.textBlackGrey,
                                     fontSize: 19,
                                     fontWeight: FontWeight.w400,
                                   ),

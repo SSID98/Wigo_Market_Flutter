@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:wigo_flutter/gen/assets.gen.dart';
 
@@ -17,16 +18,17 @@ class RiderPaymentMethodSetupScreen extends ConsumerWidget {
     final screenSize = MediaQuery.of(context).size;
     final isWeb = MediaQuery.of(context).size.width > 600;
     return isWeb
-        ? _buildWebLayout(screenSize, viewModel)
-        : _buildMobileLayout(screenSize, viewModel);
+        ? _buildWebLayout(screenSize, viewModel, context)
+        : _buildMobileLayout(screenSize, viewModel, context);
   }
 
   Widget _buildMobileLayout(
     Size screenSize,
     RiderAccountSetupViewmodel viewModel,
+    BuildContext context,
   ) {
     return Scaffold(
-      backgroundColor: AppColors.backgroundLight,
+      backgroundColor: AppColors.backgroundWhite,
       body: SafeArea(
         child: Stack(
           children: [
@@ -43,7 +45,7 @@ class RiderPaymentMethodSetupScreen extends ConsumerWidget {
                   width: screenSize.width * 0.95,
                   constraints: BoxConstraints(maxWidth: 400),
                   decoration: BoxDecoration(
-                    color: AppColors.backgroundLight,
+                    color: AppColors.backgroundWhite,
                     borderRadius: BorderRadius.circular(16.0),
                     boxShadow: [
                       BoxShadow(
@@ -73,7 +75,7 @@ class RiderPaymentMethodSetupScreen extends ConsumerWidget {
                           fontSize2: 12.0,
                           viewModel: viewModel,
                         ),
-                        _buildFooter(buttonWidth: 350.0, viewModel: viewModel),
+                        _buildFooter(viewModel: viewModel, context: context),
                         const SizedBox(height: 15.0),
                       ],
                     ),
@@ -90,9 +92,10 @@ class RiderPaymentMethodSetupScreen extends ConsumerWidget {
   Widget _buildWebLayout(
     Size screenSize,
     RiderAccountSetupViewmodel viewModel,
+    BuildContext context,
   ) {
     return Scaffold(
-      backgroundColor: AppColors.backgroundLight,
+      backgroundColor: AppColors.backgroundWhite,
       body: SafeArea(
         child: Stack(
           children: [
@@ -109,7 +112,7 @@ class RiderPaymentMethodSetupScreen extends ConsumerWidget {
                   width: screenSize.width * 0.95,
                   constraints: BoxConstraints(maxWidth: 1005),
                   decoration: BoxDecoration(
-                    color: AppColors.backgroundLight,
+                    color: AppColors.backgroundWhite,
                     borderRadius: BorderRadius.circular(16.0),
                     boxShadow: [
                       BoxShadow(
@@ -148,9 +151,9 @@ class RiderPaymentMethodSetupScreen extends ConsumerWidget {
                         Padding(
                           padding: const EdgeInsets.symmetric(horizontal: 30.0),
                           child: _buildFooter(
-                            buttonWidth: 610.0,
                             web: true,
                             viewModel: viewModel,
+                            context: context,
                           ),
                         ),
                         const SizedBox(height: 20.0),
@@ -191,7 +194,7 @@ class RiderPaymentMethodSetupScreen extends ConsumerWidget {
             style: GoogleFonts.hind(
               fontSize: descriptionFontSize,
               fontWeight: FontWeight.w500,
-              color: AppColors.textBodyText,
+              color: AppColors.textBlackGrey,
             ),
           ),
         ),
@@ -270,22 +273,24 @@ class RiderPaymentMethodSetupScreen extends ConsumerWidget {
   }
 
   Widget _buildFooter({
-    required double buttonWidth,
     required RiderAccountSetupViewmodel viewModel,
     bool web = false,
+    required BuildContext context,
   }) {
     return Column(
       children: [
         CustomButton(
           text: 'Continue',
-          onPressed: () {},
+          onPressed: () {
+            context.go('/rider/successful');
+          },
           fontSize: 18,
           fontWeight: FontWeight.w500,
           borderRadius: 6.0,
           height: 50,
           textColor: AppColors.textWhite,
           buttonColor: AppColors.primaryDarkGreen,
-          width: buttonWidth,
+          width: double.infinity,
         ),
         CustomButton(
           text: 'Skip',

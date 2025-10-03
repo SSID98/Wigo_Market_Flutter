@@ -56,7 +56,7 @@ class _ChangePasswordScreenState extends ConsumerState<ChangePasswordScreen> {
                   width: screenSize.width * 0.95,
                   constraints: BoxConstraints(maxWidth: 400),
                   decoration: BoxDecoration(
-                    color: AppColors.backgroundLight,
+                    color: AppColors.backgroundWhite,
                     borderRadius: BorderRadius.circular(16.0),
                   ),
                   child: Padding(
@@ -128,7 +128,7 @@ class _ChangePasswordScreenState extends ConsumerState<ChangePasswordScreen> {
                               _confirmPasswordHasError =
                                   confirmPasswordHasError != null;
                             });
-                            vm.submit(formKey);
+                            vm.submit(formKey, context);
                           },
                           formKey: formKey,
                           fieldKey1: passwordFieldKey,
@@ -169,7 +169,7 @@ class _ChangePasswordScreenState extends ConsumerState<ChangePasswordScreen> {
               // Left section: Image and Bottom Text
               Expanded(
                 child: Container(
-                  color: AppColors.backgroundLight,
+                  color: AppColors.backgroundWhite,
                   child: Center(
                     child: Container(
                       width: webContentWidth,
@@ -219,7 +219,7 @@ class _ChangePasswordScreenState extends ConsumerState<ChangePasswordScreen> {
                             maxHeight: screenSize.height * 0.70,
                           ),
                           decoration: BoxDecoration(
-                            color: AppColors.backgroundLight,
+                            color: AppColors.backgroundWhite,
                             borderRadius: BorderRadius.circular(16.0),
                           ),
                           child: SingleChildScrollView(
@@ -287,7 +287,7 @@ class _ChangePasswordScreenState extends ConsumerState<ChangePasswordScreen> {
                                       _confirmPasswordHasError =
                                           confirmPasswordHasError != null;
                                     });
-                                    vm.submit(formKey);
+                                    vm.submit(formKey, context);
                                   },
                                   formKey: formKey,
                                   fieldKey1: passwordFieldKey,

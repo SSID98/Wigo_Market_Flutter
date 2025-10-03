@@ -61,7 +61,7 @@ class RoleCard extends StatelessWidget {
                       style: GoogleFonts.hind(
                         fontWeight: FontWeight.w600,
                         fontSize: titleTextSize,
-                        color: AppColors.textBodyText,
+                        color: AppColors.textBlackGrey,
                       ),
                     ),
                     const SizedBox(height: 6),
@@ -70,7 +70,7 @@ class RoleCard extends StatelessWidget {
                       style: GoogleFonts.hind(
                         fontWeight: FontWeight.w400,
                         fontSize: descriptionTextSize,
-                        color: AppColors.textBodyText,
+                        color: AppColors.textBlackGrey,
                       ),
                     ),
                   ],

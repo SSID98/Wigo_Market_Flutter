@@ -11,16 +11,19 @@ import 'package:wigo_flutter/shared/widgets/custom_text_field.dart';
 
 import '../../../../../gen/assets.gen.dart';
 import '../../../models/bank_details.dart';
+import '../../../models/wallet_state.dart';
 
 class EditBankAccountScreen extends ConsumerStatefulWidget {
   const EditBankAccountScreen({
     super.key,
     required this.isWeb,
     required this.bankDetails,
+    required this.returnToState,
   });
 
   final bool isWeb;
   final BankDetails bankDetails;
+  final WalletScreenState returnToState;
 
   @override
   ConsumerState<EditBankAccountScreen> createState() =>
@@ -73,7 +76,9 @@ class _EditBankAccountScreenState extends ConsumerState<EditBankAccountScreen> {
   }
 
   void _navigateBackToList() {
-    ref.read(editBankAccountProvider.notifier).cancelEditBankAccount();
+    ref
+        .read(editBankAccountProvider.notifier)
+        .setWalletScreenState(widget.returnToState);
   }
 
   void _saveChanges() {
@@ -97,6 +102,7 @@ class _EditBankAccountScreenState extends ConsumerState<EditBankAccountScreen> {
       newAccountHolderName: _accountNameController.text,
       newIsDefault: _isDefault,
       newPhoneNumber: _phoneNumberController.text,
+      returnToState: widget.returnToState,
     );
   }
 
@@ -205,7 +211,7 @@ class _EditBankAccountScreenState extends ConsumerState<EditBankAccountScreen> {
                                 onChanged: (v) {},
                                 height: isWeb ? 52 : 40,
                                 contentPadding: EdgeInsets.symmetric(
-                                  vertical: 15,
+                                  vertical: 10,
                                   horizontal: 10,
                                 ),
                                 focusedBorderColor: AppColors.borderColor,
@@ -223,7 +229,7 @@ class _EditBankAccountScreenState extends ConsumerState<EditBankAccountScreen> {
                                 onChanged: (v) {},
                                 height: isWeb ? 52 : 40,
                                 contentPadding: EdgeInsets.symmetric(
-                                  vertical: 15,
+                                  vertical: 10,
                                   horizontal: 10,
                                 ),
                                 focusedBorderColor: AppColors.borderColor,

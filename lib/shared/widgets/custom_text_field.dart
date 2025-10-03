@@ -26,9 +26,9 @@ class CustomTextField extends ConsumerStatefulWidget {
   final void Function(String)? onChanged;
   final void Function(bool)? onFocusChange;
   final bool hasError;
-  final EdgeInsetsGeometry? contentPadding;
+  final EdgeInsetsGeometry? contentPadding, prefixPadding;
   final FontWeight? labelFontWeight;
-  final double? height;
+  final double? height, spacing;
   final int? maxLength;
   final Color? enabledBorderColor, focusedBorderColor;
   final List<TextInputFormatter>? inputFormatters;
@@ -69,6 +69,8 @@ class CustomTextField extends ConsumerStatefulWidget {
     this.focusedBorderColor,
     this.enabledBorderColor,
     this.inputFormatters,
+    this.prefixPadding,
+    this.spacing,
   });
 
   @override
@@ -107,7 +109,7 @@ class _CustomTextFieldState extends ConsumerState<CustomTextField> {
             color: widget.labelTextColor ?? AppColors.textBlack,
           ),
         ),
-        const SizedBox(height: 4),
+        SizedBox(height: widget.spacing ?? 4),
         SizedBox(
           height: widget.height,
           child: Focus(
@@ -119,7 +121,7 @@ class _CustomTextFieldState extends ConsumerState<CustomTextField> {
                 fontSize: widget.fontSize ?? 14.0,
                 color: AppColors.textBlack,
               ),
-              cursorColor: AppColors.textBodyText,
+              cursorColor: AppColors.textBlackGrey,
               inputFormatters: widget.inputFormatters,
               key: widget.fieldKey,
               controller: widget.controller,
@@ -164,11 +166,13 @@ class _CustomTextFieldState extends ConsumerState<CustomTextField> {
                     (widget.prefixIcon != null ||
                             widget.optionalPrefixIcon != null)
                         ? Padding(
-                          padding: EdgeInsets.only(
-                            left: widget.prefixIconPadding ?? 17.0,
-                            right: 3.0,
-                            bottom: 1.9,
-                          ),
+                          padding:
+                              widget.prefixPadding ??
+                              EdgeInsets.only(
+                                left: widget.prefixIconPadding ?? 17.0,
+                                right: 3.0,
+                                bottom: 1.9,
+                              ),
                           child: Row(
                             mainAxisSize: MainAxisSize.min,
                             children: [
@@ -200,7 +204,7 @@ class _CustomTextFieldState extends ConsumerState<CustomTextField> {
                 helperStyle: GoogleFonts.hind(
                   fontWeight: FontWeight.w400,
                   fontSize: 15.12,
-                  color: AppColors.textBodyText,
+                  color: AppColors.textBlackGrey,
                 ),
                 suffixIcon:
                     widget.suffixIcon != null
@@ -313,7 +317,7 @@ class _CustomDropdownFieldState extends ConsumerState<CustomDropdownField> {
             style: GoogleFonts.hind(
               fontWeight: widget.labelFontWeight ?? FontWeight.w500,
               fontSize: widget.labelFontSize ?? 16.0,
-              color: widget.labelTextColor ?? AppColors.textBodyText,
+              color: widget.labelTextColor ?? AppColors.textBlack,
             ),
           ),
           const SizedBox(height: 4),

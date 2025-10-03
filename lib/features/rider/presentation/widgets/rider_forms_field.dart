@@ -37,6 +37,7 @@ class RiderFormFields extends ConsumerWidget {
           prefixIcon: AppAssets.icons.user.path,
           iconHeight: iconHeight,
           iconWidth: iconWidth,
+          hintTextColor: AppColors.textBodyText,
         ),
         spacing,
         CustomTextField(
@@ -45,6 +46,7 @@ class RiderFormFields extends ConsumerWidget {
           prefixIcon: AppAssets.icons.mail.path,
           iconHeight: iconHeight,
           iconWidth: iconWidth,
+          hintTextColor: AppColors.textBodyText,
         ),
         spacing,
         CustomTextField(
@@ -58,11 +60,18 @@ class RiderFormFields extends ConsumerWidget {
           iconHeight: iconHeight,
           iconWidth: iconWidth,
           suffixIcon: suffixIcon,
+          hintTextColor: AppColors.textBlackGrey,
         ),
         spacing,
-        CustomPhoneNumberField(label: 'Phone Number'),
+        CustomPhoneNumberField(
+          label: 'Phone Number',
+          contentPadding: EdgeInsets.only(top: 1),
+        ),
         spacing,
-        CustomPhoneNumberField(label: 'Next of Kin Contact'),
+        CustomPhoneNumberField(
+          label: 'Next of Kin Contact',
+          contentPadding: EdgeInsets.only(top: 1),
+        ),
         spacing,
         CustomDropdownField(
           label: 'Gender',
@@ -126,7 +135,6 @@ class RiderFormFields extends ConsumerWidget {
           ),
           spacing,
         ],
-        spacing,
         CustomDropdownField(
           label: 'Means of Transportation',
           items: const ['Motor Bike', 'Car'],

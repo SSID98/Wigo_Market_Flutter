@@ -15,6 +15,14 @@ class EditBankAccountViewModel extends StateNotifier<WalletState> {
         ),
       );
 
+  void navigateToWithdrawal() {
+    state = state.copyWith(walletScreenState: WalletScreenState.withdrawal);
+  }
+
+  void navigateToOverview() {
+    state = state.copyWith(walletScreenState: WalletScreenState.overview);
+  }
+
   void setWalletScreenState(WalletScreenState newState) {
     state = state.copyWith(walletScreenState: newState);
   }
@@ -27,9 +35,15 @@ class EditBankAccountViewModel extends StateNotifier<WalletState> {
   }
 
   void cancelEditBankAccount() {
+    // If we came from the withdrawal screen, go back there, otherwise go to addBankAccount
+    final targetState =
+        state.walletScreenState == WalletScreenState.editBankAccount
+            ? WalletScreenState.addBankAccount
+            : WalletScreenState.withdrawal;
+
     state = state.copyWith(
       selectedBankDetails: null,
-      walletScreenState: WalletScreenState.addBankAccount,
+      walletScreenState: targetState,
     );
   }
 
@@ -40,11 +54,11 @@ class EditBankAccountViewModel extends StateNotifier<WalletState> {
     required String newAccountHolderName,
     required String newPhoneNumber,
     required bool newIsDefault,
+    required WalletScreenState returnToState,
   }) {
     final updatedList =
         state.bankDetailsList.map((bank) {
           if (bank.id == bankId) {
-            // 1. The bank being edited: use the submitted values
             return bank.copyWith(
               bankName: newBankName,
               accountNumber: newAccountNumber,
@@ -54,51 +68,42 @@ class EditBankAccountViewModel extends StateNotifier<WalletState> {
               isEmpty: false,
             );
           } else if (newIsDefault == true) {
-            // ISSUE 1 FIX: If the user just set a new default,
-            // unset the default status for all other accounts.
             return bank.copyWith(isDefault: false);
           }
-          // 3. Otherwise, return the bank as is.
           return bank;
         }).toList();
 
     state = state.copyWith(
       bankDetailsList: updatedList,
-      selectedBankDetails: null, // Clear selection
-      walletScreenState:
-          WalletScreenState.addBankAccount, // Go back to list view
+      selectedBankDetails: null,
+      walletScreenState: returnToState,
     );
   }
 
   void clearBankDetails(String bankId) {
-    // If the bank being cleared was the default, make the first non-empty bank the default,
-    // or if none, Bank 1 gets the default status.
     final clearedBankWasDefault =
         state.bankDetailsList.firstWhere((b) => b.id == bankId).isDefault;
 
     final updatedList =
         state.bankDetailsList.map((bank) {
           if (bank.id == bankId) {
-            // Reset to an empty state for this tile
             return BankDetails.empty(bankId);
           }
           return bank;
         }).toList();
 
-    // Logic to re-assign default if the cleared bank was the default
     if (clearedBankWasDefault) {
       final firstTile = updatedList.firstWhere(
         (b) => b.id == '1',
         orElse: () => updatedList.first,
       );
       if (firstTile.isEmpty) {
-        // If we cleared the default, make the remaining first tile the new default, even if empty.
         final listWithNewDefault =
             updatedList.map((bank) {
               if (bank.id == firstTile.id) {
                 return bank.copyWith(isDefault: true);
               }
-              return bank.copyWith(isDefault: false); // Ensure others are unset
+              return bank.copyWith(isDefault: false);
             }).toList();
         state = state.copyWith(
           bankDetailsList: listWithNewDefault,
@@ -107,6 +112,21 @@ class EditBankAccountViewModel extends StateNotifier<WalletState> {
         return;
       }
     }
+  }
+
+  BankDetails? getDefaultBankAccount() {
+    // Find the first bank account that is marked as default.
+    final defaultBank = state.bankDetailsList.cast<BankDetails?>().firstWhere(
+      (bank) => bank != null && bank.isDefault,
+      orElse: () => null,
+    );
+
+    // If we find a default bank but it's empty, we should treat it as needing setup.
+    if (defaultBank != null && defaultBank.isEmpty) {
+      return null;
+    }
+
+    return defaultBank;
   }
 }
 
