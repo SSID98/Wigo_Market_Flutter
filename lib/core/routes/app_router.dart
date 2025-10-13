@@ -16,7 +16,7 @@ import '../../shared/screens/change_password_screen.dart';
 import '../../shared/screens/role_selection_screen.dart';
 
 final appRouter = GoRouter(
-  initialLocation: '/',
+  initialLocation: '/riderMainScreen',
   routes: [
     GoRoute(
       path: '/',
@@ -55,7 +55,7 @@ final appRouter = GoRouter(
       path: '/resetPassword/verification',
       builder:
           (context, state) =>
-      const ResetPasswordEmailVerificationScreen(email: ''),
+              const ResetPasswordEmailVerificationScreen(email: ''),
     ),
     GoRoute(
       path: '/resetPassword/enterEmail',

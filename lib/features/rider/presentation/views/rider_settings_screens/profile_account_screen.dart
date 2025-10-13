@@ -36,7 +36,12 @@ class ProfileAndAccountScreen extends StatelessWidget {
                     padding: const EdgeInsets.only(left: 20.0),
                     child: Row(
                       children: [
-                        AppAssets.icons.arrowLeft.svg(),
+                        GestureDetector(
+                          child: AppAssets.icons.arrowLeft.svg(),
+                          onTap: () {
+                            Navigator.pop(context);
+                          },
+                        ),
                         const SizedBox(width: 20),
                         Text(
                           "Back",
@@ -60,53 +65,51 @@ class ProfileAndAccountScreen extends StatelessWidget {
         padding: const EdgeInsets.symmetric(horizontal: 20.0),
         child:
             isWeb
-                ? SingleChildScrollView(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Card(
-                        margin: EdgeInsets.only(bottom: 20, top: 20),
-                        shadowColor: Colors.white70.withValues(alpha: 0.06),
-                        color: AppColors.backgroundWhite,
-                        elevation: 1,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(16.0),
-                        ),
-                        child: Padding(
-                          padding: const EdgeInsets.all(16),
-                          child: vehicleInfoSection,
-                        ),
+                ? Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Card(
+                      margin: EdgeInsets.only(bottom: 20, top: 20),
+                      shadowColor: Colors.white70.withValues(alpha: 0.06),
+                      color: AppColors.backgroundWhite,
+                      elevation: 1,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(16.0),
                       ),
-                    ],
-                  ),
+                      child: Padding(
+                        padding: const EdgeInsets.all(16),
+                        child: vehicleInfoSection,
+                      ),
+                    ),
+                  ],
                 )
-                : SingleChildScrollView(
-                  child: Card(
-                    elevation: 0,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(16.0),
-                      side: BorderSide(
-                        color: AppColors.shadowColor.withValues(alpha: 0.09),
-                        width: 3,
+                : Card(
+                  elevation: 0,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(16.0),
+                    side: BorderSide(
+                      color: AppColors.shadowColor.withValues(alpha: 0.09),
+                      width: 3,
+                    ),
+                  ),
+                  margin: EdgeInsets.only(bottom: 20, top: 10),
+                  color: AppColors.backgroundWhite,
+                  child: Column(
+                    children: [
+                      Expanded(
+                        child: SingleChildScrollView(child: vehicleInfoSection),
                       ),
-                    ),
-                    margin: EdgeInsets.only(bottom: 20, top: 10),
-                    color: AppColors.backgroundWhite,
-                    child: Column(
-                      children: [
-                        vehicleInfoSection,
-                        const SizedBox(height: 40),
-                        CustomButton(
-                          text: 'Save',
-                          onPressed: () {},
-                          fontSize: 18,
-                          fontWeight: FontWeight.w500,
-                          height: 45,
-                          width: 335,
-                        ),
-                        const SizedBox(height: 20),
-                      ],
-                    ),
+                      const SizedBox(height: 20),
+                      CustomButton(
+                        text: 'Save',
+                        onPressed: () {},
+                        fontSize: 18,
+                        fontWeight: FontWeight.w500,
+                        height: 45,
+                        width: 335,
+                      ),
+                      const SizedBox(height: 20),
+                    ],
                   ),
                 ),
       ),

@@ -57,7 +57,7 @@ class AddBankAccountScreen extends ConsumerWidget {
       elevation: 0,
       color: AppColors.backgroundWhite,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(0)),
-      margin: EdgeInsets.only(top: 20),
+      margin: EdgeInsets.only(top: 10),
       child: Padding(
         padding: EdgeInsets.fromLTRB(
           isWeb ? 60 : 16.0,

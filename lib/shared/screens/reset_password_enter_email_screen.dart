@@ -21,64 +21,62 @@ class ResetPasswordEnterEmailScreen extends StatelessWidget {
 
   //Mobile Layout
   Widget _buildMobileLayout(Size screenSize, BuildContext context) {
-    return SafeArea(
-      child: Scaffold(
-        body: Stack(
-          fit: StackFit.expand,
-          children: [
-            AppAssets.images.login.image(fit: BoxFit.cover),
-            BottomTextBuilder.buildMobileBottomText(),
-            Center(
-              child: SingleChildScrollView(
-                child: Container(
-                  width: screenSize.width * 0.95,
-                  constraints: BoxConstraints(maxWidth: 400),
-                  decoration: BoxDecoration(
-                    color: AppColors.backgroundWhite,
-                    borderRadius: BorderRadius.circular(16.0),
-                  ),
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 15.0),
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Padding(
-                          padding: const EdgeInsets.only(top: 30.0),
-                          child: SvgPicture.asset(
-                            AppAssets.icons.logo.path,
-                            height: 49,
-                            width: 143.86,
-                          ),
+    return Scaffold(
+      body: Stack(
+        fit: StackFit.expand,
+        children: [
+          AppAssets.images.login.image(fit: BoxFit.cover),
+          BottomTextBuilder.buildMobileBottomText(),
+          Center(
+            child: SingleChildScrollView(
+              child: Container(
+                width: screenSize.width * 0.95,
+                constraints: BoxConstraints(maxWidth: 400),
+                decoration: BoxDecoration(
+                  color: AppColors.backgroundWhite,
+                  borderRadius: BorderRadius.circular(16.0),
+                ),
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 15.0),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.only(top: 30.0),
+                        child: SvgPicture.asset(
+                          AppAssets.icons.logo.path,
+                          height: 49,
+                          width: 143.86,
                         ),
-                        const SizedBox(height: 5.0),
-                        VerificationWidgetBuilder.buildMobileBody(
-                          titleText: 'Kindly Verify Your Email Address',
-                          bodyText:
-                              "Enter the email address linked to your wiGO MARKET account. We'll send you a reset link.",
-                          textFieldLabel: 'Email',
-                          textFieldHint: 'Please enter your email address',
-                          textFieldIcon: AppAssets.icons.mail.path,
-                          buttonText: 'Send Code',
-                          buttonColor: AppColors.primaryDarkGreen,
-                          buttonTextColor: AppColors.textWhite,
-                          hintTextSize: 14,
-                          labelTextColor: AppColors.textBlack,
-                          labelTextFontWeight: FontWeight.w600,
-                          showFooter: false,
-                          buttonTextFontSize: 18.0,
-                          onPressed: () {
-                            context.go('/resetPassword/verification');
-                          },
-                        ),
-                        const SizedBox(height: 33),
-                      ],
-                    ),
+                      ),
+                      const SizedBox(height: 5.0),
+                      VerificationWidgetBuilder.buildMobileBody(
+                        titleText: 'Kindly Verify Your Email Address',
+                        bodyText:
+                            "Enter the email address linked to your wiGO MARKET account. We'll send you a reset link.",
+                        textFieldLabel: 'Email',
+                        textFieldHint: 'Please enter your email address',
+                        textFieldIcon: AppAssets.icons.mail.path,
+                        buttonText: 'Send Code',
+                        buttonColor: AppColors.primaryDarkGreen,
+                        buttonTextColor: AppColors.textWhite,
+                        hintTextSize: 14,
+                        labelTextColor: AppColors.textBlack,
+                        labelTextFontWeight: FontWeight.w600,
+                        showFooter: false,
+                        buttonTextFontSize: 18.0,
+                        onPressed: () {
+                          context.go('/resetPassword/verification');
+                        },
+                      ),
+                      const SizedBox(height: 33),
+                    ],
                   ),
                 ),
               ),
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }

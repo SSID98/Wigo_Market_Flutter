@@ -65,12 +65,12 @@ class RiderFormFields extends ConsumerWidget {
         spacing,
         CustomPhoneNumberField(
           label: 'Phone Number',
-          contentPadding: EdgeInsets.only(top: 1),
+          // contentPadding: EdgeInsets.only(bottom: 1),
         ),
         spacing,
         CustomPhoneNumberField(
           label: 'Next of Kin Contact',
-          contentPadding: EdgeInsets.only(top: 1),
+          // contentPadding: EdgeInsets.only(bottom: 1),
         ),
         spacing,
         CustomDropdownField(

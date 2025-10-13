@@ -75,6 +75,7 @@ class _CustomPhoneNumberFieldState extends State<CustomPhoneNumberField> {
               widget.padding ??
               EdgeInsets.symmetric(horizontal: 17, vertical: 12),
           child: Row(
+            crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               CountryCodePicker(
                 onChanged: (country) {
@@ -129,10 +130,11 @@ class _CustomPhoneNumberFieldState extends State<CustomPhoneNumberField> {
                   inputFormatters: <TextInputFormatter>[
                     FilteringTextInputFormatter.digitsOnly,
                   ],
+                  textAlignVertical: TextAlignVertical.center,
                   decoration: InputDecoration(
-                    contentPadding:
-                        widget.contentPadding ?? EdgeInsets.only(bottom: 0),
-                    isCollapsed: true,
+                    isDense: true,
+                    constraints: BoxConstraints(),
+                    contentPadding: widget.contentPadding ?? EdgeInsets.zero,
                     hintText: widget.hintText,
                     hintStyle: GoogleFonts.hind(
                       fontSize: widget.hintTextFontSize ?? 15.11,

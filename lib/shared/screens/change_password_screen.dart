@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:go_router/go_router.dart';
 import 'package:wigo_flutter/shared/widgets/bottom_text.dart';
 
 import '../../core/constants/app_colors.dart';
@@ -19,11 +20,11 @@ class ChangePasswordScreen extends ConsumerStatefulWidget {
 }
 
 class _ChangePasswordScreenState extends ConsumerState<ChangePasswordScreen> {
-  final formKey = GlobalKey<FormState>();
-  bool _passwordHasError = false;
-  bool _confirmPasswordHasError = false;
+  String? _passwordError;
+  String? _confirmPasswordError;
   final passwordFieldKey = GlobalKey<FormFieldState<String>>();
   final confirmPasswordFieldKey = GlobalKey<FormFieldState<String>>();
+  AutovalidateMode _autovalidateMode = AutovalidateMode.disabled;
 
   @override
   Widget build(BuildContext context) {
@@ -43,106 +44,175 @@ class _ChangePasswordScreenState extends ConsumerState<ChangePasswordScreen> {
     LoginState state,
     BuildContext context,
   ) {
-    return SafeArea(
-      child: Scaffold(
-        body: Stack(
-          fit: StackFit.expand,
-          children: [
-            Image.asset(AppAssets.images.login.path, fit: BoxFit.cover),
-            BottomTextBuilder.buildMobileBottomText(),
-            Center(
-              child: SingleChildScrollView(
-                child: Container(
-                  width: screenSize.width * 0.95,
-                  constraints: BoxConstraints(maxWidth: 400),
-                  decoration: BoxDecoration(
-                    color: AppColors.backgroundWhite,
-                    borderRadius: BorderRadius.circular(16.0),
-                  ),
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 15.0),
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Padding(
-                          padding: const EdgeInsets.only(top: 30.0),
-                          child: SvgPicture.asset(
-                            AppAssets.icons.logo.path,
-                            height: 49,
-                            width: 143.86,
-                          ),
+    return Scaffold(
+      body: Stack(
+        fit: StackFit.expand,
+        children: [
+          Image.asset(AppAssets.images.login.path, fit: BoxFit.cover),
+          BottomTextBuilder.buildMobileBottomText(),
+          Center(
+            child: SingleChildScrollView(
+              child: Container(
+                width: screenSize.width * 0.95,
+                constraints: BoxConstraints(maxWidth: 400),
+                decoration: BoxDecoration(
+                  color: AppColors.backgroundWhite,
+                  borderRadius: BorderRadius.circular(16.0),
+                ),
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 15.0),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.only(top: 30.0),
+                        child: SvgPicture.asset(
+                          AppAssets.icons.logo.path,
+                          height: 49,
+                          width: 143.86,
                         ),
-                        const SizedBox(height: 30.0),
-                        LoginResetPasswordWidgetBuilder.buildMobileBody(
-                          suffixIcon: Icon(Icons.visibility_outlined),
-                          isPassword: true,
-                          contentPadding1: EdgeInsets.only(top: 13.8),
-                          titleText: 'Create a New Password',
-                          labelText1: 'New Password',
-                          hintText1: 'Enter New password',
-                          labelText2: 'Confirm Password',
-                          hintText2: 'Enter Confirm password',
-                          showRichText: false,
-                          textFieldIcon: AppAssets.icons.lock.path,
-                          validator: FormValidators.validatePassword,
-                          termsOnChanged: vm.toggleRememberMe,
-                          buttonText: 'Continue',
-                          state: state,
-                          controller1: vm.passwordController,
-                          controller2: vm.confirmPasswordController,
-                          firstFieldHasError: _passwordHasError,
-                          secondFieldHasError: _confirmPasswordHasError,
-                          onFocusChange1: (hasFocus) {
+                      ),
+                      const SizedBox(height: 30.0),
+                      LoginResetPasswordWidgetBuilder.buildMobileBody(
+                        suffixIcon: Icon(Icons.visibility_outlined),
+                        isPassword: true,
+                        contentPadding1: EdgeInsets.only(top: 13.8),
+                        titleText: 'Create a New Password',
+                        labelText1: 'New Password',
+                        hintText1: 'Enter New password',
+                        labelText2: 'Confirm Password',
+                        hintText2: 'Enter Confirm password',
+                        showRichText: false,
+                        textFieldIcon: AppAssets.icons.lock.path,
+                        validator1: (value) => null,
+                        validator2: (value) => null,
+                        termsOnChanged: vm.toggleRememberMe,
+                        buttonText: 'Continue',
+                        state: state,
+                        showErrorMessageIcon: false,
+                        autoValidateMode: _autovalidateMode,
+                        errorMessage1: _passwordError,
+                        errorMessage2: _confirmPasswordError,
+                        controller1: vm.passwordController,
+                        controller2: vm.confirmPasswordController,
+                        firstFieldHasError: _passwordError != null,
+                        secondFieldHasError: _confirmPasswordError != null,
+                        onFocusChange1: (hasFocus) {
+                          if (!hasFocus) {
                             if (!hasFocus) {
-                              final error = FormValidators.validatePassword(
+                              final passwordLengthError =
+                                  FormValidators.validatePassword(
+                                    vm.passwordController.text,
+                                  );
+                              final confirmPasswordLengthError =
+                                  FormValidators.validatePassword(
+                                    vm.confirmPasswordController.text,
+                                  );
+                              String? mismatchError;
+                              if (passwordLengthError == null &&
+                                  confirmPasswordLengthError == null) {
+                                if (vm.passwordController.text !=
+                                    vm.confirmPasswordController.text) {
+                                  mismatchError =
+                                      'Password Mismatch. Please re-enter.';
+                                }
+                              }
+                              setState(() {
+                                _passwordError =
+                                    passwordLengthError ?? mismatchError;
+                                mismatchError;
+                                _autovalidateMode = AutovalidateMode.always;
+                              });
+                              final hasAnyError = _passwordError != null;
+                              if (!hasAnyError) {}
+                            }
+                          }
+                        },
+                        onFocusChange2: (hasFocus) {
+                          if (!hasFocus) {
+                            if (!hasFocus) {
+                              final passwordLengthError =
+                                  FormValidators.validatePassword(
+                                    vm.passwordController.text,
+                                  );
+                              final confirmPasswordLengthError =
+                                  FormValidators.validatePassword(
+                                    vm.confirmPasswordController.text,
+                                  );
+                              String? mismatchError;
+                              if (passwordLengthError == null &&
+                                  confirmPasswordLengthError == null) {
+                                if (vm.passwordController.text !=
+                                    vm.confirmPasswordController.text) {
+                                  mismatchError =
+                                      'Password Mismatch. Please re-enter.';
+                                }
+                              }
+                              setState(() {
+                                _confirmPasswordError =
+                                    confirmPasswordLengthError ?? mismatchError;
+                                _autovalidateMode = AutovalidateMode.always;
+                              });
+                              final hasAnyError = _confirmPasswordError != null;
+                              if (!hasAnyError) {}
+                            }
+                          }
+                        },
+                        onPressed: () async {
+                          FocusManager.instance.primaryFocus?.unfocus();
+                          final passwordLengthError =
+                              FormValidators.validatePassword(
                                 vm.passwordController.text,
                               );
-                              setState(() {
-                                _passwordHasError = error != null;
-                              });
-                              passwordFieldKey.currentState!.validate();
-                            }
-                          },
-                          onFocusChange2: (hasFocus) {
-                            if (!hasFocus) {
-                              final error = FormValidators.validatePassword(
+                          final confirmPasswordLengthError =
+                              FormValidators.validatePassword(
                                 vm.confirmPasswordController.text,
                               );
-                              setState(() {
-                                _confirmPasswordHasError = error != null;
-                              });
-                              confirmPasswordFieldKey.currentState!.validate();
+                          String? mismatchError;
+                          if (passwordLengthError == null &&
+                              confirmPasswordLengthError == null) {
+                            if (vm.passwordController.text !=
+                                vm.confirmPasswordController.text) {
+                              mismatchError =
+                                  'Password Mismatch. Please re-enter.';
                             }
-                          },
-                          onPressed: () {
-                            final passwordHasError =
-                                FormValidators.validatePassword(
-                                  vm.passwordController.text,
-                                );
-                            final confirmPasswordHasError =
-                                FormValidators.validatePassword(
-                                  vm.confirmPasswordController.text,
-                                );
-                            setState(() {
-                              _passwordHasError = passwordHasError != null;
-                              _confirmPasswordHasError =
-                                  confirmPasswordHasError != null;
-                            });
-                            vm.submit(formKey, context);
-                          },
-                          formKey: formKey,
-                          fieldKey1: passwordFieldKey,
-                          fieldKey2: confirmPasswordFieldKey,
-                        ),
-                        const SizedBox(height: 33),
-                      ],
-                    ),
+                          }
+                          setState(() {
+                            _passwordError =
+                                passwordLengthError ?? mismatchError;
+                            _confirmPasswordError =
+                                confirmPasswordLengthError ?? mismatchError;
+                            _autovalidateMode = AutovalidateMode.always;
+                          });
+                          final hasAnyError =
+                              _passwordError != null ||
+                              _confirmPasswordError != null;
+                          if (!hasAnyError) {
+                            vm.setLoading(true);
+                            await Future.delayed(
+                              const Duration(milliseconds: 500),
+                            );
+                            if (!context.mounted) return;
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(
+                                content: Text('Password Successfully Reset'),
+                              ),
+                            );
+                            context.go('/login');
+                            vm.setLoading(false);
+                          }
+                        },
+                        fieldKey1: passwordFieldKey,
+                        fieldKey2: confirmPasswordFieldKey,
+                      ),
+                      const SizedBox(height: 33),
+                    ],
                   ),
                 ),
               ),
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
@@ -239,13 +309,19 @@ class _ChangePasswordScreenState extends ConsumerState<ChangePasswordScreen> {
                                   buttonText: 'Continue',
                                   controller1: vm.passwordController,
                                   controller2: vm.confirmPasswordController,
-                                  validator: FormValidators.validatePassword,
+                                  showErrorMessageIcon: false,
+                                  autoValidateMode: _autovalidateMode,
+                                  errorMessage1: _passwordError,
+                                  errorMessage2: _confirmPasswordError,
+                                  validator1: (value) => null,
+                                  validator2: (value) => null,
                                   termsOnChanged: vm.toggleRememberMe,
                                   cvm: vm,
                                   state: state,
                                   contentPadding1: EdgeInsets.only(top: 14.0),
-                                  firstFieldHasError: _passwordHasError,
-                                  secondFieldHasError: _confirmPasswordHasError,
+                                  firstFieldHasError: _passwordError != null,
+                                  secondFieldHasError:
+                                      _confirmPasswordError != null,
                                   onFocusChange1: (hasFocus) {
                                     if (!hasFocus) {
                                       final error =
@@ -253,43 +329,71 @@ class _ChangePasswordScreenState extends ConsumerState<ChangePasswordScreen> {
                                             vm.passwordController.text,
                                           );
                                       setState(() {
-                                        _passwordHasError = error != null;
+                                        _passwordError = error;
                                       });
-                                      passwordFieldKey.currentState!.validate();
+                                      _autovalidateMode =
+                                          AutovalidateMode.always;
+                                      if (_passwordError != null) {}
                                     }
                                   },
                                   onFocusChange2: (hasFocus) {
                                     if (!hasFocus) {
-                                      final error =
-                                          FormValidators.validatePassword(
-                                            vm.confirmPasswordController.text,
-                                          );
-                                      setState(() {
-                                        _confirmPasswordHasError =
-                                            error != null;
-                                      });
-                                      confirmPasswordFieldKey.currentState!
-                                          .validate();
+                                      if (!hasFocus) {
+                                        final error =
+                                            FormValidators.validatePassword(
+                                              vm.confirmPasswordController.text,
+                                            );
+                                        setState(() {
+                                          _confirmPasswordError = error;
+                                        });
+                                        _autovalidateMode =
+                                            AutovalidateMode.always;
+                                        if (_confirmPasswordError != null) {}
+                                      }
                                     }
                                   },
-                                  onPressed: () {
-                                    final passwordHasError =
+                                  onPressed: () async {
+                                    FocusManager.instance.primaryFocus
+                                        ?.unfocus();
+                                    final passwordLengthError =
                                         FormValidators.validatePassword(
                                           vm.passwordController.text,
                                         );
-                                    final confirmPasswordHasError =
+                                    final confirmPasswordLengthError =
                                         FormValidators.validatePassword(
                                           vm.confirmPasswordController.text,
                                         );
+                                    String? mismatchError;
+                                    if (passwordLengthError == null &&
+                                        confirmPasswordLengthError == null) {
+                                      if (vm.passwordController.text !=
+                                          vm.confirmPasswordController.text) {
+                                        mismatchError =
+                                            'Password Mismatch. Please re-enter.';
+                                      }
+                                    }
                                     setState(() {
-                                      _passwordHasError =
-                                          passwordHasError != null;
-                                      _confirmPasswordHasError =
-                                          confirmPasswordHasError != null;
+                                      _passwordError =
+                                          passwordLengthError ?? mismatchError;
+                                      _confirmPasswordError =
+                                          confirmPasswordLengthError ??
+                                          mismatchError;
+                                      _autovalidateMode =
+                                          AutovalidateMode.always;
                                     });
-                                    vm.submit(formKey, context);
+                                    final hasAnyError =
+                                        _passwordError != null ||
+                                        _confirmPasswordError != null;
+                                    if (!hasAnyError) {
+                                      vm.setLoading(true);
+                                      await Future.delayed(
+                                        const Duration(milliseconds: 500),
+                                      );
+                                      if (!context.mounted) return;
+                                      context.go('/login');
+                                      vm.setLoading(false);
+                                    }
                                   },
-                                  formKey: formKey,
                                   fieldKey1: passwordFieldKey,
                                   fieldKey2: confirmPasswordFieldKey,
                                 ),

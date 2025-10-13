@@ -25,10 +25,19 @@ class LocalStorageService {
   Future<void> setAccountCreationCompleted() =>
       prefs.setBool(_accountKey, true);
 
+  static const _pinSetupCompletedKey = 'pinSetupCompleted';
+
+  Future<void> setPinSetupCompleted() async {
+    await prefs.setBool(_pinSetupCompletedKey, true);
+  }
+
+  bool get isPinSetupCompleted => prefs.getBool(_pinSetupCompletedKey) ?? false;
+
   // Reset flow
   Future<void> resetFlow() async {
     await prefs.remove(_roleKey);
     await prefs.remove(_onboardingKey);
     await prefs.remove(_accountKey);
+    await prefs.remove(_pinSetupCompletedKey);
   }
 }

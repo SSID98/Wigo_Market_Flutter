@@ -8,9 +8,7 @@ import '../../../../../shared/widgets/custom_text_field.dart';
 import '../../../../../shared/widgets/upload_box.dart';
 
 class VehicleAndDocumentsScreen extends StatelessWidget {
-  final VoidCallback? onBack;
-
-  const VehicleAndDocumentsScreen({super.key, this.onBack});
+  const VehicleAndDocumentsScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -66,43 +64,53 @@ class VehicleAndDocumentsScreen extends StatelessWidget {
                     ],
                   ),
                 )
-                : SingleChildScrollView(
-                  child: Column(
-                    children: [
-                      Padding(
-                        padding: const EdgeInsets.only(left: 5, top: 50),
-                        child: Row(
-                          children: [
-                            AppAssets.icons.arrowLeft.svg(),
-                            const SizedBox(width: 20),
-                            Text(
-                              "Back",
-                              style: GoogleFonts.hind(
-                                fontSize: 18,
-                                fontWeight: FontWeight.w400,
-                                color: AppColors.textBlackGrey,
-                              ),
+                : Column(
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.only(left: 5, top: 50),
+                      child: Row(
+                        children: [
+                          GestureDetector(
+                            child: AppAssets.icons.arrowLeft.svg(),
+                            onTap: () {
+                              Navigator.pop(context);
+                            },
+                          ),
+                          const SizedBox(width: 20),
+                          Text(
+                            "Back",
+                            style: GoogleFonts.hind(
+                              fontSize: 18,
+                              fontWeight: FontWeight.w400,
+                              color: AppColors.textBlackGrey,
                             ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    const Divider(),
+                    const SizedBox(height: 5),
+                    Expanded(
+                      child: SingleChildScrollView(
+                        child: Column(
+                          children: [
+                            vehicleInfoSection,
+                            const SizedBox(height: 60),
+                            documentVerificationSection,
                           ],
                         ),
                       ),
-                      const Divider(),
-                      const SizedBox(height: 30),
-                      vehicleInfoSection,
-                      const SizedBox(height: 60),
-                      documentVerificationSection,
-                      const SizedBox(height: 40),
-                      CustomButton(
-                        text: 'Save',
-                        onPressed: () {},
-                        fontSize: 18,
-                        fontWeight: FontWeight.w500,
-                        height: 45,
-                        width: double.infinity,
-                      ),
-                      const SizedBox(height: 15),
-                    ],
-                  ),
+                    ),
+                    const SizedBox(height: 15),
+                    CustomButton(
+                      text: 'Save',
+                      onPressed: () {},
+                      fontSize: 18,
+                      fontWeight: FontWeight.w500,
+                      height: 45,
+                      width: double.infinity,
+                    ),
+                  ],
                 ),
       ),
     );

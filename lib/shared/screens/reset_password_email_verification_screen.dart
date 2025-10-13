@@ -31,51 +31,49 @@ class ResetPasswordEmailVerificationScreen extends StatelessWidget {
     String maskedEmail,
     BuildContext context,
   ) {
-    return SafeArea(
-      child: Scaffold(
-        body: Stack(
-          fit: StackFit.expand,
-          children: [
-            Image.asset(AppAssets.images.login.path, fit: BoxFit.cover),
-            BottomTextBuilder.buildMobileBottomText(),
-            Center(
-              child: SingleChildScrollView(
-                child: Container(
-                  width: screenSize.width * 0.95,
-                  constraints: BoxConstraints(maxWidth: 400),
-                  decoration: BoxDecoration(
-                    color: AppColors.backgroundWhite,
-                    borderRadius: BorderRadius.circular(16.0),
-                  ),
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 15.0),
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Padding(
-                          padding: const EdgeInsets.only(top: 30.0),
-                          child: SvgPicture.asset(
-                            AppAssets.icons.logo.path,
-                            height: 49,
-                            width: 143.86,
-                          ),
+    return Scaffold(
+      body: Stack(
+        fit: StackFit.expand,
+        children: [
+          Image.asset(AppAssets.images.login.path, fit: BoxFit.cover),
+          BottomTextBuilder.buildMobileBottomText(),
+          Center(
+            child: SingleChildScrollView(
+              child: Container(
+                width: screenSize.width * 0.95,
+                constraints: BoxConstraints(maxWidth: 400),
+                decoration: BoxDecoration(
+                  color: AppColors.backgroundWhite,
+                  borderRadius: BorderRadius.circular(16.0),
+                ),
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 15.0),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.only(top: 30.0),
+                        child: SvgPicture.asset(
+                          AppAssets.icons.logo.path,
+                          height: 49,
+                          width: 143.86,
                         ),
-                        const SizedBox(height: 5.0),
-                        VerificationWidgetBuilder.buildMobileBody(
-                          email: maskedEmail,
-                          onPressed: () {
-                            context.go('/changePassword');
-                          },
-                        ),
-                        const SizedBox(height: 33),
-                      ],
-                    ),
+                      ),
+                      const SizedBox(height: 5.0),
+                      VerificationWidgetBuilder.buildMobileBody(
+                        email: maskedEmail,
+                        onPressed: () {
+                          context.go('/changePassword');
+                        },
+                      ),
+                      const SizedBox(height: 33),
+                    ],
                   ),
                 ),
               ),
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }

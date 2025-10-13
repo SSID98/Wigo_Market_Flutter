@@ -37,7 +37,6 @@ enum WalletScreenState {
   pinSuccess,
   addBankAccount,
   editBankAccount,
-  withdrawal,
 }
 
 class WalletState {

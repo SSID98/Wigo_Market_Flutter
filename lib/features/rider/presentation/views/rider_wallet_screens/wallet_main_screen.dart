@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:wigo_flutter/features/rider/presentation/views/rider_wallet_screens/wallet_add_bank_account_screen.dart';
 import 'package:wigo_flutter/features/rider/presentation/views/rider_wallet_screens/wallet_edit_bank_account_screen.dart';
 import 'package:wigo_flutter/features/rider/presentation/views/rider_wallet_screens/wallet_overview_transactions_screen.dart';
@@ -10,6 +11,7 @@ import 'package:wigo_flutter/features/rider/viewmodels/edit_bank_account_viewmod
 import 'package:wigo_flutter/shared/widgets/custom_button.dart';
 
 import '../../../../../core/constants/app_colors.dart';
+import '../../../../../core/local/local_storage_service.dart';
 import '../../../../../gen/assets.gen.dart';
 import '../../../models/wallet_state.dart';
 
@@ -29,8 +31,7 @@ class WalletMainScreen extends ConsumerWidget {
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          if (state.walletScreenState != WalletScreenState.withdrawal)
-            _buildHeader(notifier, isWeb, state, ref),
+          _buildHeader(notifier, isWeb, state, ref, context),
           _buildBody(state, notifier, isWeb),
         ],
       ),
@@ -46,6 +47,7 @@ class WalletMainScreen extends ConsumerWidget {
     bool isWeb,
     WalletState state,
     WidgetRef ref,
+    BuildContext context,
   ) {
     return Padding(
       padding: EdgeInsets.symmetric(horizontal: isWeb ? 40 : 15),
@@ -97,7 +99,14 @@ class WalletMainScreen extends ConsumerWidget {
                   padding: const EdgeInsets.only(top: 8.0),
                   child: CustomButton(
                     text: 'Withdraw',
-                    onPressed: notifier.navigateToWithdrawal,
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (_) => WalletWithdrawalScreen(),
+                        ),
+                      );
+                    },
                     fontSize: 18,
                     height: 41,
                     fontWeight: FontWeight.w500,
@@ -148,10 +157,21 @@ class WalletMainScreen extends ConsumerWidget {
         final state = ref.watch(editBankAccountProvider);
         final isSelected = _getEarningFilter(state) == filter;
         return GestureDetector(
-          onTap: () {
-            notifier.setWalletScreenState(
-              _getWalletScreenStateForFilter(filter),
-            );
+          onTap: () async {
+            final prefs = await SharedPreferences.getInstance();
+            final storage = LocalStorageService(prefs);
+
+            if (filter == EarningFilter.paymentMethods) {
+              final nextState =
+                  storage.isPinSetupCompleted
+                      ? WalletScreenState.addBankAccount
+                      : WalletScreenState.setupPin;
+              notifier.setWalletScreenState(nextState);
+            } else {
+              notifier.setWalletScreenState(
+                await _getWalletScreenStateForFilter(filter),
+              );
+            }
           },
           child: Container(
             color:
@@ -185,14 +205,21 @@ class WalletMainScreen extends ConsumerWidget {
     }
   }
 
-  WalletScreenState _getWalletScreenStateForFilter(EarningFilter filter) {
+  Future<WalletScreenState> _getWalletScreenStateForFilter(
+    EarningFilter filter,
+  ) async {
     switch (filter) {
       case EarningFilter.overview:
         return WalletScreenState.overview;
       case EarningFilter.transactions:
         return WalletScreenState.transactions;
       case EarningFilter.paymentMethods:
-        return WalletScreenState.setupPin;
+        final prefs = await SharedPreferences.getInstance();
+        final storage = LocalStorageService(prefs);
+
+        return storage.isPinSetupCompleted
+            ? WalletScreenState.addBankAccount
+            : WalletScreenState.setupPin;
     }
   }
 
@@ -212,21 +239,11 @@ class WalletMainScreen extends ConsumerWidget {
       case WalletScreenState.paymentMethods:
       case WalletScreenState.setupPin:
       case WalletScreenState.pinSuccess:
-        return PaymentMethodScreen(isWeb: isWeb);
+        return PaymentMethodScreen();
       case WalletScreenState.addBankAccount:
         return AddBankAccountScreen(isWeb: isWeb);
       case WalletScreenState.editBankAccount:
         final bankToEdit = state.selectedBankDetails;
-        // We need to know where to return after the edit is done (Withdrawal or AddBankAccount)
-        final returnToState =
-            state.bankDetailsList.any(
-                  (b) => b.id == bankToEdit?.id && b.isDefault,
-                )
-                ? WalletScreenState
-                    .withdrawal // If editing the default bank, return to withdrawal
-                : WalletScreenState
-                    .addBankAccount; // Otherwise, return to the list
-
         if (bankToEdit == null) {
           WidgetsBinding.instance.addPostFrameCallback((_) {
             notifier.setWalletScreenState(WalletScreenState.addBankAccount);
@@ -234,12 +251,8 @@ class WalletMainScreen extends ConsumerWidget {
           return const Center(child: CircularProgressIndicator());
         }
         return EditBankAccountScreen(
-          isWeb: isWeb,
-          bankDetails: bankToEdit,
-          returnToState: returnToState, // Pass the destination state
+          bankDetails: bankToEdit, // Pass the destination state
         );
-      case WalletScreenState.withdrawal:
-        return WalletWithdrawalScreen(isWeb: isWeb); // NEW SCREEN
     }
   }
 }

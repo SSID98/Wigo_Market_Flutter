@@ -25,13 +25,18 @@ class CustomTextField extends ConsumerStatefulWidget {
   final Color? prefixIconColor, fillColor;
   final void Function(String)? onChanged;
   final void Function(bool)? onFocusChange;
-  final bool hasError;
+  final bool hasError, hasError2;
+  final AutovalidateMode? autoValidateMode;
   final EdgeInsetsGeometry? contentPadding, prefixPadding;
   final FontWeight? labelFontWeight;
   final double? height, spacing;
   final int? maxLength;
   final Color? enabledBorderColor, focusedBorderColor;
   final List<TextInputFormatter>? inputFormatters;
+  final void Function()? labelOnTap;
+  final bool errorIcon;
+  final String? errorMessage;
+  final bool showErrorMessageIcon;
 
   const CustomTextField({
     super.key,
@@ -63,6 +68,7 @@ class CustomTextField extends ConsumerStatefulWidget {
     this.contentPadding,
     this.labelFontWeight,
     this.hasError = false,
+    this.hasError2 = false,
     this.height,
     this.maxLength,
     this.labelFontSize,
@@ -71,6 +77,11 @@ class CustomTextField extends ConsumerStatefulWidget {
     this.inputFormatters,
     this.prefixPadding,
     this.spacing,
+    this.labelOnTap,
+    this.errorIcon = true,
+    this.errorMessage,
+    this.showErrorMessageIcon = true,
+    this.autoValidateMode,
   });
 
   @override
@@ -98,15 +109,19 @@ class _CustomTextFieldState extends ConsumerState<CustomTextField> {
 
   @override
   Widget build(BuildContext context) {
+    final isWeb = MediaQuery.of(context).size.width > 600;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(
-          widget.label,
-          style: GoogleFonts.hind(
-            fontWeight: widget.labelFontWeight ?? FontWeight.w500,
-            fontSize: widget.labelFontSize ?? 16.0,
-            color: widget.labelTextColor ?? AppColors.textBlack,
+        GestureDetector(
+          onTap: widget.labelOnTap,
+          child: Text(
+            widget.label,
+            style: GoogleFonts.hind(
+              fontWeight: widget.labelFontWeight ?? FontWeight.w500,
+              fontSize: widget.labelFontSize ?? 16.0,
+              color: widget.labelTextColor ?? AppColors.textBlack,
+            ),
           ),
         ),
         SizedBox(height: widget.spacing ?? 4),
@@ -129,6 +144,7 @@ class _CustomTextFieldState extends ConsumerState<CustomTextField> {
               readOnly: widget.readOnly ?? false,
               onTap: widget.onTap,
               keyboardType: widget.keyboardType,
+              autovalidateMode: widget.autoValidateMode,
               obscureText: _obscureText,
               obscuringCharacter: '•',
               maxLength: widget.maxLength,
@@ -144,14 +160,19 @@ class _CustomTextFieldState extends ConsumerState<CustomTextField> {
                         : (widget.fillColor ?? AppColors.textFieldColor),
                 enabledBorder: OutlineInputBorder(
                   borderSide: BorderSide(
-                    color: widget.enabledBorderColor ?? Colors.transparent,
-                    width: 0,
+                    color:
+                        widget.errorMessage != null
+                            ? AppColors.accentRed
+                            : (widget.enabledBorderColor ?? Colors.transparent),
                   ),
                   borderRadius: BorderRadius.circular(8.0),
                 ),
                 focusedBorder: OutlineInputBorder(
                   borderSide: BorderSide(
-                    color: widget.focusedBorderColor ?? Colors.transparent,
+                    color:
+                        widget.errorMessage != null
+                            ? AppColors.accentRed
+                            : (widget.focusedBorderColor ?? Colors.transparent),
                   ),
                   borderRadius: BorderRadius.circular(8.0),
                 ),
@@ -181,7 +202,10 @@ class _CustomTextFieldState extends ConsumerState<CustomTextField> {
                                   widget.prefixIcon!,
                                   height: widget.iconHeight,
                                   width: widget.iconWidth,
-                                  colorFilter: _resolvePrefixIconColor(),
+                                  colorFilter:
+                                      widget.errorIcon
+                                          ? _resolvePrefixIconColor()
+                                          : null,
                                 ),
                               if (widget.optionalPrefixIcon != null)
                                 SvgPicture.asset(
@@ -235,6 +259,35 @@ class _CustomTextFieldState extends ConsumerState<CustomTextField> {
             ),
           ),
         ),
+        if (widget.hasError && widget.errorMessage != null)
+          Padding(
+            padding: const EdgeInsets.only(top: 4.0),
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // Your custom error icon
+                if (widget.showErrorMessageIcon)
+                  Icon(
+                    Icons.error,
+                    color: AppColors.accentRed,
+                    size: isWeb ? 18 : 14,
+                  ),
+                if (widget.showErrorMessageIcon) const SizedBox(width: 6),
+                // The actual error text
+                Expanded(
+                  child: Text(
+                    widget.errorMessage!,
+                    style: GoogleFonts.hind(
+                      fontWeight: FontWeight.w400,
+                      fontSize: isWeb ? 14 : 10,
+                      color: AppColors.accentRed, // Match the error color
+                    ),
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ),
+              ],
+            ),
+          ),
       ],
     );
   }

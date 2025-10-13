@@ -6,8 +6,8 @@ import 'package:wigo_flutter/shared/widgets/custom_button.dart';
 
 import '../../../../../gen/assets.gen.dart';
 import '../../../../../shared/widgets/dashboard_widgets/earning_card.dart';
-import '../../../viewmodels/edit_bank_account_viewmodel.dart';
 import '../../../viewmodels/rider_dashboard_viewmodel.dart';
+import '../../views/rider_wallet_screens/wallet_withdrawal_screen.dart';
 
 class EarningOverviewWidget extends ConsumerWidget {
   const EarningOverviewWidget({super.key, this.isWallet = false});
@@ -18,8 +18,6 @@ class EarningOverviewWidget extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final dashboardState = ref.watch(riderDashboardViewModelProvider);
     final isWeb = MediaQuery.of(context).size.width > 600;
-    final notifier = ref.read(editBankAccountProvider.notifier);
-
     Widget buildEarningAmount(AsyncValue<String> asyncValue, Color color) {
       return asyncValue.when(
         data:
@@ -193,7 +191,12 @@ class EarningOverviewWidget extends ConsumerWidget {
             if (!isWeb && isWallet)
               CustomButton(
                 text: 'Withdraw',
-                onPressed: notifier.navigateToWithdrawal,
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (_) => WalletWithdrawalScreen()),
+                  );
+                },
                 fontSize: 12,
                 fontWeight: FontWeight.w500,
                 prefixIcon: AppAssets.icons.download.svg(width: 17, height: 17),

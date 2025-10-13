@@ -31,63 +31,61 @@ class EmailVerificationScreen extends StatelessWidget {
   ) {
     return Scaffold(
       backgroundColor: AppColors.backgroundWhite,
-      body: SafeArea(
-        child: Stack(
-          children: [
-            Image.asset(
-              AppAssets.images.onboardingRiderMobile.path,
-              fit: BoxFit.cover,
-              color: AppColors.backGroundOverlay,
-              colorBlendMode: BlendMode.overlay,
-            ),
-            Padding(
-              padding: const EdgeInsets.only(top: 105.0),
-              child: Align(
-                alignment: Alignment.topCenter,
-                child: Container(
-                  width: screenSize.width * 0.95,
-                  constraints: BoxConstraints(maxWidth: 400),
-                  decoration: BoxDecoration(
-                    color: AppColors.backgroundWhite,
-                    borderRadius: BorderRadius.circular(16.0),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black.withValues(alpha: 0.2),
-                        spreadRadius: 2,
-                        blurRadius: 10,
-                        offset: const Offset(0, 3),
-                      ),
-                    ],
+      body: Stack(
+        children: [
+          Image.asset(
+            AppAssets.images.onboardingRiderMobile.path,
+            fit: BoxFit.cover,
+            color: AppColors.backGroundOverlay,
+            colorBlendMode: BlendMode.overlay,
+          ),
+          Padding(
+            padding: const EdgeInsets.only(top: 105.0),
+            child: Align(
+              alignment: Alignment.topCenter,
+              child: Container(
+                width: screenSize.width * 0.95,
+                constraints: BoxConstraints(maxWidth: 400),
+                decoration: BoxDecoration(
+                  color: AppColors.backgroundWhite,
+                  borderRadius: BorderRadius.circular(16.0),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withValues(alpha: 0.2),
+                      spreadRadius: 2,
+                      blurRadius: 10,
+                      offset: const Offset(0, 3),
+                    ),
+                  ],
+                ),
+                child: Padding(
+                  padding: const EdgeInsets.only(
+                    top: 30.0,
+                    left: 20,
+                    right: 20,
                   ),
-                  child: Padding(
-                    padding: const EdgeInsets.only(
-                      top: 30.0,
-                      left: 20,
-                      right: 20,
-                    ),
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        SvgPicture.asset(
-                          AppAssets.icons.logo.path,
-                          height: 49,
-                          width: 143.86,
-                        ),
-                        VerificationWidgetBuilder.buildMobileBody(
-                          email: maskedEmail,
-                          onPressed: () {
-                            context.push('/rider/verification');
-                          },
-                        ),
-                        const SizedBox(height: 35.0),
-                      ],
-                    ),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      SvgPicture.asset(
+                        AppAssets.icons.logo.path,
+                        height: 49,
+                        width: 143.86,
+                      ),
+                      VerificationWidgetBuilder.buildMobileBody(
+                        email: maskedEmail,
+                        onPressed: () {
+                          context.push('/rider/verification');
+                        },
+                      ),
+                      const SizedBox(height: 35.0),
+                    ],
                   ),
                 ),
               ),
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }

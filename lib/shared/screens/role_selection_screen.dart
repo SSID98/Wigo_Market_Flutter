@@ -21,51 +21,49 @@ class RoleSelectionScreen extends ConsumerWidget {
 
   //Mobile Layout
   Widget _buildMobileLayout(BuildContext context, Size screenSize) {
-    return SafeArea(
-      child: Scaffold(
-        body: Stack(
-          fit: StackFit.expand,
-          children: [
-            AppAssets.images.login.image(fit: BoxFit.cover),
-            Center(
-              child: Container(
-                width: screenSize.width * 0.95,
-                constraints: BoxConstraints(
-                  maxWidth: 400,
-                  maxHeight: screenSize.height * 0.8,
-                ),
-                decoration: BoxDecoration(
-                  color: AppColors.backgroundWhite,
-                  borderRadius: BorderRadius.circular(16.0),
-                ),
-                child: Padding(
-                  padding: const EdgeInsets.all(24.0),
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      SvgPicture.asset(
-                        AppAssets.icons.logo.path,
-                        height: 49,
-                        width: 143.86,
-                      ),
-                      const SizedBox(height: 30),
-                      RoleSelectionBody(
-                        titleTextSize: 14,
-                        descriptionTextSize: 10,
-                        textFontSize: 16,
-                        sizedBoxHeight1: 10,
-                        iconWidth: 44,
-                        iconHeight: 44,
-                        padding: 35.0,
-                      ),
-                    ],
-                  ),
+    return Scaffold(
+      body: Stack(
+        fit: StackFit.expand,
+        children: [
+          AppAssets.images.login.image(fit: BoxFit.cover),
+          Center(
+            child: Container(
+              width: screenSize.width * 0.95,
+              constraints: BoxConstraints(
+                maxWidth: 400,
+                maxHeight: screenSize.height * 0.8,
+              ),
+              decoration: BoxDecoration(
+                color: AppColors.backgroundWhite,
+                borderRadius: BorderRadius.circular(16.0),
+              ),
+              child: Padding(
+                padding: const EdgeInsets.all(24.0),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    SvgPicture.asset(
+                      AppAssets.icons.logo.path,
+                      height: 49,
+                      width: 143.86,
+                    ),
+                    const SizedBox(height: 30),
+                    RoleSelectionBody(
+                      titleTextSize: 14,
+                      descriptionTextSize: 10,
+                      textFontSize: 16,
+                      sizedBoxHeight1: 10,
+                      iconWidth: 44,
+                      iconHeight: 44,
+                      padding: 35.0,
+                    ),
+                  ],
                 ),
               ),
             ),
-            _buildBottomText(17),
-          ],
-        ),
+          ),
+          _buildBottomText(17),
+        ],
       ),
     );
   }

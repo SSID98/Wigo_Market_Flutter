@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:go_router/go_router.dart';
 
 import 'login_state.dart';
 
@@ -24,22 +23,6 @@ class ChangePasswordViewmodel extends StateNotifier<LoginState> {
 
   void toggleRememberMe(bool? value) {
     state = state.copyWith(agreeToTerms: value ?? false);
-  }
-
-  Future<void> submit(
-    GlobalKey<FormState> formKey,
-    BuildContext context,
-  ) async {
-    if (formKey.currentState!.validate()) {
-      setLoading(true);
-
-      await Future.delayed(const Duration(milliseconds: 500));
-      if (!context.mounted) return;
-      context.go('/login');
-      setLoading(false);
-      debugPrint("Password: $state.password");
-      debugPrint("ConfirmPassword: $state.confirmPassword");
-    }
   }
 }
 

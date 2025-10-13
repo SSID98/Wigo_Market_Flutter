@@ -3,11 +3,13 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:wigo_flutter/features/rider/presentation/views/rider_settings_screens/profile_account_screen.dart';
+import 'package:wigo_flutter/features/rider/presentation/views/rider_settings_screens/rider_notification_screen.dart';
+import 'package:wigo_flutter/features/rider/presentation/views/rider_settings_screens/rider_privacy_security_screen.dart';
 import 'package:wigo_flutter/features/rider/presentation/views/rider_settings_screens/vehicle_documents_screen.dart';
 
 import '../../../../../core/constants/app_colors.dart';
 import '../../../../../gen/assets.gen.dart';
-import '../../../viewmodels/settings_navg_viewmodel.dart';
+import '../../../viewmodels/rider_settings_navg_viewmodel.dart';
 
 class RiderSettingsMainScreen extends ConsumerWidget {
   const RiderSettingsMainScreen({super.key});
@@ -50,211 +52,204 @@ class RiderSettingsMainScreen extends ConsumerWidget {
           isWeb ? AppColors.backgroundLight : AppColors.backgroundWhite,
       body:
           isWeb
-              ? Expanded(
-                child: Row(
-                  children: [
-                    SizedBox(
-                      width: 371,
-                      child: Card(
-                        margin: EdgeInsets.only(
-                          bottom: isWeb ? 150 : 250,
-                          left: 20,
-                          top: 20,
-                        ),
-                        shadowColor: Colors.white70.withValues(alpha: 0.06),
-                        color: AppColors.backgroundWhite,
-                        elevation: 1,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(16.0),
-                        ),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Padding(
-                              padding: const EdgeInsets.fromLTRB(
-                                30.0,
-                                15.0,
-                                30,
-                                5.0,
-                              ),
-                              child: Text(
-                                "Settings",
-                                style: GoogleFonts.hind(
-                                  fontSize: 24,
-                                  fontWeight: FontWeight.w600,
-                                  color: AppColors.textBlackGrey,
-                                ),
-                              ),
-                            ),
-                            Padding(
-                              padding: const EdgeInsets.only(left: 30.0),
-                              child: Text(
-                                "Manage your account and preferences",
-                                style: GoogleFonts.hind(
-                                  fontSize: 18,
-                                  fontWeight: FontWeight.w400,
-                                  color: AppColors.textBlackGrey,
-                                ),
-                              ),
-                            ),
-                            Padding(
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: 20.0,
-                              ),
-                              child: Divider(),
-                            ),
-                            Expanded(
-                              child: ListView.builder(
-                                itemCount: settings.length,
-                                itemBuilder: (_, i) {
-                                  final String settingTitle = settings[i];
-                                  return Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      ListTile(
-                                        title: Row(
-                                          children: [
-                                            SvgPicture.asset(
-                                              settingsIcons[settingTitle]!,
-                                            ),
-                                            const SizedBox(width: 10),
-                                            Text(
-                                              settings[i],
-                                              style: GoogleFonts.hind(
-                                                fontSize: 18,
-                                                fontWeight: FontWeight.w600,
-                                                color: AppColors.textBlackGrey,
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                        subtitle: Padding(
-                                          padding: const EdgeInsets.only(
-                                            left: 35.0,
-                                          ),
-                                          child: Text(
-                                            settingSubTitle[settingTitle]!,
-                                            style: GoogleFonts.hind(
-                                              fontSize: 16,
-                                              fontWeight: FontWeight.w400,
-                                              color: AppColors.textBlackGrey,
-                                            ),
-                                          ),
-                                        ),
-                                        tileColor:
-                                            navState.selectedIndex == i
-                                                ? AppColors.tableHeader
-                                                : null,
-                                        onTap: () => navNotifier.updateIndex(i),
-                                      ),
-                                      const SizedBox(height: 35),
-                                    ],
-                                  );
-                                },
-                              ),
-                            ),
-                          ],
-                        ),
+              ? Row(
+                children: [
+                  SizedBox(
+                    width: 371,
+                    child: Card(
+                      margin: EdgeInsets.only(
+                        bottom: isWeb ? 150 : 250,
+                        left: 20,
+                        top: 20,
                       ),
-                    ),
-                    // Right detail panel
-                    Expanded(
-                      child:
-                          navState.selectedIndex == null
-                              ? const Center(child: Text("Select a setting"))
-                              : _buildDetailScreen(navState.selectedIndex!),
-                    ),
-                  ],
-                ),
-              )
-              : Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Padding(
-                      padding: const EdgeInsets.fromLTRB(30.0, 80, 30, 5),
-                      child: Text(
-                        "Settings",
-                        style: GoogleFonts.hind(
-                          fontSize: 24,
-                          fontWeight: FontWeight.w600,
-                          color: AppColors.textBlackGrey,
-                        ),
+                      shadowColor: Colors.white70.withValues(alpha: 0.06),
+                      color: AppColors.backgroundWhite,
+                      elevation: 1,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(16.0),
                       ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 30.0),
-                      child: Text(
-                        "Manage your account and preferences",
-                        style: GoogleFonts.hind(
-                          fontSize: 18,
-                          fontWeight: FontWeight.w400,
-                          color: AppColors.textBlackGrey,
-                        ),
-                      ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 20.0),
-                      child: Divider(),
-                    ),
-                    Expanded(
-                      child: ListView.builder(
-                        itemCount: settings.length,
-                        itemBuilder: (_, i) {
-                          final String settingTitle = settings[i];
-                          return Padding(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Padding(
+                            padding: const EdgeInsets.fromLTRB(
+                              30.0,
+                              15.0,
+                              30,
+                              5.0,
+                            ),
+                            child: Text(
+                              "Settings",
+                              style: GoogleFonts.hind(
+                                fontSize: 24,
+                                fontWeight: FontWeight.w600,
+                                color: AppColors.textBlackGrey,
+                              ),
+                            ),
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.only(left: 30.0),
+                            child: Text(
+                              "Manage your account and preferences",
+                              style: GoogleFonts.hind(
+                                fontSize: 18,
+                                fontWeight: FontWeight.w400,
+                                color: AppColors.textBlackGrey,
+                              ),
+                            ),
+                          ),
+                          Padding(
                             padding: const EdgeInsets.symmetric(
                               horizontal: 20.0,
                             ),
-                            child: Column(
-                              children: [
-                                ListTile(
-                                  title: Row(
-                                    children: [
-                                      SvgPicture.asset(
-                                        settingsIcons[settingTitle]!,
+                            child: Divider(),
+                          ),
+                          Expanded(
+                            child: ListView.builder(
+                              itemCount: settings.length,
+                              itemBuilder: (_, i) {
+                                final String settingTitle = settings[i];
+                                return Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    ListTile(
+                                      title: Row(
+                                        children: [
+                                          SvgPicture.asset(
+                                            settingsIcons[settingTitle]!,
+                                          ),
+                                          const SizedBox(width: 10),
+                                          Text(
+                                            settings[i],
+                                            style: GoogleFonts.hind(
+                                              fontSize: 18,
+                                              fontWeight: FontWeight.w600,
+                                              color: AppColors.textBlackGrey,
+                                            ),
+                                          ),
+                                        ],
                                       ),
-                                      const SizedBox(width: 10),
-                                      Text(
-                                        settings[i],
-                                        style: GoogleFonts.hind(
-                                          fontSize: 18,
-                                          fontWeight: FontWeight.w600,
-                                          color: AppColors.textBlackGrey,
+                                      subtitle: Padding(
+                                        padding: const EdgeInsets.only(
+                                          left: 35.0,
+                                        ),
+                                        child: Text(
+                                          settingSubTitle[settingTitle]!,
+                                          style: GoogleFonts.hind(
+                                            fontSize: 16,
+                                            fontWeight: FontWeight.w400,
+                                            color: AppColors.textBlackGrey,
+                                          ),
                                         ),
                                       ),
-                                    ],
-                                  ),
-                                  subtitle: Padding(
-                                    padding: const EdgeInsets.only(left: 35.0),
-                                    child: Text(
-                                      settingSubTitle[settingTitle]!,
+                                      tileColor:
+                                          navState.selectedIndex == i
+                                              ? AppColors.tableHeader
+                                              : null,
+                                      onTap: () => navNotifier.updateIndex(i),
+                                    ),
+                                    const SizedBox(height: 35),
+                                  ],
+                                );
+                              },
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                  // Right detail panel
+                  Expanded(
+                    child:
+                        navState.selectedIndex == null
+                            ? const Center(child: Text("Select a setting"))
+                            : _buildDetailScreen(navState.selectedIndex!),
+                  ),
+                ],
+              )
+              : Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(30.0, 80, 30, 5),
+                    child: Text(
+                      "Settings",
+                      style: GoogleFonts.hind(
+                        fontSize: 24,
+                        fontWeight: FontWeight.w600,
+                        color: AppColors.textBlackGrey,
+                      ),
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 30.0),
+                    child: Text(
+                      "Manage your account and preferences",
+                      style: GoogleFonts.hind(
+                        fontSize: 18,
+                        fontWeight: FontWeight.w400,
+                        color: AppColors.textBlackGrey,
+                      ),
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 20.0),
+                    child: Divider(),
+                  ),
+                  Expanded(
+                    child: ListView.builder(
+                      itemCount: settings.length,
+                      itemBuilder: (_, i) {
+                        final String settingTitle = settings[i];
+                        return Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 20.0),
+                          child: Column(
+                            children: [
+                              ListTile(
+                                title: Row(
+                                  children: [
+                                    SvgPicture.asset(
+                                      settingsIcons[settingTitle]!,
+                                    ),
+                                    const SizedBox(width: 10),
+                                    Text(
+                                      settings[i],
                                       style: GoogleFonts.hind(
-                                        fontSize: 16,
-                                        fontWeight: FontWeight.w400,
+                                        fontSize: 18,
+                                        fontWeight: FontWeight.w600,
                                         color: AppColors.textBlackGrey,
                                       ),
                                     ),
-                                  ),
-                                  onTap: () {
-                                    Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                        builder: (_) => _buildDetailScreen(i),
-                                      ),
-                                    );
-                                  },
+                                  ],
                                 ),
-                                const SizedBox(height: 25),
-                              ],
-                            ),
-                          );
-                        },
-                      ),
+                                subtitle: Padding(
+                                  padding: const EdgeInsets.only(left: 35.0),
+                                  child: Text(
+                                    settingSubTitle[settingTitle]!,
+                                    style: GoogleFonts.hind(
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.w400,
+                                      color: AppColors.textBlackGrey,
+                                    ),
+                                  ),
+                                ),
+                                onTap: () {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (_) => _buildDetailScreen(i),
+                                    ),
+                                  );
+                                },
+                              ),
+                              const SizedBox(height: 25),
+                            ],
+                          ),
+                        );
+                      },
                     ),
-                  ],
-                ),
+                  ),
+                ],
               ),
     );
   }
@@ -265,6 +260,10 @@ class RiderSettingsMainScreen extends ConsumerWidget {
         return const ProfileAndAccountScreen();
       case 1:
         return const VehicleAndDocumentsScreen();
+      case 2:
+        return const NotificationScreen();
+      case 3:
+        return const PrivacyAndSecurityScreen();
       default:
         return const Center(child: Text("Coming soon..."));
     }

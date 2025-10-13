@@ -1,18 +1,21 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:wigo_flutter/features/rider/viewmodels/edit_bank_account_viewmodel.dart';
 import 'package:wigo_flutter/shared/widgets/custom_button.dart';
 import 'package:wigo_flutter/shared/widgets/custom_text_field.dart';
 
 import '../../../../../core/constants/app_colors.dart';
+import '../../../../../core/local/local_storage_service.dart';
+import '../../../../../core/utils/validation_utils.dart';
 import '../../../../../gen/assets.gen.dart';
 import '../../../models/wallet_state.dart';
+import '../../../viewmodels/wallet_withdrawal_viewmodel.dart';
 
 class PaymentMethodScreen extends ConsumerStatefulWidget {
-  const PaymentMethodScreen({super.key, required this.isWeb});
-
-  final bool isWeb;
+  const PaymentMethodScreen({super.key});
 
   @override
   ConsumerState<PaymentMethodScreen> createState() =>
@@ -20,18 +23,15 @@ class PaymentMethodScreen extends ConsumerStatefulWidget {
 }
 
 class _PaymentMethodScreenState extends ConsumerState<PaymentMethodScreen> {
-  final TextEditingController _pinController = TextEditingController();
-
-  @override
-  void dispose() {
-    _pinController.dispose();
-    super.dispose();
-  }
+  String? _pinHasError;
+  String? _confirmPinHasError;
+  AutovalidateMode _autovalidateMode = AutovalidateMode.disabled;
 
   @override
   Widget build(BuildContext context) {
     final notifier = ref.read(editBankAccountProvider.notifier);
     final isWeb = MediaQuery.of(context).size.width > 800;
+    final vm = ref.watch(withdrawalViewModelProvider.notifier);
 
     return Expanded(
       child: SingleChildScrollView(
@@ -61,7 +61,7 @@ class _PaymentMethodScreenState extends ConsumerState<PaymentMethodScreen> {
                         "Setting Up withdrawal Pin",
                         style: GoogleFonts.hind(
                           fontWeight: FontWeight.w600,
-                          fontSize: widget.isWeb ? 16 : 14,
+                          fontSize: isWeb ? 16 : 14,
                           color: AppColors.textBlackGrey,
                         ),
                       ),
@@ -72,7 +72,7 @@ class _PaymentMethodScreenState extends ConsumerState<PaymentMethodScreen> {
                 Text(
                   "Secure your earnings with a 4-digit PIN. You can reset your PIN anytime in Settings. Make sure to choose a PIN you'll remember.",
                   style: GoogleFonts.hind(
-                    fontSize: widget.isWeb ? 14 : 12,
+                    fontSize: isWeb ? 14 : 12,
                     color: AppColors.textBlackGrey,
                     fontWeight: FontWeight.w400,
                   ),
@@ -86,7 +86,16 @@ class _PaymentMethodScreenState extends ConsumerState<PaymentMethodScreen> {
                   hintTextColor: AppColors.textBlackGrey,
                   suffixIcon: Icon(Icons.visibility_off_outlined),
                   hintFontSize: isWeb ? 16 : 14,
-                  controller: _pinController,
+                  controller: vm.pinController,
+                  hasError: _pinHasError != null,
+                  validator: (value) => null,
+                  keyboardType: TextInputType.number,
+                  autoValidateMode: _autovalidateMode,
+                  errorMessage: _pinHasError,
+                  inputFormatters: <TextInputFormatter>[
+                    FilteringTextInputFormatter.digitsOnly,
+                    LengthLimitingTextInputFormatter(4),
+                  ],
                   isPassword: true,
                   height: isWeb ? 48 : 35,
                   contentPadding: EdgeInsets.only(top: isWeb ? 0 : 10),
@@ -100,7 +109,16 @@ class _PaymentMethodScreenState extends ConsumerState<PaymentMethodScreen> {
                   hintTextColor: AppColors.textBlackGrey,
                   suffixIcon: Icon(Icons.visibility_off_outlined),
                   hintFontSize: isWeb ? 16 : 14,
-                  controller: _pinController,
+                  controller: vm.confirmPinController,
+                  hasError: _confirmPinHasError != null,
+                  validator: (value) => null,
+                  autoValidateMode: _autovalidateMode,
+                  errorMessage: _confirmPinHasError,
+                  keyboardType: TextInputType.number,
+                  inputFormatters: <TextInputFormatter>[
+                    FilteringTextInputFormatter.digitsOnly,
+                    LengthLimitingTextInputFormatter(4),
+                  ],
                   isPassword: true,
                   height: isWeb ? 48 : 35,
                   contentPadding: EdgeInsets.only(top: isWeb ? 0 : 10),
@@ -111,21 +129,7 @@ class _PaymentMethodScreenState extends ConsumerState<PaymentMethodScreen> {
                     Expanded(
                       child: CustomButton(
                         text: 'Cancel',
-                        onPressed: () {
-                          // if (_pinController.text.length == 4) {
-                          //   notifier.setWalletScreenState(
-                          //     WalletScreenState.pinSuccess,
-                          //   );
-                          // } else {
-                          //   // You can add your own validation logic here
-                          //   // e.g., show an error message
-                          //   ScaffoldMessenger.of(context).showSnackBar(
-                          //     const SnackBar(
-                          //       content: Text("PIN must be 4 digits long."),
-                          //     ),
-                          //   );
-                          // }
-                        },
+                        onPressed: () {},
                         fontSize: isWeb ? 18 : 16,
                         fontWeight: FontWeight.w500,
                         textColor: AppColors.textDarkDarkerGreen,
@@ -137,18 +141,47 @@ class _PaymentMethodScreenState extends ConsumerState<PaymentMethodScreen> {
                     Expanded(
                       child: CustomButton(
                         text: 'Continue',
-                        onPressed: () {
-                          if (_pinController.text.length == 4) {
-                            _showSuccessDialog(context, notifier);
-                          } else {
-                            // You can add your own validation logic here
-                            // e.g., show an error message
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(
-                                content: Text("PIN must be 4 digits long."),
-                              ),
-                            );
+                        onPressed: () async {
+                          FocusManager.instance.primaryFocus?.unfocus();
+                          final pinLengthError = FormValidators.validatePin(
+                            vm.pinController.text,
+                          );
+                          final confirmPinLengthError =
+                              FormValidators.validatePin(
+                                vm.confirmPinController.text,
+                              );
+                          String? mismatchError;
+                          if (pinLengthError == null &&
+                              confirmPinLengthError == null) {
+                            if (vm.pinController.text !=
+                                vm.confirmPinController.text) {
+                              mismatchError =
+                                  'Pins do not match. Please re-enter.';
+                            }
                           }
+
+                          setState(() {
+                            _pinHasError = pinLengthError ?? mismatchError;
+                            _confirmPinHasError =
+                                confirmPinLengthError ?? mismatchError;
+
+                            _autovalidateMode = AutovalidateMode.always;
+                          });
+
+                          final hasAnyError =
+                              _pinHasError != null ||
+                              _confirmPinHasError != null;
+                          if (!hasAnyError) {
+                            vm.setLoading(true);
+                            vm.pinController.clear();
+                            vm.confirmPinController.clear();
+                            if (!context.mounted) return;
+                            _showSuccessDialog(context, notifier);
+                          }
+                          await Future.delayed(
+                            const Duration(milliseconds: 500),
+                          );
+                          vm.setLoading(false);
                         },
                         fontSize: isWeb ? 18 : 16,
                         fontWeight: FontWeight.w500,
@@ -169,7 +202,7 @@ class _PaymentMethodScreenState extends ConsumerState<PaymentMethodScreen> {
     BuildContext context,
     EditBankAccountViewModel notifier,
   ) async {
-    final isWeb = widget.isWeb;
+    final isWeb = MediaQuery.of(context).size.width > 600;
     return showDialog(
       context: context,
       barrierDismissible: false,
@@ -225,7 +258,12 @@ class _PaymentMethodScreenState extends ConsumerState<PaymentMethodScreen> {
                 const SizedBox(height: 20),
                 CustomButton(
                   text: 'Continue',
-                  onPressed: () {
+                  onPressed: () async {
+                    final prefs = await SharedPreferences.getInstance();
+                    final storage = LocalStorageService(prefs);
+
+                    await storage.setPinSetupCompleted();
+                    if (!dialogContext.mounted) return;
                     Navigator.of(dialogContext).pop();
                     notifier.setWalletScreenState(
                       WalletScreenState.addBankAccount,

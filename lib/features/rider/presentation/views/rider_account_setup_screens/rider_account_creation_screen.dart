@@ -13,89 +13,82 @@ class RiderAccountCreationScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final screenSize = MediaQuery
-        .of(context)
-        .size;
-    final isWeb = MediaQuery
-        .of(context)
-        .size
-        .width > 600;
+    final screenSize = MediaQuery.of(context).size;
+    final isWeb = MediaQuery.of(context).size.width > 600;
     return isWeb
         ? _buildWebLayout(screenSize)
         : _buildMobileLayout(screenSize, context);
   }
 
   Widget _buildMobileLayout(Size screenSize, BuildContext context) {
-    return SafeArea(
-      child: Scaffold(
-        backgroundColor: AppColors.backgroundWhite,
-        body: Stack(
-          children: [
-            Image.asset(
-              AppAssets.images.onboardingRiderMobile.path,
-              fit: BoxFit.cover,
-              color: AppColors.backGroundOverlay,
-              colorBlendMode: BlendMode.overlay,
-            ),
-            Padding(
-              padding: const EdgeInsets.only(top: 90.0),
-              child: Align(
-                alignment: Alignment.topCenter,
-                child: Container(
-                  height: screenSize.height * 0.82,
-                  width: screenSize.width * 0.95,
-                  constraints: BoxConstraints(maxWidth: 400),
-                  decoration: BoxDecoration(
-                    color: AppColors.backgroundWhite,
-                    borderRadius: BorderRadius.circular(16.0),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black.withValues(alpha: 0.2),
-                        spreadRadius: 1,
-                        blurRadius: 5,
-                        offset: const Offset(0, 3),
+    return Scaffold(
+      backgroundColor: AppColors.backgroundWhite,
+      body: Stack(
+        children: [
+          Image.asset(
+            AppAssets.images.onboardingRiderMobile.path,
+            fit: BoxFit.cover,
+            color: AppColors.backGroundOverlay,
+            colorBlendMode: BlendMode.overlay,
+          ),
+          Padding(
+            padding: const EdgeInsets.only(top: 90.0),
+            child: Align(
+              alignment: Alignment.topCenter,
+              child: Container(
+                height: screenSize.height * 0.82,
+                width: screenSize.width * 0.95,
+                constraints: BoxConstraints(maxWidth: 400),
+                decoration: BoxDecoration(
+                  color: AppColors.backgroundWhite,
+                  borderRadius: BorderRadius.circular(16.0),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withValues(alpha: 0.2),
+                      spreadRadius: 1,
+                      blurRadius: 5,
+                      offset: const Offset(0, 3),
+                    ),
+                  ],
+                ),
+                child: Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const SizedBox(height: 5),
+                      _buildHeader(20.0, 14.0, 18.0, 12.0, 0.0),
+                      const Divider(thickness: 1.3),
+                      Expanded(
+                        child: SingleChildScrollView(
+                          child: RiderFormFields(
+                            iconHeight: 20,
+                            iconWidth: 20,
+                            hintFontSize: 11,
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: 24),
+                      Center(
+                        child: CustomButton(
+                          text: 'Continue',
+                          onPressed: () {
+                            context.push('/verification');
+                          },
+                          fontSize: 18,
+                          fontWeight: FontWeight.w500,
+                          width: double.infinity,
+                          height: 50,
+                          borderRadius: 6.0,
+                        ),
                       ),
                     ],
-                  ),
-                  child: Padding(
-                    padding: const EdgeInsets.all(16.0),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        const SizedBox(height: 5),
-                        _buildHeader(20.0, 14.0, 18.0, 12.0, 0.0),
-                        const Divider(thickness: 1.3),
-                        Expanded(
-                          child: SingleChildScrollView(
-                            child: RiderFormFields(
-                              iconHeight: 20,
-                              iconWidth: 20,
-                              hintFontSize: 11,
-                            ),
-                          ),
-                        ),
-                        const SizedBox(height: 24),
-                        Center(
-                          child: CustomButton(
-                            text: 'Continue',
-                            onPressed: () {
-                              context.push('/verification');
-                            },
-                            fontSize: 18,
-                            fontWeight: FontWeight.w500,
-                            width: double.infinity,
-                            height: 50,
-                            borderRadius: 6.0,
-                          ),
-                        ),
-                      ],
-                    ),
                   ),
                 ),
               ),
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
@@ -185,13 +178,14 @@ class RiderAccountCreationScreen extends ConsumerWidget {
     );
   }
 
-  Widget _buildHeader(double fontSize1,
-      fontSize2,
-      fontSize3,
-      fontSize4,
-      headerPadding, {
-        bool web = false,
-      }) {
+  Widget _buildHeader(
+    double fontSize1,
+    fontSize2,
+    fontSize3,
+    fontSize4,
+    headerPadding, {
+    bool web = false,
+  }) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -223,21 +217,20 @@ class RiderAccountCreationScreen extends ConsumerWidget {
               SizedBox(height: 19),
             ],
           )
-        else
-          ...[
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 40),
-              child: Text(
-                textAlign: TextAlign.center,
-                "Let's get you set up to start delivering and earning with wiGO MARKET.",
-                style: GoogleFonts.hind(
-                  fontWeight: FontWeight.w500,
-                  fontSize: fontSize2,
-                  color: AppColors.textBlackGrey,
-                ),
+        else ...[
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 40),
+            child: Text(
+              textAlign: TextAlign.center,
+              "Let's get you set up to start delivering and earning with wiGO MARKET.",
+              style: GoogleFonts.hind(
+                fontWeight: FontWeight.w500,
+                fontSize: fontSize2,
+                color: AppColors.textBlackGrey,
               ),
             ),
-          ],
+          ),
+        ],
         const SizedBox(height: 20),
         Padding(
           padding: EdgeInsets.symmetric(horizontal: headerPadding),

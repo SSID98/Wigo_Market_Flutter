@@ -9,6 +9,7 @@ import 'package:wigo_flutter/shared/widgets/custom_button.dart';
 import 'package:wigo_flutter/shared/widgets/custom_checkbox_widget.dart';
 import 'package:wigo_flutter/shared/widgets/custom_text_field.dart';
 
+import '../../../../../core/utils/validation_utils.dart';
 import '../../../../../gen/assets.gen.dart';
 import '../../../models/bank_details.dart';
 import '../../../models/wallet_state.dart';
@@ -16,14 +17,14 @@ import '../../../models/wallet_state.dart';
 class EditBankAccountScreen extends ConsumerStatefulWidget {
   const EditBankAccountScreen({
     super.key,
-    required this.isWeb,
     required this.bankDetails,
-    required this.returnToState,
+    this.returnToState,
+    this.openedViaNavigator = false,
   });
 
-  final bool isWeb;
   final BankDetails bankDetails;
-  final WalletScreenState returnToState;
+  final WalletScreenState? returnToState;
+  final bool openedViaNavigator;
 
   @override
   ConsumerState<EditBankAccountScreen> createState() =>
@@ -37,6 +38,9 @@ class _EditBankAccountScreenState extends ConsumerState<EditBankAccountScreen> {
   late bool _isDefault;
   late bool _isAddingNew; // Check if we are adding data to an empty tile
   String? _selectedBankName;
+  String? _accountHasError;
+  AutovalidateMode _autoValidateMode = AutovalidateMode.disabled;
+  final accountKey = GlobalKey<FormFieldState<String>>();
 
   bool get isBankEmpty =>
       _selectedBankName == null || _selectedBankName!.isEmpty;
@@ -76,13 +80,25 @@ class _EditBankAccountScreenState extends ConsumerState<EditBankAccountScreen> {
   }
 
   void _navigateBackToList() {
-    ref
-        .read(editBankAccountProvider.notifier)
-        .setWalletScreenState(widget.returnToState);
+    if (widget.openedViaNavigator) {
+      Navigator.of(context).pop();
+    } else {
+      ref.read(editBankAccountProvider.notifier).cancelEditBankAccount();
+    }
   }
 
   void _saveChanges() {
     final notifier = ref.read(editBankAccountProvider.notifier);
+
+    FocusManager.instance.primaryFocus?.unfocus();
+    final validationResult = FormValidators.validateAccountNo(
+      _accountNumberController.text,
+    );
+    setState(() {
+      _accountHasError = validationResult;
+
+      _autoValidateMode = AutovalidateMode.always;
+    });
 
     if (_accountNumberController.text.isEmpty ||
         isBankEmpty ||
@@ -94,6 +110,10 @@ class _EditBankAccountScreenState extends ConsumerState<EditBankAccountScreen> {
       return;
     }
 
+    if (validationResult != null) {
+      return;
+    }
+
     // 1. Call the ViewModel to update the list and handle the default flag
     notifier.updateBankDetails(
       bankId: widget.bankDetails.id,
@@ -102,8 +122,14 @@ class _EditBankAccountScreenState extends ConsumerState<EditBankAccountScreen> {
       newAccountHolderName: _accountNameController.text,
       newIsDefault: _isDefault,
       newPhoneNumber: _phoneNumberController.text,
-      returnToState: widget.returnToState,
     );
+
+    if (widget.openedViaNavigator) {
+      Future.delayed(const Duration(milliseconds: 200), () {});
+      Navigator.of(context).pop(true);
+    } else {
+      widget.returnToState;
+    }
   }
 
   final List<String> _banks = const [
@@ -115,38 +141,50 @@ class _EditBankAccountScreenState extends ConsumerState<EditBankAccountScreen> {
 
   @override
   Widget build(BuildContext context) {
+    return widget.openedViaNavigator
+        ? Scaffold(body: _buildBody())
+        : Expanded(child: _buildBody());
+  }
+
+  Widget _buildBody() {
     final isWeb = MediaQuery.of(context).size.width > 800;
-    return Expanded(
-      child: SingleChildScrollView(
-        child: Padding(
-          padding: EdgeInsets.fromLTRB(
-            isWeb ? 40 : 15.0,
-            isWeb ? 20 : 0,
-            isWeb ? 300 : 15.0,
-            0,
-          ),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              if (isWeb)
-                Row(
-                  children: [
-                    InkWell(
-                      onTap: _navigateBackToList,
-                      child: AppAssets.icons.arrowLeft.svg(),
-                    ),
-                    const SizedBox(width: 5),
-                    Text(
-                      'Back',
-                      style: GoogleFonts.hind(
-                        fontWeight: FontWeight.w600,
-                        fontSize: 24,
-                        color: AppColors.textBlackGrey,
-                      ),
-                    ),
-                  ],
+    return Padding(
+      padding: EdgeInsets.fromLTRB(
+        isWeb ? 40 : 15.0,
+        isWeb ? 20 : 0,
+        isWeb ? 300 : 15.0,
+        0,
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          if (!isWeb && widget.openedViaNavigator) const SizedBox(height: 20),
+          if (isWeb || widget.openedViaNavigator)
+            Row(
+              children: [
+                InkWell(
+                  onTap:
+                      widget.openedViaNavigator
+                          ? () => Navigator.of(context).pop()
+                          : _navigateBackToList,
+                  child: AppAssets.icons.arrowLeft.svg(),
                 ),
-              Card(
+                const SizedBox(width: 5),
+                Text(
+                  'Back',
+                  style: GoogleFonts.hind(
+                    fontWeight: isWeb ? FontWeight.w600 : FontWeight.w400,
+                    fontSize: isWeb ? 24 : 18,
+                    color: AppColors.textBlackGrey,
+                  ),
+                ),
+              ],
+            ),
+          if (!isWeb && widget.openedViaNavigator)
+            Divider(color: AppColors.dividerColor.withValues(alpha: 0.2)),
+          Expanded(
+            child: SingleChildScrollView(
+              child: Card(
                 elevation: 0,
                 margin: EdgeInsets.only(top: 20),
                 color: AppColors.backgroundWhite,
@@ -191,7 +229,12 @@ class _EditBankAccountScreenState extends ConsumerState<EditBankAccountScreen> {
                           crossAxisCount: isWeb ? 2 : 1,
                           crossAxisSpacing: isWeb ? 13 : 0,
                           mainAxisSpacing: isWeb ? 30 : 0,
-                          mainAxisExtent: isWeb ? 85 : 75,
+                          mainAxisExtent:
+                              isWeb
+                                  ? 85
+                                  : _accountHasError != null
+                                  ? 82
+                                  : 75,
                         ),
                         itemBuilder: (context, index) {
                           switch (index) {
@@ -204,9 +247,14 @@ class _EditBankAccountScreenState extends ConsumerState<EditBankAccountScreen> {
                                 labelFontWeight: FontWeight.w600,
                                 hintText: 'Enter 10-digit account number',
                                 controller: _accountNumberController,
+                                hasError: _accountHasError != null,
+                                errorMessage: _accountHasError,
+                                autoValidateMode: _autoValidateMode,
+                                validator: (value) => null,
                                 keyboardType: TextInputType.number,
                                 inputFormatters: <TextInputFormatter>[
                                   FilteringTextInputFormatter.digitsOnly,
+                                  LengthLimitingTextInputFormatter(10),
                                 ],
                                 onChanged: (v) {},
                                 height: isWeb ? 52 : 40,
@@ -264,11 +312,7 @@ class _EditBankAccountScreenState extends ConsumerState<EditBankAccountScreen> {
                               );
                             case 3:
                               return CustomPhoneNumberField(
-                                padding: EdgeInsets.symmetric(
-                                  vertical: 5,
-                                  horizontal: 17,
-                                ),
-                                contentPadding: EdgeInsets.only(top: 1),
+                                padding: EdgeInsets.only(left: 17, top: 1),
                                 label: 'Phone Number',
                                 labelFontSize: isWeb ? 20 : 14,
                                 labelFontWeight: FontWeight.w600,
@@ -319,7 +363,10 @@ class _EditBankAccountScreenState extends ConsumerState<EditBankAccountScreen> {
                           Expanded(
                             flex: isWeb ? 0 : 1,
                             child: CustomButton(
-                              onPressed: _navigateBackToList,
+                              onPressed:
+                                  widget.openedViaNavigator
+                                      ? () => Navigator.of(context).pop()
+                                      : _navigateBackToList,
                               text: 'Cancel',
                               fontSize: isWeb ? 18 : 16,
                               fontWeight: FontWeight.w500,
@@ -347,9 +394,9 @@ class _EditBankAccountScreenState extends ConsumerState<EditBankAccountScreen> {
                   ),
                 ),
               ),
-            ],
+            ),
           ),
-        ),
+        ],
       ),
     );
   }

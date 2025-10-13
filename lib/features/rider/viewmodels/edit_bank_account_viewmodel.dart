@@ -15,13 +15,9 @@ class EditBankAccountViewModel extends StateNotifier<WalletState> {
         ),
       );
 
-  void navigateToWithdrawal() {
-    state = state.copyWith(walletScreenState: WalletScreenState.withdrawal);
-  }
-
-  void navigateToOverview() {
-    state = state.copyWith(walletScreenState: WalletScreenState.overview);
-  }
+  // void navigateToOverview() {
+  //   state = state.copyWith(walletScreenState: WalletScreenState.overview);
+  // }
 
   void setWalletScreenState(WalletScreenState newState) {
     state = state.copyWith(walletScreenState: newState);
@@ -35,15 +31,9 @@ class EditBankAccountViewModel extends StateNotifier<WalletState> {
   }
 
   void cancelEditBankAccount() {
-    // If we came from the withdrawal screen, go back there, otherwise go to addBankAccount
-    final targetState =
-        state.walletScreenState == WalletScreenState.editBankAccount
-            ? WalletScreenState.addBankAccount
-            : WalletScreenState.withdrawal;
-
     state = state.copyWith(
       selectedBankDetails: null,
-      walletScreenState: targetState,
+      walletScreenState: WalletScreenState.addBankAccount,
     );
   }
 
@@ -54,7 +44,8 @@ class EditBankAccountViewModel extends StateNotifier<WalletState> {
     required String newAccountHolderName,
     required String newPhoneNumber,
     required bool newIsDefault,
-    required WalletScreenState returnToState,
+    // required WidgetRef ref,
+    // required WalletScreenState returnToState,
   }) {
     final updatedList =
         state.bankDetailsList.map((bank) {
@@ -76,8 +67,9 @@ class EditBankAccountViewModel extends StateNotifier<WalletState> {
     state = state.copyWith(
       bankDetailsList: updatedList,
       selectedBankDetails: null,
-      walletScreenState: returnToState,
+      // walletScreenState: returnToState,
     );
+    // ref.invalidate(editBankAccountProvider);
   }
 
   void clearBankDetails(String bankId) {
