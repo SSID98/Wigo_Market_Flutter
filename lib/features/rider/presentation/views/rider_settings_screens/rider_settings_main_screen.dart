@@ -5,6 +5,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:wigo_flutter/features/rider/presentation/views/rider_settings_screens/profile_account_screen.dart';
 import 'package:wigo_flutter/features/rider/presentation/views/rider_settings_screens/rider_notification_screen.dart';
 import 'package:wigo_flutter/features/rider/presentation/views/rider_settings_screens/rider_privacy_security_screen.dart';
+import 'package:wigo_flutter/features/rider/presentation/views/rider_settings_screens/rider_support_screen.dart';
 import 'package:wigo_flutter/features/rider/presentation/views/rider_settings_screens/vehicle_documents_screen.dart';
 
 import '../../../../../core/constants/app_colors.dart';
@@ -159,12 +160,7 @@ class RiderSettingsMainScreen extends ConsumerWidget {
                     ),
                   ),
                   // Right detail panel
-                  Expanded(
-                    child:
-                        navState.selectedIndex == null
-                            ? const Center(child: Text("Select a setting"))
-                            : _buildDetailScreen(navState.selectedIndex!),
-                  ),
+                  Expanded(child: _buildDetailScreen(navState.selectedIndex!)),
                 ],
               )
               : Column(
@@ -264,6 +260,8 @@ class RiderSettingsMainScreen extends ConsumerWidget {
         return const NotificationScreen();
       case 3:
         return const PrivacyAndSecurityScreen();
+      case 4:
+        return const SupportScreen();
       default:
         return const Center(child: Text("Coming soon..."));
     }

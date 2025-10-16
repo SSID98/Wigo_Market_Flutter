@@ -35,6 +35,7 @@ class CustomTextField extends ConsumerStatefulWidget {
   final List<TextInputFormatter>? inputFormatters;
   final void Function()? labelOnTap;
   final bool errorIcon;
+  final int? maxLines, minLines;
   final String? errorMessage;
   final bool showErrorMessageIcon;
 
@@ -82,6 +83,8 @@ class CustomTextField extends ConsumerStatefulWidget {
     this.errorMessage,
     this.showErrorMessageIcon = true,
     this.autoValidateMode,
+    this.maxLines,
+    this.minLines,
   });
 
   @override
@@ -136,6 +139,8 @@ class _CustomTextFieldState extends ConsumerState<CustomTextField> {
                 fontSize: widget.fontSize ?? 14.0,
                 color: AppColors.textBlack,
               ),
+              maxLines: widget.maxLines ?? 1,
+              minLines: widget.minLines,
               cursorColor: AppColors.textBlackGrey,
               inputFormatters: widget.inputFormatters,
               key: widget.fieldKey,

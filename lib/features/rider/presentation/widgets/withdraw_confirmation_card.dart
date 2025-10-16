@@ -12,6 +12,7 @@ class WithdrawalConfirmationCard extends StatelessWidget {
   final Widget body;
   final String amount;
   final void Function()? onConfirm;
+  final void Function()? onCancel;
 
   const WithdrawalConfirmationCard({
     super.key,
@@ -20,6 +21,7 @@ class WithdrawalConfirmationCard extends StatelessWidget {
     required this.onConfirm,
     this.isWeb = false,
     required this.body,
+    this.onCancel,
   });
 
   @override
@@ -105,13 +107,14 @@ class WithdrawalConfirmationCard extends StatelessWidget {
             // Cancel Button
             CustomButton(
               text: 'Cancel',
-              onPressed: () {
-                if (!isWeb) {
-                  Navigator.of(
-                    context,
-                  ).pop(); // Pop if it's the mobile full screen
-                }
-              },
+              onPressed:
+                  isWeb
+                      ? onCancel
+                      : () {
+                        if (!isWeb) {
+                          Navigator.of(context).pop();
+                        }
+                      },
               width: double.infinity,
               height: 48,
               fontSize: isWeb ? 18 : 14,

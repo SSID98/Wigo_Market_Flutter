@@ -30,6 +30,7 @@ class _WalletWithdrawalScreenState
     extends ConsumerState<WalletWithdrawalScreen> {
   String? _currentAmountError;
   AutovalidateMode _autoValidateMode = AutovalidateMode.disabled;
+  bool _showConfirmationCard = false;
 
   @override
   Widget build(BuildContext context) {
@@ -49,7 +50,7 @@ class _WalletWithdrawalScreenState
         body:
             isWeb
                 ? Padding(
-                  padding: const EdgeInsets.fromLTRB(15, 20, 300, 0),
+                  padding: const EdgeInsets.fromLTRB(15, 0, 300, 0),
                   child: Row(
                     children: [
                       Expanded(
@@ -62,40 +63,45 @@ class _WalletWithdrawalScreenState
                       ),
                       const SizedBox(width: 20),
                       Expanded(
-                        flex: 1,
-                        child: WithdrawalConfirmationCard(
-                          onConfirm: () {
-                            _showPinDialog(
-                              context,
-                              defaultBank ??
-                                  BankDetails.empty('1').copyWith(
-                                    bankName: 'No Default Account Set',
-                                    accountNumber: '**** ****',
+                        child:
+                            _showConfirmationCard
+                                ? WithdrawalConfirmationCard(
+                                  onConfirm: () {
+                                    _showPinDialog(
+                                      context,
+                                      defaultBank ??
+                                          BankDetails.empty('1').copyWith(
+                                            bankName: 'No Default Account Set',
+                                            accountNumber: '**** ****',
+                                          ),
+                                      amount,
+                                      vm,
+                                    );
+                                  },
+                                  amount: amount,
+                                  details:
+                                      defaultBank ??
+                                      BankDetails.empty('1').copyWith(
+                                        bankName: 'No Default Account Set',
+                                        accountNumber: '**** ****',
+                                      ),
+                                  onCancel: () {
+                                    setState(() {
+                                      _showConfirmationCard = false;
+                                    });
+                                  },
+                                  isWeb: true,
+                                  body: _buildBodyCard(
+                                    context,
+                                    defaultBank ??
+                                        BankDetails.empty('1').copyWith(
+                                          bankName: 'No Default Account Set',
+                                          accountNumber: '**** ****',
+                                        ),
+                                    amount,
                                   ),
-                              amount,
-                              vm,
-                            );
-                          },
-                          amount: amount,
-                          details:
-                              defaultBank ??
-                              BankDetails.empty('1').copyWith(
-                                bankName: 'No Default Account Set',
-                                accountNumber: '**** ****',
-                              ),
-                          // onCancel: _handleCancel,
-                          // onConfirm: _handleConfirmWithdrawal,
-                          isWeb: true,
-                          body: _buildBodyCard(
-                            context,
-                            defaultBank ??
-                                BankDetails.empty('1').copyWith(
-                                  bankName: 'No Default Account Set',
-                                  accountNumber: '**** ****',
-                                ),
-                            amount,
-                          ),
-                        ),
+                                )
+                                : const SizedBox(),
                       ),
                     ],
                   ),
@@ -344,8 +350,8 @@ class _WalletWithdrawalScreenState
                     if (validationResult == null) {
                       vm.setLoading(true);
                       await Future.delayed(const Duration(milliseconds: 500));
-                      vm.amountController.clear();
                       if (!isWeb) {
+                        vm.amountController.clear();
                         if (!mounted) return;
                         Navigator.push(
                           context,
@@ -417,6 +423,10 @@ class _WalletWithdrawalScreenState
                                 ),
                           ),
                         );
+                      } else if (isWeb) {
+                        setState(() {
+                          _showConfirmationCard = true;
+                        });
                       }
                       vm.setLoading(false);
                     }

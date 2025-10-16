@@ -221,6 +221,7 @@ class _InputPinDialogState extends ConsumerState<InputPinDialog> {
               keyboardType: TextInputType.number,
               inputFormatters: <TextInputFormatter>[
                 FilteringTextInputFormatter.digitsOnly,
+                LengthLimitingTextInputFormatter(4),
               ],
               suffixIcon: Icon(Icons.visibility_off_outlined),
               controller: _pinController,

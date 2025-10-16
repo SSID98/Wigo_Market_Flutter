@@ -65,23 +65,27 @@ class ProfileAndAccountScreen extends StatelessWidget {
         padding: const EdgeInsets.symmetric(horizontal: 20.0),
         child:
             isWeb
-                ? Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Card(
-                      margin: EdgeInsets.only(bottom: 20, top: 20),
-                      shadowColor: Colors.white70.withValues(alpha: 0.06),
-                      color: AppColors.backgroundWhite,
-                      elevation: 1,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(16.0),
-                      ),
-                      child: Padding(
-                        padding: const EdgeInsets.all(16),
-                        child: vehicleInfoSection,
-                      ),
+                ? Expanded(
+                  child: SingleChildScrollView(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Card(
+                          margin: EdgeInsets.only(bottom: 20, top: 20),
+                          shadowColor: Colors.white70.withValues(alpha: 0.06),
+                          color: AppColors.backgroundWhite,
+                          elevation: 1,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(16.0),
+                          ),
+                          child: Padding(
+                            padding: const EdgeInsets.all(16),
+                            child: vehicleInfoSection,
+                          ),
+                        ),
+                      ],
                     ),
-                  ],
+                  ),
                 )
                 : Card(
                   elevation: 0,
@@ -203,9 +207,15 @@ class _VehicleInfoSection extends ConsumerWidget {
                     hintTextColor: AppColors.textBlackGrey,
                   );
                 case 2:
-                  return CustomPhoneNumberField(label: 'Phone Number');
+                  return CustomPhoneNumberField(
+                    label: 'Phone Number',
+                    contentPadding: EdgeInsets.only(bottom: isWeb ? 3.5 : 0),
+                  );
                 case 3:
-                  return CustomPhoneNumberField(label: 'Next of Kin Contact');
+                  return CustomPhoneNumberField(
+                    label: 'Next of Kin Contact',
+                    contentPadding: EdgeInsets.only(bottom: isWeb ? 3.5 : 0),
+                  );
                 case 4:
                   return CustomDropdownField(
                     label: 'Gender',

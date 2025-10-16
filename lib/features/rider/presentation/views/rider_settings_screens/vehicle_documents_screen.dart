@@ -25,43 +25,45 @@ class VehicleAndDocumentsScreen extends StatelessWidget {
         child:
             isWeb
                 ? Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      SizedBox(
-                        height: 332,
-                        child: Card(
-                          margin: EdgeInsets.only(bottom: 20, top: 20),
-                          shadowColor: Colors.white70.withValues(alpha: 0.06),
-                          color: AppColors.backgroundWhite,
-                          elevation: 1,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(16.0),
-                          ),
-                          child: Padding(
-                            padding: const EdgeInsets.all(16),
-                            child: vehicleInfoSection,
-                          ),
-                        ),
-                      ),
-                      const SizedBox(width: 16),
-                      SizedBox(
-                        height: 510,
-                        child: Card(
-                          margin: EdgeInsets.only(bottom: 150, top: 20),
-                          shadowColor: Colors.white70.withValues(alpha: 0.06),
-                          color: AppColors.backgroundWhite,
-                          elevation: 1,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(16.0),
-                          ),
-                          child: Padding(
-                            padding: const EdgeInsets.all(16),
-                            child: documentVerificationSection,
+                  child: SingleChildScrollView(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        SizedBox(
+                          height: 332,
+                          child: Card(
+                            margin: EdgeInsets.only(bottom: 20, top: 20),
+                            shadowColor: Colors.white70.withValues(alpha: 0.06),
+                            color: AppColors.backgroundWhite,
+                            elevation: 1,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(16.0),
+                            ),
+                            child: Padding(
+                              padding: const EdgeInsets.all(16),
+                              child: vehicleInfoSection,
+                            ),
                           ),
                         ),
-                      ),
-                    ],
+                        const SizedBox(width: 16),
+                        SizedBox(
+                          height: 510,
+                          child: Card(
+                            margin: EdgeInsets.only(bottom: 150, top: 20),
+                            shadowColor: Colors.white70.withValues(alpha: 0.06),
+                            color: AppColors.backgroundWhite,
+                            elevation: 1,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(16.0),
+                            ),
+                            child: Padding(
+                              padding: const EdgeInsets.all(16),
+                              child: documentVerificationSection,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
                 )
                 : Column(
@@ -89,19 +91,20 @@ class VehicleAndDocumentsScreen extends StatelessWidget {
                       ),
                     ),
                     const Divider(),
-                    const SizedBox(height: 5),
+
                     Expanded(
                       child: SingleChildScrollView(
                         child: Column(
                           children: [
+                            const SizedBox(height: 5),
                             vehicleInfoSection,
                             const SizedBox(height: 60),
                             documentVerificationSection,
+                            const SizedBox(height: 15),
                           ],
                         ),
                       ),
                     ),
-                    const SizedBox(height: 15),
                     CustomButton(
                       text: 'Save',
                       onPressed: () {},

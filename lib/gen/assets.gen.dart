@@ -49,6 +49,10 @@ class $AssetsIconsGen {
   /// File path: assets/icons/bicycle.svg
   SvgGenImage get bicycle => const SvgGenImage('assets/icons/bicycle.svg');
 
+  /// File path: assets/icons/blueMailContainer.svg
+  SvgGenImage get blueMailContainer =>
+      const SvgGenImage('assets/icons/blueMailContainer.svg');
+
   /// File path: assets/icons/blueWallet.svg
   SvgGenImage get blueWallet =>
       const SvgGenImage('assets/icons/blueWallet.svg');
@@ -138,6 +142,10 @@ class $AssetsIconsGen {
   /// File path: assets/icons/google.svg
   SvgGenImage get google => const SvgGenImage('assets/icons/google.svg');
 
+  /// File path: assets/icons/greenFacebook.svg
+  SvgGenImage get greenFacebook =>
+      const SvgGenImage('assets/icons/greenFacebook.svg');
+
   /// File path: assets/icons/greenWallet.svg
   SvgGenImage get greenWallet =>
       const SvgGenImage('assets/icons/greenWallet.svg');
@@ -151,6 +159,16 @@ class $AssetsIconsGen {
   /// File path: assets/icons/home2.svg
   SvgGenImage get home2 => const SvgGenImage('assets/icons/home2.svg');
 
+  /// File path: assets/icons/instagram.svg
+  SvgGenImage get instagram => const SvgGenImage('assets/icons/instagram.svg');
+
+  /// File path: assets/icons/linkedin.svg
+  SvgGenImage get linkedin => const SvgGenImage('assets/icons/linkedin.svg');
+
+  /// File path: assets/icons/locationContainer.svg
+  SvgGenImage get locationContainer =>
+      const SvgGenImage('assets/icons/locationContainer.svg');
+
   /// File path: assets/icons/lock.svg
   SvgGenImage get lock => const SvgGenImage('assets/icons/lock.svg');
 
@@ -162,6 +180,10 @@ class $AssetsIconsGen {
 
   /// File path: assets/icons/mail.svg
   SvgGenImage get mail => const SvgGenImage('assets/icons/mail.svg');
+
+  /// File path: assets/icons/mailContainer.svg
+  SvgGenImage get mailContainer =>
+      const SvgGenImage('assets/icons/mailContainer.svg');
 
   /// File path: assets/icons/map.svg
   SvgGenImage get map => const SvgGenImage('assets/icons/map.svg');
@@ -223,6 +245,10 @@ class $AssetsIconsGen {
   /// File path: assets/icons/pendingPayout.svg
   SvgGenImage get pendingPayout =>
       const SvgGenImage('assets/icons/pendingPayout.svg');
+
+  /// File path: assets/icons/phoneContainer.svg
+  SvgGenImage get phoneContainer =>
+      const SvgGenImage('assets/icons/phoneContainer.svg');
 
   /// File path: assets/icons/privacy.svg
   SvgGenImage get privacy => const SvgGenImage('assets/icons/privacy.svg');
@@ -307,6 +333,12 @@ class $AssetsIconsGen {
   SvgGenImage get webLogoutButton =>
       const SvgGenImage('assets/icons/webLogoutButton.svg');
 
+  /// File path: assets/icons/x.svg
+  SvgGenImage get x => const SvgGenImage('assets/icons/x.svg');
+
+  /// File path: assets/icons/youtube.svg
+  SvgGenImage get youtube => const SvgGenImage('assets/icons/youtube.svg');
+
   /// List of all assets
   List<SvgGenImage> get values => [
     actionFailed,
@@ -318,6 +350,7 @@ class $AssetsIconsGen {
     arrowsFoward,
     bank,
     bicycle,
+    blueMailContainer,
     blueWallet,
     brownWallet,
     bus,
@@ -344,14 +377,19 @@ class $AssetsIconsGen {
     fileValidation,
     foot,
     google,
+    greenFacebook,
     greenWallet,
     group,
     home,
     home2,
+    instagram,
+    linkedin,
+    locationContainer,
     lock,
     logo,
     logoWeb,
     mail,
+    mailContainer,
     map,
     menu,
     mobileFilter,
@@ -370,6 +408,7 @@ class $AssetsIconsGen {
     payInfo,
     pending,
     pendingPayout,
+    phoneContainer,
     privacy,
     received,
     recentDeliveries,
@@ -394,6 +433,8 @@ class $AssetsIconsGen {
     vehicleDoc,
     wallet,
     webLogoutButton,
+    x,
+    youtube,
   ];
 }
 

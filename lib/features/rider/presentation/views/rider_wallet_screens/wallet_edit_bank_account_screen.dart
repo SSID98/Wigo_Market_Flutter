@@ -324,6 +324,9 @@ class _EditBankAccountScreenState extends ConsumerState<EditBankAccountScreen> {
                                 hintTextFontSize: isWeb ? 18 : 12,
                                 dialCodeFontSize: isWeb ? 18 : 12,
                                 inputColor: AppColors.textBlack,
+                                contentPadding: EdgeInsets.only(
+                                  bottom: isWeb ? 4.5 : 0,
+                                ),
                               );
                             default:
                               return const SizedBox.shrink();

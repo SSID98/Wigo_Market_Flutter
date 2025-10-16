@@ -26,37 +26,31 @@ class PrivacyAndSecurityScreen extends StatelessWidget {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      SizedBox(
-                        height: 232,
-                        child: Card(
-                          margin: EdgeInsets.only(bottom: 20, top: 20),
-                          shadowColor: Colors.white70.withValues(alpha: 0.06),
-                          color: AppColors.backgroundWhite,
-                          elevation: 1,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(16.0),
-                          ),
-                          child: Padding(
-                            padding: const EdgeInsets.all(16),
-                            child: privacySection,
-                          ),
+                      Card(
+                        margin: EdgeInsets.only(bottom: 20, top: 20),
+                        shadowColor: Colors.white70.withValues(alpha: 0.06),
+                        color: AppColors.backgroundWhite,
+                        elevation: 1,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(16.0),
+                        ),
+                        child: Padding(
+                          padding: const EdgeInsets.all(16),
+                          child: privacySection,
                         ),
                       ),
                       const SizedBox(width: 16),
-                      SizedBox(
-                        height: 176,
-                        child: Card(
-                          margin: EdgeInsets.only(bottom: 150, top: 20),
-                          shadowColor: Colors.white70.withValues(alpha: 0.06),
-                          color: AppColors.backgroundWhite,
-                          elevation: 1,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(16.0),
-                          ),
-                          child: Padding(
-                            padding: const EdgeInsets.all(16),
-                            child: deleteAccountSection,
-                          ),
+                      Card(
+                        margin: EdgeInsets.only(bottom: 150, top: 20),
+                        shadowColor: Colors.white70.withValues(alpha: 0.06),
+                        color: AppColors.backgroundWhite,
+                        elevation: 1,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(16.0),
+                        ),
+                        child: Padding(
+                          padding: const EdgeInsets.all(16),
+                          child: deleteAccountSection,
                         ),
                       ),
                     ],

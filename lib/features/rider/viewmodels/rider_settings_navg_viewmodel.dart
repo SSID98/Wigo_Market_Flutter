@@ -8,7 +8,8 @@ class SettingsNavigationState {
 
 class SettingsNavigationViewModel
     extends StateNotifier<SettingsNavigationState> {
-  SettingsNavigationViewModel() : super(const SettingsNavigationState());
+  SettingsNavigationViewModel()
+    : super(const SettingsNavigationState(selectedIndex: 0));
 
   void updateIndex(int? index) {
     state = SettingsNavigationState(selectedIndex: index);
