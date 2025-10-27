@@ -282,7 +282,7 @@ class RiderPaymentMethodSetupScreen extends ConsumerWidget {
         CustomButton(
           text: 'Continue',
           onPressed: () {
-            context.go('/rider/successful');
+            context.go('/successful');
           },
           fontSize: 18,
           fontWeight: FontWeight.w500,

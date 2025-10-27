@@ -28,7 +28,9 @@ class LoginViewModel extends StateNotifier<LoginState> {
   Future<void> login(GlobalKey<FormState> formKey, BuildContext context) async {
     if (formKey.currentState!.validate()) {
       if (!state.agreeToTerms) {
-        state = state.copyWith(generalError: 'You must agree to the terms.');
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('You must agree to the terms.')),
+        );
         return;
       }
       setLoading(true);

@@ -5,8 +5,8 @@ import 'package:wigo_flutter/shared/models/location_data.dart';
 import 'package:wigo_flutter/shared/widgets/custom_text_field.dart';
 
 import '../../../../gen/assets.gen.dart';
+import '../../../../shared/viewmodels/account_creation_viewmodel.dart';
 import '../../../../shared/widgets/contact_text_field.dart';
-import '../../viewmodels/account_setup_viewmodels/rider_account_creation_viewmodel.dart';
 
 class RiderFormFields extends ConsumerWidget {
   final bool web;
@@ -14,6 +14,7 @@ class RiderFormFields extends ConsumerWidget {
   final double iconWidth;
   final double hintFontSize;
   final Widget? suffixIcon;
+  final bool isBuyer;
 
   const RiderFormFields({
     super.key,
@@ -22,6 +23,7 @@ class RiderFormFields extends ConsumerWidget {
     required this.iconWidth,
     required this.hintFontSize,
     this.suffixIcon,
+    this.isBuyer = false,
   });
 
   @override
@@ -67,23 +69,25 @@ class RiderFormFields extends ConsumerWidget {
           label: 'Phone Number',
           // contentPadding: EdgeInsets.only(bottom: 1),
         ),
-        spacing,
-        CustomPhoneNumberField(
-          label: 'Next of Kin Contact',
-          // contentPadding: EdgeInsets.only(bottom: 1),
-        ),
-        spacing,
-        CustomDropdownField(
-          label: 'Gender',
-          hintText: 'Select your Gender',
-          items: const ['Male', 'Female'],
-          iconWidth: 22,
-          iconHeight: 22,
-          prefixIcon: AppAssets.icons.user.svg(
-            width: iconWidth,
-            height: iconHeight,
+        if (!isBuyer) ...[
+          spacing,
+          CustomPhoneNumberField(
+            label: 'Next of Kin Contact',
+            // contentPadding: EdgeInsets.only(bottom: 1),
           ),
-        ),
+          spacing,
+          CustomDropdownField(
+            label: 'Gender',
+            hintText: 'Select your Gender',
+            items: const ['Male', 'Female'],
+            iconWidth: 22,
+            iconHeight: 22,
+            prefixIcon: AppAssets.icons.user.svg(
+              width: iconWidth,
+              height: iconHeight,
+            ),
+          ),
+        ],
         spacing,
         CustomTextField(
           hintText: 'Enter residential address',
@@ -133,17 +137,18 @@ class RiderFormFields extends ConsumerWidget {
             value: viewModel.selectedCity,
             onChanged: viewModel.setCityValue,
           ),
-          spacing,
         ],
-        CustomDropdownField(
-          label: 'Means of Transportation',
-          items: const ['Motor Bike', 'Car'],
-          hintText: 'Motor Bike',
-          prefixIcon: AppAssets.icons.motorbike.svg(
-            height: iconHeight,
-            width: iconWidth,
+        spacing,
+        if (!isBuyer)
+          CustomDropdownField(
+            label: 'Means of Transportation',
+            items: const ['Feet', 'Bicycle', 'Car', 'Motor Bike', 'Bus'],
+            hintText: 'Motor Bike',
+            prefixIcon: AppAssets.icons.motorbike.svg(
+              height: iconHeight,
+              width: iconWidth,
+            ),
           ),
-        ),
       ],
     );
   }

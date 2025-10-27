@@ -30,6 +30,8 @@ dependencies:
   google_maps_flutter: ^2.13.1
   file_picker: ^10.3.3
   shared_preferences: ^2.5.3
+  geolocator: ^14.0.2
+  dropdown_button2: ^2.3.9
 
 
 

@@ -156,6 +156,7 @@ class WalletOverviewAndTransactionsScreen extends ConsumerWidget {
                       width: isWeb ? 92 : 79,
                       child: CustomDropdownField(
                         radius: 4,
+                        menuItemPadding: EdgeInsets.only(left: 11),
                         colorFilter: ColorFilter.mode(
                           AppColors.primaryDarkGreen,
                           BlendMode.srcIn,
@@ -192,6 +193,7 @@ class WalletOverviewAndTransactionsScreen extends ConsumerWidget {
                     SizedBox(
                       width: isWeb ? 92 : 72,
                       child: CustomDropdownField(
+                        menuItemPadding: EdgeInsets.only(left: 11),
                         radius: 4,
                         colorFilter: ColorFilter.mode(
                           AppColors.primaryDarkGreen,

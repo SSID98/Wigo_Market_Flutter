@@ -5,7 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 import 'package:wigo_flutter/core/constants/app_colors.dart';
-import 'package:wigo_flutter/features/rider/viewmodels/rider_onboarding_viewmodel.dart';
+import 'package:wigo_flutter/shared/viewmodels/onboarding_viewmodel.dart';
 
 class MyCustomScrollBehavior extends MaterialScrollBehavior {
   @override
@@ -15,7 +15,7 @@ class MyCustomScrollBehavior extends MaterialScrollBehavior {
   };
 }
 
-class RiderOnboardingPageView extends ConsumerWidget {
+class OnboardingPageView extends ConsumerWidget {
   final double screenSize;
   final double titleFontSize, descriptionFontSize;
   final Color titleColor;
@@ -25,8 +25,9 @@ class RiderOnboardingPageView extends ConsumerWidget {
       dotWidth,
       expansionFactor,
       padding;
+  final bool isBuyer;
 
-  const RiderOnboardingPageView({
+  const OnboardingPageView({
     super.key,
     required this.screenSize,
     required this.titleFontSize,
@@ -38,6 +39,7 @@ class RiderOnboardingPageView extends ConsumerWidget {
     required this.expansionFactor,
     required this.padding,
     required this.descriptionFontSize,
+    this.isBuyer = false,
   });
 
   @override
@@ -50,10 +52,16 @@ class RiderOnboardingPageView extends ConsumerWidget {
         behavior: MyCustomScrollBehavior(),
         child: PageView.builder(
           controller: viewModel.pageController,
-          itemCount: viewModel.onboardingData.length,
+          itemCount:
+              !isBuyer
+                  ? viewModel.riderOnboardingData.length
+                  : viewModel.buyerOnboardingData.length,
           onPageChanged: viewModel.onPageChanged,
           itemBuilder: (context, index) {
-            final data = viewModel.onboardingData[index];
+            final data =
+                !isBuyer
+                    ? viewModel.riderOnboardingData[index]
+                    : viewModel.buyerOnboardingData[index];
             return StreamBuilder<Object>(
               stream: null,
               builder: (context, snapshot) {
@@ -77,7 +85,10 @@ class RiderOnboardingPageView extends ConsumerWidget {
                     const SizedBox(height: 15),
                     SmoothPageIndicator(
                       controller: viewModel.pageController,
-                      count: viewModel.onboardingData.length,
+                      count:
+                          !isBuyer
+                              ? viewModel.riderOnboardingData.length
+                              : viewModel.buyerOnboardingData.length,
                       effect: ExpandingDotsEffect(
                         dotColor: AppColors.sliderDotColor,
                         activeDotColor: AppColors.accentOrange,

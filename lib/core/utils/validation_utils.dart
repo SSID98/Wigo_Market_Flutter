@@ -28,13 +28,6 @@ class FormValidators {
     return null;
   }
 
-  static String? validateMismatch(String? value, String? value1) {
-    if (value != value1) {
-      return 'Password Mismatch';
-    }
-    return null;
-  }
-
   static String? validateAmount(String? value) {
     if (value == null || value.isEmpty) {
       return 'Amount is required.';

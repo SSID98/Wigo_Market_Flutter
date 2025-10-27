@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:wigo_flutter/shared/widgets/custom_button.dart';
 
@@ -7,14 +8,30 @@ import '../../../../../gen/assets.gen.dart';
 import '../../../../../shared/widgets/custom_text_field.dart';
 import '../../../../../shared/widgets/upload_box.dart';
 
-class VehicleAndDocumentsScreen extends StatelessWidget {
+class VehicleAndDocumentsScreen extends ConsumerStatefulWidget {
   const VehicleAndDocumentsScreen({super.key});
+
+  @override
+  ConsumerState<VehicleAndDocumentsScreen> createState() =>
+      _VehicleAndDocumentsScreenState();
+}
+
+class _VehicleAndDocumentsScreenState
+    extends ConsumerState<VehicleAndDocumentsScreen> {
+  String? selectedTransport;
 
   @override
   Widget build(BuildContext context) {
     final isWeb = MediaQuery.of(context).size.width > 800;
 
-    final vehicleInfoSection = _VehicleInfoSection(showSaveInside: isWeb);
+    final vehicleInfoSection = _VehicleInfoSection(
+      showSaveInside: isWeb,
+      selectedTransport: selectedTransport,
+      onTransportChanged: (value) {
+        setState(() => selectedTransport = value);
+      },
+    );
+
     final documentVerificationSection = const _DocumentVerificationSection();
 
     return Scaffold(
@@ -46,22 +63,25 @@ class VehicleAndDocumentsScreen extends StatelessWidget {
                           ),
                         ),
                         const SizedBox(width: 16),
-                        SizedBox(
-                          height: 510,
-                          child: Card(
-                            margin: EdgeInsets.only(bottom: 150, top: 20),
-                            shadowColor: Colors.white70.withValues(alpha: 0.06),
-                            color: AppColors.backgroundWhite,
-                            elevation: 1,
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(16.0),
-                            ),
-                            child: Padding(
-                              padding: const EdgeInsets.all(16),
-                              child: documentVerificationSection,
+                        if (selectedTransport != 'Feet')
+                          SizedBox(
+                            height: 510,
+                            child: Card(
+                              margin: EdgeInsets.only(bottom: 150, top: 20),
+                              shadowColor: Colors.white70.withValues(
+                                alpha: 0.06,
+                              ),
+                              color: AppColors.backgroundWhite,
+                              elevation: 1,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(16.0),
+                              ),
+                              child: Padding(
+                                padding: const EdgeInsets.all(16),
+                                child: documentVerificationSection,
+                              ),
                             ),
                           ),
-                        ),
                       ],
                     ),
                   ),
@@ -99,7 +119,8 @@ class VehicleAndDocumentsScreen extends StatelessWidget {
                             const SizedBox(height: 5),
                             vehicleInfoSection,
                             const SizedBox(height: 60),
-                            documentVerificationSection,
+                            if (selectedTransport != 'Feet')
+                              documentVerificationSection,
                             const SizedBox(height: 15),
                           ],
                         ),
@@ -123,12 +144,20 @@ class VehicleAndDocumentsScreen extends StatelessWidget {
 // VEHICLE INFO SECTION
 class _VehicleInfoSection extends StatelessWidget {
   final bool showSaveInside;
+  final String? selectedTransport;
+  final ValueChanged<String?> onTransportChanged;
 
-  const _VehicleInfoSection({required this.showSaveInside});
+  const _VehicleInfoSection({
+    required this.showSaveInside,
+    required this.selectedTransport,
+    required this.onTransportChanged,
+  });
 
   @override
   Widget build(BuildContext context) {
     final isWeb = MediaQuery.of(context).size.width > 800;
+    final isDisabled = selectedTransport == 'Feet';
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -175,14 +204,16 @@ class _VehicleInfoSection extends StatelessWidget {
               case 0:
                 return CustomDropdownField(
                   label: 'Means of Transportation',
-                  items: const ['Car', 'Motor Bike'],
+                  items: const ['Feet', 'Bicycle', 'Car', 'Motor Bike', 'Bus'],
                   hintText: 'Car',
                   prefixIcon: AppAssets.icons.car.svg(),
                   labelTextColor: AppColors.textBlack,
                   hintTextColor: AppColors.textBlackGrey,
+                  onChanged: onTransportChanged,
                 );
               case 1:
                 return CustomTextField(
+                  enabled: !isDisabled,
                   hintText: 'MRT12345',
                   label: 'Licence Plate Number',
                   prefixIcon: AppAssets.icons.mail.path,
@@ -190,6 +221,7 @@ class _VehicleInfoSection extends StatelessWidget {
                 );
               case 2:
                 return CustomTextField(
+                  enabled: !isDisabled,
                   hintText: 'Toyota Corolla LE',
                   label: 'Make & Model',
                   prefixIcon: AppAssets.icons.menu.path,
@@ -199,6 +231,7 @@ class _VehicleInfoSection extends StatelessWidget {
                 );
               case 3:
                 return CustomTextField(
+                  enabled: !isDisabled,
                   hintText: '2003',
                   label: 'Year',
                   prefixIcon: AppAssets.icons.calender.path,

@@ -6,17 +6,19 @@ import 'package:wigo_flutter/core/constants/app_colors.dart';
 import 'package:wigo_flutter/features/rider/presentation/widgets/rider_forms_field.dart';
 import 'package:wigo_flutter/shared/widgets/custom_button.dart';
 
-import '../../../../../gen/assets.gen.dart';
+import '../../gen/assets.gen.dart';
 
-class RiderAccountCreationScreen extends ConsumerWidget {
-  const RiderAccountCreationScreen({super.key});
+class AccountCreationScreen extends ConsumerWidget {
+  final bool isBuyer;
+
+  const AccountCreationScreen({super.key, this.isBuyer = false});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final screenSize = MediaQuery.of(context).size;
     final isWeb = MediaQuery.of(context).size.width > 600;
     return isWeb
-        ? _buildWebLayout(screenSize)
+        ? _buildWebLayout(screenSize, context)
         : _buildMobileLayout(screenSize, context);
   }
 
@@ -65,6 +67,7 @@ class RiderAccountCreationScreen extends ConsumerWidget {
                             iconHeight: 20,
                             iconWidth: 20,
                             hintFontSize: 11,
+                            isBuyer: isBuyer,
                           ),
                         ),
                       ),
@@ -73,7 +76,9 @@ class RiderAccountCreationScreen extends ConsumerWidget {
                         child: CustomButton(
                           text: 'Continue',
                           onPressed: () {
-                            context.push('/verification');
+                            isBuyer
+                                ? context.go('/successful')
+                                : context.push('/verification');
                           },
                           fontSize: 18,
                           fontWeight: FontWeight.w500,
@@ -93,7 +98,7 @@ class RiderAccountCreationScreen extends ConsumerWidget {
     );
   }
 
-  Widget _buildWebLayout(screenSize) {
+  Widget _buildWebLayout(screenSize, context) {
     return Scaffold(
       body: Stack(
         children: [
@@ -145,6 +150,7 @@ class RiderAccountCreationScreen extends ConsumerWidget {
                                   iconWidth: 40,
                                   hintFontSize: 6,
                                   web: true,
+                                  isBuyer: isBuyer,
                                   suffixIcon: Icon(Icons.visibility_outlined),
                                 ),
                                 const SizedBox(height: 32),
@@ -153,7 +159,9 @@ class RiderAccountCreationScreen extends ConsumerWidget {
                                   child: Center(
                                     child: CustomButton(
                                       text: 'Continue',
-                                      onPressed: () {},
+                                      onPressed: () {
+                                        context.push('/verification');
+                                      },
                                       fontSize: 18,
                                       fontWeight: FontWeight.w500,
                                       width: 680,
@@ -192,7 +200,7 @@ class RiderAccountCreationScreen extends ConsumerWidget {
         Center(
           child: Text(
             textAlign: TextAlign.center,
-            'Create Your Rider Account',
+            isBuyer ? 'Create Your Buyer Account' : 'Create Your Rider Account',
             style: GoogleFonts.hind(
               fontWeight: FontWeight.w700,
               fontSize: fontSize1,
@@ -206,7 +214,9 @@ class RiderAccountCreationScreen extends ConsumerWidget {
             children: [
               Center(
                 child: Text(
-                  "Let's get you set up to start delivering and earning with wiGO MARKET.",
+                  isBuyer
+                      ? "Let's get you set up to start shopping with wiGO MARKET."
+                      : "Let's get you set up to start delivering and earning with wiGO MARKET.",
                   style: GoogleFonts.hind(
                     fontWeight: FontWeight.w500,
                     fontSize: fontSize2,
@@ -222,7 +232,9 @@ class RiderAccountCreationScreen extends ConsumerWidget {
             padding: const EdgeInsets.symmetric(horizontal: 40),
             child: Text(
               textAlign: TextAlign.center,
-              "Let's get you set up to start delivering and earning with wiGO MARKET.",
+              isBuyer
+                  ? "Let's get you set up to start shopping with wiGO MARKET."
+                  : "Let's get you set up to start delivering and earning with wiGO MARKET.",
               style: GoogleFonts.hind(
                 fontWeight: FontWeight.w500,
                 fontSize: fontSize2,
@@ -247,7 +259,9 @@ class RiderAccountCreationScreen extends ConsumerWidget {
               ),
               const SizedBox(height: 12),
               Text(
-                'Provide your basic information for verification and rider profile setup.',
+                isBuyer
+                    ? 'Provide your basic information for buyer profile setup.'
+                    : 'Provide your basic information for verification and rider profile setup.',
                 style: GoogleFonts.hind(
                   fontWeight: FontWeight.w500,
                   fontSize: fontSize4,

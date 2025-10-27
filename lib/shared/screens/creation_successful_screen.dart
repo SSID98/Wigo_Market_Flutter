@@ -4,13 +4,15 @@ import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-import '../../../../../core/constants/app_colors.dart';
-import '../../../../../core/local/local_storage_service.dart';
-import '../../../../../gen/assets.gen.dart';
-import '../../../../../shared/widgets/custom_button.dart';
+import '../../core/constants/app_colors.dart';
+import '../../core/local/local_storage_service.dart';
+import '../../gen/assets.gen.dart';
+import '../widgets/custom_button.dart';
 
-class RiderCreationSuccessfulScreen extends StatelessWidget {
-  const RiderCreationSuccessfulScreen({super.key});
+class CreationSuccessfulScreen extends StatelessWidget {
+  final bool isRider;
+
+  const CreationSuccessfulScreen({super.key, this.isRider = true});
 
   @override
   Widget build(BuildContext context) {
@@ -181,7 +183,9 @@ class RiderCreationSuccessfulScreen extends StatelessWidget {
           ),
           const SizedBox(height: 20),
           Text(
-            'You are just one click away from making your first earn on wiGO MARKET.',
+            isRider
+                ? 'You are just one click away from making your first earn on wiGO MARKET.'
+                : 'You are just one click away from making your first purchase on wiGO MARKET.',
             textAlign: TextAlign.center,
             style: GoogleFonts.hind(
               fontSize: fontSize2,

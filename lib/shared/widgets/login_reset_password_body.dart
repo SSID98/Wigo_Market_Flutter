@@ -36,7 +36,6 @@ class LoginResetPasswordWidgetBuilder {
     required GlobalKey<FormFieldState<String>> fieldKey1,
     required GlobalKey<FormFieldState<String>> fieldKey2,
     void Function(bool?)? termsOnChanged,
-    bool showErrorMessageIcon = true,
     TextEditingController? controller1,
     TextEditingController? controller2,
     String? Function(String?)? validator1,
@@ -90,7 +89,6 @@ class LoginResetPasswordWidgetBuilder {
             contentPadding: contentPadding1,
             errorMessage: errorMessage1,
             autoValidateMode: autoValidateMode,
-            showErrorMessageIcon: showErrorMessageIcon,
           ),
           const SizedBox(height: 25.0),
           CustomTextField(
@@ -112,7 +110,6 @@ class LoginResetPasswordWidgetBuilder {
             contentPadding: contentPadding2,
             errorMessage: errorMessage2,
             autoValidateMode: autoValidateMode,
-            showErrorMessageIcon: showErrorMessageIcon,
           ),
           SizedBox(height: 12.0),
           Padding(
@@ -189,18 +186,6 @@ class LoginResetPasswordWidgetBuilder {
               ],
             ),
           ),
-          if (state.generalError != null)
-            Padding(
-              padding: EdgeInsets.only(top: errorPadding),
-              child: Text(
-                state.generalError!,
-                style: GoogleFonts.hind(
-                  fontSize: generalErrorFont,
-                  fontWeight: FontWeight.w400,
-                  color: AppColors.accentRed,
-                ),
-              ),
-            ),
           const SizedBox(height: 44.0),
           CustomButton(
             text: buttonText ?? 'Login',
@@ -246,7 +231,6 @@ class LoginResetPasswordWidgetBuilder {
     hintText2,
     bool isPassword = false,
     bool showRichText = true,
-    bool showErrorMessageIcon = true,
     buttonText,
     textFieldIcon,
   }) => _buildBody(
@@ -291,7 +275,6 @@ class LoginResetPasswordWidgetBuilder {
     errorMessage2: errorMessage2,
     autoValidateMode: autoValidateMode,
     cvm: cvm,
-    showErrorMessageIcon: showErrorMessageIcon,
   );
 
   static Widget buildWebBody({
@@ -322,7 +305,6 @@ class LoginResetPasswordWidgetBuilder {
     hintText1,
     hintText2,
     bool isPassword = false,
-    bool showErrorMessageIcon = true,
     bool showRichText = true,
     buttonText,
     textFieldIcon,
@@ -369,6 +351,5 @@ class LoginResetPasswordWidgetBuilder {
     autoValidateMode: autoValidateMode,
     errorMessage1: errorMessage1,
     errorMessage2: errorMessage2,
-    showErrorMessageIcon: showErrorMessageIcon,
   );
 }

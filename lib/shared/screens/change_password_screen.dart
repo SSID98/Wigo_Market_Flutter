@@ -89,7 +89,6 @@ class _ChangePasswordScreenState extends ConsumerState<ChangePasswordScreen> {
                         termsOnChanged: vm.toggleRememberMe,
                         buttonText: 'Continue',
                         state: state,
-                        showErrorMessageIcon: false,
                         autoValidateMode: _autovalidateMode,
                         errorMessage1: _passwordError,
                         errorMessage2: _confirmPasswordError,
@@ -99,63 +98,59 @@ class _ChangePasswordScreenState extends ConsumerState<ChangePasswordScreen> {
                         secondFieldHasError: _confirmPasswordError != null,
                         onFocusChange1: (hasFocus) {
                           if (!hasFocus) {
-                            if (!hasFocus) {
-                              final passwordLengthError =
-                                  FormValidators.validatePassword(
-                                    vm.passwordController.text,
-                                  );
-                              final confirmPasswordLengthError =
-                                  FormValidators.validatePassword(
-                                    vm.confirmPasswordController.text,
-                                  );
-                              String? mismatchError;
-                              if (passwordLengthError == null &&
-                                  confirmPasswordLengthError == null) {
-                                if (vm.passwordController.text !=
-                                    vm.confirmPasswordController.text) {
-                                  mismatchError =
-                                      'Password Mismatch. Please re-enter.';
-                                }
+                            final passwordLengthError =
+                                FormValidators.validatePassword(
+                                  vm.passwordController.text,
+                                );
+                            final confirmPasswordLengthError =
+                                FormValidators.validatePassword(
+                                  vm.confirmPasswordController.text,
+                                );
+                            String? mismatchError;
+                            if (passwordLengthError == null &&
+                                confirmPasswordLengthError == null) {
+                              if (vm.passwordController.text !=
+                                  vm.confirmPasswordController.text) {
+                                mismatchError =
+                                    'Password Mismatch. Please re-enter.';
                               }
-                              setState(() {
-                                _passwordError =
-                                    passwordLengthError ?? mismatchError;
-                                mismatchError;
-                                _autovalidateMode = AutovalidateMode.always;
-                              });
-                              final hasAnyError = _passwordError != null;
-                              if (!hasAnyError) {}
                             }
+                            setState(() {
+                              _passwordError =
+                                  passwordLengthError ?? mismatchError;
+                              mismatchError;
+                              _autovalidateMode = AutovalidateMode.always;
+                            });
+                            final hasAnyError = _passwordError != null;
+                            if (!hasAnyError) {}
                           }
                         },
                         onFocusChange2: (hasFocus) {
                           if (!hasFocus) {
-                            if (!hasFocus) {
-                              final passwordLengthError =
-                                  FormValidators.validatePassword(
-                                    vm.passwordController.text,
-                                  );
-                              final confirmPasswordLengthError =
-                                  FormValidators.validatePassword(
-                                    vm.confirmPasswordController.text,
-                                  );
-                              String? mismatchError;
-                              if (passwordLengthError == null &&
-                                  confirmPasswordLengthError == null) {
-                                if (vm.passwordController.text !=
-                                    vm.confirmPasswordController.text) {
-                                  mismatchError =
-                                      'Password Mismatch. Please re-enter.';
-                                }
+                            final passwordLengthError =
+                                FormValidators.validatePassword(
+                                  vm.passwordController.text,
+                                );
+                            final confirmPasswordLengthError =
+                                FormValidators.validatePassword(
+                                  vm.confirmPasswordController.text,
+                                );
+                            String? mismatchError;
+                            if (passwordLengthError == null &&
+                                confirmPasswordLengthError == null) {
+                              if (vm.passwordController.text !=
+                                  vm.confirmPasswordController.text) {
+                                mismatchError =
+                                    'Password Mismatch. Please re-enter.';
                               }
-                              setState(() {
-                                _confirmPasswordError =
-                                    confirmPasswordLengthError ?? mismatchError;
-                                _autovalidateMode = AutovalidateMode.always;
-                              });
-                              final hasAnyError = _confirmPasswordError != null;
-                              if (!hasAnyError) {}
                             }
+                            setState(() {
+                              _confirmPasswordError =
+                                  confirmPasswordLengthError ?? mismatchError;
+                              _autovalidateMode = AutovalidateMode.always;
+                            });
+                            final hasAnyError = _confirmPasswordError != null;
+                            if (!hasAnyError) {}
                           }
                         },
                         onPressed: () async {
@@ -309,7 +304,6 @@ class _ChangePasswordScreenState extends ConsumerState<ChangePasswordScreen> {
                                   buttonText: 'Continue',
                                   controller1: vm.passwordController,
                                   controller2: vm.confirmPasswordController,
-                                  showErrorMessageIcon: false,
                                   autoValidateMode: _autovalidateMode,
                                   errorMessage1: _passwordError,
                                   errorMessage2: _confirmPasswordError,

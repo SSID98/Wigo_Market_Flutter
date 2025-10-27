@@ -1,13 +1,15 @@
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:wigo_flutter/gen/assets.gen.dart';
+import 'package:wigo_flutter/shared/screens/onboarding_screen.dart';
 import 'package:wigo_flutter/shared/widgets/custom_button.dart';
 
-import '../../../../core/constants/app_colors.dart';
+import '../../core/constants/app_colors.dart';
 
-class RiderWelcomeScreen extends StatelessWidget {
-  const RiderWelcomeScreen({super.key});
+class WelcomeScreen extends StatelessWidget {
+  const WelcomeScreen({super.key, this.isBuyer = false});
+
+  final bool isBuyer;
 
   @override
   Widget build(BuildContext context) {
@@ -34,9 +36,14 @@ class RiderWelcomeScreen extends StatelessWidget {
         children: [
           Padding(
             padding: const EdgeInsets.only(top: 148.0),
-            child: AppAssets.images.welcomeRiderMobile.image(
-              fit: BoxFit.contain,
-            ),
+            child:
+                !isBuyer
+                    ? AppAssets.images.welcomeRiderMobile.image(
+                      fit: BoxFit.contain,
+                    )
+                    : AppAssets.images.buyerWelcomeMobile.image(
+                      fit: BoxFit.contain,
+                    ),
           ),
           Positioned(
             top: 0,
@@ -66,7 +73,9 @@ class RiderWelcomeScreen extends StatelessWidget {
                     ),
                     const SizedBox(height: 11),
                     Text(
-                      'Earn by Making Deliverys',
+                      !isBuyer
+                          ? 'Earn by Making Deliverys'
+                          : 'Shop what you’re looking for!',
                       style: GoogleFonts.hind(
                         textStyle: TextStyle(
                           color: AppColors.textVidaLocaGreen,
@@ -77,7 +86,9 @@ class RiderWelcomeScreen extends StatelessWidget {
                     ),
                     const SizedBox(height: 11),
                     Text(
-                      'Join hundreds of riders delivering items, food, and more fast, safe, and student-friendly. You’ll get delivery requests around your campus. Accept orders, track deliveries, and get paid weekly.',
+                      !isBuyer
+                          ? 'Join hundreds of riders delivering items, food, and more fast, safe, and student-friendly. You’ll get delivery requests around your campus. Accept orders, track deliveries, and get paid weekly.'
+                          : 'Join hundreds of trusted campus riders delivering items, food, and more fast, safe, and student-friendly. You’ll get delivery requests around your campus. Accept orders, track deliveries, and get paid weekly.ndly. You’ll get delivery requests around your campus. Accept orders, track deliveries, and get paid weekly.',
                       style: GoogleFonts.hind(
                         textStyle: TextStyle(
                           color: AppColors.textBlackGrey,
@@ -90,7 +101,13 @@ class RiderWelcomeScreen extends StatelessWidget {
                     CustomButton(
                       text: 'Get Started',
                       onPressed: () {
-                        context.go('/rider/onboarding');
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder:
+                                (context) => OnboardingScreen(isBuyer: isBuyer),
+                          ),
+                        );
                       },
                       fontSize: 18,
                       fontWeight: FontWeight.w500,

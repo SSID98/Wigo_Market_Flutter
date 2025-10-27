@@ -63,7 +63,7 @@ class VerificationWidgetBuilder {
               padding: EdgeInsets.symmetric(horizontal: horizontalPadding),
               child: Text(
                 bodyText ??
-                    'Please enter the 6-digit OTP sent to your email at $email to reset your password',
+                    'Please enter the 6-digit OTP sent to your email at $email to verify',
                 textAlign: TextAlign.center,
                 style: GoogleFonts.hind(
                   fontSize: fontSize2,

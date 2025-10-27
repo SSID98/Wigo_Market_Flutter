@@ -1,15 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:wigo_flutter/features/rider/presentation/widgets/rider_onboarding_pageview.dart';
-import 'package:wigo_flutter/features/rider/viewmodels/rider_onboarding_viewmodel.dart';
+import 'package:wigo_flutter/shared/viewmodels/onboarding_viewmodel.dart';
+import 'package:wigo_flutter/shared/widgets/onboarding_pageview.dart';
 
-import '../../../../../core/constants/app_colors.dart';
-import '../../../../../gen/assets.gen.dart';
-import '../../../../../shared/widgets/custom_button.dart';
+import '../../core/constants/app_colors.dart';
+import '../../gen/assets.gen.dart';
+import '../widgets/custom_button.dart';
 
-class RiderOnboardingScreen extends ConsumerWidget {
-  const RiderOnboardingScreen({super.key});
+class OnboardingScreen extends ConsumerWidget {
+  const OnboardingScreen({super.key, this.isBuyer = false});
+
+  final bool isBuyer;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -24,7 +26,7 @@ class RiderOnboardingScreen extends ConsumerWidget {
   //Mobile Layout
   Widget _buildMobileLayout(
     BuildContext context,
-    RiderOnboardingViewModel viewModel,
+    OnboardingViewModel viewModel,
     Size screenSize,
   ) {
     return Scaffold(
@@ -70,7 +72,7 @@ class RiderOnboardingScreen extends ConsumerWidget {
                             width: 143.86,
                           ),
                         ),
-                        RiderOnboardingPageView(
+                        OnboardingPageView(
                           screenSize: screenSize.height * 0.37,
                           titleFontSize: 16,
                           titleColor: AppColors.textBlackGrey,
@@ -81,10 +83,14 @@ class RiderOnboardingScreen extends ConsumerWidget {
                           expansionFactor: 6.5,
                           padding: 40.0,
                           descriptionFontSize: 14,
+                          isBuyer: isBuyer,
                         ),
                         CustomButton(
                           text: 'Next',
-                          onPressed: () => viewModel.nextPage(context),
+                          onPressed:
+                              isBuyer
+                                  ? () => viewModel.buyerNextPage(context)
+                                  : () => viewModel.riderNextPage(context),
                           fontSize: 16,
                           fontWeight: FontWeight.w500,
                           borderRadius: 6.0,
@@ -106,7 +112,7 @@ class RiderOnboardingScreen extends ConsumerWidget {
 
   Widget _buildWebLayout(
     BuildContext context,
-    RiderOnboardingViewModel viewModel,
+    OnboardingViewModel viewModel,
     Size screenSize,
   ) {
     return Scaffold(
@@ -142,7 +148,7 @@ class RiderOnboardingScreen extends ConsumerWidget {
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      RiderOnboardingPageView(
+                      OnboardingPageView(
                         screenSize: screenSize.height * 0.67,
                         titleFontSize: 36.0,
                         titleColor: AppColors.textDarkerGreen,
@@ -153,10 +159,15 @@ class RiderOnboardingScreen extends ConsumerWidget {
                         expansionFactor: 9.5,
                         padding: 200,
                         descriptionFontSize: 20,
+                        isBuyer: isBuyer,
                       ),
                       CustomButton(
                         text: 'Next',
-                        onPressed: () => viewModel.nextPage(context),
+                        onPressed:
+                            () =>
+                                !isBuyer
+                                    ? viewModel.riderNextPage(context)
+                                    : viewModel.buyerNextPage(context),
                         fontSize: 18,
                         fontWeight: FontWeight.w500,
                         borderRadius: 6.0,

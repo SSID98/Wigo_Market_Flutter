@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:wigo_flutter/core/utils/masked_email.dart';
+import 'package:wigo_flutter/shared/screens/creation_successful_screen.dart';
 
 import '../../../../core/constants/app_colors.dart';
 import '../../gen/assets.gen.dart';
@@ -10,8 +11,13 @@ import '../widgets/verification_widget.dart';
 
 class EmailVerificationScreen extends StatelessWidget {
   final String email;
+  final bool isRider;
 
-  const EmailVerificationScreen({super.key, required this.email});
+  const EmailVerificationScreen({
+    super.key,
+    required this.email,
+    this.isRider = true,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -75,7 +81,19 @@ class EmailVerificationScreen extends StatelessWidget {
                       VerificationWidgetBuilder.buildMobileBody(
                         email: maskedEmail,
                         onPressed: () {
-                          context.push('/rider/verification');
+                          if (isRider) {
+                            context.go('/rider/verification');
+                          } else {
+                            Navigator.pop(
+                              context,
+                              MaterialPageRoute(
+                                builder:
+                                    (_) => CreationSuccessfulScreen(
+                                      isRider: false,
+                                    ),
+                              ),
+                            );
+                          }
                         },
                       ),
                       const SizedBox(height: 35.0),

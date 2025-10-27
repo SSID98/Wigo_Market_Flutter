@@ -229,7 +229,13 @@ class _VehicleInfoSection extends ConsumerWidget {
                 case 5:
                   return CustomDropdownField(
                     label: 'Means of Transportation',
-                    items: const ['Car', 'Motor Bike'],
+                    items: const [
+                      'Feet',
+                      'Bicycle',
+                      'Car',
+                      'Motor Bike',
+                      'Bus',
+                    ],
                     hintText: 'Car',
                     prefixIcon: AppAssets.icons.car.svg(),
                     labelTextColor: AppColors.textBlack,

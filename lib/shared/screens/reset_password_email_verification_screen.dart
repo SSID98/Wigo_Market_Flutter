@@ -62,6 +62,8 @@ class ResetPasswordEmailVerificationScreen extends StatelessWidget {
                       const SizedBox(height: 5.0),
                       VerificationWidgetBuilder.buildMobileBody(
                         email: maskedEmail,
+                        bodyText:
+                            'Please enter the 6- digit OTP sent to your email at $email to reset your password',
                         onPressed: () {
                           context.go('/changePassword');
                         },

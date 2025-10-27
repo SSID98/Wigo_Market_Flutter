@@ -1,9 +1,9 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../../../../shared/models/location_data.dart';
+import '../models/location_data.dart';
 
-class RiderAccountCreationViewModel extends ChangeNotifier {
+class AccountCreationViewModel extends ChangeNotifier {
   String? selectedState;
   String? selectedCity;
   List<String> filteredCities = [];
@@ -28,5 +28,5 @@ class RiderAccountCreationViewModel extends ChangeNotifier {
 }
 
 final riderAccountViewModelProvider = ChangeNotifierProvider(
-  (ref) => RiderAccountCreationViewModel(),
+  (ref) => AccountCreationViewModel(),
 );

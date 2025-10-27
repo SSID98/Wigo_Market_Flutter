@@ -441,6 +441,22 @@ class $AssetsIconsGen {
 class $AssetsImagesGen {
   const $AssetsImagesGen();
 
+  /// File path: assets/images/buyerOnboarding1.png
+  AssetGenImage get buyerOnboarding1 =>
+      const AssetGenImage('assets/images/buyerOnboarding1.png');
+
+  /// File path: assets/images/buyerOnboarding2.png
+  AssetGenImage get buyerOnboarding2 =>
+      const AssetGenImage('assets/images/buyerOnboarding2.png');
+
+  /// File path: assets/images/buyerWelcomeMobile.png
+  AssetGenImage get buyerWelcomeMobile =>
+      const AssetGenImage('assets/images/buyerWelcomeMobile.png');
+
+  /// File path: assets/images/buyerWelcomeWeb.png
+  AssetGenImage get buyerWelcomeWeb =>
+      const AssetGenImage('assets/images/buyerWelcomeWeb.png');
+
   /// File path: assets/images/login.png
   AssetGenImage get login => const AssetGenImage('assets/images/login.png');
 
@@ -481,6 +497,10 @@ class $AssetsImagesGen {
 
   /// List of all assets
   List<AssetGenImage> get values => [
+    buyerOnboarding1,
+    buyerOnboarding2,
+    buyerWelcomeMobile,
+    buyerWelcomeWeb,
     login,
     mapMobile,
     mapWeb,

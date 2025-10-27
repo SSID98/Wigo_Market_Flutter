@@ -1,3 +1,4 @@
+import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -37,7 +38,7 @@ class CustomTextField extends ConsumerStatefulWidget {
   final bool errorIcon;
   final int? maxLines, minLines;
   final String? errorMessage;
-  final bool showErrorMessageIcon;
+  final bool? enabled;
 
   const CustomTextField({
     super.key,
@@ -81,10 +82,10 @@ class CustomTextField extends ConsumerStatefulWidget {
     this.labelOnTap,
     this.errorIcon = true,
     this.errorMessage,
-    this.showErrorMessageIcon = true,
     this.autoValidateMode,
     this.maxLines,
     this.minLines,
+    this.enabled,
   });
 
   @override
@@ -133,6 +134,7 @@ class _CustomTextFieldState extends ConsumerState<CustomTextField> {
           child: Focus(
             onFocusChange: widget.onFocusChange,
             child: TextFormField(
+              enabled: widget.enabled,
               validator: widget.validator,
               style: GoogleFonts.hind(
                 fontWeight: FontWeight.w400,
@@ -271,21 +273,19 @@ class _CustomTextFieldState extends ConsumerState<CustomTextField> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 // Your custom error icon
-                if (widget.showErrorMessageIcon)
-                  Icon(
-                    Icons.error,
-                    color: AppColors.accentRed,
-                    size: isWeb ? 18 : 14,
-                  ),
-                if (widget.showErrorMessageIcon) const SizedBox(width: 6),
-                // The actual error text
+                Icon(
+                  Icons.error,
+                  color: AppColors.accentRed,
+                  size: isWeb ? 18 : 14,
+                ),
+                const SizedBox(width: 6),
                 Expanded(
                   child: Text(
                     widget.errorMessage!,
                     style: GoogleFonts.hind(
                       fontWeight: FontWeight.w400,
                       fontSize: isWeb ? 14 : 10,
-                      color: AppColors.accentRed, // Match the error color
+                      color: AppColors.accentRed,
                     ),
                     overflow: TextOverflow.ellipsis,
                   ),
@@ -320,7 +320,8 @@ class CustomDropdownField extends ConsumerStatefulWidget {
       itemTextColor;
   final ColorFilter? colorFilter;
   final FontWeight? labelFontWeight;
-  final EdgeInsetsGeometry? padding;
+  final EdgeInsetsGeometry? padding, menuItemPadding;
+  final double? dropMenuWidth;
 
   const CustomDropdownField({
     super.key,
@@ -347,6 +348,8 @@ class CustomDropdownField extends ConsumerStatefulWidget {
     this.labelFontSize,
     this.labelFontWeight,
     this.padding,
+    this.dropMenuWidth,
+    this.menuItemPadding,
   });
 
   @override
@@ -382,14 +385,34 @@ class _CustomDropdownFieldState extends ConsumerState<CustomDropdownField> {
         ],
         SizedBox(
           height: widget.height,
-          child: DropdownButtonFormField<String>(
-            iconSize: 0,
+          child: DropdownButtonFormField2<String>(
             isExpanded: true,
-            initialValue: widget.value,
-            icon: AppAssets.icons.arrowDown.svg(
-              height: widget.iconHeight ?? 20,
-              width: widget.iconWidth ?? 20,
-              colorFilter: widget.colorFilter,
+            value: widget.value,
+            menuItemStyleData: MenuItemStyleData(
+              padding:
+                  widget.menuItemPadding ?? EdgeInsets.only(left: 13, right: 5),
+            ),
+            dropdownStyleData: DropdownStyleData(
+              width: widget.dropMenuWidth,
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(widget.radius ?? 8),
+                color: AppColors.backgroundWhite,
+              ),
+              offset: const Offset(0, 0),
+            ),
+            buttonStyleData: ButtonStyleData(height: widget.height),
+            iconStyleData: IconStyleData(
+              icon: AppAssets.icons.arrowDown.svg(
+                height: widget.iconHeight ?? 20,
+                width: widget.iconWidth ?? 20,
+                colorFilter: widget.colorFilter,
+              ),
+              iconSize: 0,
+              openMenuIcon: AppAssets.icons.arrowDown.svg(
+                height: widget.iconHeight ?? 20,
+                width: widget.iconWidth ?? 20,
+                colorFilter: widget.colorFilter,
+              ),
             ),
             hint: Text(
               widget.hintText ?? '',
@@ -400,18 +423,15 @@ class _CustomDropdownFieldState extends ConsumerState<CustomDropdownField> {
               ),
             ),
             decoration: InputDecoration(
-              contentPadding: EdgeInsets.symmetric(horizontal: 8),
-              prefixIconConstraints: BoxConstraints(),
+              contentPadding: EdgeInsets.only(right: 10),
+              prefixIconConstraints: const BoxConstraints(),
               prefixIcon:
                   currentPrefixIcon != null
                       ? Padding(
-                        padding: const EdgeInsets.only(left: 17.0, right: 3.0),
+                        padding: const EdgeInsets.only(left: 17.0),
                         child: currentPrefixIcon!,
                       )
                       : null,
-              border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(8),
-              ),
               fillColor: widget.fillColor ?? AppColors.textFieldColor,
               filled: true,
               enabledBorder: OutlineInputBorder(
@@ -426,6 +446,14 @@ class _CustomDropdownFieldState extends ConsumerState<CustomDropdownField> {
                 ),
                 borderRadius: BorderRadius.circular(widget.radius ?? 8.0),
               ),
+              errorBorder: OutlineInputBorder(
+                borderSide: const BorderSide(color: AppColors.accentRed),
+                borderRadius: BorderRadius.circular(widget.radius ?? 8.0),
+              ),
+              focusedErrorBorder: OutlineInputBorder(
+                borderSide: const BorderSide(color: AppColors.accentRed),
+                borderRadius: BorderRadius.circular(widget.radius ?? 8.0),
+              ),
             ),
             items:
                 widget.items
@@ -433,7 +461,8 @@ class _CustomDropdownFieldState extends ConsumerState<CustomDropdownField> {
                       (e) => DropdownMenuItem<String>(
                         value: e,
                         child: Padding(
-                          padding: widget.padding ?? EdgeInsets.only(top: 4.0),
+                          padding:
+                              widget.padding ?? const EdgeInsets.only(top: 4.0),
                           child: Text(
                             e,
                             overflow: TextOverflow.ellipsis,
@@ -455,6 +484,14 @@ class _CustomDropdownFieldState extends ConsumerState<CustomDropdownField> {
                   currentPrefixIcon = AppAssets.icons.motorbike.svg();
                 } else if (val == 'Car') {
                   currentPrefixIcon = AppAssets.icons.car.svg();
+                } else if (val == 'Feet') {
+                  currentPrefixIcon = AppAssets.icons.foot.svg();
+                } else if (val == 'Bus') {
+                  currentPrefixIcon = AppAssets.icons.bus.svg();
+                } else if (val == 'Bicycle') {
+                  currentPrefixIcon = AppAssets.icons.bicycle.svg();
+                } else {
+                  currentPrefixIcon = widget.prefixIcon;
                 }
               });
               widget.onChanged?.call(val);

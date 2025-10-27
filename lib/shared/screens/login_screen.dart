@@ -22,8 +22,9 @@ class LoginScreen extends ConsumerStatefulWidget {
 
 class _LoginScreenState extends ConsumerState<LoginScreen> {
   final formKey = GlobalKey<FormState>();
-  bool _emailHasError = false;
-  bool _passwordHasError = false;
+  String? _passwordError;
+  String? _emailError;
+  AutovalidateMode _autovalidateMode = AutovalidateMode.disabled;
   final emailFieldKey = GlobalKey<FormFieldState<String>>();
   final passwordFieldKey = GlobalKey<FormFieldState<String>>();
 
@@ -80,20 +81,24 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                         termsOnChanged: vm.toggleAgreeToTerms,
                         vm: vm,
                         state: state,
-                        firstFieldHasError: _emailHasError,
-                        secondFieldHasError: _passwordHasError,
-                        validator1: FormValidators.validateEmail,
-                        validator2: FormValidators.validatePassword,
+                        firstFieldHasError: _emailError != null,
+                        secondFieldHasError: _passwordError != null,
+                        validator1: (value) => null,
+                        validator2: (value) => null,
+                        errorMessage1: _emailError,
+                        errorMessage2: _passwordError,
+                        autoValidateMode: _autovalidateMode,
                         onFocusChange1: (hasFocus) {
                           if (!hasFocus) {
                             final error = FormValidators.validateEmail(
                               vm.emailController.text,
                             );
-
                             setState(() {
-                              _emailHasError = error != null;
+                              _emailError = error;
+                              _autovalidateMode = AutovalidateMode.always;
                             });
-                            emailFieldKey.currentState!.validate();
+                            final emailError = _emailError != null;
+                            if (!emailError) {}
                           }
                         },
                         onFocusChange2: (hasFocus) {
@@ -102,9 +107,11 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                               vm.passwordController.text,
                             );
                             setState(() {
-                              _passwordHasError = error != null;
+                              _passwordError = error;
+                              _autovalidateMode = AutovalidateMode.always;
                             });
-                            passwordFieldKey.currentState!.validate();
+                            final passwordError = _passwordError != null;
+                            if (!passwordError) {}
                           }
                         },
                         onPressed: () {
@@ -117,10 +124,15 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                               );
                           setState(() {
                             state.generalError = null;
-                            _emailHasError = emailHasError != null;
-                            _passwordHasError = passwordHasError != null;
+                            _emailError = emailHasError;
+                            _passwordError = passwordHasError;
+                            _autovalidateMode = AutovalidateMode.always;
                           });
-                          vm.login(formKey, context);
+                          final hasAnyError =
+                              _emailError != null || _passwordError != null;
+                          if (!hasAnyError) {
+                            vm.login(formKey, context);
+                          }
                         },
                         formKey: formKey,
                         fieldKey1: emailFieldKey,
@@ -224,18 +236,20 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                                 controller2: vm.passwordController,
                                 vm: vm,
                                 state: state,
-                                firstFieldHasError: _emailHasError,
-                                secondFieldHasError: _passwordHasError,
+                                firstFieldHasError: _emailError != null,
+                                secondFieldHasError: _passwordError != null,
                                 onFocusChange1: (hasFocus) {
                                   if (!hasFocus) {
                                     final error = FormValidators.validateEmail(
                                       vm.emailController.text,
                                     );
-
                                     setState(() {
-                                      _emailHasError = error != null;
+                                      _emailError = error;
+                                      _autovalidateMode =
+                                          AutovalidateMode.always;
                                     });
-                                    emailFieldKey.currentState!.validate();
+                                    final emailError = _emailError != null;
+                                    if (!emailError) {}
                                   }
                                 },
                                 onFocusChange2: (hasFocus) {
@@ -245,9 +259,13 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                                           vm.passwordController.text,
                                         );
                                     setState(() {
-                                      _passwordHasError = error != null;
+                                      _passwordError = error;
+                                      _autovalidateMode =
+                                          AutovalidateMode.always;
                                     });
-                                    passwordFieldKey.currentState!.validate();
+                                    final passwordError =
+                                        _passwordError != null;
+                                    if (!passwordError) {}
                                   }
                                 },
                                 onPressed: () {
@@ -261,14 +279,19 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                                       );
                                   setState(() {
                                     state.generalError = null;
-                                    _emailHasError = emailHasError != null;
-                                    _passwordHasError =
-                                        passwordHasError != null;
+                                    _emailError = emailHasError;
+                                    _passwordError = passwordHasError;
+                                    _autovalidateMode = AutovalidateMode.always;
                                   });
-                                  vm.login(formKey, context);
+                                  final hasAnyError =
+                                      _emailError != null ||
+                                      _passwordError != null;
+                                  if (!hasAnyError) {
+                                    vm.login(formKey, context);
+                                  }
                                 },
-                                validator1: FormValidators.validateEmail,
-                                validator2: FormValidators.validatePassword,
+                                validator1: (value) => null,
+                                validator2: (value) => null,
                                 formKey: formKey,
                                 fieldKey1: emailFieldKey,
                                 fieldKey2: passwordFieldKey,
