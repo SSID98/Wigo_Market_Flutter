@@ -32,6 +32,7 @@ class AppColors {
   // Background Colors
   static const Color backgroundWhitish = Color(0xFFF5F5F5);
   static const Color backgroundWhite = Color(0xffFFFFFF);
+  static const Color backgroundWhit = Color(0xffFBFDF8);
   static const Color backgroundLight = Color(0xF0F0F0F0);
   static const Color riderCardColor = Color(0xffEBF6FE);
   static const Color sellerCardColor = Color(0xffFEF5EE);
@@ -41,6 +42,7 @@ class AppColors {
   static const Color tableHeader = Color(0xffF3FAEB);
   static const Color darkerGreen = Color(0xff314720);
   static const Color containerGreen = Color(0xff8FC457);
+  static const Color backgroundPurple = Color(0xffD4D4FF);
 
   // Text Colors (approximate)
   static const Color textDarkGreen = Color(0xff436724);
@@ -66,4 +68,5 @@ class AppColors {
   static const Color webTotalEarningGreen = Color(0xff40862A);
   static const Color textDeliveryFee = Color(0xff007AFF);
   static const Color textNeutral950 = Color(0xff292929);
+  static const Color textBlueishBlack = Color(0xff000C21);
 }

@@ -6,6 +6,7 @@ import 'package:wigo_flutter/core/utils/masked_email.dart';
 import 'package:wigo_flutter/shared/screens/creation_successful_screen.dart';
 
 import '../../../../core/constants/app_colors.dart';
+import '../../core/constants/url.dart';
 import '../../gen/assets.gen.dart';
 import '../widgets/verification_widget.dart';
 
@@ -39,8 +40,8 @@ class EmailVerificationScreen extends StatelessWidget {
       backgroundColor: AppColors.backgroundWhite,
       body: Stack(
         children: [
-          Image.asset(
-            AppAssets.images.onboardingRiderMobile.path,
+          Image.network(
+            '$networkImageUrl/onboardingRiderMobile.png',
             fit: BoxFit.cover,
             color: AppColors.backGroundOverlay,
             colorBlendMode: BlendMode.overlay,
@@ -114,8 +115,8 @@ class EmailVerificationScreen extends StatelessWidget {
       body: SafeArea(
         child: Stack(
           children: [
-            Image.asset(
-              AppAssets.images.onboardingRiderWeb.path,
+            Image.network(
+              '$networkImageUrl/onboardingRiderWeb.png',
               fit: BoxFit.cover,
               color: AppColors.backGroundOverlay,
               colorBlendMode: BlendMode.overlay,

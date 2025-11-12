@@ -5,6 +5,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:wigo_flutter/gen/assets.gen.dart';
 
 import '../../../../../core/constants/app_colors.dart';
+import '../../../../../core/constants/url.dart';
 import '../../../../../shared/widgets/custom_button.dart';
 import '../../../../../shared/widgets/custom_text_field.dart';
 import '../../../viewmodels/account_setup_viewmodels/rider_payment_method_setup_viewmodel.dart';
@@ -32,7 +33,8 @@ class RiderPaymentMethodSetupScreen extends ConsumerWidget {
       body: SafeArea(
         child: Stack(
           children: [
-            AppAssets.images.onboardingRiderMobile.image(
+            Image.network(
+              '$networkImageUrl/onboardingRiderMobile.png',
               fit: BoxFit.cover,
               color: AppColors.backGroundOverlay,
               colorBlendMode: BlendMode.overlay,
@@ -99,7 +101,8 @@ class RiderPaymentMethodSetupScreen extends ConsumerWidget {
       body: SafeArea(
         child: Stack(
           children: [
-            AppAssets.images.onboardingRiderWeb.image(
+            Image.network(
+              '$networkImageUrl/onboardingRiderWeb.png',
               fit: BoxFit.cover,
               color: AppColors.backGroundOverlay,
               colorBlendMode: BlendMode.overlay,

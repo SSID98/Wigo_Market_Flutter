@@ -4,43 +4,64 @@ import 'package:wigo_flutter/core/constants/app_colors.dart';
 
 class CustomAvatar extends StatelessWidget {
   final double? radius;
-  final double padding;
+  final EdgeInsetsGeometry avatarPadding;
+  final Widget? bottomText;
   final TextStyle? profileNameStyle, profileEmailStyle;
-  final bool showEmail, showBottomText, showLeftTexts;
+  final bool showEmail, showBottomText, showLeftTexts, showCircleAvatar;
   final MainAxisAlignment mainAxisAlignment, avatarAlign;
   final CrossAxisAlignment crossAxisAlignment;
+  final void Function()? onTap;
+  final ImageProvider<Object>? backgroundImage;
+  final Color borderColor;
 
   const CustomAvatar({
     super.key,
     this.radius,
+    this.borderColor = Colors.transparent,
+    this.bottomText,
     this.profileNameStyle,
     this.profileEmailStyle,
-    this.padding = 0.0,
+    this.avatarPadding = EdgeInsetsGeometry.zero,
     this.showEmail = true,
     this.showBottomText = false,
     this.showLeftTexts = true,
+    this.showCircleAvatar = true,
     this.mainAxisAlignment = MainAxisAlignment.start,
     this.crossAxisAlignment = CrossAxisAlignment.start,
     this.avatarAlign = MainAxisAlignment.start,
+    this.onTap,
+    this.backgroundImage,
   });
 
   @override
   Widget build(BuildContext context) {
     return InkWell(
       splashColor: Colors.transparent,
-      onTap: () {},
+      onTap: onTap,
       child: Column(
         crossAxisAlignment: crossAxisAlignment,
         children: [
           Row(
             mainAxisAlignment: avatarAlign,
             children: [
-              CircleAvatar(
-                radius: radius ?? 20.0,
-                backgroundImage: NetworkImage(
-                  'https://github.com/user-attachments/assets/93e38020-8447-4f79-a623-cfea02d6bd4b',
+              if (showCircleAvatar)
+                Padding(
+                  padding: avatarPadding,
+                  child: Container(
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      border: Border.all(color: borderColor, width: 1.0),
+                    ),
+                    child: CircleAvatar(
+                      radius: radius ?? 20.0,
+                      backgroundImage:
+                          backgroundImage ??
+                          NetworkImage(
+                            'https://github.com/user-attachments/assets/93e38020-8447-4f79-a623-cfea02d6bd4b',
+                          ),
+                    ),
+                  ),
                 ),
-              ),
               const SizedBox(width: 10.0),
               if (showLeftTexts) ...[
                 Column(
@@ -81,15 +102,17 @@ class CustomAvatar extends StatelessWidget {
             const SizedBox(height: 10.0),
             Padding(
               padding: const EdgeInsets.only(right: 10.0),
-              child: Text(
-                "Upload Photo",
-                style: GoogleFonts.hind(
-                  fontSize: 12,
-                  fontWeight: FontWeight.w400,
-                  height: 14.52 / 12,
-                  color: AppColors.primaryDarkGreen,
-                ),
-              ),
+              child:
+                  bottomText ??
+                  Text(
+                    "Upload Photo",
+                    style: GoogleFonts.hind(
+                      fontSize: 12,
+                      fontWeight: FontWeight.w400,
+                      height: 14.52 / 12,
+                      color: AppColors.primaryDarkGreen,
+                    ),
+                  ),
             ),
           ],
         ],

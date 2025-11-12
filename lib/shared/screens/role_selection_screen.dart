@@ -5,6 +5,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:wigo_flutter/shared/widgets/role_selection_body.dart';
 
 import '../../core/constants/app_colors.dart';
+import '../../core/constants/url.dart';
 import '../../gen/assets.gen.dart';
 
 class RoleSelectionScreen extends ConsumerWidget {
@@ -25,7 +26,7 @@ class RoleSelectionScreen extends ConsumerWidget {
       body: Stack(
         fit: StackFit.expand,
         children: [
-          AppAssets.images.login.image(fit: BoxFit.cover),
+          Image.network('$networkImageUrl/login.png', fit: BoxFit.cover),
           Center(
             child: Container(
               width: screenSize.width * 0.95,
@@ -93,7 +94,7 @@ class RoleSelectionScreen extends ConsumerWidget {
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(imageBorderRadius),
                         image: DecorationImage(
-                          image: AssetImage(AppAssets.images.login.path),
+                          image: NetworkImage('$networkImageUrl/login.png'),
                           fit: BoxFit.cover,
                         ),
                       ),

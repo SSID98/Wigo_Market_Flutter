@@ -5,6 +5,7 @@ import 'package:wigo_flutter/shared/screens/onboarding_screen.dart';
 import 'package:wigo_flutter/shared/widgets/custom_button.dart';
 
 import '../../core/constants/app_colors.dart';
+import '../../core/constants/url.dart';
 
 class WelcomeScreen extends StatelessWidget {
   const WelcomeScreen({super.key, this.isBuyer = false});
@@ -36,14 +37,12 @@ class WelcomeScreen extends StatelessWidget {
         children: [
           Padding(
             padding: const EdgeInsets.only(top: 148.0),
-            child:
-                !isBuyer
-                    ? AppAssets.images.welcomeRiderMobile.image(
-                      fit: BoxFit.contain,
-                    )
-                    : AppAssets.images.buyerWelcomeMobile.image(
-                      fit: BoxFit.contain,
-                    ),
+            child: Image.network(
+              !isBuyer
+                  ? '$networkImageUrl/welcomeRiderMobile.png'
+                  : '$networkImageUrl/buyerWelcomeMobile.png',
+              fit: BoxFit.contain,
+            ),
           ),
           Positioned(
             top: 0,
@@ -215,7 +214,7 @@ class WelcomeScreen extends StatelessWidget {
                 child: SizedBox(
                   width: webContentWidth,
                   height: webContentHeight,
-                  child: AppAssets.images.welcomeRiderWeb.image(),
+                  child: Image.network('$networkImageUrl/welcomeRiderWeb.png'),
                 ),
               ),
             ),

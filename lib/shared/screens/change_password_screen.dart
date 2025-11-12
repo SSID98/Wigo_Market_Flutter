@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 import 'package:wigo_flutter/shared/widgets/bottom_text.dart';
 
 import '../../core/constants/app_colors.dart';
+import '../../core/constants/url.dart';
 import '../../core/utils/validation_utils.dart';
 import '../../gen/assets.gen.dart';
 import '../viewmodels/change_password_viewmodel.dart';
@@ -48,7 +49,7 @@ class _ChangePasswordScreenState extends ConsumerState<ChangePasswordScreen> {
       body: Stack(
         fit: StackFit.expand,
         children: [
-          Image.asset(AppAssets.images.login.path, fit: BoxFit.cover),
+          Image.network('$networkImageUrl/login.png', fit: BoxFit.cover),
           BottomTextBuilder.buildMobileBottomText(),
           Center(
             child: SingleChildScrollView(
@@ -242,7 +243,7 @@ class _ChangePasswordScreenState extends ConsumerState<ChangePasswordScreen> {
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(imageBorderRadius),
                         image: DecorationImage(
-                          image: AssetImage(AppAssets.images.login.path),
+                          image: NetworkImage('$networkImageUrl/login.png'),
                           fit: BoxFit.cover,
                         ),
                       ),

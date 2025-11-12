@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:wigo_flutter/shared/widgets/bottom_text.dart';
 
 import '../../core/constants/app_colors.dart';
+import '../../core/constants/url.dart';
 import '../../gen/assets.gen.dart';
 import '../widgets/verification_widget.dart';
 
@@ -25,7 +26,7 @@ class ResetPasswordEnterEmailScreen extends StatelessWidget {
       body: Stack(
         fit: StackFit.expand,
         children: [
-          AppAssets.images.login.image(fit: BoxFit.cover),
+          Image.network('$networkImageUrl/login.png', fit: BoxFit.cover),
           BottomTextBuilder.buildMobileBottomText(),
           Center(
             child: SingleChildScrollView(
@@ -106,7 +107,7 @@ class ResetPasswordEnterEmailScreen extends StatelessWidget {
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(imageBorderRadius),
                         image: DecorationImage(
-                          image: AssetImage(AppAssets.images.login.path),
+                          image: NetworkImage('$networkImageUrl/login.png'),
                           fit: BoxFit.cover,
                         ),
                       ),

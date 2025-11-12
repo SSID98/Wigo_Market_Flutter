@@ -7,6 +7,7 @@ import 'package:wigo_flutter/gen/assets.gen.dart';
 import 'package:wigo_flutter/shared/widgets/custom_checkbox_widget.dart';
 
 import '../../../../../core/constants/app_colors.dart';
+import '../../../../../core/constants/url.dart';
 import '../../../../../shared/widgets/custom_button.dart';
 import '../../../viewmodels/account_setup_viewmodels/rider_account_nin_verification_viewmodel.dart';
 
@@ -33,7 +34,8 @@ class RiderAccountNinVerificationScreen extends ConsumerWidget {
       body: SafeArea(
         child: Stack(
           children: [
-            AppAssets.images.onboardingRiderMobile.image(
+            Image.network(
+              '$networkImageUrl/onboardingRiderMobile.png',
               fit: BoxFit.cover,
               color: AppColors.backGroundOverlay,
               colorBlendMode: BlendMode.overlay,
@@ -104,7 +106,8 @@ class RiderAccountNinVerificationScreen extends ConsumerWidget {
       body: SafeArea(
         child: Stack(
           children: [
-            AppAssets.images.onboardingRiderWeb.image(
+            Image.network(
+              '$networkImageUrl/onboardingRiderWeb.png',
               fit: BoxFit.cover,
               color: AppColors.backGroundOverlay,
               colorBlendMode: BlendMode.overlay,

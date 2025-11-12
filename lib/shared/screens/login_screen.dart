@@ -7,6 +7,7 @@ import 'package:wigo_flutter/core/utils/validation_utils.dart';
 import 'package:wigo_flutter/shared/widgets/login_reset_password_body.dart';
 
 import '../../core/constants/app_colors.dart';
+import '../../core/constants/url.dart';
 import '../../gen/assets.gen.dart';
 import '../viewmodels/login_state.dart';
 import '../viewmodels/login_view_model.dart';
@@ -50,7 +51,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
       body: Stack(
         fit: StackFit.expand,
         children: [
-          Image.asset(AppAssets.images.login.path, fit: BoxFit.cover),
+          Image.network('$networkImageUrl/login.png', fit: BoxFit.cover),
           BottomTextBuilder.buildMobileBottomText(),
           Center(
             child: SingleChildScrollView(
@@ -181,7 +182,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(imageBorderRadius),
                       image: DecorationImage(
-                        image: AssetImage(AppAssets.images.login.path),
+                        image: NetworkImage('$networkImageUrl/login.png'),
                         fit: BoxFit.cover,
                       ),
                     ),

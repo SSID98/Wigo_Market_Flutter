@@ -1,0 +1,120 @@
+import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'package:wigo_flutter/core/constants/app_colors.dart';
+import 'package:wigo_flutter/features/buyer/presentation/widgets/product_card.dart';
+
+import '../../../../core/constants/url.dart';
+import '../../../../shared/widgets/custom_carousel.dart';
+import '../../models/product_model.dart';
+
+final List<Product> dummyLikedProductItems = [
+  Product(
+    imageUrl: '$networkImageUrl/nintendo.png',
+    amount: '10,027.61',
+    slashedAmount: '12,053.69',
+    productName: 'Nintendo Gaming Console',
+    rating: 4.0,
+    reviews: 67,
+  ),
+  Product(
+    imageUrl: '$networkImageUrl/gamePad.png',
+    amount: '10,027.61',
+    slashedAmount: '12,053.69',
+    productName: 'PS3 Game pad with type C USB',
+    rating: 4.0,
+    reviews: 67,
+  ),
+  Product(
+    imageUrl: '$networkImageUrl/wristwatch.png',
+    amount: '10,027.61',
+    slashedAmount: '12,053.69',
+    productName: 'Quartz Wrist Watch',
+    rating: 4.0,
+    reviews: 67,
+  ),
+  Product(
+    imageUrl: '$networkImageUrl/phones.png',
+    amount: '10,027.61',
+    slashedAmount: '12,053.69',
+    productName: 'Small Button Phone',
+    rating: 4.0,
+    reviews: 67,
+  ),
+  Product(
+    imageUrl: '$networkImageUrl/Honey.png',
+    amount: '10,027.61',
+    slashedAmount: '12,053.69',
+    productName: 'Special Honey',
+    rating: 4.0,
+    reviews: 67,
+  ),
+];
+
+class ProductsYouLikeSection extends StatelessWidget {
+  const ProductsYouLikeSection({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    final isWeb = MediaQuery.of(context).size.width > 600;
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Padding(
+          padding: const EdgeInsets.only(left: 16.0, top: 20),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                'Products you might like',
+                style: GoogleFonts.hind(
+                  fontWeight: FontWeight.w600,
+                  fontSize: isWeb ? 20 : 16,
+                  color: AppColors.textBlackGrey,
+                ),
+              ),
+              Row(
+                children: [
+                  Text(
+                    'View More',
+                    style: GoogleFonts.hind(
+                      fontWeight: FontWeight.w400,
+                      fontSize: isWeb ? 18 : 14,
+                      color: AppColors.textBlackGrey,
+                    ),
+                  ),
+                  const SizedBox(width: 1),
+                  Icon(
+                    Icons.keyboard_arrow_right_rounded,
+                    size: 20,
+                    color: AppColors.textBlackGrey,
+                  ),
+                ],
+              ),
+            ],
+          ),
+        ),
+        const SizedBox(height: 16),
+        CustomCarouselWidget(
+          pageViewBuilderHeight: isWeb ? 235 : 220,
+          viewportFraction: isWeb ? 0.50 : 0.53,
+          dotColor: AppColors.clampValueColor,
+          items: dummyLikedProductItems,
+          itemBuilder: (item) {
+            return ProductCard(
+              imageUrl: item.imageUrl,
+              productName: item.productName,
+              rating: item.rating,
+              reviews: item.reviews,
+              amount: item.amount,
+              slashedAmount: item.slashedAmount,
+              onCardPress: () {},
+              onPress: () {},
+              onPressed: () {},
+            );
+          },
+        ),
+        const SizedBox(height: 15),
+      ],
+    );
+  }
+}

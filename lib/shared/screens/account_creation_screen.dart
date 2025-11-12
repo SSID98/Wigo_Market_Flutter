@@ -6,7 +6,7 @@ import 'package:wigo_flutter/core/constants/app_colors.dart';
 import 'package:wigo_flutter/features/rider/presentation/widgets/rider_forms_field.dart';
 import 'package:wigo_flutter/shared/widgets/custom_button.dart';
 
-import '../../gen/assets.gen.dart';
+import '../../core/constants/url.dart';
 
 class AccountCreationScreen extends ConsumerWidget {
   final bool isBuyer;
@@ -27,8 +27,8 @@ class AccountCreationScreen extends ConsumerWidget {
       backgroundColor: AppColors.backgroundWhite,
       body: Stack(
         children: [
-          Image.asset(
-            AppAssets.images.onboardingRiderMobile.path,
+          Image.network(
+            '$networkImageUrl/onboardingRiderMobile.png',
             fit: BoxFit.cover,
             color: AppColors.backGroundOverlay,
             colorBlendMode: BlendMode.overlay,
@@ -102,8 +102,8 @@ class AccountCreationScreen extends ConsumerWidget {
     return Scaffold(
       body: Stack(
         children: [
-          Image.asset(
-            AppAssets.images.onboardingRiderWeb.path,
+          Image.network(
+            '$networkImageUrl/onboardingRiderWeb.png',
             fit: BoxFit.cover,
             color: AppColors.backGroundOverlay,
             colorBlendMode: BlendMode.overlay,
