@@ -13,7 +13,8 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
   final bool showEmail, showCircleAvatar;
   final String userName = 'Emmanuel';
   final String userEmail = 'emmanuel@example.com';
-  final void Function()? onMenuPress;
+  final void Function()? onMobileMenuPress;
+  final void Function()? onMobileSearchPress, onUserPress;
 
   const CustomAppBar({
     super.key,
@@ -21,7 +22,9 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
     this.isBuyer = false,
     this.showCircleAvatar = true,
     this.showEmail = true,
-    this.onMenuPress,
+    this.onMobileMenuPress,
+    this.onMobileSearchPress,
+    this.onUserPress,
   });
 
   @override
@@ -96,30 +99,33 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
           const SizedBox(width: 50),
         ] else ...[
           if (isBuyer)
-            Container(
-              decoration: BoxDecoration(
-                color: AppColors.tableHeader,
-                borderRadius: BorderRadius.circular(46.13),
-              ),
-              child: Padding(
-                padding: const EdgeInsets.symmetric(
-                  vertical: 12.0,
-                  horizontal: 10.0,
+            GestureDetector(
+              onTap: onUserPress,
+              child: Container(
+                decoration: BoxDecoration(
+                  color: AppColors.tableHeader,
+                  borderRadius: BorderRadius.circular(46.13),
                 ),
-                child: Text(
-                  'Hi, Emmanuel',
-                  textAlign: TextAlign.center,
-                  style: GoogleFonts.hind(
-                    fontWeight: FontWeight.w600,
-                    fontSize: 12,
-                    color: AppColors.textBlackGrey,
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(
+                    vertical: 12.0,
+                    horizontal: 10.0,
+                  ),
+                  child: Text(
+                    'Hi, Emmanuel',
+                    textAlign: TextAlign.center,
+                    style: GoogleFonts.hind(
+                      fontWeight: FontWeight.w600,
+                      fontSize: 12,
+                      color: AppColors.textBlackGrey,
+                    ),
                   ),
                 ),
               ),
             ),
           IconButton(
             icon: AppAssets.icons.mobileSearch.svg(),
-            onPressed: () {},
+            onPressed: onMobileSearchPress,
           ),
           isBuyer
               ? AppAssets.icons.cart2.svg()
@@ -139,7 +145,7 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
               ),
           IconButton(
             icon: AppAssets.icons.mobileMenu.svg(),
-            onPressed: onMenuPress,
+            onPressed: onMobileMenuPress,
           ),
         ],
       ],
@@ -147,5 +153,5 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
   }
 
   @override
-  Size get preferredSize => const Size.fromHeight(90);
+  Size get preferredSize => const Size.fromHeight(80);
 }

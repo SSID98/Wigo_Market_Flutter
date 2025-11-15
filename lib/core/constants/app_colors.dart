@@ -64,6 +64,7 @@ class AppColors {
   static const Color textGreen = Color(0xff3BB758);
   static const Color textYellow = Color(0xffBB9913);
   static const Color textRed = Color(0xffDC2626);
+  static const Color textLightRed = Color(0xffE66565);
   static const Color textStatusGreen = Color(0xff367C59);
   static const Color webTotalEarningGreen = Color(0xff40862A);
   static const Color textDeliveryFee = Color(0xff007AFF);

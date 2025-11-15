@@ -1,77 +1,139 @@
-// import 'package:flutter/material.dart';
-// import 'package:google_fonts/google_fonts.dart';
-//
-// import '../../../../core/constants/app_colors.dart';
-// import '../../models/product_model.dart';
-// import '../widgets/product_card.dart';
-//
-// class SearchResultsView extends StatelessWidget {
-//   final String searchQuery;
-//   final List<Product> products;
-//
-//   const SearchResultsView({
-//     super.key,
-//     required this.searchQuery,
-//     required this.products,
-//   });
-//
-//   @override
-//   Widget build(BuildContext context) {
-//     final isWeb = MediaQuery.of(context).size.width > 800;
-//
-//     // Filter products by name
-//     final filtered =
-//         products
-//             .where(
-//               (p) => p.productName.toLowerCase().contains(
-//                 searchQuery.toLowerCase(),
-//               ),
-//             )
-//             .toList();
-//
-//     if (filtered.isEmpty) {
-//       return Center(
-//         child: Text(
-//           'No results found for "$searchQuery"',
-//           style: GoogleFonts.hind(fontSize: 16, color: AppColors.textBlackGrey),
-//         ),
-//       );
-//     }
-//
-//     return Column(
-//       crossAxisAlignment: CrossAxisAlignment.start,
-//       children: [
-//         // Heading
-//         Padding(
-//           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-//           child: Text(
-//             'Results for "$searchQuery"',
-//             style: GoogleFonts.hind(
-//               fontSize: 16,
-//               fontWeight: FontWeight.bold,
-//               color: AppColors.textBlack,
-//             ),
-//           ),
-//         ),
-//
-//         // Grid layout
-//         Expanded(
-//           child: GridView.builder(
-//             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-//             itemCount: filtered.length,
-//             gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-//               crossAxisCount: isWeb ? 5 : 2,
-//               crossAxisSpacing: 12,
-//               mainAxisSpacing: 12,
-//               childAspectRatio: 0.8,
-//             ),
-//             itemBuilder: (context, index) {
-//               final product = filtered[index];
-//               return ProductCard(product: product);
-//             },
-//           ),
-//         ),
-//       ],
-//     );
-//   }
-// }
+import 'package:diacritic/diacritic.dart';
+import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
+
+import '../../../../core/constants/app_colors.dart';
+import '../../../../core/constants/url.dart';
+import '../../models/product_model.dart';
+import '../widgets/product_card.dart';
+
+String normalizeText(String text) {
+  return removeDiacritics(text).toLowerCase();
+}
+
+class SearchResultsView extends StatelessWidget {
+  final String searchQuery;
+  final List<Product> products;
+
+  const SearchResultsView({
+    super.key,
+    required this.searchQuery,
+    required this.products,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final isWeb = MediaQuery.of(context).size.width > 800;
+
+    final normalizedQuery = normalizeText(searchQuery);
+    final filtered =
+        products
+            .where(
+              (p) => normalizeText(p.productName).contains(normalizedQuery),
+            )
+            .toList();
+
+    if (filtered.isEmpty) {
+      return Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const SizedBox(height: 45),
+          Text(
+            'Results for “$searchQuery”',
+            style: GoogleFonts.hind(
+              fontSize: isWeb ? 32 : 20,
+              fontWeight: isWeb ? FontWeight.w500 : FontWeight.w600,
+              color: AppColors.textBlackGrey,
+            ),
+          ),
+          const SizedBox(height: 10),
+          Center(
+            child: Image.network(
+              '$networkImageUrl/searchFailed.png',
+              height: isWeb ? 237 : 137,
+              width: isWeb ? 321 : 185,
+              errorBuilder: (
+                BuildContext context,
+                Object exception,
+                StackTrace? stackTrace,
+              ) {
+                return const Center(
+                  child: Icon(
+                    Icons.broken_image,
+                    color: AppColors.textIconGrey,
+                    size: 50.0,
+                  ),
+                );
+              },
+            ),
+          ),
+          if (!isWeb) const SizedBox(height: 10),
+          Center(
+            child: Text(
+              'Something Went Wrong',
+              style: GoogleFonts.hind(
+                fontSize: isWeb ? 40 : 18,
+                fontWeight: FontWeight.w700,
+                color: AppColors.textBlackGrey,
+              ),
+            ),
+          ),
+          SizedBox(height: isWeb ? 10 : 20),
+          Center(
+            child: Text(
+              'We can’t find the item you are looking for.',
+              style: GoogleFonts.hind(
+                fontSize: isWeb ? 24 : 16,
+                fontWeight: FontWeight.w400,
+                color: AppColors.textBlackGrey,
+              ),
+            ),
+          ),
+          const SizedBox(height: 40),
+        ],
+      );
+    }
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const SizedBox(height: 35),
+        Text(
+          'Results for “$searchQuery”',
+          style: GoogleFonts.hind(
+            fontSize: 20,
+            fontWeight: FontWeight.w600,
+            color: AppColors.textBlackGrey,
+          ),
+        ),
+        const SizedBox(height: 20),
+        GridView.builder(
+          // padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+          primary: false,
+          shrinkWrap: true,
+          itemCount: filtered.length,
+          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+            crossAxisCount: isWeb ? 5 : 2,
+            crossAxisSpacing: 12,
+            mainAxisSpacing: 12,
+            childAspectRatio: 0.8,
+          ),
+          itemBuilder: (context, index) {
+            final product = filtered[index];
+            return ProductCard(
+              productName: product.productName,
+              slashedAmount: product.slashedAmount,
+              amount: product.amount,
+              onPressed: () {},
+              imageUrl: product.imageUrl,
+              onPress: () {},
+              onCardPress: () {},
+              rating: product.rating,
+              reviews: product.reviews,
+            );
+          },
+        ),
+      ],
+    );
+  }
+}

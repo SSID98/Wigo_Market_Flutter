@@ -182,6 +182,10 @@ class $AssetsIconsGen {
   SvgGenImage get greenFacebook =>
       const SvgGenImage('assets/icons/greenFacebook.svg');
 
+  /// File path: assets/icons/greenHeart.svg
+  SvgGenImage get greenHeart =>
+      const SvgGenImage('assets/icons/greenHeart.svg');
+
   /// File path: assets/icons/greenWallet.svg
   SvgGenImage get greenWallet =>
       const SvgGenImage('assets/icons/greenWallet.svg');
@@ -475,6 +479,7 @@ class $AssetsIconsGen {
     givePill,
     google,
     greenFacebook,
+    greenHeart,
     greenWallet,
     group,
     home,

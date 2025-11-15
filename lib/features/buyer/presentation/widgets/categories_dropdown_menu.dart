@@ -6,8 +6,6 @@ import 'package:wigo_flutter/core/constants/app_colors.dart';
 import '../../../../gen/assets.gen.dart';
 
 class CategoriesDropdownMenu extends StatelessWidget {
-  // final VoidCallback onClose;
-
   const CategoriesDropdownMenu({super.key});
 
   @override

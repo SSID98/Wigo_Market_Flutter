@@ -1,0 +1,83 @@
+import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'package:wigo_flutter/core/constants/app_colors.dart';
+
+import '../../../../gen/assets.gen.dart';
+
+class UserDropDownMenu extends StatelessWidget {
+  const UserDropDownMenu({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    final isWeb = MediaQuery.of(context).size.width > 600;
+    double iconHeight = isWeb ? 18 : 14;
+    final menuItems = [
+      {
+        'icon': AppAssets.icons.userCircle.svg(height: iconHeight),
+        'label': 'My account',
+      },
+      {
+        'icon': AppAssets.icons.cart.svg(height: iconHeight),
+        'label': 'My Orders',
+      },
+      {
+        'icon': AppAssets.icons.greenHeart.svg(height: iconHeight),
+        'label': 'Saved',
+      },
+      {
+        'icon': AppAssets.icons.buyerLogout.svg(height: iconHeight),
+        'label': 'Log out',
+      },
+    ];
+
+    return Material(
+      color: Colors.transparent,
+      child: Container(
+        width: 150,
+        decoration: BoxDecoration(
+          color: AppColors.backgroundWhite,
+          borderRadius: BorderRadius.vertical(bottom: Radius.circular(8.0)),
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            ...menuItems.asMap().entries.map((entry) {
+              final index = entry.key;
+              final item = entry.value;
+
+              final isLastItem = index == menuItems.length - 1;
+              return Padding(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 16,
+                  vertical: 5,
+                ),
+                child: Row(
+                  children: [
+                    item['icon'] as SvgPicture,
+                    const SizedBox(width: 10),
+                    Expanded(
+                      child: Text(
+                        item['label'] as String,
+                        style: GoogleFonts.hind(
+                          fontSize: isWeb ? 14 : 12,
+                          color:
+                              isLastItem
+                                  ? AppColors.textLightRed
+                                  : AppColors.primaryDarkGreen,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              );
+            }),
+            const SizedBox(height: 5),
+          ],
+        ),
+      ),
+    );
+  }
+}

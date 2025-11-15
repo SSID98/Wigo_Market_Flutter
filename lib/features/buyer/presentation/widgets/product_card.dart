@@ -45,7 +45,7 @@ class ProductCard extends StatelessWidget {
       onTap: onCardPress,
       child: Container(
         padding: EdgeInsets.zero,
-        color: AppColors.backgroundWhite,
+        // color: AppColors.backgroundWhite,
         margin: const EdgeInsets.only(left: 2, bottom: 15),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
