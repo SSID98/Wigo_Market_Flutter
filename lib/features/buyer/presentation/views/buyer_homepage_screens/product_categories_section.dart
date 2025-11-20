@@ -3,9 +3,9 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:wigo_flutter/core/constants/app_colors.dart';
 import 'package:wigo_flutter/shared/widgets/custom_text_field.dart';
 
-import '../../../../core/constants/url.dart';
-import '../../../../shared/widgets/custom_carousel.dart';
-import '../widgets/categories_card.dart';
+import '../../../../../core/constants/url.dart';
+import '../../../../../shared/widgets/custom_carousel.dart';
+import '../../widgets/categories_card.dart';
 
 class CategoryItem {
   final String imageUrl;

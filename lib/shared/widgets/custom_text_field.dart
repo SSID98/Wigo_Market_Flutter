@@ -39,6 +39,7 @@ class CustomTextField extends ConsumerStatefulWidget {
   final int? maxLines, minLines;
   final String? errorMessage;
   final bool? enabled;
+  final double? borderRadius;
 
   const CustomTextField({
     super.key,
@@ -86,6 +87,7 @@ class CustomTextField extends ConsumerStatefulWidget {
     this.maxLines,
     this.minLines,
     this.enabled,
+    this.borderRadius,
   });
 
   @override
@@ -172,7 +174,9 @@ class _CustomTextFieldState extends ConsumerState<CustomTextField> {
                             ? AppColors.accentRed
                             : (widget.enabledBorderColor ?? Colors.transparent),
                   ),
-                  borderRadius: BorderRadius.circular(8.0),
+                  borderRadius: BorderRadius.circular(
+                    widget.borderRadius ?? 8.0,
+                  ),
                 ),
                 focusedBorder: OutlineInputBorder(
                   borderSide: BorderSide(
@@ -181,14 +185,18 @@ class _CustomTextFieldState extends ConsumerState<CustomTextField> {
                             ? AppColors.accentRed
                             : (widget.focusedBorderColor ?? Colors.transparent),
                   ),
-                  borderRadius: BorderRadius.circular(8.0),
+                  borderRadius: BorderRadius.circular(
+                    widget.borderRadius ?? 8.0,
+                  ),
                 ),
                 errorBorder: OutlineInputBorder(
                   borderSide: BorderSide(
                     color: AppColors.accentRed,
                     width: 1.0,
                   ),
-                  borderRadius: BorderRadius.circular(8.0),
+                  borderRadius: BorderRadius.circular(
+                    widget.borderRadius ?? 8.0,
+                  ),
                 ),
                 prefixIcon:
                     (widget.prefixIcon != null ||

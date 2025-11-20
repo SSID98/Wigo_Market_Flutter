@@ -5,19 +5,21 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:wigo_flutter/core/constants/app_colors.dart';
 import 'package:wigo_flutter/core/constants/url.dart';
-import 'package:wigo_flutter/features/buyer/presentation/views/close_shops_section.dart';
-import 'package:wigo_flutter/features/buyer/presentation/views/popular_vendor_section.dart';
-import 'package:wigo_flutter/features/buyer/presentation/views/product_categories_section.dart';
-import 'package:wigo_flutter/features/buyer/presentation/views/products_you_like_section.dart';
+import 'package:wigo_flutter/features/buyer/presentation/views/buyer_homepage_screens/popular_vendor_section.dart';
+import 'package:wigo_flutter/features/buyer/presentation/views/buyer_homepage_screens/product_categories_section.dart';
+import 'package:wigo_flutter/features/buyer/presentation/views/buyer_homepage_screens/products_you_like_section.dart';
+import 'package:wigo_flutter/features/buyer/presentation/views/buyer_homepage_screens/top_shops_section.dart';
+import 'package:wigo_flutter/features/buyer/presentation/views/footer_section.dart';
 import 'package:wigo_flutter/features/buyer/presentation/views/search_results_view.dart';
-import 'package:wigo_flutter/features/buyer/presentation/views/top_shops_section.dart';
+import 'package:wigo_flutter/features/buyer/presentation/widgets/self_delivery_card.dart';
 import 'package:wigo_flutter/features/buyer/presentation/widgets/user_dropdown_menu.dart';
 import 'package:wigo_flutter/gen/assets.gen.dart';
 import 'package:wigo_flutter/shared/widgets/custom_search_field.dart';
 
-import '../../../../shared/widgets/dashboard_widgets/custom_app_bar.dart';
-import '../../models/product_model.dart';
-import '../widgets/custom_dropdown_menu.dart';
+import '../../../../../shared/widgets/dashboard_widgets/custom_app_bar.dart';
+import '../../../models/product_model.dart';
+import '../../widgets/custom_dropdown_menu.dart';
+import 'close_shops_section.dart';
 
 class BuyerHomeScreen extends ConsumerStatefulWidget {
   const BuyerHomeScreen({super.key});
@@ -36,25 +38,28 @@ class _BuyerHomeScreenState extends ConsumerState<BuyerHomeScreen> {
       imageUrl: '$networkImageUrl/nintendo.png',
       amount: '10,027.61',
       slashedAmount: '12,053.69',
-      productName: 'Nintendo Gaming Phone',
+      productName: 'Nintendo Gaming Console',
       rating: 4.0,
       reviews: 67,
+      categoryName: 'Gaming',
     ),
     Product(
       imageUrl: '$networkImageUrl/gamePad.png',
       amount: '10,027.61',
       slashedAmount: '12,053.69',
-      productName: 'PS3 Game pad with type C Phone',
+      productName: 'PS3 Game pad with type C USB',
       rating: 4.0,
       reviews: 67,
+      categoryName: 'Gaming',
     ),
     Product(
       imageUrl: '$networkImageUrl/wristwatch.png',
       amount: '10,027.61',
       slashedAmount: '12,053.69',
-      productName: 'Quartz Wrist Phone',
+      productName: 'Quartz Wrist Watch',
       rating: 4.0,
       reviews: 67,
+      categoryName: 'Jewelry',
     ),
     Product(
       imageUrl: '$networkImageUrl/phones.png',
@@ -63,6 +68,7 @@ class _BuyerHomeScreenState extends ConsumerState<BuyerHomeScreen> {
       productName: 'Small Button Phone',
       rating: 4.0,
       reviews: 67,
+      categoryName: 'Gadgets',
     ),
     Product(
       imageUrl: '$networkImageUrl/Honey.png',
@@ -71,6 +77,7 @@ class _BuyerHomeScreenState extends ConsumerState<BuyerHomeScreen> {
       productName: 'Special Honey',
       rating: 4.0,
       reviews: 67,
+      categoryName: 'Beverages',
     ),
   ];
 
@@ -152,10 +159,8 @@ class _BuyerHomeScreenState extends ConsumerState<BuyerHomeScreen> {
 
   void _showSearchField() {
     setState(() {
-      // 1. Toggle visibility
       _isSearchFieldVisible = !_isSearchFieldVisible;
 
-      // 2. IMPORTANT: If we are hiding it, we must also clear the query.
       if (!_isSearchFieldVisible) {
         _searchQuery = '';
         _searchController.clear();
@@ -171,15 +176,12 @@ class _BuyerHomeScreenState extends ConsumerState<BuyerHomeScreen> {
       canPop: !_isSearchFieldVisible && _searchQuery.isEmpty,
       onPopInvokedWithResult: (didPop, result) {
         if (!didPop) {
-          // Only run if the pop was blocked
           setState(() {
             if (_searchQuery.isNotEmpty) {
-              // Scenario 1: Clear results first
               _searchQuery = '';
               _searchController.clear();
               _isSearchFieldVisible = false;
             } else if (_isSearchFieldVisible) {
-              // Scenario 2: Hide field if it was just visible without results
               _isSearchFieldVisible = false;
             }
           });
@@ -244,29 +246,14 @@ class _BuyerHomeScreenState extends ConsumerState<BuyerHomeScreen> {
                                 const SizedBox(height: 20),
                                 PopularVendorsSection(),
                                 const SizedBox(height: 20),
-                                ProductsYouLikeSection(),
+                                ProductsYouLikeSection(products: _products),
                                 const SizedBox(height: 40),
-                                Image.network(
-                                  '$networkImageUrl/selfDelivery.png',
-                                  errorBuilder: (
-                                    BuildContext context,
-                                    Object exception,
-                                    StackTrace? stackTrace,
-                                  ) {
-                                    return const Center(
-                                      child: Icon(
-                                        Icons.broken_image,
-                                        color: AppColors.textIconGrey,
-                                        size: 50.0,
-                                      ),
-                                    );
-                                  },
-                                ),
+                                SelfDeliveryPromoCard(onPressed: () {}),
                               ],
                             ),
                   ),
                   const SizedBox(height: 30),
-                  _buildFooter(isWeb),
+                  FooterSection(),
                 ],
               ),
             ),
@@ -289,89 +276,89 @@ class _BuyerHomeScreenState extends ConsumerState<BuyerHomeScreen> {
     );
   }
 
-  Widget _buildFooter(bool isWeb) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Image.network(
-          '$networkImageUrl/logo3.png',
-          errorBuilder: (
-            BuildContext context,
-            Object exception,
-            StackTrace? stackTrace,
-          ) {
-            return const Center(
-              child: Icon(
-                Icons.broken_image,
-                color: AppColors.textIconGrey,
-                size: 50.0,
-              ),
-            );
-          },
-        ),
-        const SizedBox(height: 20),
-        _buildTextProperties(
-          'Empowering campus communities through smart commerce and Easy Buying and Selling.',
-          isWeb,
-          isBodyText: true,
-        ),
-        const SizedBox(height: 30),
-        _buildTextProperties('Latest', isWeb),
-        const SizedBox(height: 10),
-        _buildTextProperties('Orders', isWeb),
-        const SizedBox(height: 30),
-        _buildTextProperties('Privacy Policy', isWeb),
-        const SizedBox(height: 10),
-        _buildTextProperties('Cookie Policy', isWeb),
-        const SizedBox(height: 10),
-        _buildTextProperties('Refund Policy', isWeb),
-        const SizedBox(height: 30),
-        _buildTextProperties('About Us', isWeb),
-        const SizedBox(height: 10),
-        _buildTextProperties('Support', isWeb),
-        const SizedBox(height: 10),
-        _buildTextProperties('For Riders', isWeb),
-        const SizedBox(height: 10),
-        _buildTextProperties('Become A Seller', isWeb),
-        const SizedBox(height: 20),
-        Divider(),
-        _buildTextProperties(
-          '© 2025 wiGO MARKET. All rights reserved.',
-          isWeb,
-          isBodyText: true,
-        ),
-        const SizedBox(height: 10),
-        Padding(
-          padding: EdgeInsets.only(right: 150.0, bottom: 20),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              AppAssets.icons.greenFacebook.svg(
-                height: isWeb ? 50 : 34,
-                width: isWeb ? 50 : 34,
-              ),
-              AppAssets.icons.x.svg(
-                height: isWeb ? 50 : 34,
-                width: isWeb ? 50 : 34,
-              ),
-              AppAssets.icons.instagram.svg(
-                height: isWeb ? 50 : 34,
-                width: isWeb ? 50 : 34,
-              ),
-              AppAssets.icons.linkedin.svg(
-                height: isWeb ? 50 : 34,
-                width: isWeb ? 50 : 34,
-              ),
-              AppAssets.icons.youtube.svg(
-                height: isWeb ? 50 : 34,
-                width: isWeb ? 50 : 34,
-              ),
-            ],
-          ),
-        ),
-      ],
-    );
-  }
+  // Widget _buildFooter(bool isWeb) {
+  //   return Column(
+  //     crossAxisAlignment: CrossAxisAlignment.start,
+  //     children: [
+  //       Image.network(
+  //         '$networkImageUrl/logo3.png',
+  //         errorBuilder: (
+  //           BuildContext context,
+  //           Object exception,
+  //           StackTrace? stackTrace,
+  //         ) {
+  //           return const Center(
+  //             child: Icon(
+  //               Icons.broken_image,
+  //               color: AppColors.textIconGrey,
+  //               size: 50.0,
+  //             ),
+  //           );
+  //         },
+  //       ),
+  //       const SizedBox(height: 20),
+  //       _buildTextProperties(
+  //         'Empowering campus communities through smart commerce and Easy Buying and Selling.',
+  //         isWeb,
+  //         isBodyText: true,
+  //       ),
+  //       const SizedBox(height: 30),
+  //       _buildTextProperties('Latest', isWeb),
+  //       const SizedBox(height: 10),
+  //       _buildTextProperties('Orders', isWeb),
+  //       const SizedBox(height: 30),
+  //       _buildTextProperties('Privacy Policy', isWeb),
+  //       const SizedBox(height: 10),
+  //       _buildTextProperties('Cookie Policy', isWeb),
+  //       const SizedBox(height: 10),
+  //       _buildTextProperties('Refund Policy', isWeb),
+  //       const SizedBox(height: 30),
+  //       _buildTextProperties('About Us', isWeb),
+  //       const SizedBox(height: 10),
+  //       _buildTextProperties('Support', isWeb),
+  //       const SizedBox(height: 10),
+  //       _buildTextProperties('For Riders', isWeb),
+  //       const SizedBox(height: 10),
+  //       _buildTextProperties('Become A Seller', isWeb),
+  //       const SizedBox(height: 20),
+  //       Divider(),
+  //       _buildTextProperties(
+  //         '© 2025 wiGO MARKET. All rights reserved.',
+  //         isWeb,
+  //         isBodyText: true,
+  //       ),
+  //       const SizedBox(height: 10),
+  //       Padding(
+  //         padding: EdgeInsets.only(right: 150.0, bottom: 20),
+  //         child: Row(
+  //           mainAxisAlignment: MainAxisAlignment.spaceBetween,
+  //           children: [
+  //             AppAssets.icons.greenFacebook.svg(
+  //               height: isWeb ? 50 : 34,
+  //               width: isWeb ? 50 : 34,
+  //             ),
+  //             AppAssets.icons.x.svg(
+  //               height: isWeb ? 50 : 34,
+  //               width: isWeb ? 50 : 34,
+  //             ),
+  //             AppAssets.icons.instagram.svg(
+  //               height: isWeb ? 50 : 34,
+  //               width: isWeb ? 50 : 34,
+  //             ),
+  //             AppAssets.icons.linkedin.svg(
+  //               height: isWeb ? 50 : 34,
+  //               width: isWeb ? 50 : 34,
+  //             ),
+  //             AppAssets.icons.youtube.svg(
+  //               height: isWeb ? 50 : 34,
+  //               width: isWeb ? 50 : 34,
+  //             ),
+  //           ],
+  //         ),
+  //       ),
+  //     ],
+  //   );
+  // }
 
   Widget _webHeader(bool isWeb) {
     return Row(

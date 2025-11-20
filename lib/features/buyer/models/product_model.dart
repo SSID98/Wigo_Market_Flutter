@@ -5,6 +5,7 @@ class Product {
   final String imageUrl;
   final double rating;
   final int reviews;
+  final String categoryName;
 
   Product({
     required this.imageUrl,
@@ -13,5 +14,6 @@ class Product {
     required this.rating,
     required this.reviews,
     required this.slashedAmount,
+    required this.categoryName,
   });
 }

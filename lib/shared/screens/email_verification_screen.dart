@@ -12,12 +12,12 @@ import '../widgets/verification_widget.dart';
 
 class EmailVerificationScreen extends StatelessWidget {
   final String email;
-  final bool isRider;
+  final bool isBuyer;
 
   const EmailVerificationScreen({
     super.key,
     required this.email,
-    this.isRider = true,
+    this.isBuyer = false,
   });
 
   @override
@@ -82,15 +82,15 @@ class EmailVerificationScreen extends StatelessWidget {
                       VerificationWidgetBuilder.buildMobileBody(
                         email: maskedEmail,
                         onPressed: () {
-                          if (isRider) {
+                          if (!isBuyer) {
                             context.go('/rider/verification');
                           } else {
-                            Navigator.pop(
+                            Navigator.push(
                               context,
                               MaterialPageRoute(
                                 builder:
                                     (_) => CreationSuccessfulScreen(
-                                      isRider: false,
+                                      isBuyer: isBuyer,
                                     ),
                               ),
                             );

@@ -348,6 +348,10 @@ class $AssetsIconsGen {
   /// File path: assets/icons/star.svg
   SvgGenImage get star => const SvgGenImage('assets/icons/star.svg');
 
+  /// File path: assets/icons/starOutline.svg
+  SvgGenImage get starOutline =>
+      const SvgGenImage('assets/icons/starOutline.svg');
+
   /// File path: assets/icons/statusChip1.svg
   SvgGenImage get statusChip1 =>
       const SvgGenImage('assets/icons/statusChip1.svg');
@@ -528,6 +532,7 @@ class $AssetsIconsGen {
     smallPackage,
     smartWatch,
     star,
+    starOutline,
     statusChip1,
     statusChip2,
     thisWeek,

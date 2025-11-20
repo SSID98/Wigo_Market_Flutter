@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:wigo_flutter/features/buyer/presentation/views/buyer_product_details_screens/product_details_screen.dart';
 import 'package:wigo_flutter/features/buyer/presentation/widgets/icon_text_row.dart';
 
 import '../../../../core/constants/app_colors.dart';
@@ -9,6 +10,7 @@ import '../../../../shared/widgets/custom_button.dart';
 class ProductCard extends StatelessWidget {
   final String productName;
   final String amount;
+  final String categoryName;
   final String slashedAmount;
   final VoidCallback onPressed;
   final VoidCallback onCardPress;
@@ -28,6 +30,7 @@ class ProductCard extends StatelessWidget {
     required this.onCardPress,
     required this.rating,
     required this.reviews,
+    required this.categoryName,
   });
 
   // String formatNumber(String numberString) {
@@ -42,7 +45,20 @@ class ProductCard extends StatelessWidget {
     // String formattedSlashedAmount = formatNumber(slashedAmount);
     final isWeb = MediaQuery.of(context).size.width > 600;
     return InkWell(
-      onTap: onCardPress,
+      onTap: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder:
+                (_) => ProductDetailsPage(
+                  productName: productName,
+                  imageUrl: imageUrl,
+                  price: amount,
+                  categoryName: categoryName,
+                ),
+          ),
+        );
+      },
       child: Container(
         padding: EdgeInsets.zero,
         // color: AppColors.backgroundWhite,

@@ -81,7 +81,7 @@ class OnboardingScreen extends ConsumerWidget {
                           imageHeight: 117,
                           dotHeight: 5,
                           dotWidth: 5,
-                          expansionFactor: 6.5,
+                          expansionFactor: 5,
                           padding: 40.0,
                           descriptionFontSize: 14,
                           isBuyer: isBuyer,

@@ -3,7 +3,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:wigo_flutter/core/constants/url.dart';
 import 'package:wigo_flutter/shared/widgets/custom_avatar.dart';
 
-import '../../../../core/constants/app_colors.dart';
+import '../../../../../core/constants/app_colors.dart';
 
 class TopShopsSection extends StatelessWidget {
   const TopShopsSection({super.key});

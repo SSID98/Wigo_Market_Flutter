@@ -15,7 +15,9 @@ import '../widgets/bottom_text.dart';
 import '../widgets/custom_button.dart';
 
 class LoginScreen extends ConsumerStatefulWidget {
-  const LoginScreen({super.key});
+  const LoginScreen({super.key, this.isBuyer = false});
+
+  final bool isBuyer;
 
   @override
   ConsumerState<LoginScreen> createState() => _LoginScreenState();
@@ -132,7 +134,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                           final hasAnyError =
                               _emailError != null || _passwordError != null;
                           if (!hasAnyError) {
-                            vm.login(formKey, context);
+                            vm.login(formKey, context, widget.isBuyer);
                           }
                         },
                         formKey: formKey,
@@ -288,7 +290,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                                       _emailError != null ||
                                       _passwordError != null;
                                   if (!hasAnyError) {
-                                    vm.login(formKey, context);
+                                    vm.login(formKey, context, widget.isBuyer);
                                   }
                                 },
                                 validator1: (value) => null,

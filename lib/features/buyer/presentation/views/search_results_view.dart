@@ -108,7 +108,6 @@ class SearchResultsView extends StatelessWidget {
         ),
         const SizedBox(height: 20),
         GridView.builder(
-          // padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
           primary: false,
           shrinkWrap: true,
           itemCount: filtered.length,
@@ -130,6 +129,7 @@ class SearchResultsView extends StatelessWidget {
               onCardPress: () {},
               rating: product.rating,
               reviews: product.reviews,
+              categoryName: product.categoryName,
             );
           },
         ),

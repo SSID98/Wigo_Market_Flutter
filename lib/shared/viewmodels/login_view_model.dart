@@ -25,7 +25,11 @@ class LoginViewModel extends StateNotifier<LoginState> {
     state = state.copyWith(isLoading: isLoading);
   }
 
-  Future<void> login(GlobalKey<FormState> formKey, BuildContext context) async {
+  Future<void> login(
+    GlobalKey<FormState> formKey,
+    BuildContext context,
+    bool isBuyer,
+  ) async {
     if (formKey.currentState!.validate()) {
       if (!state.agreeToTerms) {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -34,7 +38,9 @@ class LoginViewModel extends StateNotifier<LoginState> {
         return;
       }
       setLoading(true);
-      context.push('/riderMainScreen');
+      !isBuyer
+          ? context.push('/riderMainScreen')
+          : context.push('/buyerHomeScreen');
       await Future.delayed(const Duration(milliseconds: 500));
       setLoading(false);
       debugPrint("Email: $state.email");

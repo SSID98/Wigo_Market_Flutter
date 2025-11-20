@@ -43,6 +43,9 @@ class AppColors {
   static const Color darkerGreen = Color(0xff314720);
   static const Color containerGreen = Color(0xff8FC457);
   static const Color backgroundPurple = Color(0xffD4D4FF);
+  static const Color backgroundLightYellow = Color(0xffFFF9C2);
+  static const Color backgroundLightPink = Color(0xffFDE9D7);
+  static const Color backgroundPeach = Color(0xffF5AD7C);
 
   // Text Colors (approximate)
   static const Color textDarkGreen = Color(0xff436724);

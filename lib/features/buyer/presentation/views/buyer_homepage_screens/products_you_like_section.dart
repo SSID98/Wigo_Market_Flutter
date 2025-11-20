@@ -3,55 +3,13 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:wigo_flutter/core/constants/app_colors.dart';
 import 'package:wigo_flutter/features/buyer/presentation/widgets/product_card.dart';
 
-import '../../../../core/constants/url.dart';
-import '../../../../shared/widgets/custom_carousel.dart';
-import '../../models/product_model.dart';
-
-final List<Product> dummyLikedProductItems = [
-  Product(
-    imageUrl: '$networkImageUrl/nintendo.png',
-    amount: '10,027.61',
-    slashedAmount: '12,053.69',
-    productName: 'Nintendo Gaming Console',
-    rating: 4.0,
-    reviews: 67,
-  ),
-  Product(
-    imageUrl: '$networkImageUrl/gamePad.png',
-    amount: '10,027.61',
-    slashedAmount: '12,053.69',
-    productName: 'PS3 Game pad with type C USB',
-    rating: 4.0,
-    reviews: 67,
-  ),
-  Product(
-    imageUrl: '$networkImageUrl/wristwatch.png',
-    amount: '10,027.61',
-    slashedAmount: '12,053.69',
-    productName: 'Quartz Wrist Watch',
-    rating: 4.0,
-    reviews: 67,
-  ),
-  Product(
-    imageUrl: '$networkImageUrl/phones.png',
-    amount: '10,027.61',
-    slashedAmount: '12,053.69',
-    productName: 'Small Button Phone',
-    rating: 4.0,
-    reviews: 67,
-  ),
-  Product(
-    imageUrl: '$networkImageUrl/Honey.png',
-    amount: '10,027.61',
-    slashedAmount: '12,053.69',
-    productName: 'Special Honey',
-    rating: 4.0,
-    reviews: 67,
-  ),
-];
+import '../../../../../shared/widgets/custom_carousel.dart';
+import '../../../models/product_model.dart';
 
 class ProductsYouLikeSection extends StatelessWidget {
-  const ProductsYouLikeSection({super.key});
+  final List<Product> products;
+
+  const ProductsYouLikeSection({super.key, required this.products});
 
   @override
   Widget build(BuildContext context) {
@@ -98,7 +56,7 @@ class ProductsYouLikeSection extends StatelessWidget {
           pageViewBuilderHeight: isWeb ? 235 : 220,
           viewportFraction: isWeb ? 0.50 : 0.53,
           dotColor: AppColors.clampValueColor,
-          items: dummyLikedProductItems,
+          items: products,
           itemBuilder: (item) {
             return ProductCard(
               imageUrl: item.imageUrl,
@@ -107,6 +65,7 @@ class ProductsYouLikeSection extends StatelessWidget {
               reviews: item.reviews,
               amount: item.amount,
               slashedAmount: item.slashedAmount,
+              categoryName: item.categoryName,
               onCardPress: () {},
               onPress: () {},
               onPressed: () {},

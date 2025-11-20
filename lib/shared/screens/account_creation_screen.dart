@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:wigo_flutter/core/constants/app_colors.dart';
 import 'package:wigo_flutter/features/rider/presentation/widgets/rider_forms_field.dart';
+import 'package:wigo_flutter/shared/screens/email_verification_screen.dart';
 import 'package:wigo_flutter/shared/widgets/custom_button.dart';
 
 import '../../core/constants/url.dart';
@@ -77,7 +78,16 @@ class AccountCreationScreen extends ConsumerWidget {
                           text: 'Continue',
                           onPressed: () {
                             isBuyer
-                                ? context.go('/successful')
+                                ? Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder:
+                                        (_) => EmailVerificationScreen(
+                                          email: '',
+                                          isBuyer: isBuyer,
+                                        ),
+                                  ),
+                                )
                                 : context.push('/verification');
                           },
                           fontSize: 18,

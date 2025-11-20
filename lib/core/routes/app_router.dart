@@ -6,7 +6,7 @@ import 'package:wigo_flutter/shared/screens/login_screen.dart';
 import 'package:wigo_flutter/shared/screens/reset_password_email_verification_screen.dart';
 import 'package:wigo_flutter/shared/screens/reset_password_enter_email_screen.dart';
 
-import '../../features/buyer/presentation/views/buyer_home_screen.dart';
+import '../../features/buyer/presentation/views/buyer_homepage_screens/buyer_home_screen.dart';
 import '../../features/rider/presentation/views/rider_account_setup_screens/rider_account_nin_verification_screen.dart';
 import '../../features/rider/presentation/views/rider_account_setup_screens/rider_payment_method_setup_screen.dart';
 import '../../shared/screens/account_creation_screen.dart';

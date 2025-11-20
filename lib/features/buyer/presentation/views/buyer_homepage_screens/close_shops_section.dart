@@ -1,63 +1,63 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:wigo_flutter/core/constants/app_colors.dart';
-import 'package:wigo_flutter/features/buyer/presentation/widgets/popular_vendors_card.dart';
+import 'package:wigo_flutter/features/buyer/presentation/widgets/close_shops_card.dart';
 
-import '../../../../core/constants/url.dart';
-import '../../../../shared/widgets/custom_carousel.dart';
+import '../../../../../core/constants/url.dart';
+import '../../../../../shared/widgets/custom_carousel.dart';
 
-class PopularVendorsItem {
+class CloseShopsItem {
   final String imageUrl;
-  final String vendorName;
-  final String vendorCategory;
+  final String shopName;
+  final String category;
   final double rating;
   final int reviews;
   final String deliveryFee;
   final String deliveryTime;
 
-  PopularVendorsItem({
+  CloseShopsItem({
     required this.imageUrl,
     required this.deliveryFee,
     required this.deliveryTime,
-    required this.vendorName,
+    required this.category,
     required this.rating,
     required this.reviews,
-    required this.vendorCategory,
+    required this.shopName,
   });
 }
 
-final List<PopularVendorsItem> dummyPopularVendors = [
-  PopularVendorsItem(
-    imageUrl: '$networkImageUrl/sharwama.png',
+final List<CloseShopsItem> dummyCloseShops = [
+  CloseShopsItem(
+    imageUrl: '$networkImageUrl/shopsClosest.png',
     deliveryFee: '1000',
     deliveryTime: '30-45 mins',
-    vendorName: 'Manny’s Grills and Lounge',
+    category: 'Women Clothings',
     rating: 4.0,
     reviews: 67,
-    vendorCategory: 'Restaurant',
+    shopName: 'Jennis Collectibles',
   ),
-  PopularVendorsItem(
-    imageUrl: '$networkImageUrl/manikin.png',
+  CloseShopsItem(
+    imageUrl: '$networkImageUrl/shopsClosest.png',
     deliveryFee: '1000',
     deliveryTime: '30-45 mins',
-    vendorName: 'Manny’s Girls and Lounge',
+    category: 'Women Clothings',
     rating: 4.0,
     reviews: 67,
-    vendorCategory: 'Makeup & Spa',
+    shopName: 'Jennis Collectibles',
   ),
-  PopularVendorsItem(
-    imageUrl: '$networkImageUrl/manikin2.png',
+  CloseShopsItem(
+    imageUrl: '$networkImageUrl/shopsClosest.png',
     deliveryFee: '1000',
     deliveryTime: '30-45 mins',
-    vendorName: 'Manny’s Comrades and Lounge',
+    category: 'Women Clothings',
     rating: 4.0,
     reviews: 67,
-    vendorCategory: 'Men’s Clothing',
+    shopName: 'Jennis Collectibles',
   ),
 ];
 
-class PopularVendorsSection extends StatelessWidget {
-  const PopularVendorsSection({super.key});
+class CloseShopSection extends StatelessWidget {
+  const CloseShopSection({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -66,14 +66,14 @@ class PopularVendorsSection extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Padding(
-          padding: const EdgeInsets.only(left: 16.0, top: 20),
+          padding: const EdgeInsets.only(left: 11.0, top: 20),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
-                'Popular Vendors',
+                'Shop Closest to you',
                 style: GoogleFonts.hind(
-                  fontWeight: FontWeight.w600,
+                  fontWeight: FontWeight.w500,
                   fontSize: isWeb ? 20 : 16,
                   color: AppColors.textBlackGrey,
                 ),
@@ -84,15 +84,15 @@ class PopularVendorsSection extends StatelessWidget {
                     'View More',
                     style: GoogleFonts.hind(
                       fontWeight: FontWeight.w400,
-                      fontSize: isWeb ? 18 : 14,
-                      color: AppColors.textBlackGrey,
+                      fontSize: isWeb ? 18.87 : 14,
+                      color: AppColors.textOrange,
                     ),
                   ),
                   const SizedBox(width: 1),
                   Icon(
                     Icons.keyboard_arrow_right_rounded,
                     size: 20,
-                    color: AppColors.textBlackGrey,
+                    color: AppColors.textOrange,
                   ),
                 ],
               ),
@@ -102,21 +102,19 @@ class PopularVendorsSection extends StatelessWidget {
         const SizedBox(height: 16),
         CustomCarouselWidget(
           visibleItemsPerPage: 1,
-          pageViewBuilderHeight: 245,
-          viewportFraction: 1.0,
+          pageViewBuilderHeight: 240,
+          viewportFraction: 0.90,
           dotColor: AppColors.clampValueColor,
-          items: dummyPopularVendors,
+          items: dummyCloseShops,
           itemBuilder: (item) {
-            return PopularVendorsCard(
+            return CloseShopsCard(
               imageUrl: item.imageUrl,
-              vendorName: item.vendorName,
-              vendorCategory: item.vendorCategory,
+              shopName: item.shopName,
+              category: item.category,
               rating: item.rating,
               reviews: item.reviews,
               deliveryFee: item.deliveryFee,
               deliveryTime: item.deliveryTime,
-              onCardPress: () {},
-              onPress: () {},
             );
           },
         ),

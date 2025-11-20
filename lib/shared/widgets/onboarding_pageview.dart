@@ -77,7 +77,7 @@ class OnboardingPageView extends ConsumerWidget {
                       ),
                     ),
                     const SizedBox(height: 10),
-                    Image.asset(
+                    Image.network(
                       data['image']!,
                       height: imageHeight,
                       width: imageWidth,

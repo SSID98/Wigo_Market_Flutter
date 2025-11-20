@@ -3,6 +3,7 @@ import 'package:flutter_svg/svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:wigo_flutter/shared/screens/login_screen.dart';
 
 import '../../core/constants/app_colors.dart';
 import '../../core/constants/url.dart';
@@ -11,9 +12,9 @@ import '../../gen/assets.gen.dart';
 import '../widgets/custom_button.dart';
 
 class CreationSuccessfulScreen extends StatelessWidget {
-  final bool isRider;
+  final bool isBuyer;
 
-  const CreationSuccessfulScreen({super.key, this.isRider = true});
+  const CreationSuccessfulScreen({super.key, this.isBuyer = false});
 
   @override
   Widget build(BuildContext context) {
@@ -184,7 +185,7 @@ class CreationSuccessfulScreen extends StatelessWidget {
           ),
           const SizedBox(height: 20),
           Text(
-            isRider
+            !isBuyer
                 ? 'You are just one click away from making your first earn on wiGO MARKET.'
                 : 'You are just one click away from making your first purchase on wiGO MARKET.',
             textAlign: TextAlign.center,
@@ -206,7 +207,14 @@ class CreationSuccessfulScreen extends StatelessWidget {
               final storage = LocalStorageService(prefs);
               await storage.setAccountCreationCompleted();
               if (!context.mounted) return;
-              context.go('/login');
+              isBuyer
+                  ? Navigator.pushReplacement(
+                    context,
+                    MaterialPageRoute(
+                      builder: (_) => LoginScreen(isBuyer: isBuyer),
+                    ),
+                  )
+                  : context.go('/login');
             },
             fontSize: 18,
             fontWeight: FontWeight.w500,
