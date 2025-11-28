@@ -34,6 +34,7 @@ dependencies:
   dropdown_button2: ^2.3.9
   diacritic: ^0.1.6
   dotted_decoration: ^2.0.0
+  flutter_dotenv: ^6.0.0
 
 
 
@@ -52,6 +53,7 @@ flutter:
   uses-material-design: true
   assets:
     - assets/icons/
+    - .env
 
 flutter_gen:
   assets:

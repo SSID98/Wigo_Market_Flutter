@@ -6,22 +6,24 @@ import 'package:wigo_flutter/shared/widgets/onboarding_pageview.dart';
 
 import '../../core/constants/app_colors.dart';
 import '../../core/constants/url.dart';
+import '../../core/providers/role_selection_provider.dart';
 import '../../gen/assets.gen.dart';
+import '../models/user_role.dart';
 import '../widgets/custom_button.dart';
 
 class OnboardingScreen extends ConsumerWidget {
-  const OnboardingScreen({super.key, this.isBuyer = false});
-
-  final bool isBuyer;
+  const OnboardingScreen({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final viewModel = ref.watch(riderOnboardingViewModelProvider);
+    final viewModel = ref.watch(onboardingViewModelProvider);
     final screenSize = MediaQuery.of(context).size;
     final isWeb = MediaQuery.of(context).size.width < 600;
+    final role = ref.watch(userRoleProvider);
+    final isBuyer = role == UserRole.buyer;
     return isWeb
-        ? _buildMobileLayout(context, viewModel, screenSize)
-        : _buildWebLayout(context, viewModel, screenSize);
+        ? _buildMobileLayout(context, viewModel, screenSize, isBuyer)
+        : _buildWebLayout(context, viewModel, screenSize, isBuyer);
   }
 
   //Mobile Layout
@@ -29,6 +31,7 @@ class OnboardingScreen extends ConsumerWidget {
     BuildContext context,
     OnboardingViewModel viewModel,
     Size screenSize,
+    bool isBuyer,
   ) {
     return Scaffold(
       backgroundColor: AppColors.backgroundWhite,
@@ -84,7 +87,6 @@ class OnboardingScreen extends ConsumerWidget {
                           expansionFactor: 5,
                           padding: 40.0,
                           descriptionFontSize: 14,
-                          isBuyer: isBuyer,
                         ),
                         CustomButton(
                           text: 'Next',
@@ -115,6 +117,7 @@ class OnboardingScreen extends ConsumerWidget {
     BuildContext context,
     OnboardingViewModel viewModel,
     Size screenSize,
+    bool isBuyer,
   ) {
     return Scaffold(
       backgroundColor: AppColors.backgroundWhite,
@@ -160,7 +163,6 @@ class OnboardingScreen extends ConsumerWidget {
                         expansionFactor: 9.5,
                         padding: 200,
                         descriptionFontSize: 20,
-                        isBuyer: isBuyer,
                       ),
                       CustomButton(
                         text: 'Next',

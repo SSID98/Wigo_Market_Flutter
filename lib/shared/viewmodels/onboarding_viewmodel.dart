@@ -5,7 +5,6 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../core/constants/url.dart';
 import '../../core/local/local_storage_service.dart';
-import '../screens/account_creation_screen.dart';
 
 class OnboardingViewModel extends ChangeNotifier {
   final PageController pageController = PageController();
@@ -67,10 +66,7 @@ class OnboardingViewModel extends ChangeNotifier {
       final storage = LocalStorageService(prefs);
       await storage.setOnboardingCompleted();
       if (!context.mounted) return;
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(builder: (_) => AccountCreationScreen(isBuyer: true)),
-      );
+      context.go('/accountCreation');
     }
   }
 
@@ -80,6 +76,6 @@ class OnboardingViewModel extends ChangeNotifier {
   }
 }
 
-final riderOnboardingViewModelProvider = ChangeNotifierProvider(
+final onboardingViewModelProvider = ChangeNotifierProvider(
   (ref) => OnboardingViewModel(),
 );

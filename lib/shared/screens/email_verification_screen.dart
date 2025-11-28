@@ -1,40 +1,52 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:wigo_flutter/core/utils/masked_email.dart';
-import 'package:wigo_flutter/shared/screens/creation_successful_screen.dart';
 
 import '../../../../core/constants/app_colors.dart';
 import '../../core/constants/url.dart';
+import '../../core/providers/otp_code_provider.dart';
+import '../../core/providers/role_selection_provider.dart';
 import '../../gen/assets.gen.dart';
+import '../models/user_role.dart';
+import '../viewmodels/email_verification_viewmodel.dart';
 import '../widgets/verification_widget.dart';
 
-class EmailVerificationScreen extends StatelessWidget {
+class EmailVerificationScreen extends ConsumerWidget {
   final String email;
-  final bool isBuyer;
 
-  const EmailVerificationScreen({
-    super.key,
-    required this.email,
-    this.isBuyer = false,
-  });
+  const EmailVerificationScreen({super.key, required this.email});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final String displayEmail = kDebugMode ? 'chu******osy@gmail.com' : email;
     final String maskedEmail = MaskedEmail.maskEmail(displayEmail);
     final screenSize = MediaQuery.of(context).size;
     final isWeb = MediaQuery.of(context).size.width > 600;
+    final role = ref.watch(userRoleProvider);
+    final notifier = ref.read(emailVerificationProvider.notifier);
+    final isBuyer = role == UserRole.buyer;
     return isWeb
         ? _buildWebLayout(screenSize, maskedEmail)
-        : _buildMobileLayout(screenSize, maskedEmail, context);
+        : _buildMobileLayout(
+          screenSize,
+          maskedEmail,
+          context,
+          isBuyer,
+          notifier,
+          ref,
+        );
   }
 
   Widget _buildMobileLayout(
     Size screenSize,
     String maskedEmail,
     BuildContext context,
+    bool isBuyer,
+    EmailVerificationViewModel notifier,
+    WidgetRef ref,
   ) {
     return Scaffold(
       backgroundColor: AppColors.backgroundWhite,
@@ -81,19 +93,21 @@ class EmailVerificationScreen extends StatelessWidget {
                       ),
                       VerificationWidgetBuilder.buildMobileBody(
                         email: maskedEmail,
-                        onPressed: () {
-                          if (!isBuyer) {
-                            context.go('/rider/verification');
-                          } else {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder:
-                                    (_) => CreationSuccessfulScreen(
-                                      isBuyer: isBuyer,
-                                    ),
-                              ),
-                            );
+                        onChanged:
+                            (value) =>
+                                ref.read(otpCodeProvider.notifier).state =
+                                    value,
+                        onPressed: () async {
+                          final code = ref.read(otpCodeProvider);
+                          await notifier.verifyCode(email: email, code: code);
+                          if (ref.read(emailVerificationProvider).isVerified) {
+                            if (isBuyer) {
+                              if (!context.mounted) return;
+                              context.go('/successful');
+                            } else {
+                              if (!context.mounted) return;
+                              context.go('/rider/verification');
+                            }
                           }
                         },
                       ),

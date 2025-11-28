@@ -1,29 +1,39 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:wigo_flutter/core/constants/app_colors.dart';
-import 'package:wigo_flutter/features/rider/presentation/widgets/rider_forms_field.dart';
-import 'package:wigo_flutter/shared/screens/email_verification_screen.dart';
+import 'package:wigo_flutter/shared/models/register_state.dart';
 import 'package:wigo_flutter/shared/widgets/custom_button.dart';
+import 'package:wigo_flutter/shared/widgets/forms_field.dart';
 
 import '../../core/constants/url.dart';
+import '../../core/providers/role_selection_provider.dart';
+import '../models/user_role.dart';
+import '../viewmodels/account_creation_viewmodel.dart';
 
 class AccountCreationScreen extends ConsumerWidget {
-  final bool isBuyer;
-
-  const AccountCreationScreen({super.key, this.isBuyer = false});
+  const AccountCreationScreen({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final screenSize = MediaQuery.of(context).size;
     final isWeb = MediaQuery.of(context).size.width > 600;
+    final notifier = ref.read(registerViewModelProvider.notifier);
+    final state = ref.watch(registerViewModelProvider);
+    final role = ref.watch(userRoleProvider);
+    final isBuyer = role == UserRole.buyer;
     return isWeb
-        ? _buildWebLayout(screenSize, context)
-        : _buildMobileLayout(screenSize, context);
+        ? _buildWebLayout(screenSize, context, isBuyer)
+        : _buildMobileLayout(screenSize, context, notifier, state, isBuyer);
   }
 
-  Widget _buildMobileLayout(Size screenSize, BuildContext context) {
+  Widget _buildMobileLayout(
+    Size screenSize,
+    BuildContext context,
+    RegisterViewModel notifier,
+    RegisterState state,
+    bool isBuyer,
+  ) {
     return Scaffold(
       backgroundColor: AppColors.backgroundWhite,
       body: Stack(
@@ -60,11 +70,11 @@ class AccountCreationScreen extends ConsumerWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       const SizedBox(height: 5),
-                      _buildHeader(20.0, 14.0, 18.0, 12.0, 0.0),
+                      _buildHeader(20.0, 14.0, 18.0, 12.0, 0.0, isBuyer),
                       const Divider(thickness: 1.3),
                       Expanded(
                         child: SingleChildScrollView(
-                          child: RiderFormFields(
+                          child: FormFields(
                             iconHeight: 20,
                             iconWidth: 20,
                             hintFontSize: 11,
@@ -76,20 +86,38 @@ class AccountCreationScreen extends ConsumerWidget {
                       Center(
                         child: CustomButton(
                           text: 'Continue',
-                          onPressed: () {
-                            isBuyer
-                                ? Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder:
-                                        (_) => EmailVerificationScreen(
-                                          email: '',
-                                          isBuyer: isBuyer,
+                          onPressed:
+                              state.isLoading
+                                  ? null
+                                  : () async {
+                                    // set role before submit if you have separate path
+                                    notifier.setRole(
+                                      isBuyer ? UserRole.buyer : UserRole.rider,
+                                    );
+
+                                    final ok = await notifier.submit();
+                                    if (ok) {
+                                      // navigate to verification or next screen
+                                      if (!context.mounted) return;
+                                      Navigator.pushNamed(
+                                        context,
+                                        '/verification',
+                                      ); // or your route
+                                    } else {
+                                      // show error via snackBar or inline UI from state.errorMessage
+                                      if (!context.mounted) return;
+                                      ScaffoldMessenger.of(
+                                        context,
+                                      ).showSnackBar(
+                                        SnackBar(
+                                          content: Text(
+                                            state.errorMessage ??
+                                                'An error occurred',
+                                          ),
                                         ),
-                                  ),
-                                )
-                                : context.push('/verification');
-                          },
+                                      );
+                                    }
+                                  },
                           fontSize: 18,
                           fontWeight: FontWeight.w500,
                           width: double.infinity,
@@ -108,7 +136,22 @@ class AccountCreationScreen extends ConsumerWidget {
     );
   }
 
-  Widget _buildWebLayout(screenSize, context) {
+  // onPressed: () {
+  //   isBuyer
+  //       ? Navigator.push(
+  //         context,
+  //         MaterialPageRoute(
+  //           builder:
+  //               (_) => EmailVerificationScreen(
+  //                 email: '',
+  //                 isBuyer: isBuyer,
+  //               ),
+  //         ),
+  //       )
+  //       : context.push('/verification');
+  // },
+
+  Widget _buildWebLayout(screenSize, context, bool isBuyer) {
     return Scaffold(
       body: Stack(
         children: [
@@ -146,7 +189,15 @@ class AccountCreationScreen extends ConsumerWidget {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           const SizedBox(height: 32),
-                          _buildHeader(web: true, 36.0, 18.0, 24.0, 16.72, 20),
+                          _buildHeader(
+                            web: true,
+                            36.0,
+                            18.0,
+                            24.0,
+                            16.72,
+                            20,
+                            isBuyer,
+                          ),
                           Padding(
                             padding: const EdgeInsets.symmetric(
                               horizontal: 20.0,
@@ -155,12 +206,11 @@ class AccountCreationScreen extends ConsumerWidget {
                               children: [
                                 const Divider(thickness: 1.3),
                                 const SizedBox(height: 15),
-                                RiderFormFields(
+                                FormFields(
                                   iconHeight: 20,
                                   iconWidth: 40,
                                   hintFontSize: 6,
                                   web: true,
-                                  isBuyer: isBuyer,
                                   suffixIcon: Icon(Icons.visibility_outlined),
                                 ),
                                 const SizedBox(height: 32),
@@ -201,7 +251,8 @@ class AccountCreationScreen extends ConsumerWidget {
     fontSize2,
     fontSize3,
     fontSize4,
-    headerPadding, {
+    headerPadding,
+    bool isBuyer, {
     bool web = false,
   }) {
     return Column(

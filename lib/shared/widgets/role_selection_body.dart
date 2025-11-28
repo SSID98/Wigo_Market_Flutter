@@ -4,10 +4,10 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:wigo_flutter/core/constants/app_colors.dart';
 import 'package:wigo_flutter/shared/widgets/role_card.dart';
 
+import '../../core/providers/role_selection_provider.dart';
 import '../../gen/assets.gen.dart';
 import '../models/user_role.dart';
-import '../viewmodels/role_selection/role_selection_provider.dart';
-import '../viewmodels/role_selection/role_selection_view_model.dart';
+import '../viewmodels/role_selection_view_model.dart';
 
 class RoleSelectionBody extends ConsumerWidget {
   final double sizedBoxHeight1, padding;
@@ -29,8 +29,8 @@ class RoleSelectionBody extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final viewModel = ref.watch(roleSelectionViewModelProvider);
-    final selectedRole = ref.watch(selectedRoleProvider);
+    final viewModel = ref.read(roleSelectionViewModelProvider.notifier);
+    final selectedRole = ref.watch(userRoleProvider);
 
     return Column(
       children: [

@@ -7,6 +7,9 @@ import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 import 'package:wigo_flutter/core/constants/app_colors.dart';
 import 'package:wigo_flutter/shared/viewmodels/onboarding_viewmodel.dart';
 
+import '../../core/providers/role_selection_provider.dart';
+import '../models/user_role.dart';
+
 class MyCustomScrollBehavior extends MaterialScrollBehavior {
   @override
   Set<PointerDeviceKind> get dragDevices => {
@@ -25,7 +28,6 @@ class OnboardingPageView extends ConsumerWidget {
       dotWidth,
       expansionFactor,
       padding;
-  final bool isBuyer;
 
   const OnboardingPageView({
     super.key,
@@ -39,13 +41,13 @@ class OnboardingPageView extends ConsumerWidget {
     required this.expansionFactor,
     required this.padding,
     required this.descriptionFontSize,
-    this.isBuyer = false,
   });
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final viewModel = ref.watch(riderOnboardingViewModelProvider);
-
+    final viewModel = ref.watch(onboardingViewModelProvider);
+    final role = ref.watch(userRoleProvider);
+    final isBuyer = role == UserRole.buyer;
     return SizedBox(
       height: screenSize,
       child: ScrollConfiguration(

@@ -18,6 +18,7 @@ class CustomPhoneNumberField extends StatefulWidget {
   final FontWeight? labelFontWeight, inputFontWeight;
   final EdgeInsetsGeometry? padding, contentPadding;
   final Color? inputColor, fillColor;
+  final void Function(String)? onChanged;
 
   const CustomPhoneNumberField({
     super.key,
@@ -36,6 +37,7 @@ class CustomPhoneNumberField extends StatefulWidget {
     this.hintTextFontSize,
     this.dialCodeFontSize,
     this.fillColor,
+    this.onChanged,
   });
 
   @override
@@ -127,6 +129,7 @@ class _CustomPhoneNumberFieldState extends State<CustomPhoneNumberField> {
                     color: widget.inputColor ?? AppColors.textBlackGrey,
                   ),
                   controller: widget.controller,
+                  onChanged: widget.onChanged,
                   keyboardType: TextInputType.phone,
                   inputFormatters: <TextInputFormatter>[
                     FilteringTextInputFormatter.digitsOnly,

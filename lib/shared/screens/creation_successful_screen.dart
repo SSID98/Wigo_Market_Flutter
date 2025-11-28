@@ -1,31 +1,34 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:wigo_flutter/shared/screens/login_screen.dart';
 
 import '../../core/constants/app_colors.dart';
 import '../../core/constants/url.dart';
 import '../../core/local/local_storage_service.dart';
+import '../../core/providers/role_selection_provider.dart';
 import '../../gen/assets.gen.dart';
+import '../models/user_role.dart';
 import '../widgets/custom_button.dart';
 
-class CreationSuccessfulScreen extends StatelessWidget {
-  final bool isBuyer;
-
-  const CreationSuccessfulScreen({super.key, this.isBuyer = false});
+class CreationSuccessfulScreen extends ConsumerWidget {
+  const CreationSuccessfulScreen({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final screenSize = MediaQuery.of(context).size;
     final isWeb = MediaQuery.of(context).size.width > 600;
+    final role = ref.watch(userRoleProvider);
+
+    final isBuyer = role == UserRole.buyer;
     return isWeb
-        ? _buildWebLayout(screenSize, context)
-        : _buildMobileLayout(screenSize, context);
+        ? _buildWebLayout(screenSize, context, isBuyer)
+        : _buildMobileLayout(screenSize, context, isBuyer);
   }
 
-  Widget _buildMobileLayout(Size screenSize, BuildContext context) {
+  Widget _buildMobileLayout(Size screenSize, BuildContext context, isBuyer) {
     return Scaffold(
       backgroundColor: AppColors.backgroundWhite,
       body: SafeArea(
@@ -78,6 +81,7 @@ class CreationSuccessfulScreen extends StatelessWidget {
                           fontWeight2: FontWeight.w500,
                           fontSize2: 14,
                           context: context,
+                          isBuyer: isBuyer,
                         ),
                       ],
                     ),
@@ -91,7 +95,7 @@ class CreationSuccessfulScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildWebLayout(Size screenSize, BuildContext context) {
+  Widget _buildWebLayout(Size screenSize, BuildContext context, bool isBuyer) {
     return Scaffold(
       backgroundColor: AppColors.backgroundWhite,
       body: SafeArea(
@@ -140,6 +144,7 @@ class CreationSuccessfulScreen extends StatelessWidget {
                           fontSize2: 24,
                           web: true,
                           context: context,
+                          isBuyer: isBuyer,
                         ),
                         const SizedBox(height: 20.0),
                       ],
@@ -155,6 +160,7 @@ class CreationSuccessfulScreen extends StatelessWidget {
   }
 
   Widget _buildBody({
+    required bool isBuyer,
     required double screenSize,
     required double imageSize,
     required double fontSize1,
@@ -207,14 +213,7 @@ class CreationSuccessfulScreen extends StatelessWidget {
               final storage = LocalStorageService(prefs);
               await storage.setAccountCreationCompleted();
               if (!context.mounted) return;
-              isBuyer
-                  ? Navigator.pushReplacement(
-                    context,
-                    MaterialPageRoute(
-                      builder: (_) => LoginScreen(isBuyer: isBuyer),
-                    ),
-                  )
-                  : context.go('/login');
+              context.go('/login');
             },
             fontSize: 18,
             fontWeight: FontWeight.w500,

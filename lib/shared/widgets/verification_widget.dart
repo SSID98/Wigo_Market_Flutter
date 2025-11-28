@@ -18,6 +18,7 @@ class VerificationWidgetBuilder {
     required FontWeight fontWeight2,
     required double topPadding,
     void Function()? onPressed,
+    void Function(String)? onChanged,
     bottomPadding,
     horizontalPadding,
     double? buttonTextFontSize,
@@ -86,6 +87,7 @@ class VerificationWidgetBuilder {
                 labelTextColor: labelTextColor ?? AppColors.textEdufacilisBlack,
                 hintTextColor: AppColors.textIconGrey,
                 labelFontWeight: labelTextFontWeight,
+                onChanged: onChanged,
               ),
             ),
           ],
@@ -142,6 +144,7 @@ class VerificationWidgetBuilder {
     buttonTextColor,
     labelTextColor,
     double? hintTextSize,
+    void Function(String)? onChanged,
     buttonTextFontSize,
     FontWeight? labelTextFontWeight,
     showFooter = true,
@@ -172,6 +175,7 @@ class VerificationWidgetBuilder {
     footerTextFontSize: 12.0,
     horizontalPadding: 0.0,
     onPressed: onPressed,
+    onChanged: onChanged,
   );
 
   static Widget buildWebBody({
@@ -189,6 +193,7 @@ class VerificationWidgetBuilder {
     FontWeight? labelTextFontWeight,
     showFooter = true,
     void Function()? onPressed,
+    void Function(String)? onChanged,
   }) => _buildBody(
     email: email,
     titleText: titleText,
@@ -215,5 +220,6 @@ class VerificationWidgetBuilder {
     footerTextFontSize: 14.0,
     horizontalPadding: 65.0,
     onPressed: onPressed,
+    onChanged: onChanged,
   );
 }

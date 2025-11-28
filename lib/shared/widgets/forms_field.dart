@@ -4,11 +4,11 @@ import 'package:wigo_flutter/core/constants/app_colors.dart';
 import 'package:wigo_flutter/shared/models/location_data.dart';
 import 'package:wigo_flutter/shared/widgets/custom_text_field.dart';
 
-import '../../../../gen/assets.gen.dart';
-import '../../../../shared/viewmodels/account_creation_viewmodel.dart';
-import '../../../../shared/widgets/contact_text_field.dart';
+import '../../gen/assets.gen.dart';
+import '../viewmodels/account_creation_viewmodel.dart';
+import 'contact_text_field.dart';
 
-class RiderFormFields extends ConsumerWidget {
+class FormFields extends ConsumerWidget {
   final bool web;
   final double iconHeight;
   final double iconWidth;
@@ -16,7 +16,7 @@ class RiderFormFields extends ConsumerWidget {
   final Widget? suffixIcon;
   final bool isBuyer;
 
-  const RiderFormFields({
+  const FormFields({
     super.key,
     this.web = false,
     required this.iconHeight,
@@ -28,7 +28,9 @@ class RiderFormFields extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final viewModel = ref.watch(riderAccountViewModelProvider);
+    // final viewModel = ref.watch(accountCreationProvider);
+    final regState = ref.watch(registerViewModelProvider);
+    final notifier = ref.read(registerViewModelProvider.notifier);
     final spacing = const SizedBox(height: 16);
 
     return Column(
@@ -40,6 +42,8 @@ class RiderFormFields extends ConsumerWidget {
           iconHeight: iconHeight,
           iconWidth: iconWidth,
           hintTextColor: AppColors.textBodyText,
+          onChanged: notifier.updateFullName,
+          // controller: viewModel.fullNameCtrl,
         ),
         spacing,
         CustomTextField(
@@ -49,6 +53,8 @@ class RiderFormFields extends ConsumerWidget {
           iconHeight: iconHeight,
           iconWidth: iconWidth,
           hintTextColor: AppColors.textBodyText,
+          // controller: viewModel.emailCtrl,
+          onChanged: notifier.updateEmail,
         ),
         spacing,
         CustomTextField(
@@ -63,16 +69,22 @@ class RiderFormFields extends ConsumerWidget {
           iconWidth: iconWidth,
           suffixIcon: suffixIcon,
           hintTextColor: AppColors.textBlackGrey,
+          // controller: viewModel.passwordCtrl,
+          onChanged: notifier.updatePassword,
         ),
         spacing,
         CustomPhoneNumberField(
           label: 'Phone Number',
+          onChanged: notifier.updateMobile,
+          // controller: viewModel.phoneCtrl,
           // contentPadding: EdgeInsets.only(bottom: 1),
         ),
         if (!isBuyer) ...[
           spacing,
           CustomPhoneNumberField(
             label: 'Next of Kin Contact',
+            onChanged: notifier.updateNextOfKinPhone,
+            // controller: viewModel.nextOfKinPhoneCtrl,
             // contentPadding: EdgeInsets.only(bottom: 1),
           ),
           spacing,
@@ -82,6 +94,8 @@ class RiderFormFields extends ConsumerWidget {
             items: const ['Male', 'Female'],
             iconWidth: 22,
             iconHeight: 22,
+            onChanged: notifier.updateGender,
+            value: regState.gender,
             prefixIcon: AppAssets.icons.user.svg(
               width: iconWidth,
               height: iconHeight,
@@ -96,6 +110,8 @@ class RiderFormFields extends ConsumerWidget {
           iconHeight: iconHeight,
           iconWidth: iconWidth,
           hintTextColor: AppColors.textIconGrey,
+          onChanged: notifier.updateResidentialAddress,
+          // controller: viewModel.residentialAddressCtrl,
         ),
         spacing,
         if (web)
@@ -106,18 +122,23 @@ class RiderFormFields extends ConsumerWidget {
                   label: 'State',
                   items: nigeriaStatesAndCities.keys.toList(),
                   hintText: 'Select State',
-                  value: viewModel.selectedState,
-                  onChanged: viewModel.setStateValue,
+                  value:
+                      regState.residentialState.isEmpty
+                          ? null
+                          : regState.residentialState,
+                  onChanged: (val) {
+                    notifier.updateResidentialState(val ?? '');
+                  },
                 ),
               ),
               const SizedBox(width: 16.0),
               Expanded(
                 child: CustomDropdownField(
                   label: 'City/ Town',
-                  items: viewModel.filteredCities,
+                  items: regState.filteredCities,
                   hintText: 'Select City',
-                  value: viewModel.selectedCity,
-                  onChanged: viewModel.setCityValue,
+                  value: regState.city.isEmpty ? null : regState.city,
+                  onChanged: notifier.updateCity,
                 ),
               ),
             ],
@@ -127,15 +148,21 @@ class RiderFormFields extends ConsumerWidget {
             label: 'State',
             items: nigeriaStatesAndCities.keys.toList(),
             hintText: 'Select State',
-            onChanged: viewModel.setStateValue,
+            value:
+                regState.residentialState.isEmpty
+                    ? null
+                    : regState.residentialState,
+            onChanged: (val) {
+              notifier.updateResidentialState(val ?? '');
+            },
           ),
           spacing,
           CustomDropdownField(
             label: 'City/ Town',
-            items: viewModel.filteredCities,
+            items: regState.filteredCities,
             hintText: 'Select City',
-            value: viewModel.selectedCity,
-            onChanged: viewModel.setCityValue,
+            value: regState.city.isEmpty ? null : regState.city,
+            onChanged: notifier.updateCity,
           ),
         ],
         spacing,
@@ -144,6 +171,8 @@ class RiderFormFields extends ConsumerWidget {
             label: 'Means of Transportation',
             items: const ['Feet', 'Bicycle', 'Car', 'Motor Bike', 'Bus'],
             hintText: 'Motor Bike',
+            value: regState.modeOfTransport,
+            onChanged: notifier.updateModeOfTransport,
             prefixIcon: AppAssets.icons.motorbike.svg(
               height: iconHeight,
               width: iconWidth,

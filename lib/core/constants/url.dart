@@ -1,2 +1,4 @@
-final String networkImageUrl =
-    'https://cdn.jsdelivr.net/gh/SSID98/Wigo_Market_Flutter/assets/network_images';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
+
+final baseUrl = dotenv.env['BASE_URL']!;
+final networkImageUrl = dotenv.env['NETWORK_URL']!;

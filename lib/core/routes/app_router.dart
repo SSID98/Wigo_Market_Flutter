@@ -17,7 +17,7 @@ import '../../shared/screens/role_selection_screen.dart';
 import '../../shared/screens/welcome_screen.dart';
 
 final appRouter = GoRouter(
-  initialLocation: '/buyerHomeScreen',
+  initialLocation: '/',
   routes: [
     GoRoute(
       path: '/',

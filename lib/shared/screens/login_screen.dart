@@ -8,16 +8,16 @@ import 'package:wigo_flutter/shared/widgets/login_reset_password_body.dart';
 
 import '../../core/constants/app_colors.dart';
 import '../../core/constants/url.dart';
+import '../../core/providers/role_selection_provider.dart';
 import '../../gen/assets.gen.dart';
+import '../models/user_role.dart';
 import '../viewmodels/login_state.dart';
 import '../viewmodels/login_view_model.dart';
 import '../widgets/bottom_text.dart';
 import '../widgets/custom_button.dart';
 
 class LoginScreen extends ConsumerStatefulWidget {
-  const LoginScreen({super.key, this.isBuyer = false});
-
-  final bool isBuyer;
+  const LoginScreen({super.key});
 
   @override
   ConsumerState<LoginScreen> createState() => _LoginScreenState();
@@ -37,9 +37,11 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
     final vm = ref.watch(loginViewModelProvider.notifier);
     final screenSize = MediaQuery.of(context).size;
     final isWeb = MediaQuery.of(context).size.width > 600;
+    final role = ref.watch(userRoleProvider);
+    final isBuyer = role == UserRole.buyer;
     return isWeb
-        ? _buildWebLayout(screenSize, vm, state, context)
-        : _buildMobileLayout(screenSize, vm, state, context);
+        ? _buildWebLayout(screenSize, vm, state, context, isBuyer)
+        : _buildMobileLayout(screenSize, vm, state, context, isBuyer);
   }
 
   //Mobile Layout
@@ -48,6 +50,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
     LoginViewModel vm,
     LoginState state,
     BuildContext context,
+    bool isBuyer,
   ) {
     return Scaffold(
       body: Stack(
@@ -134,7 +137,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                           final hasAnyError =
                               _emailError != null || _passwordError != null;
                           if (!hasAnyError) {
-                            vm.login(formKey, context, widget.isBuyer);
+                            vm.login(formKey, context, isBuyer);
                           }
                         },
                         formKey: formKey,
@@ -163,6 +166,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
     LoginViewModel vm,
     LoginState state,
     BuildContext context,
+    bool isBuyer,
   ) {
     final double webContentWidth = screenSize.width * 0.34;
     final double webContentHeight = screenSize.height * 0.95;
@@ -290,7 +294,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                                       _emailError != null ||
                                       _passwordError != null;
                                   if (!hasAnyError) {
-                                    vm.login(formKey, context, widget.isBuyer);
+                                    vm.login(formKey, context, isBuyer);
                                   }
                                 },
                                 validator1: (value) => null,
