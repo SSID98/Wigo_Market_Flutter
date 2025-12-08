@@ -6,7 +6,7 @@ import 'package:wigo_flutter/shared/widgets/custom_checkbox_widget.dart';
 
 import '../../core/constants/app_colors.dart';
 import '../../gen/assets.gen.dart';
-import '../viewmodels/login_state.dart';
+import '../models/login/login_state.dart';
 import '../viewmodels/login_view_model.dart';
 import 'custom_button.dart';
 import 'custom_text_field.dart';
@@ -30,7 +30,7 @@ class LoginResetPasswordWidgetBuilder {
     double? sizedBoxHeight1,
     void Function(bool)? onFocusChange1,
     void Function(bool)? onFocusChange2,
-    required void Function() onPressed,
+    required void Function()? onPressed,
     required double errorPadding,
     GlobalKey<FormState>? formKey,
     required GlobalKey<FormFieldState<String>> fieldKey1,
@@ -204,7 +204,7 @@ class LoginResetPasswordWidgetBuilder {
 
   static Widget buildMobileBody({
     required LoginState state,
-    required void Function() onPressed,
+    required void Function()? onPressed,
     required EdgeInsetsGeometry contentPadding1,
     void Function(bool)? onFocusChange1,
     void Function(bool)? onFocusChange2,
@@ -279,7 +279,7 @@ class LoginResetPasswordWidgetBuilder {
 
   static Widget buildWebBody({
     required LoginState state,
-    required void Function() onPressed,
+    required void Function()? onPressed,
     void Function(bool)? onFocusChange1,
     void Function(bool)? onFocusChange2,
     bool firstFieldHasError = false,

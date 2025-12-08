@@ -8,8 +8,8 @@ import '../../core/constants/app_colors.dart';
 import '../../core/constants/url.dart';
 import '../../core/utils/validation_utils.dart';
 import '../../gen/assets.gen.dart';
+import '../models/login/login_state.dart';
 import '../viewmodels/change_password_viewmodel.dart';
-import '../viewmodels/login_state.dart';
 import '../widgets/login_reset_password_body.dart';
 
 class ChangePasswordScreen extends ConsumerStatefulWidget {

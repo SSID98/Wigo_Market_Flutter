@@ -213,7 +213,7 @@ class CreationSuccessfulScreen extends ConsumerWidget {
               final storage = LocalStorageService(prefs);
               await storage.setAccountCreationCompleted();
               if (!context.mounted) return;
-              context.go('/login');
+              isBuyer ? context.go('/buyerHomeScreen') : context.go('/login');
             },
             fontSize: 18,
             fontWeight: FontWeight.w500,

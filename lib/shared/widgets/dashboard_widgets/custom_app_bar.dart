@@ -1,13 +1,17 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:wigo_flutter/gen/assets.gen.dart';
 import 'package:wigo_flutter/shared/widgets/custom_avatar.dart';
+import 'package:wigo_flutter/shared/widgets/custom_button.dart';
 import 'package:wigo_flutter/shared/widgets/custom_search_field.dart';
 
+import '../../../core/auth/auth_state.dart';
+import '../../../core/auth/auth_state_notifier.dart';
 import '../../../core/constants/app_colors.dart';
 import '../../../core/constants/url.dart';
 
-class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
+class CustomAppBar extends ConsumerWidget implements PreferredSizeWidget {
   final bool isWeb;
   final bool isBuyer;
   final bool showEmail, showCircleAvatar;
@@ -15,6 +19,7 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
   final String userEmail = 'emmanuel@example.com';
   final void Function()? onMobileMenuPress;
   final void Function()? onMobileSearchPress, onUserPress;
+  final void Function()? onLoginPress;
 
   const CustomAppBar({
     super.key,
@@ -25,15 +30,18 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
     this.onMobileMenuPress,
     this.onMobileSearchPress,
     this.onUserPress,
+    this.onLoginPress,
   });
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final authState = ref.watch(authStateProvider);
     return AppBar(
       automaticallyImplyLeading: false,
       toolbarHeight: preferredSize.height,
       surfaceTintColor: AppColors.backgroundWhite,
       backgroundColor: AppColors.backgroundWhite,
+      titleSpacing: 10,
       title:
           isWeb
               ? Row(
@@ -98,37 +106,65 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
               ),
           const SizedBox(width: 50),
         ] else ...[
-          if (isBuyer)
-            GestureDetector(
-              onTap: onUserPress,
-              child: Container(
-                decoration: BoxDecoration(
-                  color: AppColors.tableHeader,
-                  borderRadius: BorderRadius.circular(46.13),
-                ),
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(
-                    vertical: 12.0,
-                    horizontal: 10.0,
+          if (authState.status == AuthStatus.loggedIn)
+            if (isBuyer) ...[
+              GestureDetector(
+                onTap: onUserPress,
+                child: Container(
+                  decoration: BoxDecoration(
+                    color: AppColors.tableHeader,
+                    borderRadius: BorderRadius.circular(46.13),
                   ),
-                  child: Text(
-                    'Hi, Emmanuel',
-                    textAlign: TextAlign.center,
-                    style: GoogleFonts.hind(
-                      fontWeight: FontWeight.w600,
-                      fontSize: 12,
-                      color: AppColors.textBlackGrey,
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(
+                      vertical: 12.0,
+                      horizontal: 10.0,
+                    ),
+                    child: Text(
+                      'Hi, Emmanuel',
+                      textAlign: TextAlign.center,
+                      style: GoogleFonts.hind(
+                        fontWeight: FontWeight.w600,
+                        fontSize: 12,
+                        color: AppColors.textBlackGrey,
+                      ),
                     ),
                   ),
                 ),
               ),
-            ),
+            ],
           IconButton(
-            icon: AppAssets.icons.mobileSearch.svg(),
+            icon: AppAssets.icons.mobileSearch.svg(
+              height: authState.status == AuthStatus.loggedIn ? null : 35,
+            ),
             onPressed: onMobileSearchPress,
           ),
           isBuyer
-              ? AppAssets.icons.cart2.svg()
+              ? authState.status == AuthStatus.loggedOut
+                  ? Row(
+                    children: [
+                      CustomButton(
+                        text: 'Login',
+                        fontSize: 13,
+                        fontWeight: FontWeight.w500,
+                        buttonColor: Colors.transparent,
+                        textColor: AppColors.textVidaLocaGreen,
+                        onPressed: onLoginPress,
+                        width: 55,
+                        padding: EdgeInsets.zero,
+                      ),
+                      CustomButton(
+                        text: 'Sign Up',
+                        fontSize: 12,
+                        fontWeight: FontWeight.w500,
+                        height: 35,
+                        width: 76,
+                        onPressed: () {},
+                        padding: EdgeInsets.zero,
+                      ),
+                    ],
+                  )
+                  : AppAssets.icons.cart2.svg()
               : Container(
                 height: 42,
                 width: 42,

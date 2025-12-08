@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:wigo_flutter/features/buyer/presentation/views/buyer_product_details_screens/product_details_screen.dart';
 import 'package:wigo_flutter/features/buyer/presentation/widgets/icon_text_row.dart';
 
 import '../../../../core/constants/app_colors.dart';
@@ -46,18 +46,27 @@ class ProductCard extends StatelessWidget {
     final isWeb = MediaQuery.of(context).size.width > 600;
     return InkWell(
       onTap: () {
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder:
-                (_) => ProductDetailsPage(
-                  productName: productName,
-                  imageUrl: imageUrl,
-                  price: amount,
-                  categoryName: categoryName,
-                ),
-          ),
+        context.push(
+          '/buyer/product-details',
+          extra: {
+            'productName': productName,
+            'imageUrl': imageUrl,
+            'price': amount,
+            'categoryName': categoryName,
+          },
         );
+        // Navigator.push(
+        //   context,
+        //   MaterialPageRoute(
+        //     builder:
+        //         (_) => ProductDetailsPage(
+        //           productName: productName,
+        //           imageUrl: imageUrl,
+        //           price: amount,
+        //           categoryName: categoryName,
+        //         ),
+        //   ),
+        // );
       },
       child: Container(
         padding: EdgeInsets.zero,

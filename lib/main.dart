@@ -11,15 +11,15 @@ Future<void> main() async {
   runApp(const ProviderScope(child: WigoApp()));
 }
 
-class WigoApp extends StatelessWidget {
+class WigoApp extends ConsumerWidget {
   const WigoApp({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     return MaterialApp.router(
       debugShowCheckedModeBanner: false,
       title: 'Wigo',
-      routerConfig: appRouter,
+      routerConfig: ref.watch(routerProvider),
       theme: ThemeData(
         fontFamily: 'Hind',
         scaffoldBackgroundColor: AppColors.backgroundLight,

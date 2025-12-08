@@ -10,8 +10,8 @@ import '../../core/constants/app_colors.dart';
 import '../../core/constants/url.dart';
 import '../../core/providers/role_selection_provider.dart';
 import '../../gen/assets.gen.dart';
+import '../models/login/login_state.dart';
 import '../models/user_role.dart';
-import '../viewmodels/login_state.dart';
 import '../viewmodels/login_view_model.dart';
 import '../widgets/bottom_text.dart';
 import '../widgets/custom_button.dart';
@@ -120,26 +120,31 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                             if (!passwordError) {}
                           }
                         },
-                        onPressed: () {
-                          final emailHasError = FormValidators.validateEmail(
-                            vm.emailController.text,
-                          );
-                          final passwordHasError =
-                              FormValidators.validatePassword(
-                                vm.passwordController.text,
-                              );
-                          setState(() {
-                            state.generalError = null;
-                            _emailError = emailHasError;
-                            _passwordError = passwordHasError;
-                            _autovalidateMode = AutovalidateMode.always;
-                          });
-                          final hasAnyError =
-                              _emailError != null || _passwordError != null;
-                          if (!hasAnyError) {
-                            vm.login(formKey, context, isBuyer);
-                          }
-                        },
+                        onPressed:
+                            state.isLoading
+                                ? null
+                                : () {
+                                  final emailHasError =
+                                      FormValidators.validateEmail(
+                                        vm.emailController.text,
+                                      );
+                                  final passwordHasError =
+                                      FormValidators.validatePassword(
+                                        vm.passwordController.text,
+                                      );
+                                  setState(() {
+                                    state.generalError = null;
+                                    _emailError = emailHasError;
+                                    _passwordError = passwordHasError;
+                                    _autovalidateMode = AutovalidateMode.always;
+                                  });
+                                  final hasAnyError =
+                                      _emailError != null ||
+                                      _passwordError != null;
+                                  if (!hasAnyError) {
+                                    vm.login(formKey, context);
+                                  }
+                                },
                         formKey: formKey,
                         fieldKey1: emailFieldKey,
                         fieldKey2: passwordFieldKey,
@@ -294,7 +299,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                                       _emailError != null ||
                                       _passwordError != null;
                                   if (!hasAnyError) {
-                                    vm.login(formKey, context, isBuyer);
+                                    vm.login(formKey, context);
                                   }
                                 },
                                 validator1: (value) => null,

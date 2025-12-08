@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import 'login_state.dart';
+import '../models/login/login_state.dart';
 
 class ChangePasswordViewmodel extends StateNotifier<LoginState> {
   final TextEditingController passwordController = TextEditingController();

@@ -37,7 +37,7 @@ class SearchResultsView extends StatelessWidget {
       return Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const SizedBox(height: 45),
+          const SizedBox(height: 50),
           Text(
             'Results for “$searchQuery”',
             style: GoogleFonts.hind(
@@ -97,7 +97,7 @@ class SearchResultsView extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const SizedBox(height: 35),
+        const SizedBox(height: 50),
         Text(
           'Results for “$searchQuery”',
           style: GoogleFonts.hind(

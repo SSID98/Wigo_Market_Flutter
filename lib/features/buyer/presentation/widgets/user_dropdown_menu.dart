@@ -1,33 +1,41 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:wigo_flutter/core/constants/app_colors.dart';
 
+import '../../../../core/auth/auth_state_notifier.dart';
 import '../../../../gen/assets.gen.dart';
 
-class UserDropDownMenu extends StatelessWidget {
+class UserDropDownMenu extends ConsumerWidget {
   const UserDropDownMenu({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final isWeb = MediaQuery.of(context).size.width > 600;
     double iconHeight = isWeb ? 18 : 14;
     final menuItems = [
       {
         'icon': AppAssets.icons.userCircle.svg(height: iconHeight),
         'label': 'My account',
+        'onPressed': () {},
       },
       {
         'icon': AppAssets.icons.cart.svg(height: iconHeight),
         'label': 'My Orders',
+        'onPressed': () {},
       },
       {
         'icon': AppAssets.icons.greenHeart.svg(height: iconHeight),
         'label': 'Saved',
+        'onPressed': () {},
       },
       {
         'icon': AppAssets.icons.buyerLogout.svg(height: iconHeight),
         'label': 'Log out',
+        'onPressed': () {
+          ref.read(authStateProvider.notifier).logout();
+        },
       },
     ];
 
@@ -53,24 +61,27 @@ class UserDropDownMenu extends StatelessWidget {
                   horizontal: 16,
                   vertical: 5,
                 ),
-                child: Row(
-                  children: [
-                    item['icon'] as SvgPicture,
-                    const SizedBox(width: 10),
-                    Expanded(
-                      child: Text(
-                        item['label'] as String,
-                        style: GoogleFonts.hind(
-                          fontSize: isWeb ? 14 : 12,
-                          color:
-                              isLastItem
-                                  ? AppColors.textLightRed
-                                  : AppColors.primaryDarkGreen,
-                          fontWeight: FontWeight.w500,
+                child: GestureDetector(
+                  onTap: item['onPressed'] as void Function()?,
+                  child: Row(
+                    children: [
+                      item['icon'] as SvgPicture,
+                      const SizedBox(width: 10),
+                      Expanded(
+                        child: Text(
+                          item['label'] as String,
+                          style: GoogleFonts.hind(
+                            fontSize: isWeb ? 14 : 12,
+                            color:
+                                isLastItem
+                                    ? AppColors.textLightRed
+                                    : AppColors.primaryDarkGreen,
+                            fontWeight: FontWeight.w500,
+                          ),
                         ),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
               );
             }),
