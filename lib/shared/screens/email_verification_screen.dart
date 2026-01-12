@@ -7,6 +7,7 @@ import 'package:wigo_flutter/core/utils/masked_email.dart';
 
 import '../../../../core/constants/app_colors.dart';
 import '../../core/constants/url.dart';
+import '../../core/local/local_user_controller.dart';
 import '../../core/providers/otp_code_provider.dart';
 import '../../core/providers/role_selection_provider.dart';
 import '../../gen/assets.gen.dart';
@@ -103,9 +104,15 @@ class EmailVerificationScreen extends ConsumerWidget {
                           if (ref.read(emailVerificationProvider).isVerified) {
                             if (isBuyer) {
                               if (!context.mounted) return;
+                              ref
+                                  .read(localUserControllerProvider)
+                                  .saveStage(OnboardingStage.success);
                               context.go('/successful');
                             } else {
                               if (!context.mounted) return;
+                              ref
+                                  .read(localUserControllerProvider)
+                                  .saveStage(OnboardingStage.ninVerification);
                               context.go('/rider/verification');
                             }
                           }

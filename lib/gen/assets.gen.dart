@@ -87,6 +87,14 @@ class $AssetsIconsGen {
   /// File path: assets/icons/car.svg
   SvgGenImage get car => const SvgGenImage('assets/icons/car.svg');
 
+  /// File path: assets/icons/cart-check-in.svg
+  SvgGenImage get cartCheckIn =>
+      const SvgGenImage('assets/icons/cart-check-in.svg');
+
+  /// File path: assets/icons/cart-check-out.svg
+  SvgGenImage get cartCheckOut =>
+      const SvgGenImage('assets/icons/cart-check-out.svg');
+
   /// File path: assets/icons/cart.svg
   SvgGenImage get cart => const SvgGenImage('assets/icons/cart.svg');
 
@@ -98,6 +106,10 @@ class $AssetsIconsGen {
 
   /// File path: assets/icons/chair.svg
   SvgGenImage get chair => const SvgGenImage('assets/icons/chair.svg');
+
+  /// File path: assets/icons/checkmark-circle.svg
+  SvgGenImage get checkmarkCircle =>
+      const SvgGenImage('assets/icons/checkmark-circle.svg');
 
   /// File path: assets/icons/cloud.svg
   SvgGenImage get cloud => const SvgGenImage('assets/icons/cloud.svg');
@@ -119,6 +131,9 @@ class $AssetsIconsGen {
   /// File path: assets/icons/defaultContainer.svg
   SvgGenImage get defaultContainer =>
       const SvgGenImage('assets/icons/defaultContainer.svg');
+
+  /// File path: assets/icons/delete.svg
+  SvgGenImage get delete => const SvgGenImage('assets/icons/delete.svg');
 
   /// File path: assets/icons/delivered.svg
   SvgGenImage get delivered => const SvgGenImage('assets/icons/delivered.svg');
@@ -323,6 +338,10 @@ class $AssetsIconsGen {
   /// File path: assets/icons/search.svg
   SvgGenImage get search => const SvgGenImage('assets/icons/search.svg');
 
+  /// File path: assets/icons/security-check.svg
+  SvgGenImage get securityCheck =>
+      const SvgGenImage('assets/icons/security-check.svg');
+
   /// File path: assets/icons/sellerIcon.svg
   SvgGenImage get sellerIcon =>
       const SvgGenImage('assets/icons/sellerIcon.svg');
@@ -455,16 +474,20 @@ class $AssetsIconsGen {
     calender,
     cancelled,
     car,
+    cartCheckIn,
+    cartCheckOut,
     cart,
     cart2,
     cash,
     chair,
+    checkmarkCircle,
     cloud,
     cloudWhite,
     completed,
     computer,
     customerService,
     defaultContainer,
+    delete,
     delivered,
     deliveryContact,
     distribution,
@@ -525,6 +548,7 @@ class $AssetsIconsGen {
     rubiksCube,
     runningShoes,
     search,
+    securityCheck,
     sellerIcon,
     setting,
     settingsNotify,
@@ -562,7 +586,11 @@ class $AssetsIconsGen {
 class AppAssets {
   const AppAssets._();
 
+  static const String aEnv = '.env';
   static const $AssetsIconsGen icons = $AssetsIconsGen();
+
+  /// List of all assets
+  static List<String> get values => [aEnv];
 }
 
 class SvgGenImage {

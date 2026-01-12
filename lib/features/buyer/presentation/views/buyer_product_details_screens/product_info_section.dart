@@ -1,29 +1,27 @@
 import 'package:dotted_decoration/dotted_decoration.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:wigo_flutter/core/utils/price_formatter.dart';
 import 'package:wigo_flutter/shared/widgets/custom_button.dart';
 
 import '../../../../../core/constants/app_colors.dart';
 import '../../../../../gen/assets.gen.dart';
+import '../../../models/cart_model.dart';
+import '../../../models/product_model.dart';
+import '../../../viewmodels/buyer_cart_viewmodel.dart';
 import '../../widgets/icon_text_row.dart';
 
-class ProductInfoSection extends StatefulWidget {
-  final String productName;
-  final String price;
-  final String categoryName;
+class ProductInfoSection extends ConsumerStatefulWidget {
+  final Product product;
 
-  const ProductInfoSection({
-    super.key,
-    required this.productName,
-    required this.price,
-    required this.categoryName,
-  });
+  const ProductInfoSection({super.key, required this.product});
 
   @override
-  State<ProductInfoSection> createState() => _ProductInfoSectionState();
+  ConsumerState<ProductInfoSection> createState() => _ProductInfoSectionState();
 }
 
-class _ProductInfoSectionState extends State<ProductInfoSection> {
+class _ProductInfoSectionState extends ConsumerState<ProductInfoSection> {
   int quantity = 1;
   int selectedColor = 0;
   int selectedSize = 2;
@@ -41,6 +39,19 @@ class _ProductInfoSectionState extends State<ProductInfoSection> {
     Colors.black,
   ];
 
+  static Map<Color, String> colorToNameMap = {
+    Colors.white: 'White',
+    Colors.pinkAccent: 'Pink',
+    Colors.lightGreen: 'Light Green',
+    Colors.green: 'Green',
+    Colors.yellowAccent: 'Yellow',
+    Colors.red: 'Red',
+    Colors.cyan: 'Cyan',
+    Colors.purple: 'Purple',
+    Colors.cyanAccent: 'Light Blue',
+    Colors.black: 'Black',
+  };
+
   final List<String> sizes = ["XXS", "XS", "S", "M", "L", "XL", "XXL", 'XXXL'];
 
   @override
@@ -51,6 +62,15 @@ class _ProductInfoSectionState extends State<ProductInfoSection> {
       fontWeight: FontWeight.w500,
       color: AppColors.textIconGrey.withValues(alpha: 0.7),
     );
+    final cartNotifier = ref.read(cartProvider.notifier);
+    // final selectedColorName = colorToNameMap[colors[selectedColor]] ?? '';
+    // final selectedSizeString = sizes[selectedSize];
+    // final uniqueProductId =
+    //     '${widget.product.productName}-$selectedSizeString-$selectedColorName';
+
+    final isAlreadyInCart = ref.watch(
+      isInCartProvider(widget.product.productName),
+    );
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -58,7 +78,7 @@ class _ProductInfoSectionState extends State<ProductInfoSection> {
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 20.0),
           child: Text(
-            widget.categoryName,
+            widget.product.categoryName,
             style: GoogleFonts.hind(
               fontSize: 14,
               fontWeight: FontWeight.w500,
@@ -77,7 +97,7 @@ class _ProductInfoSectionState extends State<ProductInfoSection> {
             switch (index) {
               case 0:
                 return Text(
-                  widget.productName,
+                  widget.product.productName,
                   style: GoogleFonts.hind(
                     fontSize: isWeb ? 24 : 18,
                     fontWeight: FontWeight.w500,
@@ -109,7 +129,7 @@ class _ProductInfoSectionState extends State<ProductInfoSection> {
             switch (index) {
               case 0:
                 return Text(
-                  "#${widget.price}",
+                  formatPrice(widget.product.price),
                   style: GoogleFonts.hind(
                     fontSize: isWeb ? 32 : 18,
                     fontWeight: FontWeight.w600,
@@ -267,13 +287,40 @@ class _ProductInfoSectionState extends State<ProductInfoSection> {
               isWeb ? MainAxisAlignment.start : MainAxisAlignment.spaceBetween,
           children: [
             CustomButton(
-              text: 'Add to Cart',
+              key: const Key('cart_add_button'),
+              text: isAlreadyInCart ? 'Already in Cart' : 'Add to Cart',
               fontSize: 16,
               fontWeight: FontWeight.w600,
               borderRadius: 16,
               height: 50,
+              textColor:
+                  isAlreadyInCart
+                      ? AppColors.textBodyText
+                      : AppColors.textWhite,
               width: isWeb ? 269 : 180,
-              onPressed: () {},
+              onPressed:
+                  isAlreadyInCart
+                      ? null
+                      : () {
+                        final selectedColorObject = colors[selectedColor];
+                        final selectedSizeString = sizes[selectedSize];
+                        final colorName =
+                            colorToNameMap[selectedColorObject] ??
+                            'Unknown Color';
+                        final newItem = CartState(
+                          product: widget.product,
+                          colorName: colorName,
+                          size: selectedSizeString,
+                          quantity: quantity,
+                        );
+                        cartNotifier.addItem(newItem);
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            content: Text('Item successfully added to cart'),
+                            backgroundColor: AppColors.primaryDarkGreen,
+                          ),
+                        );
+                      },
             ),
             if (isWeb) const SizedBox(width: 14),
             CustomButton(
@@ -283,7 +330,6 @@ class _ProductInfoSectionState extends State<ProductInfoSection> {
               textColor: AppColors.textVidaLocaGreen,
               buttonColor: Colors.transparent,
               prefixIcon: AppAssets.icons.greenHeart.svg(height: 15.81),
-
               borderRadius: 16,
               borderColor: AppColors.primaryDarkGreen,
               height: 50,

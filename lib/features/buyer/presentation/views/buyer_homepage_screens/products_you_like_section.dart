@@ -58,18 +58,7 @@ class ProductsYouLikeSection extends StatelessWidget {
           dotColor: AppColors.clampValueColor,
           items: products,
           itemBuilder: (item) {
-            return ProductCard(
-              imageUrl: item.imageUrl,
-              productName: item.productName,
-              rating: item.rating,
-              reviews: item.reviews,
-              amount: item.amount,
-              slashedAmount: item.slashedAmount,
-              categoryName: item.categoryName,
-              onCardPress: () {},
-              onPress: () {},
-              onPressed: () {},
-            );
+            return ProductCard(product: item, onPress: () {}, onPressed: () {});
           },
         ),
         const SizedBox(height: 15),

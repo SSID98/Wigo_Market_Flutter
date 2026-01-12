@@ -4,6 +4,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:wigo_flutter/core/constants/app_colors.dart';
 import 'package:wigo_flutter/shared/widgets/role_card.dart';
 
+import '../../core/local/local_user_controller.dart';
 import '../../core/providers/role_selection_provider.dart';
 import '../../gen/assets.gen.dart';
 import '../models/user_role.dart';
@@ -56,6 +57,10 @@ class RoleSelectionBody extends ConsumerWidget {
           icon: AppAssets.icons.buyerIcon.path,
           isSelected: selectedRole == UserRole.buyer,
           onTap: () {
+            ref.read(localUserControllerProvider).saveRole(UserRole.buyer.name);
+            ref
+                .read(localUserControllerProvider)
+                .saveStage(OnboardingStage.onboarding);
             viewModel.selectRole(UserRole.buyer);
             viewModel.confirmSelection(context);
           },
@@ -74,6 +79,12 @@ class RoleSelectionBody extends ConsumerWidget {
           icon: AppAssets.icons.sellerIcon.path,
           isSelected: selectedRole == UserRole.seller,
           onTap: () {
+            ref
+                .read(localUserControllerProvider)
+                .saveRole(UserRole.seller.name);
+            ref
+                .read(localUserControllerProvider)
+                .saveStage(OnboardingStage.onboarding);
             viewModel.selectRole(UserRole.seller);
             viewModel.confirmSelection(context);
           },
@@ -92,6 +103,10 @@ class RoleSelectionBody extends ConsumerWidget {
           icon: AppAssets.icons.riderIcon.path,
           isSelected: selectedRole == UserRole.rider,
           onTap: () {
+            ref.read(localUserControllerProvider).saveRole(UserRole.rider.name);
+            ref
+                .read(localUserControllerProvider)
+                .saveStage(OnboardingStage.onboarding);
             viewModel.selectRole(UserRole.rider);
             viewModel.confirmSelection(context);
           },

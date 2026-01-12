@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../core/constants/url.dart';
+import '../../core/local/local_user_controller.dart';
 
 class OnboardingViewModel extends ChangeNotifier {
   final PageController pageController = PageController();
@@ -38,7 +39,7 @@ class OnboardingViewModel extends ChangeNotifier {
     },
   ];
 
-  Future<void> riderNextPage(BuildContext context) async {
+  Future<void> riderNextPage(BuildContext context, WidgetRef ref) async {
     if (currentPage < riderOnboardingData.length - 1) {
       pageController.nextPage(
         duration: Duration(milliseconds: 300),
@@ -46,17 +47,23 @@ class OnboardingViewModel extends ChangeNotifier {
       );
     } else {
       if (!context.mounted) return;
+      ref
+          .read(localUserControllerProvider)
+          .saveStage(OnboardingStage.registration);
       context.go('/accountCreation');
     }
   }
 
-  Future<void> buyerNextPage(BuildContext context) async {
+  Future<void> buyerNextPage(BuildContext context, WidgetRef ref) async {
     if (currentPage < buyerOnboardingData.length - 1) {
       pageController.nextPage(
         duration: Duration(milliseconds: 300),
         curve: Curves.easeInOut,
       );
     } else {
+      ref
+          .read(localUserControllerProvider)
+          .saveStage(OnboardingStage.registration);
       context.go('/accountCreation');
     }
   }

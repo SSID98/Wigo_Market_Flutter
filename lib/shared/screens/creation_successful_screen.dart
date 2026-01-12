@@ -3,11 +3,10 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../core/constants/app_colors.dart';
 import '../../core/constants/url.dart';
-import '../../core/local/local_storage_service.dart';
+import '../../core/local/local_user_controller.dart';
 import '../../core/providers/role_selection_provider.dart';
 import '../../gen/assets.gen.dart';
 import '../models/user_role.dart';
@@ -24,11 +23,16 @@ class CreationSuccessfulScreen extends ConsumerWidget {
 
     final isBuyer = role == UserRole.buyer;
     return isWeb
-        ? _buildWebLayout(screenSize, context, isBuyer)
-        : _buildMobileLayout(screenSize, context, isBuyer);
+        ? _buildWebLayout(screenSize, context, isBuyer, ref)
+        : _buildMobileLayout(screenSize, context, isBuyer, ref);
   }
 
-  Widget _buildMobileLayout(Size screenSize, BuildContext context, isBuyer) {
+  Widget _buildMobileLayout(
+    Size screenSize,
+    BuildContext context,
+    isBuyer,
+    WidgetRef ref,
+  ) {
     return Scaffold(
       backgroundColor: AppColors.backgroundWhite,
       body: SafeArea(
@@ -81,6 +85,7 @@ class CreationSuccessfulScreen extends ConsumerWidget {
                           fontWeight2: FontWeight.w500,
                           fontSize2: 14,
                           context: context,
+                          ref: ref,
                           isBuyer: isBuyer,
                         ),
                       ],
@@ -95,7 +100,12 @@ class CreationSuccessfulScreen extends ConsumerWidget {
     );
   }
 
-  Widget _buildWebLayout(Size screenSize, BuildContext context, bool isBuyer) {
+  Widget _buildWebLayout(
+    Size screenSize,
+    BuildContext context,
+    bool isBuyer,
+    WidgetRef ref,
+  ) {
     return Scaffold(
       backgroundColor: AppColors.backgroundWhite,
       body: SafeArea(
@@ -144,6 +154,7 @@ class CreationSuccessfulScreen extends ConsumerWidget {
                           fontSize2: 24,
                           web: true,
                           context: context,
+                          ref: ref,
                           isBuyer: isBuyer,
                         ),
                         const SizedBox(height: 20.0),
@@ -168,6 +179,7 @@ class CreationSuccessfulScreen extends ConsumerWidget {
     required FontWeight fontWeight2,
     required double fontSize2,
     required BuildContext context,
+    required WidgetRef ref,
     bool web = false,
   }) {
     return SizedBox(
@@ -209,9 +221,10 @@ class CreationSuccessfulScreen extends ConsumerWidget {
           CustomButton(
             text: 'Continue',
             onPressed: () async {
-              final prefs = await SharedPreferences.getInstance();
-              final storage = LocalStorageService(prefs);
-              await storage.setAccountCreationCompleted();
+              ref
+                  .read(localUserControllerProvider)
+                  .saveStage(OnboardingStage.completed);
+              ref.read(localUserControllerProvider).saveHasOnboarded(true);
               if (!context.mounted) return;
               isBuyer ? context.go('/buyerHomeScreen') : context.go('/login');
             },

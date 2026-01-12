@@ -35,6 +35,9 @@ dependencies:
   dotted_decoration: ^2.0.0
   flutter_dotenv: ^6.0.0
   flutter_secure_storage: ^9.2.4
+  path: ^1.9.1
+  sqflite: ^2.4.2
+
 
 
 
@@ -42,14 +45,15 @@ dependencies:
 
 
 dev_dependencies:
+  integration_test:
+    sdk: flutter
   flutter_test:
     sdk: flutter
   flutter_lints: ^5.0.0
   very_good_analysis: ^8.0.0
   mocktail: ^1.0.4
   flutter_gen_runner: ^5.11.0
-  build_runner: ^2.7.0
- 
+  build_runner: ^2.3.3
 
 flutter:
   uses-material-design: true

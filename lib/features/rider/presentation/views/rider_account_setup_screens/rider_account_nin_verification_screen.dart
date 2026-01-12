@@ -8,6 +8,7 @@ import 'package:wigo_flutter/shared/widgets/custom_checkbox_widget.dart';
 
 import '../../../../../core/constants/app_colors.dart';
 import '../../../../../core/constants/url.dart';
+import '../../../../../core/local/local_user_controller.dart';
 import '../../../../../shared/widgets/custom_button.dart';
 import '../../../viewmodels/account_setup_viewmodels/rider_account_nin_verification_viewmodel.dart';
 
@@ -20,14 +21,15 @@ class RiderAccountNinVerificationScreen extends ConsumerWidget {
     final screenSize = MediaQuery.of(context).size;
     final isWeb = MediaQuery.of(context).size.width > 600;
     return isWeb
-        ? _buildWebLayout(screenSize, viewModel, context)
-        : _buildMobileLayout(screenSize, viewModel, context);
+        ? _buildWebLayout(screenSize, viewModel, context, ref)
+        : _buildMobileLayout(screenSize, viewModel, context, ref);
   }
 
   Widget _buildMobileLayout(
     Size screenSize,
     RiderAccountNinVerificationViewmodel viewModel,
     BuildContext context,
+    WidgetRef ref,
   ) {
     return Scaffold(
       backgroundColor: AppColors.backgroundWhite,
@@ -82,6 +84,7 @@ class RiderAccountNinVerificationScreen extends ConsumerWidget {
                         _buildFooter(
                           buttonTextFontSize: 16.0,
                           context: context,
+                          ref: ref,
                         ),
                         const SizedBox(height: 35.0),
                       ],
@@ -100,6 +103,7 @@ class RiderAccountNinVerificationScreen extends ConsumerWidget {
     Size screenSize,
     RiderAccountNinVerificationViewmodel viewModel,
     BuildContext context,
+    WidgetRef ref,
   ) {
     return Scaffold(
       backgroundColor: AppColors.backgroundWhite,
@@ -162,6 +166,7 @@ class RiderAccountNinVerificationScreen extends ConsumerWidget {
                             buttonTextFontSize: 18.0,
                             web: true,
                             context: context,
+                            ref: ref,
                           ),
                         ),
                         const SizedBox(height: 75.0),
@@ -310,6 +315,7 @@ class RiderAccountNinVerificationScreen extends ConsumerWidget {
   Widget _buildFooter({
     required double buttonTextFontSize,
     bool web = false,
+    required WidgetRef ref,
     required BuildContext context,
   }) {
     return Column(
@@ -317,6 +323,9 @@ class RiderAccountNinVerificationScreen extends ConsumerWidget {
         CustomButton(
           text: 'Verify',
           onPressed: () {
+            ref
+                .read(localUserControllerProvider)
+                .saveStage(OnboardingStage.bankSetup);
             context.push('/rider/account/setup');
           },
           fontSize: buttonTextFontSize,

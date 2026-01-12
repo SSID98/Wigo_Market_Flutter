@@ -13,6 +13,7 @@ class CustomSearchField extends StatelessWidget {
   final WidgetStateProperty<TextStyle?>? hintStyle;
   final double? height, padding;
   final Color? backgroundColor;
+  final void Function(String)? onSubmitted;
 
   const CustomSearchField({
     super.key,
@@ -25,6 +26,7 @@ class CustomSearchField extends StatelessWidget {
     this.height,
     this.backgroundColor,
     this.padding,
+    this.onSubmitted,
   });
 
   @override
@@ -33,6 +35,8 @@ class CustomSearchField extends StatelessWidget {
     return SizedBox(
       height: height ?? 40,
       child: SearchBar(
+        textInputAction: TextInputAction.search,
+        onSubmitted: onSubmitted,
         controller: searchController,
         leading:
             leading ??

@@ -28,13 +28,13 @@ class RegisterViewModel extends StateNotifier<RegisterState> {
       state = state.copyWith(
         residentialState: value,
         filteredCities: newFilteredCities,
-        city: null, // Always reset city when state changes
+        clearCity: true,
       );
     } else {
       state = state.copyWith(
-        residentialState: null,
+        residentialState: '',
         filteredCities: [],
-        city: null,
+        clearCity: true,
       );
     }
   }
@@ -55,10 +55,13 @@ class RegisterViewModel extends StateNotifier<RegisterState> {
   void updateResidentialState(String value) =>
       state = state.copyWith(residentialState: value, city: '');
 
-  void updateCity(String? value) => state = state.copyWith(city: value);
+  void updateCity(String? value) => state = state.copyWith(city: value ?? '');
 
   // Rider-only
   void updateGender(String? value) => state = state.copyWith(gender: value);
+
+  void updateNextOfKinName(String value) =>
+      state = state.copyWith(nameOfNok: value);
 
   void updateNextOfKinPhone(String? value) =>
       state = state.copyWith(nextOfKinPhone: value);
@@ -91,6 +94,7 @@ class RegisterViewModel extends StateNotifier<RegisterState> {
         city: state.city,
         state: state.residentialState,
         gender: state.gender,
+        nameOfNok: state.nameOfNok,
         nextOfKinPhone: state.nextOfKinPhone,
         modeOfTransport: state.modeOfTransport,
       );

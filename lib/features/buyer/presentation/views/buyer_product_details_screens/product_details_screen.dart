@@ -1,35 +1,35 @@
 import 'package:flutter/material.dart';
-import 'package:wigo_flutter/core/constants/app_colors.dart';
 import 'package:wigo_flutter/features/buyer/presentation/views/buyer_product_details_screens/product_images_section.dart';
 import 'package:wigo_flutter/features/buyer/presentation/views/buyer_product_details_screens/product_info_section.dart';
 import 'package:wigo_flutter/features/buyer/presentation/views/buyer_product_details_screens/product_review_section.dart';
 import 'package:wigo_flutter/features/buyer/presentation/views/buyer_product_details_screens/product_specfics_section.dart';
-import 'package:wigo_flutter/features/buyer/presentation/widgets/self_delivery_card.dart';
 
-import '../footer_section.dart';
+import '../../../../../core/utils/helper_methods.dart';
+import '../../../models/product_model.dart';
+import '../../widgets/self_delivery_card.dart';
 import 'comment_review_section.dart';
 
 class ProductDetailsPage extends StatelessWidget {
-  final String productName;
-  final String imageUrl;
-  final String price;
-  final String categoryName;
+  final Product product;
 
-  const ProductDetailsPage({
-    super.key,
-    required this.productName,
-    required this.imageUrl,
-    required this.price,
-    required this.categoryName,
-  });
+  const ProductDetailsPage({super.key, required this.product});
 
   @override
   Widget build(BuildContext context) {
     final isWeb = MediaQuery.of(context).size.width > 600;
-
-    return Scaffold(
-      backgroundColor: AppColors.backgroundWhite,
-      body: isWeb ? _buildWebLayout(context) : _buildMobileLayout(context),
+    bool isHandlingBack = false;
+    return PopScope(
+      canPop: false,
+      onPopInvokedWithResult: (didPop, result) async {
+        if (isHandlingBack || didPop) return;
+        isHandlingBack = true;
+        showLoadingDialog(context);
+        await Future.delayed(const Duration(seconds: 1));
+        if (!context.mounted) return;
+        Navigator.of(context, rootNavigator: true).pop();
+        Navigator.of(context).pop(result);
+      },
+      child: isWeb ? _buildWebLayout(context) : _buildMobileLayout(context),
     );
   }
 
@@ -39,16 +39,12 @@ class ProductDetailsPage extends StatelessWidget {
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Expanded(flex: 4, child: ProductImagesSection(imageUrl: imageUrl)),
-          const SizedBox(width: 30),
           Expanded(
-            flex: 3,
-            child: ProductInfoSection(
-              productName: productName,
-              price: price,
-              categoryName: categoryName,
-            ),
+            flex: 4,
+            child: ProductImagesSection(imageUrl: product.imageUrl),
           ),
+          const SizedBox(width: 30),
+          Expanded(flex: 3, child: ProductInfoSection(product: product)),
         ],
       ),
     );
@@ -56,16 +52,11 @@ class ProductDetailsPage extends StatelessWidget {
 
   Widget _buildMobileLayout(BuildContext context) {
     return SingleChildScrollView(
-      padding: const EdgeInsets.all(16),
       child: Column(
         children: [
-          ProductImagesSection(imageUrl: imageUrl),
+          ProductImagesSection(imageUrl: product.imageUrl),
           const SizedBox(height: 20),
-          ProductInfoSection(
-            productName: productName,
-            price: price,
-            categoryName: categoryName,
-          ),
+          ProductInfoSection(product: product),
           const SizedBox(height: 80),
           DescriptionAndProductSpecificsSection(),
           const SizedBox(height: 80),
@@ -74,8 +65,6 @@ class ProductDetailsPage extends StatelessWidget {
           ProductReviewSection(),
           const SizedBox(height: 80),
           SelfDeliveryPromoCard(onPressed: () {}),
-          const SizedBox(height: 20),
-          FooterSection(),
         ],
       ),
     );

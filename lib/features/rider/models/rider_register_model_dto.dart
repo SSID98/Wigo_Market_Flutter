@@ -2,11 +2,12 @@ class RiderRegisterModel {
   final String email;
   final String mobile;
   final String password;
+  final String? gender;
   final String fullName;
   final String residentialAddress;
   final String city;
   final String state;
-  final String? gender;
+  final String? nameOfNok;
   final String? nextOfKinPhone;
   final String? modeOfTransport;
 
@@ -19,6 +20,7 @@ class RiderRegisterModel {
     required this.city,
     required this.state,
     this.gender,
+    this.nameOfNok,
     this.nextOfKinPhone,
     this.modeOfTransport,
   });
@@ -28,6 +30,7 @@ class RiderRegisterModel {
       "email": email,
       "mobile": mobile,
       "password": password,
+      "gender": gender,
       "fullName": fullName,
       "residentialAddress": residentialAddress,
       "city": city,
@@ -35,12 +38,11 @@ class RiderRegisterModel {
     };
 
     // Put optional rider-only fields if present
-    if (gender != null && gender!.isNotEmpty) m['gender'] = gender;
-    if (nextOfKinPhone != null && nextOfKinPhone!.isNotEmpty) {
-      m['nextOfKin'] = {
-        // backend expects nested object earlier — if backend expects only phone you can adapt
-        "mobile": nextOfKinPhone,
-      };
+    if (nextOfKinPhone != null &&
+        nextOfKinPhone!.isNotEmpty &&
+        nameOfNok != null &&
+        nameOfNok!.isNotEmpty) {
+      m['nextOfKin'] = {"name": nameOfNok, "mobile": nextOfKinPhone};
     }
     if (modeOfTransport != null && modeOfTransport!.isNotEmpty) {
       m['modeOfTransport'] = modeOfTransport;

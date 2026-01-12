@@ -22,13 +22,14 @@ class OnboardingScreen extends ConsumerWidget {
     final role = ref.watch(userRoleProvider);
     final isBuyer = role == UserRole.buyer;
     return isWeb
-        ? _buildMobileLayout(context, viewModel, screenSize, isBuyer)
-        : _buildWebLayout(context, viewModel, screenSize, isBuyer);
+        ? _buildMobileLayout(context, ref, viewModel, screenSize, isBuyer)
+        : _buildWebLayout(context, ref, viewModel, screenSize, isBuyer);
   }
 
   //Mobile Layout
   Widget _buildMobileLayout(
     BuildContext context,
+    WidgetRef ref,
     OnboardingViewModel viewModel,
     Size screenSize,
     bool isBuyer,
@@ -92,8 +93,8 @@ class OnboardingScreen extends ConsumerWidget {
                           text: 'Next',
                           onPressed:
                               isBuyer
-                                  ? () => viewModel.buyerNextPage(context)
-                                  : () => viewModel.riderNextPage(context),
+                                  ? () => viewModel.buyerNextPage(context, ref)
+                                  : () => viewModel.riderNextPage(context, ref),
                           fontSize: 16,
                           fontWeight: FontWeight.w500,
                           borderRadius: 6.0,
@@ -115,6 +116,7 @@ class OnboardingScreen extends ConsumerWidget {
 
   Widget _buildWebLayout(
     BuildContext context,
+    WidgetRef ref,
     OnboardingViewModel viewModel,
     Size screenSize,
     bool isBuyer,
@@ -169,8 +171,8 @@ class OnboardingScreen extends ConsumerWidget {
                         onPressed:
                             () =>
                                 !isBuyer
-                                    ? viewModel.riderNextPage(context)
-                                    : viewModel.buyerNextPage(context),
+                                    ? viewModel.riderNextPage(context, ref)
+                                    : viewModel.buyerNextPage(context, ref),
                         fontSize: 18,
                         fontWeight: FontWeight.w500,
                         borderRadius: 6.0,

@@ -1,43 +1,47 @@
 import 'package:diacritic/diacritic.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import '../../../../core/constants/app_colors.dart';
 import '../../../../core/constants/url.dart';
-import '../../models/product_model.dart';
+import '../../viewmodels/buyer_home_viewmodel.dart';
 import '../widgets/product_card.dart';
 
 String normalizeText(String text) {
   return removeDiacritics(text).toLowerCase();
 }
 
-class SearchResultsView extends StatelessWidget {
+class SearchResultsView extends ConsumerWidget {
   final String searchQuery;
-  final List<Product> products;
+
+  // final List<Product> products;
 
   const SearchResultsView({
     super.key,
     required this.searchQuery,
-    required this.products,
+    // required this.products,
   });
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final isWeb = MediaQuery.of(context).size.width > 800;
+    final results = ref
+        .read(buyerHomeViewModelProvider.notifier)
+        .searchProducts(searchQuery);
+    // final normalizedQuery = normalizeText(searchQuery);
+    // final filtered =
+    //     products
+    //         .where(
+    //           (p) => normalizeText(p.productName).contains(normalizedQuery),
+    //         )
+    //         .toList();
 
-    final normalizedQuery = normalizeText(searchQuery);
-    final filtered =
-        products
-            .where(
-              (p) => normalizeText(p.productName).contains(normalizedQuery),
-            )
-            .toList();
-
-    if (filtered.isEmpty) {
+    if (results.isEmpty) {
       return Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const SizedBox(height: 50),
+          const SizedBox(height: 10),
           Text(
             'Results for “$searchQuery”',
             style: GoogleFonts.hind(
@@ -97,7 +101,7 @@ class SearchResultsView extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const SizedBox(height: 50),
+        const SizedBox(height: 10),
         Text(
           'Results for “$searchQuery”',
           style: GoogleFonts.hind(
@@ -110,7 +114,7 @@ class SearchResultsView extends StatelessWidget {
         GridView.builder(
           primary: false,
           shrinkWrap: true,
-          itemCount: filtered.length,
+          itemCount: results.length,
           gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
             crossAxisCount: isWeb ? 5 : 2,
             crossAxisSpacing: 12,
@@ -118,18 +122,11 @@ class SearchResultsView extends StatelessWidget {
             childAspectRatio: 0.8,
           ),
           itemBuilder: (context, index) {
-            final product = filtered[index];
+            final product = results[index];
             return ProductCard(
-              productName: product.productName,
-              slashedAmount: product.slashedAmount,
-              amount: product.amount,
               onPressed: () {},
-              imageUrl: product.imageUrl,
               onPress: () {},
-              onCardPress: () {},
-              rating: product.rating,
-              reviews: product.reviews,
-              categoryName: product.categoryName,
+              product: product,
             );
           },
         ),

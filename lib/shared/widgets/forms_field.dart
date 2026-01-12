@@ -28,7 +28,6 @@ class FormFields extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    // final viewModel = ref.watch(accountCreationProvider);
     final regState = ref.watch(registerViewModelProvider);
     final notifier = ref.read(registerViewModelProvider.notifier);
     final spacing = const SizedBox(height: 16);
@@ -80,6 +79,17 @@ class FormFields extends ConsumerWidget {
           // contentPadding: EdgeInsets.only(bottom: 1),
         ),
         if (!isBuyer) ...[
+          spacing,
+          CustomTextField(
+            hintText: 'eg. Peter Doe',
+            label: 'Name of Next of Kin',
+            prefixIcon: AppAssets.icons.user.path,
+            iconHeight: iconHeight,
+            iconWidth: iconWidth,
+            hintTextColor: AppColors.textBodyText,
+            onChanged: notifier.updateNextOfKinName,
+            // controller: viewModel.fullNameCtrl,
+          ),
           spacing,
           CustomPhoneNumberField(
             label: 'Next of Kin Contact',
@@ -153,16 +163,22 @@ class FormFields extends ConsumerWidget {
                     ? null
                     : regState.residentialState,
             onChanged: (val) {
-              notifier.updateResidentialState(val ?? '');
+              notifier.setStateValue(val);
             },
           ),
           spacing,
           CustomDropdownField(
             label: 'City/ Town',
-            items: regState.filteredCities,
+            items:
+                regState.residentialState.isEmpty
+                    ? []
+                    : regState.filteredCities,
             hintText: 'Select City',
             value: regState.city.isEmpty ? null : regState.city,
-            onChanged: notifier.updateCity,
+            onChanged:
+                regState.residentialState.isEmpty
+                    ? null
+                    : (val) => notifier.updateCity(val),
           ),
         ],
         spacing,

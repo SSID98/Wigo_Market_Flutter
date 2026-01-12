@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:wigo_flutter/core/utils/helper_methods.dart';
 import 'package:wigo_flutter/gen/assets.gen.dart';
 import 'package:wigo_flutter/shared/widgets/custom_avatar.dart';
 import 'package:wigo_flutter/shared/widgets/custom_button.dart';
@@ -10,6 +12,7 @@ import '../../../core/auth/auth_state.dart';
 import '../../../core/auth/auth_state_notifier.dart';
 import '../../../core/constants/app_colors.dart';
 import '../../../core/constants/url.dart';
+import '../../../features/buyer/viewmodels/buyer_cart_viewmodel.dart';
 
 class CustomAppBar extends ConsumerWidget implements PreferredSizeWidget {
   final bool isWeb;
@@ -36,6 +39,7 @@ class CustomAppBar extends ConsumerWidget implements PreferredSizeWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final authState = ref.watch(authStateProvider);
+    final cartItemCount = ref.watch(cartCountProvider);
     return AppBar(
       automaticallyImplyLeading: false,
       toolbarHeight: preferredSize.height,
@@ -164,7 +168,54 @@ class CustomAppBar extends ConsumerWidget implements PreferredSizeWidget {
                       ),
                     ],
                   )
-                  : AppAssets.icons.cart2.svg()
+                  : Stack(
+                    children: [
+                      Container(
+                        height: 42,
+                        width: 42,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(66.76),
+                          color: AppColors.tableHeader,
+                        ),
+                        child: IconButton(
+                          key: const Key('cart_button'),
+                          icon: AppAssets.icons.cart.svg(height: 24),
+                          onPressed: () async {
+                            showLoadingDialog(context);
+                            await Future.delayed(const Duration(seconds: 1));
+                            if (!context.mounted) return;
+                            Navigator.of(context, rootNavigator: true).pop();
+                            context.push('/buyer/cart');
+                          },
+                        ),
+                      ),
+                      if (cartItemCount > 0)
+                        Positioned(
+                          right: 0,
+                          top: 0,
+                          child: Container(
+                            padding: EdgeInsets.only(top: 1),
+                            decoration: BoxDecoration(
+                              color: AppColors.accentRed,
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                            constraints: const BoxConstraints(
+                              minWidth: 16,
+                              minHeight: 16,
+                            ),
+                            child: Text(
+                              cartItemCount.toString(),
+                              style: GoogleFonts.hind(
+                                color: AppColors.textWhite,
+                                fontSize: 10,
+                                fontWeight: FontWeight.bold,
+                              ),
+                              textAlign: TextAlign.center,
+                            ),
+                          ),
+                        ),
+                    ],
+                  )
               : Container(
                 height: 42,
                 width: 42,

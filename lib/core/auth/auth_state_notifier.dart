@@ -12,32 +12,26 @@ class AuthStateNotifier extends StateNotifier<AuthState> {
   }
 
   Future<void> _init() async {
-    final hasOnboarded = await storage.getHasOnboarded();
-    final savedRole = await storage.getRole();
     final token = await storage.getToken();
-
-    // FIRST APP OPEN → role selection
-    if (!hasOnboarded) {
-      state = AuthState.loggedOut(role: savedRole, hasOnboarded: false);
-      return;
-    }
 
     // NO TOKEN BUT ALREADY OPENED BEFORE
     if (token == null) {
-      state = AuthState.loggedOut(role: savedRole, hasOnboarded: true);
+      state = AuthState.loggedOut();
       return;
     }
+
+    final userId = await storage.getUserId();
+    final role = await storage.getRole();
 
     // TOKEN EXISTS → user logged in
     state = AuthState.loggedIn(
       LoginResponseModel(
-        id: await storage.getUserId() ?? '',
-        activeRole: savedRole ?? '',
+        id: userId ?? '',
+        activeRole: role ?? '',
         token: token,
         role: [],
         status: '',
       ),
-      hasOnboarded: true,
     );
   }
 

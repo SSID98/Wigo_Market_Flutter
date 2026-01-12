@@ -36,7 +36,7 @@ class _EditBankAccountScreenState extends ConsumerState<EditBankAccountScreen> {
   late TextEditingController _accountNameController;
   late TextEditingController _phoneNumberController;
   late bool _isDefault;
-  late bool _isAddingNew; // Check if we are adding data to an empty tile
+  late bool _isAddingNew;
   String? _selectedBankName;
   String? _accountHasError;
   AutovalidateMode _autoValidateMode = AutovalidateMode.disabled;
@@ -114,7 +114,6 @@ class _EditBankAccountScreenState extends ConsumerState<EditBankAccountScreen> {
       return;
     }
 
-    // 1. Call the ViewModel to update the list and handle the default flag
     notifier.updateBankDetails(
       bankId: widget.bankDetails.id,
       newBankName: _selectedBankName ?? '',

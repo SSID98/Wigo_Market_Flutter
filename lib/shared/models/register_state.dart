@@ -8,9 +8,10 @@ class RegisterState {
   final String residentialAddress;
   final String residentialState;
   final String city;
-  final String? gender; // only for rider
-  final String? nextOfKinPhone; // only for rider
-  final String? modeOfTransport; // only for rider
+  final String? gender;
+  final String? nameOfNok;
+  final String? nextOfKinPhone;
+  final String? modeOfTransport;
   final UserRole role;
   final List<String> filteredCities;
   final bool isLoading;
@@ -26,6 +27,7 @@ class RegisterState {
     this.residentialState = '',
     this.city = '',
     this.gender,
+    this.nameOfNok,
     this.nextOfKinPhone,
     this.filteredCities = const [],
     this.modeOfTransport,
@@ -44,6 +46,7 @@ class RegisterState {
     String? residentialState,
     String? city,
     String? gender,
+    String? nameOfNok,
     String? nextOfKinPhone,
     String? modeOfTransport,
     UserRole? role,
@@ -51,6 +54,7 @@ class RegisterState {
     String? errorMessage,
     bool? success,
     List<String>? filteredCities,
+    bool clearCity = false,
   }) {
     return RegisterState(
       fullName: fullName ?? this.fullName,
@@ -59,8 +63,9 @@ class RegisterState {
       mobile: mobile ?? this.mobile,
       residentialAddress: residentialAddress ?? this.residentialAddress,
       residentialState: residentialState ?? this.residentialState,
-      city: city ?? this.city,
+      city: clearCity ? '' : (city ?? this.city),
       gender: gender ?? this.gender,
+      nameOfNok: nameOfNok ?? this.nameOfNok,
       nextOfKinPhone: nextOfKinPhone ?? this.nextOfKinPhone,
       modeOfTransport: modeOfTransport ?? this.modeOfTransport,
       role: role ?? this.role,
@@ -85,6 +90,7 @@ class RegisterState {
           residentialAddress.isNotEmpty &&
           residentialState.isNotEmpty &&
           city.isNotEmpty &&
+          (nameOfNok?.isNotEmpty ?? false) &&
           (nextOfKinPhone?.isNotEmpty ?? false) &&
           (modeOfTransport?.isNotEmpty ?? false) &&
           (gender?.isNotEmpty ?? false);

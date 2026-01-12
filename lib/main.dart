@@ -1,14 +1,26 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:wigo_flutter/core/constants/app_colors.dart';
 
+import 'core/local/local_user_controller.dart';
 import 'core/routes/app_router.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await dotenv.load(fileName: ".env");
-  runApp(const ProviderScope(child: WigoApp()));
+  final prefs = await SharedPreferences.getInstance();
+  runApp(
+    ProviderScope(
+      overrides: [
+        localUserControllerProvider.overrideWithValue(
+          LocalUserController(prefs),
+        ),
+      ],
+      child: WigoApp(),
+    ),
+  );
 }
 
 class WigoApp extends ConsumerWidget {
@@ -25,6 +37,14 @@ class WigoApp extends ConsumerWidget {
         scaffoldBackgroundColor: AppColors.backgroundLight,
         colorScheme: ColorScheme.fromSeed(seedColor: AppColors.radioBlue),
         useMaterial3: true,
+        radioTheme: RadioThemeData(
+          fillColor: WidgetStateColor.resolveWith((states) {
+            if (states.contains(WidgetState.selected)) {
+              return AppColors.primaryDarkGreen;
+            }
+            return AppColors.primaryDarkGreen;
+          }),
+        ),
       ),
     );
   }

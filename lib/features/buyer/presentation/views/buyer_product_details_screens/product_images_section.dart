@@ -16,7 +16,23 @@ class ProductImagesSection extends StatelessWidget {
           padding: const EdgeInsets.all(10),
           child: AspectRatio(
             aspectRatio: 1,
-            child: Image.network(imageUrl, fit: BoxFit.contain),
+            child: Image.network(
+              imageUrl,
+              fit: BoxFit.contain,
+              errorBuilder: (
+                BuildContext context,
+                Object exception,
+                StackTrace? stackTrace,
+              ) {
+                return const Center(
+                  child: Icon(
+                    Icons.broken_image,
+                    color: AppColors.textIconGrey,
+                    size: 50.0,
+                  ),
+                );
+              },
+            ),
           ),
         ),
         const SizedBox(height: 20),
@@ -36,7 +52,21 @@ class ProductImagesSection extends StatelessWidget {
                     borderRadius: BorderRadius.circular(4),
                     border: Border.all(color: AppColors.primaryLightGreen),
                   ),
-                  child: Image.network(imageUrl),
+                  child: Image.network(
+                    imageUrl,
+                    errorBuilder: (
+                      BuildContext context,
+                      Object exception,
+                      StackTrace? stackTrace,
+                    ) {
+                      return const Center(
+                        child: Icon(
+                          Icons.broken_image,
+                          color: AppColors.textIconGrey,
+                        ),
+                      );
+                    },
+                  ),
                 ),
               ),
             ),

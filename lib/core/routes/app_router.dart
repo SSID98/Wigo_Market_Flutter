@@ -2,7 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:wigo_flutter/core/auth/auth_state_notifier.dart';
+import 'package:wigo_flutter/features/buyer/presentation/views/cart_details_screen/buyer_cart_screen.dart';
+import 'package:wigo_flutter/features/buyer/presentation/views/cart_details_screen/customer_info_screen.dart';
+import 'package:wigo_flutter/features/buyer/presentation/views/cart_details_screen/delivery_details_screen.dart';
+import 'package:wigo_flutter/features/buyer/presentation/views/cart_details_screen/order_confirmation_screen.dart';
+import 'package:wigo_flutter/features/buyer/presentation/views/search_results_view.dart';
 
+import '../../features/buyer/models/product_model.dart';
 import '../../features/buyer/presentation/views/buyer_homepage_screens/buyer_home_screen.dart';
 import '../../features/buyer/presentation/views/buyer_product_details_screens/product_details_screen.dart';
 import '../../features/buyer/presentation/views/buyer_shell.dart';
@@ -22,9 +28,11 @@ import '../../shared/screens/role_selection_screen.dart';
 import '../../shared/screens/welcome_screen.dart';
 import '../auth/auth_state.dart';
 import '../constants/url.dart';
+import '../local/local_user_controller.dart';
 
 final routerProvider = Provider<GoRouter>((ref) {
   final authState = ref.watch(authStateProvider);
+  final local = ref.watch(localUserControllerProvider);
   return GoRouter(
     initialLocation: '/buyerHomeScreen',
     redirect: (context, state) {
@@ -32,33 +40,113 @@ final routerProvider = Provider<GoRouter>((ref) {
 
       if (authState.status == AuthStatus.loading) return null;
 
+      bool isOnboardingRoute(String loc) {
+        return loc.startsWith('/onboarding') ||
+            loc.startsWith('/accountCreation') ||
+            loc.startsWith('/verification') ||
+            loc.startsWith('/rider/verification') ||
+            loc.startsWith('/rider/account/setup') ||
+            loc.startsWith('/successful');
+      }
+
       final loggedIn = authState.status == AuthStatus.loggedIn;
-      final role = authState.role;
-      final hasOnboarded = authState.hasOnboarded;
+      final role = local.role; // e.g., 'buyer', 'rider', null
+      final stage = local.stage;
+      final hasOnboarded = local.hasOnboarded;
 
-      final isLogin = state.uri.toString() == '/login';
-      final isRoleSelection = state.uri.toString() == '/';
+      final loc = state.uri.toString();
 
-      // 1️⃣ FIRST TIME OPEN → ALWAYS ROLE SELECTION
-      if (!hasOnboarded) {
-        if (!isRoleSelection) return '/';
+      // ----------------------------
+      // 1. ABSOLUTE FIRST LAUNCH / Role Selection
+      // ----------------------------
+      // If no role is selected, force them to the root role selection screen (/)
+      if (role == null && loc != '/') {
+        return '/';
+      }
+
+      // ----------------------------
+      // 2. GUARD: BLOCK completed users from accessing old routes
+      // ----------------------------
+      if (hasOnboarded && isOnboardingRoute(loc)) {
+        // If fully onboarded, redirect based on role (see sections 3 & 4 for targets)
+        if (role == 'buyer') {
+          return '/buyerHomeScreen';
+        } else if (role == 'rider') {
+          return '/riderMainScreen';
+        }
+        // Fallback if role is completed but unknown
+        return '/';
+      }
+
+      // ----------------------------
+      // 3. INCOMPLETE ONBOARDING → RECOVERY
+      // ----------------------------
+      if (!hasOnboarded && role != null) {
+        switch (stage) {
+          case OnboardingStage.none:
+            // User chose a role but didn't proceed to the first screen
+            return '/onboarding';
+          case OnboardingStage.onboarding:
+            // Ensure they are on the correct recovery route
+            if (loc != '/onboarding') return '/onboarding';
+            break; // Allow navigation to continue if already on /onboarding
+          case OnboardingStage.registration:
+            if (loc != '/accountCreation') return '/accountCreation';
+            break;
+          case OnboardingStage.otp:
+            if (loc != '/verification') return '/verification';
+            break;
+          case OnboardingStage.ninVerification:
+            if (loc != '/rider/verification') return '/rider/verification';
+            break;
+          case OnboardingStage.bankSetup:
+            if (loc != '/rider/account/setup') return '/rider/account/setup';
+            break;
+          case OnboardingStage.success:
+            if (loc != '/successful') return '/successful';
+            break;
+          case OnboardingStage.completed:
+            // Should be caught by the hasOnboarded check above, but as a safeguard:
+            return (role == 'buyer') ? '/buyerHomeScreen' : '/login';
+        }
+
+        // If the user is currently on the correct stage route, allow them to proceed
+        // This return null means "allow the requested navigation"
         return null;
       }
 
-      // 2️⃣ USER IS BUYER (logged out allowed)
+      // ----------------------------
+      // 4. AUTHENTICATION & PRIMARY ROLE FLOWS (Only runs if onboarding is complete or irrelevant)
+      // ----------------------------
+
+      // Buyer Logic (No login requirement)
       if (role == 'buyer') {
-        if (!loggedIn && isLogin) return '/buyerHomeScreen';
-        return null;
+        // If a buyer tries to go to login, send them home
+        if (loc == '/login' && loggedIn) {
+          return '/buyerHomeScreen';
+        }
+        // If a buyer is on the login screen but not logged in (e.g., they chose buyer
+        // but the token expired), let them login or proceed. In your initial logic,
+        // you assumed they don't need login, so let's stick to that:
+        if (loc == '/login' && !loggedIn) {
+          return '/buyerHomeScreen';
+        }
       }
 
-      // 3️⃣ USER IS RIDER → requires login
+      // Rider Logic (Requires Login)
       if (role == 'rider') {
-        if (!loggedIn && !isLogin) return '/login';
-        if (loggedIn && isLogin) return '/riderMainScreen';
-        return null;
+        // Force unauthenticated riders to the login screen
+        if (!loggedIn && loc != '/login') {
+          return '/login';
+        }
+        // If logged in, prevent access to the login screen
+        if (loggedIn && loc == '/login') {
+          return '/riderMainScreen';
+        }
       }
 
-      // TEMP fallback until seller logic decided
+      // Allow navigation for all other cases (e.g., user is a logged-in Rider trying
+      // to access /riderMainScreen, or a Buyer trying to access /buyerHomeScreen)
       return null;
     },
     routes: [
@@ -120,14 +208,10 @@ final routerProvider = Provider<GoRouter>((ref) {
       ShellRoute(
         builder: (context, state, child) => BuyerShell(child: child),
         routes: [
-          // 1. Buyer Home Screen (Base of the Shell)
           GoRoute(
             path: '/buyerHomeScreen',
             builder: (context, state) => BuyerHomeScreen(),
           ),
-
-          // 2. Product Details Page (Nested under the Shell)
-          // The persistent AppBar will appear on this page too!
           GoRoute(
             path: '/buyer/product-details',
             builder: (context, state) {
@@ -139,13 +223,28 @@ final routerProvider = Provider<GoRouter>((ref) {
                 return const Center(child: Text('Product not found.'));
               }
 
-              return ProductDetailsPage(
-                productName: args['productName'] as String,
-                imageUrl: args['imageUrl'] as String,
-                price: args['price'] as String,
-                categoryName: args['categoryName'] as String,
-              );
+              return ProductDetailsPage(product: args['product'] as Product);
             },
+          ),
+          GoRoute(path: '/buyer/cart', builder: (context, state) => CartPage()),
+          GoRoute(
+            path: '/buyer/search',
+            builder: (context, state) {
+              final query = state.extra as String;
+              return SearchResultsView(searchQuery: query);
+            },
+          ),
+          GoRoute(
+            path: '/buyer/customerInfo',
+            builder: (context, state) => CustomerInfoScreen(),
+          ),
+          GoRoute(
+            path: '/buyer/deliveryDetails',
+            builder: (context, state) => BuyerDeliveryDetailsScreen(),
+          ),
+          GoRoute(
+            path: '/buyer/orderConfirmation',
+            builder: (context, state) => OrderConfirmationScreen(),
           ),
         ],
       ),

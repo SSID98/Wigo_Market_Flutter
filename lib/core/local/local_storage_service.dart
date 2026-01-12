@@ -7,9 +7,6 @@ class LocalStorageService {
 
   LocalStorageService(this.prefs);
 
-  Future<void> setAccountCreationCompleted() =>
-      prefs.setBool(_accountKey, true);
-
   static const _pinSetupCompletedKey = 'pinSetupCompleted';
 
   Future<void> setPinSetupCompleted() async {

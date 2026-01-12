@@ -6,6 +6,7 @@ import 'package:wigo_flutter/gen/assets.gen.dart';
 
 import '../../../../../core/constants/app_colors.dart';
 import '../../../../../core/constants/url.dart';
+import '../../../../../core/local/local_user_controller.dart';
 import '../../../../../shared/widgets/custom_button.dart';
 import '../../../../../shared/widgets/custom_text_field.dart';
 import '../../../viewmodels/account_setup_viewmodels/rider_payment_method_setup_viewmodel.dart';
@@ -19,14 +20,15 @@ class RiderPaymentMethodSetupScreen extends ConsumerWidget {
     final screenSize = MediaQuery.of(context).size;
     final isWeb = MediaQuery.of(context).size.width > 600;
     return isWeb
-        ? _buildWebLayout(screenSize, viewModel, context)
-        : _buildMobileLayout(screenSize, viewModel, context);
+        ? _buildWebLayout(screenSize, viewModel, context, ref)
+        : _buildMobileLayout(screenSize, viewModel, context, ref);
   }
 
   Widget _buildMobileLayout(
     Size screenSize,
     RiderAccountSetupViewmodel viewModel,
     BuildContext context,
+    WidgetRef ref,
   ) {
     return Scaffold(
       backgroundColor: AppColors.backgroundWhite,
@@ -77,7 +79,11 @@ class RiderPaymentMethodSetupScreen extends ConsumerWidget {
                           fontSize2: 12.0,
                           viewModel: viewModel,
                         ),
-                        _buildFooter(viewModel: viewModel, context: context),
+                        _buildFooter(
+                          viewModel: viewModel,
+                          context: context,
+                          ref: ref,
+                        ),
                         const SizedBox(height: 15.0),
                       ],
                     ),
@@ -95,6 +101,7 @@ class RiderPaymentMethodSetupScreen extends ConsumerWidget {
     Size screenSize,
     RiderAccountSetupViewmodel viewModel,
     BuildContext context,
+    WidgetRef ref,
   ) {
     return Scaffold(
       backgroundColor: AppColors.backgroundWhite,
@@ -157,6 +164,7 @@ class RiderPaymentMethodSetupScreen extends ConsumerWidget {
                             web: true,
                             viewModel: viewModel,
                             context: context,
+                            ref: ref,
                           ),
                         ),
                         const SizedBox(height: 20.0),
@@ -279,12 +287,16 @@ class RiderPaymentMethodSetupScreen extends ConsumerWidget {
     required RiderAccountSetupViewmodel viewModel,
     bool web = false,
     required BuildContext context,
+    required WidgetRef ref,
   }) {
     return Column(
       children: [
         CustomButton(
           text: 'Continue',
           onPressed: () {
+            ref
+                .read(localUserControllerProvider)
+                .saveStage(OnboardingStage.success);
             context.go('/successful');
           },
           fontSize: 18,

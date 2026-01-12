@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:wigo_flutter/core/constants/app_colors.dart';
 import 'package:wigo_flutter/shared/models/register_state.dart';
@@ -7,6 +8,7 @@ import 'package:wigo_flutter/shared/widgets/custom_button.dart';
 import 'package:wigo_flutter/shared/widgets/forms_field.dart';
 
 import '../../core/constants/url.dart';
+import '../../core/local/local_user_controller.dart';
 import '../../core/providers/role_selection_provider.dart';
 import '../models/user_role.dart';
 import '../viewmodels/account_creation_viewmodel.dart';
@@ -24,12 +26,20 @@ class AccountCreationScreen extends ConsumerWidget {
     final isBuyer = role == UserRole.buyer;
     return isWeb
         ? _buildWebLayout(screenSize, context, isBuyer)
-        : _buildMobileLayout(screenSize, context, notifier, state, isBuyer);
+        : _buildMobileLayout(
+          screenSize,
+          context,
+          ref,
+          notifier,
+          state,
+          isBuyer,
+        );
   }
 
   Widget _buildMobileLayout(
     Size screenSize,
     BuildContext context,
+    WidgetRef ref,
     RegisterViewModel notifier,
     RegisterState state,
     bool isBuyer,
@@ -99,10 +109,12 @@ class AccountCreationScreen extends ConsumerWidget {
                                     if (ok) {
                                       // navigate to verification or next screen
                                       if (!context.mounted) return;
-                                      Navigator.pushNamed(
-                                        context,
+                                      context.go(
                                         '/verification',
                                       ); // or your route
+                                      ref
+                                          .read(localUserControllerProvider)
+                                          .saveStage(OnboardingStage.otp);
                                     } else {
                                       // show error via snackBar or inline UI from state.errorMessage
                                       if (!context.mounted) return;
