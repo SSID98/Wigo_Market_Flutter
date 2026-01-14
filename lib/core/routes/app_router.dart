@@ -6,6 +6,7 @@ import 'package:wigo_flutter/features/buyer/presentation/views/cart_details_scre
 import 'package:wigo_flutter/features/buyer/presentation/views/cart_details_screen/customer_info_screen.dart';
 import 'package:wigo_flutter/features/buyer/presentation/views/cart_details_screen/delivery_details_screen.dart';
 import 'package:wigo_flutter/features/buyer/presentation/views/cart_details_screen/order_confirmation_screen.dart';
+import 'package:wigo_flutter/features/buyer/presentation/views/orders_screens/orders_screen.dart';
 import 'package:wigo_flutter/features/buyer/presentation/views/search_results_view.dart';
 
 import '../../features/buyer/models/product_model.dart';
@@ -245,6 +246,10 @@ final routerProvider = Provider<GoRouter>((ref) {
           GoRoute(
             path: '/buyer/orderConfirmation',
             builder: (context, state) => OrderConfirmationScreen(),
+          ),
+          GoRoute(
+            path: '/buyer/Orders',
+            builder: (context, state) => OrdersScreen(),
           ),
         ],
       ),

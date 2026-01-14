@@ -85,7 +85,13 @@ class CustomerInfoSection extends ConsumerWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              _iconTextRow(isWeb, onTap: () {}),
+              _iconTextRow(isWeb, onTap: () async {
+                showLoadingDialog(context);
+                await Future.delayed(const Duration(seconds: 1));
+                if (!context.mounted) return;
+                Navigator.of(context, rootNavigator: true).pop();
+                Navigator.of(context).pop();
+              }),
               SizedBox(height: 20),
               _iconTextRow(isWeb, isCustomer: true),
             ],

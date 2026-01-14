@@ -74,7 +74,13 @@ class OrderConfirmationDetails extends ConsumerWidget {
         Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            _iconTextRow(isWeb, onTap: () {}, text: "Back"),
+            _iconTextRow(isWeb, onTap: () async {
+              showLoadingDialog(context);
+              await Future.delayed(const Duration(seconds: 1));
+              if (!context.mounted) return;
+              Navigator.of(context, rootNavigator: true).pop();
+              Navigator.of(context).pop();
+            }, text: "Back"),
             SizedBox(height: 20),
             _titleRow(isWeb, "Customer Information", () async {showLoadingDialog(context);
             await Future.delayed(const Duration(seconds: 1));

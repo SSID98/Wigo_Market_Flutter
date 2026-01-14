@@ -2,6 +2,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../database/cart_database.dart';
 import '../models/cart_model.dart';
+import 'order_viewmodel.dart';
 
 class CartNotifier extends StateNotifier<List<CartState>> {
   CartNotifier() : super([]) {
@@ -68,6 +69,39 @@ class CartNotifier extends StateNotifier<List<CartState>> {
       total += (item.product.price * item.quantity);
     }
     return total;
+  }
+
+  Future<void> processCheckout(WidgetRef ref) async {
+    // 1. Identify selected items
+    final selectedItems = state.where((item) => item.isOrdered).toList();
+
+    if (selectedItems.isEmpty) return;
+
+    // 2. Convert to OrderItemModels
+    final newOrders =
+        selectedItems
+            .map(
+              (item) => OrderItemModel(
+                productName: item.product.productName,
+                price: item.product.price,
+                imageUrl: item.product.imageUrl,
+                quantity: item.quantity,
+                size: item.size,
+                colorName: item.colorName,
+              ),
+            )
+            .toList();
+
+    // 3. Add to the Orders Screen provider
+    ref.read(ordersProvider.notifier).addOrders(newOrders);
+
+    // 4. Update SQLite and State: Remove purchased items from Cart
+    for (var item in selectedItems) {
+      await CartDatabase.instance.deleteItem(item.product.productName);
+    }
+
+    // Update state to only include items that were NOT ordered (the ones left in the "wishlist")
+    state = state.where((item) => !item.isOrdered).toList();
   }
 }
 

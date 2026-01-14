@@ -6,9 +6,7 @@ import '../../../../core/constants/url.dart';
 import '../../../../shared/widgets/custom_button.dart';
 
 class SelfDeliveryPromoCard extends StatelessWidget {
-  final VoidCallback onPressed;
-
-  const SelfDeliveryPromoCard({super.key, required this.onPressed});
+  const SelfDeliveryPromoCard({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -55,7 +53,7 @@ class SelfDeliveryPromoCard extends StatelessWidget {
                       fontWeight: FontWeight.w500,
                       textColor: AppColors.buttonOrange,
                       buttonColor: AppColors.backgroundWhite,
-                      onPressed: onPressed,
+                      onPressed: () {},
                       height: isWeb ? 40 : 22.35,
                       borderRadius: 4.47,
                       width: isWeb ? 143 : 80.12,

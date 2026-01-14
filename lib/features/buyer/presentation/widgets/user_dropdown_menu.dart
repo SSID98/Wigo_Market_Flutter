@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:wigo_flutter/core/constants/app_colors.dart';
 
 import '../../../../core/auth/auth_state_notifier.dart';
+import '../../../../core/utils/helper_methods.dart';
 import '../../../../gen/assets.gen.dart';
 
 class UserDropDownMenu extends ConsumerWidget {
@@ -23,7 +25,13 @@ class UserDropDownMenu extends ConsumerWidget {
       {
         'icon': AppAssets.icons.cart.svg(height: iconHeight),
         'label': 'My Orders',
-        'onPressed': () {},
+        'onPressed': () async {
+          showLoadingDialog(context);
+          await Future.delayed(const Duration(seconds: 1));
+          if (!context.mounted) return;
+          Navigator.of(context, rootNavigator: true).pop();
+          context.push('/buyer/Orders');
+        },
       },
       {
         'icon': AppAssets.icons.greenHeart.svg(height: iconHeight),

@@ -89,7 +89,13 @@ class DeliveryDetailsSection extends ConsumerWidget {
       children: [
         Padding(
           padding: const EdgeInsets.only(left: 8.0),
-          child: _iconTextRow(isWeb, onTap: () {}, text: "Back"),
+          child: _iconTextRow(isWeb, onTap: () async {
+            showLoadingDialog(context);
+            await Future.delayed(const Duration(seconds: 1));
+            if (!context.mounted) return;
+            Navigator.of(context, rootNavigator: true).pop();
+            Navigator.of(context).pop();
+          }, text: "Back"),
         ),
         const SizedBox(height: 20),
         _iconTextRow(isWeb, isDelivery: true, text: "Delivery Details"),

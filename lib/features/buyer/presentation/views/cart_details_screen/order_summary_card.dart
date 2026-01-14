@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import 'package:dotted_decoration/dotted_decoration.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -95,7 +97,29 @@ class OrderSummaryCard extends ConsumerWidget {
             fontWeight: FontWeight.w600,
             height: 50,
             width: isWeb ? 411 : double.infinity,
-            onPressed: isFinalCheckout ? () {} : null,
+            onPressed:
+                isFinalCheckout
+                    ? () async {
+                      showLoadingDialog(context);
+                      await Future.delayed(const Duration(seconds: 1));
+                      if (!context.mounted) return;
+                      Navigator.of(context, rootNavigator: true).pop();
+                      try {
+                        await ref
+                            .read(cartProvider.notifier)
+                            .processCheckout(ref);
+                        if (context.mounted) {
+                          _showDeliveryConfirmationDialog(context, isWeb);
+                          Navigator.pop(context);
+                          context.go('/buyerHomeScreen');
+                        }
+                      } catch (e) {
+                        if (context.mounted) {
+                          Navigator.pop(context);
+                        }
+                      }
+                    }
+                    : null,
             borderRadius: 16,
           ),
         const SizedBox(height: 40),
@@ -190,6 +214,76 @@ class OrderSummaryCard extends ConsumerWidget {
           ),
         ),
       ],
+    );
+  }
+
+  Future<void> _showDeliveryConfirmationDialog(
+    BuildContext context,
+    bool isWeb,
+  ) async {
+    return showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (dialogContext) {
+        return BackdropFilter(
+          filter: ImageFilter.blur(sigmaX: 5, sigmaY: 5),
+          child: AlertDialog(
+            contentPadding: EdgeInsets.only(left: 16, right: 16, bottom: 15),
+            insetPadding: EdgeInsets.zero,
+            iconPadding: EdgeInsets.zero,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(10),
+            ),
+            backgroundColor: AppColors.backgroundWhite,
+            titlePadding: EdgeInsets.zero,
+            title: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                const SizedBox(width: 15),
+                Padding(
+                  padding: EdgeInsets.only(right: isWeb ? 0 : 25, top: 10),
+                  child: GestureDetector(
+                    child: const Icon(Icons.close),
+                    onTap: () {
+                      Navigator.of(dialogContext).pop();
+                    },
+                  ),
+                ),
+              ],
+            ),
+            content: SizedBox(
+              width: MediaQuery.of(context).size.width * 0.85,
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  AppAssets.icons.doubleTickSuccessful.svg(),
+                  const SizedBox(height: 20),
+                  Text(
+                    "Delivery Confirmed",
+                    style: GoogleFonts.hind(
+                      fontWeight: FontWeight.w700,
+                      fontSize: isWeb ? 24 : 16,
+                      color: AppColors.textBlackGrey,
+                    ),
+                  ),
+                  const SizedBox(height: 15),
+                  Text(
+                    "Thank You For Shopping With Us, Check The Order Details Page For More Updates On The Product You Ordered.",
+                    textAlign: TextAlign.center,
+                    style: GoogleFonts.hind(
+                      fontWeight: FontWeight.w400,
+                      fontSize: isWeb ? 16 : 12,
+                      color: AppColors.textBlackGrey,
+                    ),
+                  ),
+                  const SizedBox(height: 15),
+                ],
+              ),
+            ),
+          ),
+        );
+      },
     );
   }
 }

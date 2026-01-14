@@ -2,6 +2,8 @@ import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:wigo_flutter/features/buyer/models/cart_model.dart';
 
+import '../viewmodels/order_viewmodel.dart';
+
 class CartDatabase {
   static final CartDatabase instance = CartDatabase._init();
   static Database? _database;
@@ -34,6 +36,17 @@ class CartDatabase {
         isOrdered INTEGER NOT NULL,
         saveInfo INTEGER NOT NULL
       )
+    ''');
+    await db.execute('''
+    CREATE TABLE orders (
+        productName TEXT,
+        price REAL,
+        imageUrl TEXT,
+        quantity INTEGER,
+        colorName TEXT,
+        size TEXT,
+        status TEXT
+     )
     ''');
   }
 
@@ -69,5 +82,31 @@ class CartDatabase {
   Future close() async {
     final db = await instance.database;
     db.close();
+  }
+
+  Future<void> insertOrder(OrderItemModel order) async {
+    final db = await instance.database;
+    await db.insert('orders', order.toMap());
+  }
+
+  Future<List<OrderItemModel>> getAllOrders() async {
+    final db = await instance.database;
+    final result = await db.query('orders', orderBy: 'productName');
+
+    return result
+        .map(
+          (json) => OrderItemModel(
+            productName: json['productName'] as String,
+            imageUrl: json['imageUrl'] as String,
+            price: (json['price'] as num).toDouble(),
+            quantity: (json['quantity'] as num).toInt(),
+            // price: json['price'] as double,
+            // quantity: json['quantity'] as int,
+            colorName: json['colorName'] as String,
+            size: json['size'] as String,
+            status: json['status'] as String,
+          ),
+        )
+        .toList();
   }
 }

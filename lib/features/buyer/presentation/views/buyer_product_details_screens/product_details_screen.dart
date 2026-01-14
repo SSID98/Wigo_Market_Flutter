@@ -64,7 +64,7 @@ class ProductDetailsPage extends StatelessWidget {
           const SizedBox(height: 20),
           ProductReviewSection(),
           const SizedBox(height: 80),
-          SelfDeliveryPromoCard(onPressed: () {}),
+          SelfDeliveryPromoCard(),
         ],
       ),
     );

@@ -71,7 +71,7 @@ class BuyerHomeScreen extends ConsumerWidget {
           const SizedBox(height: 20),
           ProductsYouLikeSection(products: state.allProducts),
           const SizedBox(height: 40),
-          SelfDeliveryPromoCard(onPressed: () {}),
+          SelfDeliveryPromoCard(),
         ],
       ),
     );

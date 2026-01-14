@@ -4,106 +4,98 @@ import 'package:google_fonts/google_fonts.dart';
 import '../../../../core/constants/app_colors.dart';
 import '../../../../core/utils/price_formatter.dart';
 import '../../../../shared/widgets/custom_button.dart';
-import '../../models/product_model.dart';
+import '../../viewmodels/order_viewmodel.dart';
 
-class ProductCard extends StatelessWidget {
-  final VoidCallback onPressed;
-  final VoidCallback onPress;
-  final Product product;
+class OrderCard extends StatelessWidget {
+  final OrderItemModel order;
 
-  const ProductCard({
-    super.key,
-    required this.onPressed,
-    required this.onPress,
-    required this.product,
-  });
+  const OrderCard({super.key, required this.order});
 
   @override
   Widget build(BuildContext context) {
     final isWeb = MediaQuery.of(context).size.width > 600;
-    return isWeb
-        ? Row(
+    return isWeb ? _buildWebLayout(isWeb) : _buildMobileLayout(isWeb);
+  }
+
+  Widget _buildWebLayout(bool isWeb) {
+    return Row(
+      children: [
+        _imageSection(124),
+        const SizedBox(width: 5),
+        Expanded(child: _itemDetails(isWeb)),
+        const SizedBox(width: 5),
+        Expanded(child: _itemPrice(isWeb)),
+        const SizedBox(width: 5),
+        Expanded(child: _itemDetails(isWeb, isStatus: true)),
+        const SizedBox(width: 5),
+        Expanded(child: _itemPrice(isWeb, isDelivery: true)),
+        const SizedBox(width: 5),
+        _trackButton(isWeb),
+      ],
+    );
+  }
+
+  Widget _buildMobileLayout(bool isWeb) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Expanded(
-              child: Image.network(
-                product.imageUrl,
-                height: double.infinity,
-                width: double.infinity,
-                errorBuilder: (
-                  BuildContext context,
-                  Object exception,
-                  StackTrace? stackTrace,
-                ) {
-                  return const Center(
-                    child: Icon(
-                      Icons.broken_image,
-                      color: AppColors.textIconGrey,
-                      size: 50.0,
-                    ),
-                  );
-                },
-              ),
-            ),
-            const SizedBox(width: 5),
-            _itemDetails(isWeb),
-            const SizedBox(width: 5),
+            _imageSection(104),
+            const SizedBox(height: 10),
             _itemPrice(isWeb),
-            const SizedBox(width: 5),
-            _itemDetails(isWeb, isStatus: true),
-            const SizedBox(width: 5),
+            const SizedBox(height: 10),
             _itemPrice(isWeb, isDelivery: true),
-            const SizedBox(width: 5),
-            _customButton(isWeb),
           ],
-        )
-        : Row(
-          children: [
-            Column(
-              children: [
-                Expanded(
-                  child: Image.network(
-                    product.imageUrl,
-                    height: double.infinity,
-                    width: double.infinity,
-                    errorBuilder: (
-                      BuildContext context,
-                      Object exception,
-                      StackTrace? stackTrace,
-                    ) {
-                      return const Center(
-                        child: Icon(
-                          Icons.broken_image,
-                          color: AppColors.textIconGrey,
-                          size: 50.0,
-                        ),
-                      );
-                    },
-                  ),
-                ),
-                const SizedBox(height: 10),
-                _itemPrice(isWeb),
-                const SizedBox(height: 10),
-                _itemPrice(isWeb, isDelivery: true),
-              ],
+        ),
+        Padding(
+          padding: const EdgeInsets.only(top: 25.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.end,
+            children: [
+              _itemDetails(isWeb),
+              const SizedBox(height: 15),
+              _itemDetails(isWeb, isStatus: true),
+              const SizedBox(height: 25),
+              _trackButton(isWeb),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _imageSection(double size) {
+    return ClipRRect(
+      borderRadius: BorderRadius.circular(8),
+      child: Image.network(
+        order.imageUrl,
+        height: size,
+        width: size,
+        errorBuilder: (
+          BuildContext context,
+          Object exception,
+          StackTrace? stackTrace,
+        ) {
+          return const Center(
+            child: Icon(
+              Icons.broken_image,
+              color: AppColors.textIconGrey,
+              size: 50.0,
             ),
-            Column(
-              children: [
-                _itemDetails(isWeb),
-                const SizedBox(height: 10),
-                _itemDetails(isWeb, isStatus: true),
-                const SizedBox(height: 10),
-                _customButton(isWeb),
-              ],
-            ),
-          ],
-        );
+          );
+        },
+      ),
+    );
   }
 
   Widget _itemDetails(bool isWeb, {bool isStatus = false}) {
     return Column(
+      crossAxisAlignment: CrossAxisAlignment.end,
       children: [
         Text(
-          isStatus ? 'Status' : product.productName,
+          isStatus ? 'Status' : order.productName,
           style: GoogleFonts.hind(
             fontSize:
                 isStatus
@@ -117,27 +109,15 @@ class ProductCard extends StatelessWidget {
             color: AppColors.textBlack,
           ),
         ),
-        const SizedBox(height: 20),
+        SizedBox(height: isStatus ? 10 : 15),
         if (!isStatus)
-          Row(
-            children: [
-              Text(
-                '| ${product.productName}',
-                style: GoogleFonts.hind(
-                  fontSize: isWeb ? 20 : 16,
-                  fontWeight: FontWeight.w400,
-                  color: AppColors.textBlack,
-                ),
-              ),
-              Text(
-                '| ${product.productName}',
-                style: GoogleFonts.hind(
-                  fontSize: isWeb ? 16 : 12,
-                  fontWeight: FontWeight.w400,
-                  color: AppColors.textBodyText,
-                ),
-              ),
-            ],
+          Text(
+            '|  ${order.size}  |  ${order.colorName}',
+            style: GoogleFonts.hind(
+              fontSize: isWeb ? 16 : 12,
+              fontWeight: FontWeight.w400,
+              color: AppColors.textBodyText,
+            ),
           ),
         if (isStatus)
           Container(
@@ -148,12 +128,14 @@ class ProductCard extends StatelessWidget {
               color: AppColors.backgroundLightPink,
               borderRadius: BorderRadius.circular(62),
             ),
-            child: Text(
-              'On Delivery',
-              style: GoogleFonts.hind(
-                fontSize: isWeb ? 16 : 12,
-                fontWeight: FontWeight.w400,
-                color: AppColors.textBlack,
+            child: Center(
+              child: Text(
+                order.status,
+                style: GoogleFonts.hind(
+                  fontSize: isWeb ? 16 : 12,
+                  fontWeight: FontWeight.w400,
+                  color: AppColors.textBlack,
+                ),
               ),
             ),
           ),
@@ -163,35 +145,31 @@ class ProductCard extends StatelessWidget {
 
   Widget _itemPrice(bool isWeb, {bool isDelivery = false}) {
     return Column(
+      crossAxisAlignment:
+          isDelivery ? CrossAxisAlignment.start : CrossAxisAlignment.end,
       children: [
         Text(
-          isDelivery ? 'Expected Delivery' : formatPrice(product.price),
+          isDelivery ? 'Expected Delivery' : formatPrice(order.price),
           style: GoogleFonts.hind(
             fontSize: isWeb ? 20 : 16,
             fontWeight: isDelivery ? FontWeight.w500 : FontWeight.w600,
             color: AppColors.textBlack,
           ),
         ),
-        const SizedBox(height: 20),
-        Align(
-          alignment:
-              isDelivery
-                  ? AlignmentDirectional.centerStart
-                  : AlignmentDirectional.centerEnd,
-          child: Text(
-            isDelivery ? '12 April - 14 April 2025' : 'Qty: 1',
-            style: GoogleFonts.hind(
-              fontSize: isWeb ? 16 : 12,
-              fontWeight: isDelivery ? FontWeight.w500 : FontWeight.w400,
-              color: AppColors.textBodyText,
-            ),
+        const SizedBox(height: 10),
+        Text(
+          isDelivery ? '12 April - 14 April 2025' : 'Qty: ${order.quantity}',
+          style: GoogleFonts.hind(
+            fontSize: isWeb ? 16 : 12,
+            fontWeight: isDelivery ? FontWeight.w500 : FontWeight.w400,
+            color: AppColors.textIconGrey,
           ),
         ),
       ],
     );
   }
 
-  Widget _customButton(bool isWeb) {
+  Widget _trackButton(bool isWeb) {
     return CustomButton(
       text: 'Track Order',
       fontSize: isWeb ? 16 : 12,
