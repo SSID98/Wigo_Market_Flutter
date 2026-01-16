@@ -10,6 +10,7 @@ import '../../../../../gen/assets.gen.dart';
 import '../../../models/cart_model.dart';
 import '../../../models/product_model.dart';
 import '../../../viewmodels/buyer_cart_viewmodel.dart';
+import '../../../viewmodels/saved_products_viewmodel.dart';
 import '../../widgets/icon_text_row.dart';
 
 class ProductInfoSection extends ConsumerStatefulWidget {
@@ -62,11 +63,10 @@ class _ProductInfoSectionState extends ConsumerState<ProductInfoSection> {
       fontWeight: FontWeight.w500,
       color: AppColors.textIconGrey.withValues(alpha: 0.7),
     );
+    final isSaved = ref
+        .watch(savedProductsProvider)
+        .any((item) => item.productName == widget.product.productName);
     final cartNotifier = ref.read(cartProvider.notifier);
-    // final selectedColorName = colorToNameMap[colors[selectedColor]] ?? '';
-    // final selectedSizeString = sizes[selectedSize];
-    // final uniqueProductId =
-    //     '${widget.product.productName}-$selectedSizeString-$selectedColorName';
 
     final isAlreadyInCart = ref.watch(
       isInCartProvider(widget.product.productName),
@@ -324,7 +324,7 @@ class _ProductInfoSectionState extends ConsumerState<ProductInfoSection> {
             ),
             if (isWeb) const SizedBox(width: 14),
             CustomButton(
-              text: 'Save for Later',
+              text: isSaved ? 'Already Saved' : 'Save for Later',
               fontSize: 16,
               fontWeight: FontWeight.w600,
               textColor: AppColors.textVidaLocaGreen,
@@ -334,7 +334,25 @@ class _ProductInfoSectionState extends ConsumerState<ProductInfoSection> {
               borderColor: AppColors.primaryDarkGreen,
               height: 50,
               width: isWeb ? 269 : 180,
-              onPressed: () {},
+              onPressed: () async {
+                final wasAdded = await ref
+                    .read(savedProductsProvider.notifier)
+                    .toggleFavorite(widget.product);
+                if (!context.mounted) return;
+                ScaffoldMessenger.of(context).hideCurrentSnackBar();
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    backgroundColor: AppColors.primaryDarkGreen,
+                    duration: const Duration(seconds: 2),
+                    content: Text(
+                      wasAdded
+                          ? "Product Successfully Saved"
+                          : "Product Was Removed Successfully",
+                      style: GoogleFonts.hind(color: AppColors.textWhite),
+                    ),
+                  ),
+                );
+              },
             ),
           ],
         ),

@@ -123,11 +123,7 @@ class SearchResultsView extends ConsumerWidget {
           ),
           itemBuilder: (context, index) {
             final product = results[index];
-            return ProductCard(
-              onPressed: () {},
-              onPress: () {},
-              product: product,
-            );
+            return ProductCard(product: product);
           },
         ),
       ],

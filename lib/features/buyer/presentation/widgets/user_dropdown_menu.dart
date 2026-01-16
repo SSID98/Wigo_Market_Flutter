@@ -36,7 +36,13 @@ class UserDropDownMenu extends ConsumerWidget {
       {
         'icon': AppAssets.icons.greenHeart.svg(height: iconHeight),
         'label': 'Saved',
-        'onPressed': () {},
+        'onPressed': () async {
+          showLoadingDialog(context);
+          await Future.delayed(const Duration(seconds: 1));
+          if (!context.mounted) return;
+          Navigator.of(context, rootNavigator: true).pop();
+          context.push('/buyer/SavedItems');
+        },
       },
       {
         'icon': AppAssets.icons.buyerLogout.svg(height: iconHeight),

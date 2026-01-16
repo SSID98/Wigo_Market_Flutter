@@ -28,6 +28,7 @@ class AppColors {
   static const Color shadowColor = Color(0xffB0B0D0);
   static const Color borderColor = Color(0xffE4E4E4);
   static const Color borderColor1 = Color(0xffD1D1D6);
+  static const Color accentLightGold = Color(0xffD9C119);
 
   // Background Colors
   static const Color backgroundWhitish = Color(0xFFF5F5F5);

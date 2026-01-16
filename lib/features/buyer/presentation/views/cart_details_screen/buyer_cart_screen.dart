@@ -8,6 +8,7 @@ import '../../../../../core/constants/url.dart';
 import '../../../../../core/utils/helper_methods.dart';
 import '../../../models/cart_model.dart';
 import '../../../viewmodels/buyer_cart_viewmodel.dart';
+import '../saved_product_view.dart';
 import 'cart_item_card.dart';
 import 'order_summary_card.dart';
 
@@ -31,19 +32,24 @@ class CartPage extends ConsumerWidget {
         Navigator.of(context).pop(result);
       },
       child: SingleChildScrollView(
-        padding: const EdgeInsets.all(20.0),
         child:
             isWeb
-                ? Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
+                ? Column(
                   children: [
-                    Expanded(
-                      flex: 3,
-                      child: _buildCartItemList(cartItems, isWeb),
+                    Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Expanded(
+                          flex: 3,
+                          child: _buildCartItemList(cartItems, isWeb),
+                        ),
+                        const SizedBox(width: 30),
+                        if (cartItems.isNotEmpty)
+                          Expanded(flex: 2, child: OrderSummaryCard()),
+                      ],
                     ),
-                    const SizedBox(width: 30),
-                    if (cartItems.isNotEmpty)
-                      Expanded(flex: 2, child: OrderSummaryCard()),
+                    const SizedBox(height: 50),
+                    SavedProductsView(isPreview: true),
                   ],
                 )
                 : Column(
@@ -51,6 +57,8 @@ class CartPage extends ConsumerWidget {
                     _buildCartItemList(cartItems, isWeb),
                     const SizedBox(height: 30),
                     if (cartItems.isNotEmpty) OrderSummaryCard(),
+                    const SizedBox(height: 100),
+                    SavedProductsView(isPreview: true),
                   ],
                 ),
       ),

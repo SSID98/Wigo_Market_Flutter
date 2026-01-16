@@ -45,7 +45,18 @@ class CartDatabase {
         quantity INTEGER,
         colorName TEXT,
         size TEXT,
-        status TEXT,
+        status TEXT
+     )
+    ''');
+    await db.execute('''
+    CREATE TABLE wishlist (
+        productName TEXT PRIMARY KEY,
+        price REAL,
+        imageUrl TEXT,
+        slashedAmount REAL,
+        rating REAL,
+        reviews INTEGER,
+        stock INTEGER
      )
     ''');
   }
@@ -106,6 +117,29 @@ class CartDatabase {
           ),
         )
         .toList();
+  }
+
+  Future<void> insertSavedProduct(Map<String, dynamic> productMap) async {
+    final db = await instance.database;
+    await db.insert(
+      'wishlist',
+      productMap,
+      conflictAlgorithm: ConflictAlgorithm.replace,
+    );
+  }
+
+  Future<void> deleteSavedProduct(String productName) async {
+    final db = await instance.database;
+    await db.delete(
+      'wishlist',
+      where: 'productName = ?',
+      whereArgs: [productName],
+    );
+  }
+
+  Future<List<Map<String, dynamic>>> getWishlist() async {
+    final db = await instance.database;
+    return await db.query('wishlist');
   }
 
   // Future<void> updateOrderRating(String productName, int rating) async {

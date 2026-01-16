@@ -3,6 +3,7 @@ import 'package:wigo_flutter/features/buyer/presentation/views/buyer_product_det
 import 'package:wigo_flutter/features/buyer/presentation/views/buyer_product_details_screens/product_info_section.dart';
 import 'package:wigo_flutter/features/buyer/presentation/views/buyer_product_details_screens/product_review_section.dart';
 import 'package:wigo_flutter/features/buyer/presentation/views/buyer_product_details_screens/product_specfics_section.dart';
+import 'package:wigo_flutter/features/buyer/presentation/views/saved_product_view.dart';
 
 import '../../../../../core/utils/helper_methods.dart';
 import '../../../models/product_model.dart';
@@ -63,6 +64,8 @@ class ProductDetailsPage extends StatelessWidget {
           CommentsAndReviewSection(),
           const SizedBox(height: 20),
           ProductReviewSection(),
+          const SizedBox(height: 50),
+          SavedProductsView(isPreview: true),
           const SizedBox(height: 80),
           SelfDeliveryPromoCard(),
         ],
