@@ -10,6 +10,7 @@ class OrderItemModel {
   final String status;
   final String size;
   final String colorName;
+  final int rating;
 
   OrderItemModel({
     required this.productName,
@@ -19,6 +20,7 @@ class OrderItemModel {
     required this.colorName,
     required this.size,
     this.status = 'On Delivery',
+    this.rating = 0,
   });
 
   Map<String, dynamic> toMap() {
@@ -30,7 +32,30 @@ class OrderItemModel {
       'colorName': colorName,
       'size': size,
       'status': status,
+      'rating': rating,
     };
+  }
+
+  OrderItemModel copyWith({
+    String? productName,
+    double? price,
+    String? imageUrl,
+    int? quantity,
+    String? status,
+    String? size,
+    String? colorName,
+    int? rating,
+  }) {
+    return OrderItemModel(
+      productName: productName ?? this.productName,
+      price: price ?? this.price,
+      imageUrl: imageUrl ?? this.imageUrl,
+      quantity: quantity ?? this.quantity,
+      status: status ?? this.status,
+      size: size ?? this.size,
+      colorName: colorName ?? this.colorName,
+      rating: rating ?? this.rating,
+    );
   }
 }
 
@@ -46,21 +71,26 @@ class OrdersNotifier extends StateNotifier<List<OrderItemModel>> {
 
     state = {...state, ...savedOrders}.toList();
 
-    // // Sort by date to keep newest at the top
-    // state.sort((a, b) => b.orderDate.compareTo(a.orderDate));
-
     isInitialized = true;
   }
-
-  // Future<void> _loadOrders() async {
-  //   state = await CartDatabase.instance.getAllOrders();
-  // }
 
   void addOrders(List<OrderItemModel> newOrders) async {
     state = [...newOrders, ...state];
     for (var order in newOrders) {
       await CartDatabase.instance.insertOrder(order);
     }
+  }
+
+  Future<void> updateRating(String productName, int newRating) async {
+    state =
+        state.map((order) {
+          if (order.productName == productName) {
+            return order.copyWith(rating: newRating);
+          }
+          return order;
+        }).toList();
+
+    // await CartDatabase.instance.updateOrderRating(productName, newRating);
   }
 }
 

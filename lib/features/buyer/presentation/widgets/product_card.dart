@@ -85,7 +85,7 @@ class ProductCard extends StatelessWidget {
                             ),
                             const SizedBox(width: 5),
                             GestureDetector(
-                              onTap: onPress,
+                              onTap: () {},
                               child: Icon(
                                 Icons.favorite_border,
                                 size: 18,

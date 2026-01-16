@@ -70,6 +70,7 @@ class OrdersScreen extends ConsumerWidget {
                     _iconTextRow(isWeb, text: "Your Orders", isDelivery: true),
                     ListView.builder(
                       shrinkWrap: true,
+                      physics: const NeverScrollableScrollPhysics(),
                       padding: const EdgeInsets.all(16),
                       itemCount: orders.length,
                       itemBuilder: (context, index) {

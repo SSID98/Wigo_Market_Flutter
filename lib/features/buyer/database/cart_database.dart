@@ -45,7 +45,7 @@ class CartDatabase {
         quantity INTEGER,
         colorName TEXT,
         size TEXT,
-        status TEXT
+        status TEXT,
      )
     ''');
   }
@@ -100,8 +100,6 @@ class CartDatabase {
             imageUrl: json['imageUrl'] as String,
             price: (json['price'] as num).toDouble(),
             quantity: (json['quantity'] as num).toInt(),
-            // price: json['price'] as double,
-            // quantity: json['quantity'] as int,
             colorName: json['colorName'] as String,
             size: json['size'] as String,
             status: json['status'] as String,
@@ -109,4 +107,14 @@ class CartDatabase {
         )
         .toList();
   }
+
+  // Future<void> updateOrderRating(String productName, int rating) async {
+  //   final db = await instance.database;
+  //   await db.update(
+  //     'orders',
+  //     {'rating': rating},
+  //     where: 'productName = ?',
+  //     whereArgs: [productName],
+  //   );
+  // }
 }
