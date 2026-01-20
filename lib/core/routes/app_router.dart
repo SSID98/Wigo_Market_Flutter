@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:wigo_flutter/core/auth/auth_state_notifier.dart';
+import 'package:wigo_flutter/features/buyer/presentation/views/buyer_account_screen.dart';
 import 'package:wigo_flutter/features/buyer/presentation/views/cart_details_screen/buyer_cart_screen.dart';
 import 'package:wigo_flutter/features/buyer/presentation/views/cart_details_screen/customer_info_screen.dart';
 import 'package:wigo_flutter/features/buyer/presentation/views/cart_details_screen/delivery_details_screen.dart';
@@ -11,6 +12,7 @@ import 'package:wigo_flutter/features/buyer/presentation/views/orders_screens/or
 import 'package:wigo_flutter/features/buyer/presentation/views/orders_screens/orders_screen.dart';
 import 'package:wigo_flutter/features/buyer/presentation/views/privacy_policy_screen.dart';
 import 'package:wigo_flutter/features/buyer/presentation/views/refund_policy_screen.dart';
+import 'package:wigo_flutter/features/buyer/presentation/views/saved_product_view.dart';
 import 'package:wigo_flutter/features/buyer/presentation/views/search_results_view.dart';
 import 'package:wigo_flutter/shared/screens/support_screen.dart';
 
@@ -279,8 +281,16 @@ final routerProvider = Provider<GoRouter>((ref) {
             builder: (context, state) => PrivacyPolicyScreen(),
           ),
           GoRoute(
+            path: '/buyer/SavedItems',
+            builder: (context, state) => SavedProductsView(),
+          ),
+          GoRoute(
             path: '/buyer/support',
             builder: (context, state) => SupportScreen(isBuyer: true),
+          ),
+          GoRoute(
+            path: '/buyer/Account',
+            builder: (context, state) => BuyerAccountScreen(),
           ),
         ],
       ),

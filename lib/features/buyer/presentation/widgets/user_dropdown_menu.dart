@@ -10,7 +10,9 @@ import '../../../../core/utils/helper_methods.dart';
 import '../../../../gen/assets.gen.dart';
 
 class UserDropDownMenu extends ConsumerWidget {
-  const UserDropDownMenu({super.key});
+  final VoidCallback? onAction;
+
+  const UserDropDownMenu({super.key, this.onAction});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -20,7 +22,14 @@ class UserDropDownMenu extends ConsumerWidget {
       {
         'icon': AppAssets.icons.userCircle.svg(height: iconHeight),
         'label': 'My account',
-        'onPressed': () {},
+        'onPressed': () async {
+          showLoadingDialog(context);
+          await Future.delayed(const Duration(seconds: 1));
+          if (!context.mounted) return;
+          Navigator.of(context, rootNavigator: true).pop();
+          context.push('/buyer/Account');
+          onAction?.call();
+        },
       },
       {
         'icon': AppAssets.icons.cart.svg(height: iconHeight),
@@ -31,6 +40,7 @@ class UserDropDownMenu extends ConsumerWidget {
           if (!context.mounted) return;
           Navigator.of(context, rootNavigator: true).pop();
           context.push('/buyer/Orders');
+          onAction?.call();
         },
       },
       {
@@ -42,6 +52,7 @@ class UserDropDownMenu extends ConsumerWidget {
           if (!context.mounted) return;
           Navigator.of(context, rootNavigator: true).pop();
           context.push('/buyer/SavedItems');
+          onAction?.call();
         },
       },
       {

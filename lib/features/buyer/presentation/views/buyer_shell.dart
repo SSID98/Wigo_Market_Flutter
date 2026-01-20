@@ -95,7 +95,7 @@ class _BuyerShellState extends ConsumerState<BuyerShell> {
                           },
                           showCategories: _showingCategories,
                         )
-                        : UserDropDownMenu();
+                        : UserDropDownMenu(onAction: _closeDropdownMenu);
                   },
                 ),
               ),
