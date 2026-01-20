@@ -5,8 +5,8 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:wigo_flutter/features/rider/presentation/views/rider_settings_screens/profile_account_screen.dart';
 import 'package:wigo_flutter/features/rider/presentation/views/rider_settings_screens/rider_notification_screen.dart';
 import 'package:wigo_flutter/features/rider/presentation/views/rider_settings_screens/rider_privacy_security_screen.dart';
-import 'package:wigo_flutter/features/rider/presentation/views/rider_settings_screens/rider_support_screen.dart';
 import 'package:wigo_flutter/features/rider/presentation/views/rider_settings_screens/vehicle_documents_screen.dart';
+import 'package:wigo_flutter/shared/screens/support_screen.dart';
 
 import '../../../../../core/constants/app_colors.dart';
 import '../../../../../gen/assets.gen.dart';

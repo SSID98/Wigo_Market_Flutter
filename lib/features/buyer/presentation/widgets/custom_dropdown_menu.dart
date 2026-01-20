@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:wigo_flutter/core/constants/app_colors.dart';
 
+import '../../../../core/utils/helper_methods.dart';
 import 'categories_dropdown_menu.dart';
 
 class CustomDropdownMenu extends StatelessWidget {
@@ -57,7 +59,16 @@ class CustomDropdownMenu extends StatelessWidget {
             ),
 
             _menuItem('About', onTap: () {}),
-            _menuItem('Support', onTap: () {}),
+            _menuItem(
+              'Support',
+              onTap: () async {
+                showLoadingDialog(context);
+                await Future.delayed(const Duration(seconds: 1));
+                if (!context.mounted) return;
+                Navigator.of(context, rootNavigator: true).pop();
+                context.push('/buyer/support');
+              },
+            ),
             _menuItem('Become a Seller', onTap: () {}),
             _menuItem('For Riders', onTap: () {}),
           ],

@@ -3,105 +3,146 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:wigo_flutter/shared/widgets/contact_text_field.dart';
 import 'package:wigo_flutter/shared/widgets/custom_button.dart';
 
-import '../../../../../core/constants/app_colors.dart';
-import '../../../../../gen/assets.gen.dart';
-import '../../../../../shared/widgets/custom_text_field.dart';
+import '../../core/constants/app_colors.dart';
+import '../../core/utils/helper_methods.dart';
+import '../../gen/assets.gen.dart';
+import '../widgets/custom_text_field.dart';
 
 class SupportScreen extends StatelessWidget {
-  const SupportScreen({super.key});
+  final bool isBuyer;
+
+  const SupportScreen({super.key, this.isBuyer = false});
 
   @override
   Widget build(BuildContext context) {
     final isWeb = MediaQuery.of(context).size.width > 800;
+    bool isHandlingBack = false;
+    return isWeb
+        ? Scaffold(
+          backgroundColor: AppColors.backgroundLight,
 
-    final contactSupportSection = _ContactSupportSection();
-    final submitFormSection = const _SubmitFormSection();
-
-    return Scaffold(
-      backgroundColor:
-          isWeb ? AppColors.backgroundLight : AppColors.backgroundWhite,
-      body: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 20.0),
-        child:
-            isWeb
-                ? Expanded(
-                  child: SingleChildScrollView(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Card(
-                          margin: EdgeInsets.only(bottom: 20, top: 20),
-                          shadowColor: Colors.white70.withValues(alpha: 0.06),
-                          color: AppColors.backgroundWhite,
-                          elevation: 1,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(16.0),
-                          ),
-                          child: Padding(
-                            padding: const EdgeInsets.all(16),
-                            child: contactSupportSection,
-                          ),
-                        ),
-                        const SizedBox(width: 16),
-                        Card(
-                          margin: EdgeInsets.only(bottom: 150, top: 20),
-                          shadowColor: Colors.white70.withValues(alpha: 0.06),
-                          color: AppColors.backgroundWhite,
-                          elevation: 1,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(16.0),
-                          ),
-                          child: Padding(
-                            padding: const EdgeInsets.all(16),
-                            child: submitFormSection,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                )
-                : Column(
+          body: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 20.0),
+            child: Expanded(
+              child: SingleChildScrollView(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Padding(
-                      padding: const EdgeInsets.only(left: 5, top: 75),
-                      child: Row(
-                        children: [
-                          GestureDetector(
-                            child: AppAssets.icons.arrowLeft.svg(),
-                            onTap: () {
-                              Navigator.pop(context);
-                            },
-                          ),
-                          const SizedBox(width: 20),
-                          Text(
-                            "Back",
-                            style: GoogleFonts.hind(
-                              fontSize: 18,
-                              fontWeight: FontWeight.w400,
-                              color: AppColors.textBlackGrey,
-                            ),
-                          ),
-                        ],
+                    Card(
+                      margin: EdgeInsets.only(bottom: 20, top: 20),
+                      shadowColor: Colors.white70.withValues(alpha: 0.06),
+                      color: AppColors.backgroundWhite,
+                      elevation: 1,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(16.0),
+                      ),
+                      child: Padding(
+                        padding: const EdgeInsets.all(16),
+                        child: _ContactSupportSection(),
                       ),
                     ),
-                    const Divider(),
-                    Expanded(
-                      child: SingleChildScrollView(
-                        padding: EdgeInsets.symmetric(horizontal: 10),
-                        child: Column(
-                          children: [
-                            const SizedBox(height: 10),
-                            contactSupportSection,
-                            const SizedBox(height: 35),
-                            submitFormSection,
-                            const SizedBox(height: 15),
-                          ],
-                        ),
+                    const SizedBox(width: 16),
+                    Card(
+                      margin: EdgeInsets.only(bottom: 150, top: 20),
+                      shadowColor: Colors.white70.withValues(alpha: 0.06),
+                      color: AppColors.backgroundWhite,
+                      elevation: 1,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(16.0),
+                      ),
+                      child: Padding(
+                        padding: const EdgeInsets.all(16),
+                        child: _SubmitFormSection(),
                       ),
                     ),
                   ],
                 ),
-      ),
+              ),
+            ),
+          ),
+        )
+        : isBuyer
+        ? PopScope(
+          canPop: false,
+          onPopInvokedWithResult: (didPop, result) async {
+            if (isHandlingBack || didPop) return;
+            isHandlingBack = true;
+            showLoadingDialog(context);
+            await Future.delayed(const Duration(seconds: 1));
+            if (!context.mounted) return;
+            Navigator.of(context, rootNavigator: true).pop();
+            Navigator.of(context).pop(result);
+          },
+          child: _mobileBuild(context, isBuyer),
+        )
+        : Scaffold(
+          backgroundColor: AppColors.backgroundWhite,
+          body: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 20.0),
+            child: _mobileBuild(context, isBuyer),
+          ),
+        );
+  }
+
+  Widget _mobileBuild(BuildContext context, bool isBuyer) {
+    return Column(
+      children: [
+        Padding(
+          padding: EdgeInsets.only(left: 5, top: isBuyer ? 0 : 75),
+          child: Row(
+            children: [
+              GestureDetector(
+                child: AppAssets.icons.arrowLeft.svg(),
+                onTap: () async {
+                  showLoadingDialog(context);
+                  await Future.delayed(const Duration(seconds: 1));
+                  if (!context.mounted) return;
+                  Navigator.of(context, rootNavigator: true).pop();
+                  Navigator.pop(context);
+                },
+              ),
+              const SizedBox(width: 20),
+              Text(
+                "Back",
+                style: GoogleFonts.hind(
+                  fontSize: 18,
+                  fontWeight: FontWeight.w400,
+                  color: AppColors.textBlackGrey,
+                ),
+              ),
+            ],
+          ),
+        ),
+        const Divider(),
+        if (!isBuyer)
+          Expanded(
+            child: SingleChildScrollView(
+              padding: EdgeInsets.symmetric(horizontal: 10),
+              child: Column(
+                children: [
+                  const SizedBox(height: 10),
+                  _ContactSupportSection(),
+                  const SizedBox(height: 35),
+                  _SubmitFormSection(),
+                  const SizedBox(height: 15),
+                ],
+              ),
+            ),
+          ),
+        if (isBuyer)
+          SingleChildScrollView(
+            padding: EdgeInsets.symmetric(horizontal: 10),
+            child: Column(
+              children: [
+                const SizedBox(height: 10),
+                _ContactSupportSection(),
+                const SizedBox(height: 35),
+                _SubmitFormSection(),
+                const SizedBox(height: 15),
+              ],
+            ),
+          ),
+      ],
     );
   }
 }

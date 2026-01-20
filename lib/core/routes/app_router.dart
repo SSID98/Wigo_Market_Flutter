@@ -6,10 +6,13 @@ import 'package:wigo_flutter/features/buyer/presentation/views/cart_details_scre
 import 'package:wigo_flutter/features/buyer/presentation/views/cart_details_screen/customer_info_screen.dart';
 import 'package:wigo_flutter/features/buyer/presentation/views/cart_details_screen/delivery_details_screen.dart';
 import 'package:wigo_flutter/features/buyer/presentation/views/cart_details_screen/order_confirmation_screen.dart';
+import 'package:wigo_flutter/features/buyer/presentation/views/delivery_policy_screen.dart';
 import 'package:wigo_flutter/features/buyer/presentation/views/orders_screens/order_tracking_screen.dart';
 import 'package:wigo_flutter/features/buyer/presentation/views/orders_screens/orders_screen.dart';
-import 'package:wigo_flutter/features/buyer/presentation/views/saved_product_view.dart';
+import 'package:wigo_flutter/features/buyer/presentation/views/privacy_policy_screen.dart';
+import 'package:wigo_flutter/features/buyer/presentation/views/refund_policy_screen.dart';
 import 'package:wigo_flutter/features/buyer/presentation/views/search_results_view.dart';
+import 'package:wigo_flutter/shared/screens/support_screen.dart';
 
 import '../../features/buyer/models/product_model.dart';
 import '../../features/buyer/presentation/views/buyer_homepage_screens/buyer_home_screen.dart';
@@ -264,8 +267,20 @@ final routerProvider = Provider<GoRouter>((ref) {
             builder: (context, state) => OrdersScreen(),
           ),
           GoRoute(
-            path: '/buyer/SavedItems',
-            builder: (context, state) => SavedProductsView(),
+            path: '/buyer/refundPolicy',
+            builder: (context, state) => RefundPolicyScreen(),
+          ),
+          GoRoute(
+            path: '/buyer/deliveryPolicy',
+            builder: (context, state) => DeliveryPolicyScreen(),
+          ),
+          GoRoute(
+            path: '/buyer/privacyPolicy',
+            builder: (context, state) => PrivacyPolicyScreen(),
+          ),
+          GoRoute(
+            path: '/buyer/support',
+            builder: (context, state) => SupportScreen(isBuyer: true),
           ),
         ],
       ),

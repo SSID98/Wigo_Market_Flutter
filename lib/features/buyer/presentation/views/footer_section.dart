@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import '../../../../core/constants/app_colors.dart';
 import '../../../../core/constants/url.dart';
+import '../../../../core/utils/helper_methods.dart';
 import '../../../../gen/assets.gen.dart';
 
 class FooterSection extends StatelessWidget {
@@ -41,11 +43,38 @@ class FooterSection extends StatelessWidget {
         const SizedBox(height: 10),
         _buildTextProperties('Orders', isWeb),
         const SizedBox(height: 30),
-        _buildTextProperties('Privacy Policy', isWeb),
+        GestureDetector(
+          onTap: () async {
+            showLoadingDialog(context);
+            await Future.delayed(const Duration(seconds: 1));
+            if (!context.mounted) return;
+            Navigator.of(context, rootNavigator: true).pop();
+            context.push('/buyer/privacyPolicy');
+          },
+          child: _buildTextProperties('Privacy Policy', isWeb),
+        ),
         const SizedBox(height: 10),
-        _buildTextProperties('Cookie Policy', isWeb),
+        GestureDetector(
+          onTap: () async {
+            showLoadingDialog(context);
+            await Future.delayed(const Duration(seconds: 1));
+            if (!context.mounted) return;
+            Navigator.of(context, rootNavigator: true).pop();
+            context.push('/buyer/deliveryPolicy');
+          },
+          child: _buildTextProperties('Cookie Policy', isWeb),
+        ),
         const SizedBox(height: 10),
-        _buildTextProperties('Refund Policy', isWeb),
+        GestureDetector(
+          onTap: () async {
+            showLoadingDialog(context);
+            await Future.delayed(const Duration(seconds: 1));
+            if (!context.mounted) return;
+            Navigator.of(context, rootNavigator: true).pop();
+            context.push('/buyer/refundPolicy');
+          },
+          child: _buildTextProperties('Refund Policy', isWeb),
+        ),
         const SizedBox(height: 30),
         _buildTextProperties('About Us', isWeb),
         const SizedBox(height: 10),
