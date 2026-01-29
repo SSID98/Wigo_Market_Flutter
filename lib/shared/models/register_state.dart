@@ -16,7 +16,10 @@ class RegisterState {
   final List<String> filteredCities;
   final bool isLoading;
   final String? errorMessage;
+  final String? emailError;
+  final String? passwordError;
   final bool success;
+  final bool hasSubmitted;
 
   const RegisterState({
     this.fullName = '',
@@ -34,7 +37,10 @@ class RegisterState {
     this.role = UserRole.buyer,
     this.isLoading = false,
     this.errorMessage,
+    this.emailError,
+    this.passwordError,
     this.success = false,
+    this.hasSubmitted = false,
   });
 
   RegisterState copyWith({
@@ -55,6 +61,9 @@ class RegisterState {
     bool? success,
     List<String>? filteredCities,
     bool clearCity = false,
+    String? emailError,
+    String? passwordError,
+    bool? hasSubmitted,
   }) {
     return RegisterState(
       fullName: fullName ?? this.fullName,
@@ -71,36 +80,52 @@ class RegisterState {
       role: role ?? this.role,
       isLoading: isLoading ?? this.isLoading,
       errorMessage: errorMessage,
+      emailError: emailError,
+      passwordError: passwordError,
       success: success ?? this.success,
       filteredCities: filteredCities ?? this.filteredCities,
+      hasSubmitted: hasSubmitted ?? this.hasSubmitted,
     );
   }
+
+  bool get hasValidationErrors => emailError != null || passwordError != null;
 
   bool get isBuyer => role == UserRole.buyer;
 
   bool get isRider => role == UserRole.rider;
 
-  // minimal required check based on role
   bool get canSubmit {
+    if (hasValidationErrors) return false;
+
     if (isRider) {
       return fullName.isNotEmpty &&
           email.isNotEmpty &&
-          password.length >= 8 &&
+          // password.length >= 8 &&
           mobile.isNotEmpty &&
           residentialAddress.isNotEmpty &&
           residentialState.isNotEmpty &&
           city.isNotEmpty &&
           (nameOfNok?.isNotEmpty ?? false) &&
           (nextOfKinPhone?.isNotEmpty ?? false) &&
-          (modeOfTransport?.isNotEmpty ?? false) &&
-          (gender?.isNotEmpty ?? false);
-    } else {
+          (modeOfTransport?.toLowerCase().trim().isNotEmpty ?? false) &&
+          (gender?.toLowerCase().trim().isNotEmpty ?? false);
+    } else if (isBuyer) {
       // buyer
       return fullName.isNotEmpty &&
           email.isNotEmpty &&
-          password.length >= 8 &&
+          // password.length >= 8 &&
           mobile.isNotEmpty &&
           residentialAddress.isNotEmpty &&
+          residentialState.isNotEmpty &&
+          city.isNotEmpty;
+    } else {
+      //seller
+      return fullName.isNotEmpty &&
+          email.isNotEmpty &&
+          // password.length >= 8 &&
+          mobile.isNotEmpty &&
+          residentialAddress.isNotEmpty &&
+          (gender?.isNotEmpty ?? false) &&
           residentialState.isNotEmpty &&
           city.isNotEmpty;
     }

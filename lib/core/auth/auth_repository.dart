@@ -30,6 +30,6 @@ class AuthRepository {
 }
 
 final authRepositoryProvider = Provider<AuthRepository>((ref) {
-  final baseUrl = const String.fromEnvironment("BASE_URL"); // OR dotenv
+  final baseUrl = const String.fromEnvironment("BASE_URL");
   return AuthRepository(baseUrl);
 });

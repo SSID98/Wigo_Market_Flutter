@@ -1,4 +1,3 @@
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/svg.dart';
@@ -22,13 +21,25 @@ class EmailVerificationScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final String displayEmail = kDebugMode ? 'chu******osy@gmail.com' : email;
+    ref.listen<EmailVerificationState>(emailVerificationProvider, (
+      previous,
+      next,
+    ) {
+      if (next.errorMessage != null) {
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text(next.errorMessage!)));
+      }
+    });
+    final String displayEmail =
+        email.isEmpty ? 'chu******osy@gmail.com' : email;
     final String maskedEmail = MaskedEmail.maskEmail(displayEmail);
     final screenSize = MediaQuery.of(context).size;
     final isWeb = MediaQuery.of(context).size.width > 600;
     final role = ref.watch(userRoleProvider);
     final notifier = ref.read(emailVerificationProvider.notifier);
     final isBuyer = role == UserRole.buyer;
+    final verificationState = ref.watch(emailVerificationProvider);
     return isWeb
         ? _buildWebLayout(screenSize, maskedEmail)
         : _buildMobileLayout(
@@ -38,6 +49,7 @@ class EmailVerificationScreen extends ConsumerWidget {
           isBuyer,
           notifier,
           ref,
+          verificationState,
         );
   }
 
@@ -48,6 +60,7 @@ class EmailVerificationScreen extends ConsumerWidget {
     bool isBuyer,
     EmailVerificationViewModel notifier,
     WidgetRef ref,
+    EmailVerificationState state,
   ) {
     return Scaffold(
       backgroundColor: AppColors.backgroundWhite,
@@ -59,67 +72,77 @@ class EmailVerificationScreen extends ConsumerWidget {
             color: AppColors.backGroundOverlay,
             colorBlendMode: BlendMode.overlay,
           ),
-          Padding(
-            padding: const EdgeInsets.only(top: 105.0),
-            child: Align(
-              alignment: Alignment.topCenter,
-              child: Container(
-                width: screenSize.width * 0.95,
-                constraints: BoxConstraints(maxWidth: 400),
-                decoration: BoxDecoration(
-                  color: AppColors.backgroundWhite,
-                  borderRadius: BorderRadius.circular(16.0),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.black.withValues(alpha: 0.2),
-                      spreadRadius: 2,
-                      blurRadius: 10,
-                      offset: const Offset(0, 3),
-                    ),
-                  ],
-                ),
-                child: Padding(
-                  padding: const EdgeInsets.only(
-                    top: 30.0,
-                    left: 20,
-                    right: 20,
-                  ),
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      SvgPicture.asset(
-                        AppAssets.icons.logo.path,
-                        height: 49,
-                        width: 143.86,
+          SingleChildScrollView(
+            child: Padding(
+              padding: const EdgeInsets.only(top: 105.0),
+              child: Align(
+                alignment: Alignment.topCenter,
+                child: Container(
+                  width: screenSize.width * 0.95,
+                  constraints: BoxConstraints(maxWidth: 400),
+                  decoration: BoxDecoration(
+                    color: AppColors.backgroundWhite,
+                    borderRadius: BorderRadius.circular(16.0),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withValues(alpha: 0.2),
+                        spreadRadius: 2,
+                        blurRadius: 10,
+                        offset: const Offset(0, 3),
                       ),
-                      VerificationWidgetBuilder.buildMobileBody(
-                        email: maskedEmail,
-                        onChanged:
-                            (value) =>
-                                ref.read(otpCodeProvider.notifier).state =
-                                    value,
-                        onPressed: () async {
-                          final code = ref.read(otpCodeProvider);
-                          await notifier.verifyCode(email: email, code: code);
-                          if (ref.read(emailVerificationProvider).isVerified) {
-                            if (isBuyer) {
-                              if (!context.mounted) return;
-                              ref
-                                  .read(localUserControllerProvider)
-                                  .saveStage(OnboardingStage.success);
-                              context.go('/successful');
-                            } else {
-                              if (!context.mounted) return;
-                              ref
-                                  .read(localUserControllerProvider)
-                                  .saveStage(OnboardingStage.ninVerification);
-                              context.go('/rider/verification');
-                            }
-                          }
-                        },
-                      ),
-                      const SizedBox(height: 35.0),
                     ],
+                  ),
+                  child: Padding(
+                    padding: const EdgeInsets.only(
+                      top: 30.0,
+                      left: 20,
+                      right: 20,
+                    ),
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        SvgPicture.asset(
+                          AppAssets.icons.logo.path,
+                          height: 49,
+                          width: 143.86,
+                        ),
+                        VerificationWidgetBuilder.buildMobileBody(
+                          hasError: state.otpError != null,
+                          errorMessage: state.otpError,
+                          email: maskedEmail,
+                          onChanged:
+                              (value) =>
+                                  ref.read(otpCodeProvider.notifier).state =
+                                      value,
+                          onPressed: () async {
+                            final code = ref.read(otpCodeProvider);
+                            await notifier.verifyCode(
+                              email: email,
+                              code: code,
+                              context: context,
+                            );
+                            if (ref
+                                .read(emailVerificationProvider)
+                                .isVerified) {
+                              if (isBuyer) {
+                                if (!context.mounted) return;
+                                ref
+                                    .read(localUserControllerProvider)
+                                    .saveStage(OnboardingStage.success);
+                                context.go('/successful');
+                              } else {
+                                if (!context.mounted) return;
+                                ref
+                                    .read(localUserControllerProvider)
+                                    .saveStage(OnboardingStage.ninVerification);
+                                context.go('/rider/verification');
+                              }
+                            }
+                          },
+                        ),
+                        const SizedBox(height: 35.0),
+                      ],
+                    ),
                   ),
                 ),
               ),

@@ -42,7 +42,7 @@ final routerProvider = Provider<GoRouter>((ref) {
   final authState = ref.watch(authStateProvider);
   final local = ref.watch(localUserControllerProvider);
   return GoRouter(
-    initialLocation: '/buyerHomeScreen',
+    initialLocation: '/',
     redirect: (context, state) {
       if (kDevMode) return null;
 
@@ -175,8 +175,28 @@ final routerProvider = Provider<GoRouter>((ref) {
         builder: (context, state) => const AccountCreationScreen(),
       ),
       GoRoute(
+        path: '/buyer/trackOrder',
+        builder: (context, state) {
+          final args = state.extra as Map<String, dynamic>?;
+
+          if (args == null) {
+            return const Center(child: Text('Product not found.'));
+          }
+
+          return OrdersTrackingScreen(productName: args['productName']);
+        },
+      ),
+      GoRoute(
         path: '/verification',
-        builder: (context, state) => const EmailVerificationScreen(email: ''),
+        builder: (context, state) {
+          final args = state.extra as Map<String, dynamic>?;
+
+          if (args == null) {
+            return const Center(child: Text('Email not found.'));
+          }
+
+          return EmailVerificationScreen(email: args['email']);
+        },
       ),
       GoRoute(path: '/login', builder: (context, state) => const LoginScreen()),
       GoRoute(

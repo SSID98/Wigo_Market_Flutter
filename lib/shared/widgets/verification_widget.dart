@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/gestures.dart';
+import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import '../../core/constants/app_colors.dart';
@@ -22,6 +23,8 @@ class VerificationWidgetBuilder {
     bottomPadding,
     horizontalPadding,
     double? buttonTextFontSize,
+    final String? errorMessage,
+    bool hasError = false,
     required double footerTextFontSize,
     String? titleText,
     bodyText,
@@ -88,6 +91,11 @@ class VerificationWidgetBuilder {
                 hintTextColor: AppColors.textIconGrey,
                 labelFontWeight: labelTextFontWeight,
                 onChanged: onChanged,
+                hasError: hasError,
+                errorMessage: errorMessage,
+                inputFormatters: <TextInputFormatter>[
+                  LengthLimitingTextInputFormatter(6),
+                ],
               ),
             ),
           ],
@@ -148,6 +156,8 @@ class VerificationWidgetBuilder {
     buttonTextFontSize,
     FontWeight? labelTextFontWeight,
     showFooter = true,
+    hasError = false,
+    String? errorMessage,
     void Function()? onPressed,
   }) => _buildBody(
     email: email,
@@ -176,6 +186,8 @@ class VerificationWidgetBuilder {
     horizontalPadding: 0.0,
     onPressed: onPressed,
     onChanged: onChanged,
+    hasError: hasError,
+    errorMessage: errorMessage,
   );
 
   static Widget buildWebBody({
@@ -194,6 +206,8 @@ class VerificationWidgetBuilder {
     showFooter = true,
     void Function()? onPressed,
     void Function(String)? onChanged,
+    hasError = false,
+    String? errorMessage,
   }) => _buildBody(
     email: email,
     titleText: titleText,
@@ -221,5 +235,7 @@ class VerificationWidgetBuilder {
     horizontalPadding: 65.0,
     onPressed: onPressed,
     onChanged: onChanged,
+    hasError: hasError,
+    errorMessage: errorMessage,
   );
 }

@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 
 import '../../core/constants/url.dart';
 import '../../core/local/local_user_controller.dart';
+import '../../core/utils/helper_methods.dart';
 
 class OnboardingViewModel extends ChangeNotifier {
   final PageController pageController = PageController();
@@ -39,6 +40,21 @@ class OnboardingViewModel extends ChangeNotifier {
     },
   ];
 
+  final List<Map<String, String>> sellerOnboardingData = [
+    {
+      'image': '$networkImageUrl/sellerOnboarding1.png',
+      'title': 'Sell Smarter with WIGOMARKET',
+      'description':
+          'Reach thousands of students near you, manage sales easily, and grow your business—all in one place.',
+    },
+    {
+      'image': '$networkImageUrl/sellerOnboarding2.png',
+      'title': 'Run Your Store Right From Your Phone.',
+      'description':
+          'No need for complicated tools. With WIGOMARKET, you can manage orders, update your listings, and track deliveries—all in one simple app.',
+    },
+  ];
+
   Future<void> riderNextPage(BuildContext context, WidgetRef ref) async {
     if (currentPage < riderOnboardingData.length - 1) {
       pageController.nextPage(
@@ -50,6 +66,10 @@ class OnboardingViewModel extends ChangeNotifier {
       ref
           .read(localUserControllerProvider)
           .saveStage(OnboardingStage.registration);
+      showLoadingDialog(context);
+      await Future.delayed(const Duration(seconds: 1));
+      if (!context.mounted) return;
+      Navigator.of(context, rootNavigator: true).pop();
       context.go('/accountCreation');
     }
   }
@@ -64,6 +84,28 @@ class OnboardingViewModel extends ChangeNotifier {
       ref
           .read(localUserControllerProvider)
           .saveStage(OnboardingStage.registration);
+      showLoadingDialog(context);
+      await Future.delayed(const Duration(seconds: 1));
+      if (!context.mounted) return;
+      Navigator.of(context, rootNavigator: true).pop();
+      context.go('/accountCreation');
+    }
+  }
+
+  Future<void> sellerNextPage(BuildContext context, WidgetRef ref) async {
+    if (currentPage < sellerOnboardingData.length - 1) {
+      pageController.nextPage(
+        duration: Duration(milliseconds: 300),
+        curve: Curves.easeInOut,
+      );
+    } else {
+      ref
+          .read(localUserControllerProvider)
+          .saveStage(OnboardingStage.registration);
+      showLoadingDialog(context);
+      await Future.delayed(const Duration(seconds: 1));
+      if (!context.mounted) return;
+      Navigator.of(context, rootNavigator: true).pop();
       context.go('/accountCreation');
     }
   }

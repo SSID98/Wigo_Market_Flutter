@@ -21,9 +21,24 @@ class OnboardingScreen extends ConsumerWidget {
     final isWeb = MediaQuery.of(context).size.width < 600;
     final role = ref.watch(userRoleProvider);
     final isBuyer = role == UserRole.buyer;
+    final isSeller = role == UserRole.seller;
     return isWeb
-        ? _buildMobileLayout(context, ref, viewModel, screenSize, isBuyer)
-        : _buildWebLayout(context, ref, viewModel, screenSize, isBuyer);
+        ? _buildMobileLayout(
+          context,
+          ref,
+          viewModel,
+          screenSize,
+          isBuyer,
+          isSeller,
+        )
+        : _buildWebLayout(
+          context,
+          ref,
+          viewModel,
+          screenSize,
+          isBuyer,
+          isSeller,
+        );
   }
 
   //Mobile Layout
@@ -33,6 +48,7 @@ class OnboardingScreen extends ConsumerWidget {
     OnboardingViewModel viewModel,
     Size screenSize,
     bool isBuyer,
+    bool isSeller,
   ) {
     return Scaffold(
       backgroundColor: AppColors.backgroundWhite,
@@ -94,6 +110,8 @@ class OnboardingScreen extends ConsumerWidget {
                           onPressed:
                               isBuyer
                                   ? () => viewModel.buyerNextPage(context, ref)
+                                  : isSeller
+                                  ? () => viewModel.sellerNextPage(context, ref)
                                   : () => viewModel.riderNextPage(context, ref),
                           fontSize: 16,
                           fontWeight: FontWeight.w500,
@@ -120,6 +138,7 @@ class OnboardingScreen extends ConsumerWidget {
     OnboardingViewModel viewModel,
     Size screenSize,
     bool isBuyer,
+    bool isSeller,
   ) {
     return Scaffold(
       backgroundColor: AppColors.backgroundWhite,
@@ -172,6 +191,8 @@ class OnboardingScreen extends ConsumerWidget {
                             () =>
                                 !isBuyer
                                     ? viewModel.riderNextPage(context, ref)
+                                    : isSeller
+                                    ? viewModel.sellerNextPage(context, ref)
                                     : viewModel.buyerNextPage(context, ref),
                         fontSize: 18,
                         fontWeight: FontWeight.w500,

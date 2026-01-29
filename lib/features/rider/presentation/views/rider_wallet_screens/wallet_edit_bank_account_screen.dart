@@ -51,7 +51,6 @@ class _EditBankAccountScreenState extends ConsumerState<EditBankAccountScreen> {
     final bank = widget.bankDetails;
     _isAddingNew = bank.isEmpty;
 
-    // If it's empty, use empty strings; otherwise, use existing data
     _accountNumberController = TextEditingController(
       text: bank.isEmpty ? '' : bank.accountNumber,
     );
@@ -65,10 +64,7 @@ class _EditBankAccountScreenState extends ConsumerState<EditBankAccountScreen> {
       text: bank.isEmpty ? '' : bank.phoneNumber,
     );
 
-    _isDefault =
-        bank.isEmpty
-            ? false
-            : bank.isDefault || _isAddingNew; // If adding, suggest default
+    _isDefault = bank.isEmpty ? false : bank.isDefault || _isAddingNew;
   }
 
   @override

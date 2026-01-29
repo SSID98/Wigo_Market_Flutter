@@ -26,7 +26,7 @@ class CustomTextField extends ConsumerStatefulWidget {
   final Color? prefixIconColor, fillColor;
   final void Function(String)? onChanged;
   final void Function(bool)? onFocusChange;
-  final bool hasError, hasError2;
+  final bool hasError;
   final AutovalidateMode? autoValidateMode;
   final EdgeInsetsGeometry? contentPadding, prefixPadding;
   final FontWeight? labelFontWeight;
@@ -71,7 +71,6 @@ class CustomTextField extends ConsumerStatefulWidget {
     this.contentPadding,
     this.labelFontWeight,
     this.hasError = false,
-    this.hasError2 = false,
     this.height,
     this.maxLength,
     this.labelFontSize,
@@ -488,7 +487,7 @@ class _CustomDropdownFieldState extends ConsumerState<CustomDropdownField> {
             onChanged: (val) {
               setState(() {
                 selectedItem = val;
-                if (val == 'Motor Bike') {
+                if (val == 'Bike') {
                   currentPrefixIcon = AppAssets.icons.motorbike.svg();
                 } else if (val == 'Car') {
                   currentPrefixIcon = AppAssets.icons.car.svg();

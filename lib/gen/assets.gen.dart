@@ -382,6 +382,9 @@ class $AssetsIconsGen {
   SvgGenImage get statusChip2 =>
       const SvgGenImage('assets/icons/statusChip2.svg');
 
+  /// File path: assets/icons/store.svg
+  SvgGenImage get store => const SvgGenImage('assets/icons/store.svg');
+
   /// File path: assets/icons/thisWeek.svg
   SvgGenImage get thisWeek => const SvgGenImage('assets/icons/thisWeek.svg');
 
@@ -563,6 +566,7 @@ class $AssetsIconsGen {
     starOutline,
     statusChip1,
     statusChip2,
+    store,
     thisWeek,
     tickDouble,
     time,

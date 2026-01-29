@@ -1,6 +1,9 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../core/service/user_api_service.dart';
+import '../../core/utils/helper_methods.dart';
+import '../../core/utils/validation_utils.dart';
 import '../../features/rider/models/rider_register_model_dto.dart';
 import '../models/location_data.dart';
 import '../models/register_state.dart';
@@ -43,9 +46,29 @@ class RegisterViewModel extends StateNotifier<RegisterState> {
 
   void updateFullName(String value) => state = state.copyWith(fullName: value);
 
-  void updateEmail(String value) => state = state.copyWith(email: value);
+  // void updateEmail(String value) {
+  //   final error = FormValidators.validateEmail(value);
+  //
+  //   state = state.copyWith(email: value, emailError: error);
+  // }
+  //
+  // void updatePassword(String value) {
+  //   final error = FormValidators.validateSignupPassword(value);
+  //
+  //   state = state.copyWith(password: value, passwordError: error);
+  // }
 
-  void updatePassword(String value) => state = state.copyWith(password: value);
+  // void updateEmail(String value) => state = state.copyWith(email: value);
+  //
+  // void updatePassword(String value) => state = state.copyWith(password: value);
+
+  void updateEmail(String value) {
+    state = state.copyWith(email: value, emailError: null);
+  }
+
+  void updatePassword(String value) {
+    state = state.copyWith(password: value, passwordError: null);
+  }
 
   void updateMobile(String value) => state = state.copyWith(mobile: value);
 
@@ -72,9 +95,55 @@ class RegisterViewModel extends StateNotifier<RegisterState> {
   // error/clear
   void clearError() => state = state.copyWith(errorMessage: null);
 
+  Future<Map<String, dynamic>> _registerByRole(
+    UserRole role,
+    Map<String, dynamic> payload,
+  ) {
+    switch (role) {
+      case UserRole.rider:
+        return api.registerRider(payload);
+      case UserRole.buyer:
+        return api.registerBuyer(payload);
+      case UserRole.seller:
+        return api.registerSeller(payload);
+    }
+  }
+
+  void validateOnSubmit() {
+    final emailError = FormValidators.validateEmail(state.email);
+    final passwordError = FormValidators.validateSignupPassword(state.password);
+
+    state = state.copyWith(
+      hasSubmitted: true,
+      emailError: emailError,
+      passwordError: passwordError,
+    );
+  }
+
   // Submit
-  Future<bool> submit() async {
+  Future<bool> submit(BuildContext context) async {
     // Validate client-side
+    // mark that user attempted submission
+    // state = state.copyWith(hasSubmitted: true);
+
+    // final emailError = FormValidators.validateEmail(state.email);
+    // final passwordError = FormValidators.validateSignupPassword(state.password);
+    //
+    // state = state.copyWith(
+    //   hasSubmitted: true,
+    //   emailError: emailError,
+    //   passwordError: passwordError,
+    // );
+    //
+    // if (emailError != null || passwordError != null) {
+    //   state = state.copyWith(errorMessage: 'Please fix the highlighted fields');
+    //   print(
+    //     'hasSubmitted=${state.hasSubmitted}, '
+    //     'emailError=${state.emailError}',
+    //   );
+    //   return false;
+    // }
+
     if (!state.canSubmit) {
       state = state.copyWith(
         errorMessage: 'Please fill all required fields for ${state.role.name}.',
@@ -83,6 +152,8 @@ class RegisterViewModel extends StateNotifier<RegisterState> {
     }
 
     state = state.copyWith(isLoading: true, errorMessage: null, success: false);
+
+    showLoadingDialog(context);
 
     try {
       final model = RiderRegisterModel(
@@ -93,19 +164,28 @@ class RegisterViewModel extends StateNotifier<RegisterState> {
         residentialAddress: state.residentialAddress,
         city: state.city,
         state: state.residentialState,
-        gender: state.gender,
+        // gender: state.gender,
+        gender: state.gender?.toLowerCase().trim(),
         nameOfNok: state.nameOfNok,
         nextOfKinPhone: state.nextOfKinPhone,
-        modeOfTransport: state.modeOfTransport,
+        modeOfTransport: state.modeOfTransport?.toLowerCase().trim(),
       );
 
       final payload = model.toJson();
+      debugPrint('REGISTER PAYLOAD => $payload');
+      debugPrint('Gender => ${state.gender}');
+      debugPrint('MOT => ${state.modeOfTransport}');
+      // final res = await api.registerRider(payload);
+      final res = await _registerByRole(state.role, payload);
 
-      // Choose endpoint depending on role
-      // For buyer you may want a different endpoint or payload
-      final res = await api.registerRider(payload);
+      if (context.mounted) {
+        Navigator.of(context, rootNavigator: true).pop();
+      }
 
       if (res['success'] == true) {
+        final data = res['data'];
+
+        debugPrint('REGISTER RESPONSE => $data');
         state = state.copyWith(isLoading: false, success: true);
         return true;
       } else {
@@ -116,6 +196,9 @@ class RegisterViewModel extends StateNotifier<RegisterState> {
         return false;
       }
     } catch (e) {
+      if (context.mounted) {
+        Navigator.of(context, rootNavigator: true).pop();
+      }
       state = state.copyWith(isLoading: false, errorMessage: e.toString());
       return false;
     }

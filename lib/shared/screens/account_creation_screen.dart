@@ -24,8 +24,9 @@ class AccountCreationScreen extends ConsumerWidget {
     final state = ref.watch(registerViewModelProvider);
     final role = ref.watch(userRoleProvider);
     final isBuyer = role == UserRole.buyer;
+    final isSeller = role == UserRole.seller;
     return isWeb
-        ? _buildWebLayout(screenSize, context, isBuyer)
+        ? _buildWebLayout(screenSize, context, isBuyer, isSeller)
         : _buildMobileLayout(
           screenSize,
           context,
@@ -33,6 +34,7 @@ class AccountCreationScreen extends ConsumerWidget {
           notifier,
           state,
           isBuyer,
+          isSeller,
         );
   }
 
@@ -43,6 +45,7 @@ class AccountCreationScreen extends ConsumerWidget {
     RegisterViewModel notifier,
     RegisterState state,
     bool isBuyer,
+    bool isSeller,
   ) {
     return Scaffold(
       backgroundColor: AppColors.backgroundWhite,
@@ -80,7 +83,15 @@ class AccountCreationScreen extends ConsumerWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       const SizedBox(height: 5),
-                      _buildHeader(20.0, 14.0, 18.0, 12.0, 0.0, isBuyer),
+                      _buildHeader(
+                        20.0,
+                        14.0,
+                        18.0,
+                        12.0,
+                        0.0,
+                        isBuyer,
+                        isSeller,
+                      ),
                       const Divider(thickness: 1.3),
                       Expanded(
                         child: SingleChildScrollView(
@@ -88,7 +99,6 @@ class AccountCreationScreen extends ConsumerWidget {
                             iconHeight: 20,
                             iconWidth: 20,
                             hintFontSize: 11,
-                            isBuyer: isBuyer,
                           ),
                         ),
                       ),
@@ -100,18 +110,43 @@ class AccountCreationScreen extends ConsumerWidget {
                               state.isLoading
                                   ? null
                                   : () async {
-                                    // set role before submit if you have separate path
-                                    notifier.setRole(
-                                      isBuyer ? UserRole.buyer : UserRole.rider,
+                                    notifier.validateOnSubmit();
+
+                                    final currentState = ref.read(
+                                      registerViewModelProvider,
                                     );
 
-                                    final ok = await notifier.submit();
+                                    if (currentState.emailError != null ||
+                                        currentState.passwordError != null) {
+                                      ScaffoldMessenger.of(
+                                        context,
+                                      ).showSnackBar(
+                                        const SnackBar(
+                                          content: Text(
+                                            'Please fix the highlighted fields',
+                                          ),
+                                        ),
+                                      );
+                                      return;
+                                    }
+
+                                    // set role before submit if you have separate path
+                                    notifier.setRole(
+                                      isBuyer
+                                          ? UserRole.buyer
+                                          : isSeller
+                                          ? UserRole.seller
+                                          : UserRole.rider,
+                                    );
+
+                                    final ok = await notifier.submit(context);
                                     if (ok) {
                                       // navigate to verification or next screen
                                       if (!context.mounted) return;
                                       context.go(
                                         '/verification',
-                                      ); // or your route
+                                        extra: {'email': state.email},
+                                      );
                                       ref
                                           .read(localUserControllerProvider)
                                           .saveStage(OnboardingStage.otp);
@@ -163,7 +198,7 @@ class AccountCreationScreen extends ConsumerWidget {
   //       : context.push('/verification');
   // },
 
-  Widget _buildWebLayout(screenSize, context, bool isBuyer) {
+  Widget _buildWebLayout(screenSize, context, bool isBuyer, bool isSeller) {
     return Scaffold(
       body: Stack(
         children: [
@@ -209,6 +244,7 @@ class AccountCreationScreen extends ConsumerWidget {
                             16.72,
                             20,
                             isBuyer,
+                            isSeller,
                           ),
                           Padding(
                             padding: const EdgeInsets.symmetric(
@@ -264,7 +300,8 @@ class AccountCreationScreen extends ConsumerWidget {
     fontSize3,
     fontSize4,
     headerPadding,
-    bool isBuyer, {
+    bool isBuyer,
+    bool isSeller, {
     bool web = false,
   }) {
     return Column(
@@ -273,7 +310,11 @@ class AccountCreationScreen extends ConsumerWidget {
         Center(
           child: Text(
             textAlign: TextAlign.center,
-            isBuyer ? 'Create Your Buyer Account' : 'Create Your Rider Account',
+            isBuyer
+                ? 'Create Your Buyer Account'
+                : isSeller
+                ? 'Create Your Seller Account'
+                : 'Create Your Rider Account',
             style: GoogleFonts.hind(
               fontWeight: FontWeight.w700,
               fontSize: fontSize1,
@@ -289,6 +330,8 @@ class AccountCreationScreen extends ConsumerWidget {
                 child: Text(
                   isBuyer
                       ? "Let's get you set up to start shopping with wiGO MARKET."
+                      : isSeller
+                      ? 'Let’s get your store ready to start selling on WIGOMARKET.'
                       : "Let's get you set up to start delivering and earning with wiGO MARKET.",
                   style: GoogleFonts.hind(
                     fontWeight: FontWeight.w500,
@@ -307,6 +350,8 @@ class AccountCreationScreen extends ConsumerWidget {
               textAlign: TextAlign.center,
               isBuyer
                   ? "Let's get you set up to start shopping with wiGO MARKET."
+                  : isSeller
+                  ? "Let’s get your store ready to start selling on WIGOMARKET."
                   : "Let's get you set up to start delivering and earning with wiGO MARKET.",
               style: GoogleFonts.hind(
                 fontWeight: FontWeight.w500,
@@ -334,6 +379,8 @@ class AccountCreationScreen extends ConsumerWidget {
               Text(
                 isBuyer
                     ? 'Provide your basic information for buyer profile setup.'
+                    : isSeller
+                    ? 'Provide a few personal details to create your seller profile.'
                     : 'Provide your basic information for verification and rider profile setup.',
                 style: GoogleFonts.hind(
                   fontWeight: FontWeight.w500,

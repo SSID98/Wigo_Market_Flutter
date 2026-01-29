@@ -48,6 +48,7 @@ class OnboardingPageView extends ConsumerWidget {
     final viewModel = ref.watch(onboardingViewModelProvider);
     final role = ref.watch(userRoleProvider);
     final isBuyer = role == UserRole.buyer;
+    final isSeller = role == UserRole.seller;
     return SizedBox(
       height: screenSize,
       child: ScrollConfiguration(
@@ -57,12 +58,16 @@ class OnboardingPageView extends ConsumerWidget {
           itemCount:
               !isBuyer
                   ? viewModel.riderOnboardingData.length
+                  : isSeller
+                  ? viewModel.sellerOnboardingData.length
                   : viewModel.buyerOnboardingData.length,
           onPageChanged: viewModel.onPageChanged,
           itemBuilder: (context, index) {
             final data =
                 !isBuyer
                     ? viewModel.riderOnboardingData[index]
+                    : isSeller
+                    ? viewModel.sellerOnboardingData[index]
                     : viewModel.buyerOnboardingData[index];
             return StreamBuilder<Object>(
               stream: null,
@@ -90,6 +95,8 @@ class OnboardingPageView extends ConsumerWidget {
                       count:
                           !isBuyer
                               ? viewModel.riderOnboardingData.length
+                              : isSeller
+                              ? viewModel.sellerOnboardingData.length
                               : viewModel.buyerOnboardingData.length,
                       effect: ExpandingDotsEffect(
                         dotColor: AppColors.sliderDotColor,

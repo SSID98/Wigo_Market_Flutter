@@ -20,7 +20,6 @@ class RoleSelectionScreen extends ConsumerWidget {
         : _buildMobileLayout(context, screenSize);
   }
 
-  //Mobile Layout
   Widget _buildMobileLayout(BuildContext context, Size screenSize) {
     return Scaffold(
       body: Stack(
@@ -83,7 +82,6 @@ class RoleSelectionScreen extends ConsumerWidget {
           ),
           child: Row(
             children: [
-              // Left section: Image and Bottom Text
               Expanded(
                 child: Container(
                   color: AppColors.backgroundLight,
@@ -180,7 +178,6 @@ class RoleSelectionScreen extends ConsumerWidget {
     );
   }
 
-  // Bottom text gradient overlay
   Widget _buildBottomText(double textSize) {
     return Positioned(
       bottom: 0,
@@ -196,9 +193,7 @@ class RoleSelectionScreen extends ConsumerWidget {
               end: Alignment.center,
               colors: [
                 Colors.black.withValues(alpha: 0.1),
-                // Start with more transparent black
                 Colors.black.withValues(alpha: 0.8),
-                // End with more opaque black
               ],
               stops: const [0.0, 1.0],
             ),

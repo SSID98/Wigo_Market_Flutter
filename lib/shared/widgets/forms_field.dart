@@ -4,7 +4,9 @@ import 'package:wigo_flutter/core/constants/app_colors.dart';
 import 'package:wigo_flutter/shared/models/location_data.dart';
 import 'package:wigo_flutter/shared/widgets/custom_text_field.dart';
 
+import '../../core/providers/role_selection_provider.dart';
 import '../../gen/assets.gen.dart';
+import '../models/user_role.dart';
 import '../viewmodels/account_creation_viewmodel.dart';
 import 'contact_text_field.dart';
 
@@ -14,7 +16,6 @@ class FormFields extends ConsumerWidget {
   final double iconWidth;
   final double hintFontSize;
   final Widget? suffixIcon;
-  final bool isBuyer;
 
   const FormFields({
     super.key,
@@ -23,7 +24,6 @@ class FormFields extends ConsumerWidget {
     required this.iconWidth,
     required this.hintFontSize,
     this.suffixIcon,
-    this.isBuyer = false,
   });
 
   @override
@@ -31,6 +31,9 @@ class FormFields extends ConsumerWidget {
     final regState = ref.watch(registerViewModelProvider);
     final notifier = ref.read(registerViewModelProvider.notifier);
     final spacing = const SizedBox(height: 16);
+    final role = ref.watch(userRoleProvider);
+    final isSeller = role == UserRole.seller;
+    final isRider = role == UserRole.rider;
 
     return Column(
       children: [
@@ -42,7 +45,6 @@ class FormFields extends ConsumerWidget {
           iconWidth: iconWidth,
           hintTextColor: AppColors.textBodyText,
           onChanged: notifier.updateFullName,
-          // controller: viewModel.fullNameCtrl,
         ),
         spacing,
         CustomTextField(
@@ -52,7 +54,8 @@ class FormFields extends ConsumerWidget {
           iconHeight: iconHeight,
           iconWidth: iconWidth,
           hintTextColor: AppColors.textBodyText,
-          // controller: viewModel.emailCtrl,
+          hasError: regState.hasSubmitted && regState.emailError != null,
+          errorMessage: regState.hasSubmitted ? regState.emailError : null,
           onChanged: notifier.updateEmail,
         ),
         spacing,
@@ -68,17 +71,17 @@ class FormFields extends ConsumerWidget {
           iconWidth: iconWidth,
           suffixIcon: suffixIcon,
           hintTextColor: AppColors.textBlackGrey,
-          // controller: viewModel.passwordCtrl,
+          hasError: regState.hasSubmitted && regState.passwordError != null,
+          errorMessage: regState.hasSubmitted ? regState.passwordError : null,
           onChanged: notifier.updatePassword,
         ),
         spacing,
         CustomPhoneNumberField(
           label: 'Phone Number',
           onChanged: notifier.updateMobile,
-          // controller: viewModel.phoneCtrl,
           // contentPadding: EdgeInsets.only(bottom: 1),
         ),
-        if (!isBuyer) ...[
+        if (isRider) ...[
           spacing,
           CustomTextField(
             hintText: 'eg. Peter Doe',
@@ -88,15 +91,29 @@ class FormFields extends ConsumerWidget {
             iconWidth: iconWidth,
             hintTextColor: AppColors.textBodyText,
             onChanged: notifier.updateNextOfKinName,
-            // controller: viewModel.fullNameCtrl,
           ),
           spacing,
           CustomPhoneNumberField(
             label: 'Next of Kin Contact',
             onChanged: notifier.updateNextOfKinPhone,
-            // controller: viewModel.nextOfKinPhoneCtrl,
             // contentPadding: EdgeInsets.only(bottom: 1),
           ),
+          spacing,
+          CustomDropdownField(
+            label: 'Gender',
+            hintText: 'Select your Gender',
+            items: const ['Male', 'Female'],
+            iconWidth: 22,
+            iconHeight: 22,
+            onChanged: notifier.updateGender,
+            value: regState.gender,
+            prefixIcon: AppAssets.icons.user.svg(
+              width: iconWidth,
+              height: iconHeight,
+            ),
+          ),
+        ],
+        if (isSeller) ...[
           spacing,
           CustomDropdownField(
             label: 'Gender',
@@ -121,7 +138,6 @@ class FormFields extends ConsumerWidget {
           iconWidth: iconWidth,
           hintTextColor: AppColors.textIconGrey,
           onChanged: notifier.updateResidentialAddress,
-          // controller: viewModel.residentialAddressCtrl,
         ),
         spacing,
         if (web)
@@ -182,11 +198,11 @@ class FormFields extends ConsumerWidget {
           ),
         ],
         spacing,
-        if (!isBuyer)
+        if (isRider)
           CustomDropdownField(
             label: 'Means of Transportation',
-            items: const ['Feet', 'Bicycle', 'Car', 'Motor Bike', 'Bus'],
-            hintText: 'Motor Bike',
+            items: const ['Feet', 'Bicycle', 'Car', 'Bike', 'Bus'],
+            hintText: 'Bike',
             value: regState.modeOfTransport,
             onChanged: notifier.updateModeOfTransport,
             prefixIcon: AppAssets.icons.motorbike.svg(

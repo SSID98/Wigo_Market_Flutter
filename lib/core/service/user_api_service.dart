@@ -21,10 +21,53 @@ class UserApiService {
     Map<String, dynamic> payload,
   ) async {
     try {
-      final resp = await _dio.post(
-        '/api/user/register/delivery',
-        data: payload,
-      );
+      final resp = await _dio.post('/user/register/delivery', data: payload);
+      if (resp.statusCode != null &&
+          resp.statusCode! >= 200 &&
+          resp.statusCode! < 300) {
+        return {"success": true, "data": resp.data};
+      } else {
+        return {
+          "success": false,
+          "message": resp.data?['message'] ?? 'Unknown error',
+        };
+      }
+    } on DioException catch (e) {
+      final msg = e.response?.data?['message'] ?? e.message;
+      return {"success": false, "message": "Network/API error: $msg"};
+    } catch (e) {
+      return {"success": false, "message": "Unexpected error: $e"};
+    }
+  }
+
+  Future<Map<String, dynamic>> registerBuyer(
+    Map<String, dynamic> payload,
+  ) async {
+    try {
+      final resp = await _dio.post('/user/register/buyer', data: payload);
+      if (resp.statusCode != null &&
+          resp.statusCode! >= 200 &&
+          resp.statusCode! < 300) {
+        return {"success": true, "data": resp.data};
+      } else {
+        return {
+          "success": false,
+          "message": resp.data?['message'] ?? 'Unknown error',
+        };
+      }
+    } on DioException catch (e) {
+      final msg = e.response?.data?['message'] ?? e.message;
+      return {"success": false, "message": "Network/API error: $msg"};
+    } catch (e) {
+      return {"success": false, "message": "Unexpected error: $e"};
+    }
+  }
+
+  Future<Map<String, dynamic>> registerSeller(
+    Map<String, dynamic> payload,
+  ) async {
+    try {
+      final resp = await _dio.post('/user/register/seller', data: payload);
       if (resp.statusCode != null &&
           resp.statusCode! >= 200 &&
           resp.statusCode! < 300) {
@@ -49,29 +92,27 @@ class UserApiService {
   }) async {
     try {
       final resp = await _dio.post(
-        '/api/user/verify',
+        '/user/verify',
         data: {"email": email, "code": code},
       );
 
-      if (resp.statusCode != null &&
-          resp.statusCode! >= 200 &&
-          resp.statusCode! < 300) {
-        return {"success": true, "data": resp.data};
+      final data = resp.data;
+
+      if (data is Map<String, dynamic> && data['success'] == true) {
+        return {"success": true, "data": data};
       } else {
         return {
           "success": false,
-          "message": resp.data?['message'] ?? 'Invalid or expired code',
+          "message": data?['msg'] ?? 'Invalid or expired code',
         };
       }
     } on DioException catch (e) {
-      final msg = e.response?.data?['message'] ?? e.message;
+      final msg = e.response?.data?['msg'] ?? e.message;
       return {"success": false, "message": "Network/API error: $msg"};
     } catch (e) {
       return {"success": false, "message": "Unexpected error: $e"};
     }
   }
-
-  // If buyer endpoint is different, add method: registerBuyer(...)
 }
 
 final userApiServiceProvider = Provider<UserApiService>((ref) {

@@ -8,6 +8,7 @@ import 'package:wigo_flutter/shared/widgets/custom_button.dart';
 import '../../core/constants/app_colors.dart';
 import '../../core/constants/url.dart';
 import '../../core/providers/role_selection_provider.dart';
+import '../../core/utils/helper_methods.dart';
 import '../models/user_role.dart';
 
 class WelcomeScreen extends ConsumerWidget {
@@ -18,10 +19,11 @@ class WelcomeScreen extends ConsumerWidget {
     final Size screenSize = MediaQuery.of(context).size;
     final role = ref.watch(userRoleProvider);
     final isRider = role == UserRole.rider;
+    final isSeller = role == UserRole.seller;
     return LayoutBuilder(
       builder: (context, constraints) {
         if (constraints.maxWidth < 600) {
-          return _buildMobileLayout(context, screenSize, isRider);
+          return _buildMobileLayout(context, screenSize, isRider, isSeller);
         } else {
           return _buildWebLayout(context, screenSize);
         }
@@ -29,11 +31,11 @@ class WelcomeScreen extends ConsumerWidget {
     );
   }
 
-  //Mobile Layout
   Widget _buildMobileLayout(
     BuildContext context,
     Size screenSize,
     bool isRider,
+    bool isSeller,
   ) {
     final double contentContainerHeight = screenSize.height * 0.60;
     return Scaffold(
@@ -45,6 +47,8 @@ class WelcomeScreen extends ConsumerWidget {
             child: Image.network(
               isRider
                   ? '$networkImageUrl/welcomeRiderMobile.png'
+                  : isSeller
+                  ? '$networkImageUrl/sellerMobileWelcome.png'
                   : '$networkImageUrl/buyerWelcomeMobile.png',
               fit: BoxFit.contain,
             ),
@@ -79,6 +83,8 @@ class WelcomeScreen extends ConsumerWidget {
                     Text(
                       isRider
                           ? 'Earn by Making Deliverys'
+                          : isSeller
+                          ? 'Welcome to wiGO MARKET'
                           : 'Shop what you’re looking for!',
                       style: GoogleFonts.hind(
                         textStyle: TextStyle(
@@ -92,6 +98,8 @@ class WelcomeScreen extends ConsumerWidget {
                     Text(
                       isRider
                           ? 'Join hundreds of riders delivering items, food, and more fast, safe, and student-friendly. You’ll get delivery requests around your campus. Accept orders, track deliveries, and get paid weekly.'
+                          : isSeller
+                          ? 'You’re just a few steps away from reaching more buyers and growing your business. Whether you’re a shop owner, student entrepreneur, WIGOMARKET gives you the tools to list your products, manage orders, and connect with thousands of students nearby.'
                           : 'Join hundreds of trusted campus riders delivering items, food, and more fast, safe, and student-friendly. You’ll get delivery requests around your campus. Accept orders, track deliveries, and get paid weekly.ndly. You’ll get delivery requests around your campus. Accept orders, track deliveries, and get paid weekly.',
                       style: GoogleFonts.hind(
                         textStyle: TextStyle(
@@ -104,7 +112,11 @@ class WelcomeScreen extends ConsumerWidget {
                     const SizedBox(height: 65),
                     CustomButton(
                       text: 'Get Started',
-                      onPressed: () {
+                      onPressed: () async {
+                        showLoadingDialog(context);
+                        await Future.delayed(const Duration(seconds: 1));
+                        if (!context.mounted) return;
+                        Navigator.of(context, rootNavigator: true).pop();
                         context.push('/onboarding');
                       },
                       fontSize: 18,
@@ -135,7 +147,6 @@ class WelcomeScreen extends ConsumerWidget {
         padding: const EdgeInsets.symmetric(vertical: 20.0, horizontal: 100.0),
         child: Row(
           children: [
-            // Left section: Image
             Expanded(
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
@@ -207,7 +218,6 @@ class WelcomeScreen extends ConsumerWidget {
                 ],
               ),
             ),
-            // Right form section
             Expanded(
               child: Center(
                 child: SizedBox(
