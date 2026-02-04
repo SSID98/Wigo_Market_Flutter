@@ -14,8 +14,8 @@ Future<void> main() async {
   runApp(
     ProviderScope(
       overrides: [
-        localUserControllerProvider.overrideWithValue(
-          LocalUserController(prefs),
+        localUserControllerProvider.overrideWith(
+          (ref) => LocalUserController(prefs),
         ),
       ],
       child: WigoApp(),

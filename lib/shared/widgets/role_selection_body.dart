@@ -57,9 +57,11 @@ class RoleSelectionBody extends ConsumerWidget {
           icon: AppAssets.icons.buyerIcon.path,
           isSelected: selectedRole == UserRole.buyer,
           onTap: () {
-            ref.read(localUserControllerProvider).saveRole(UserRole.buyer.name);
             ref
-                .read(localUserControllerProvider)
+                .read(localUserControllerProvider.notifier)
+                .saveRole(UserRole.buyer.name);
+            ref
+                .read(localUserControllerProvider.notifier)
                 .saveStage(OnboardingStage.onboarding);
             viewModel.selectRole(UserRole.buyer);
             viewModel.confirmSelection(context);
@@ -80,10 +82,10 @@ class RoleSelectionBody extends ConsumerWidget {
           isSelected: selectedRole == UserRole.seller,
           onTap: () {
             ref
-                .read(localUserControllerProvider)
+                .read(localUserControllerProvider.notifier)
                 .saveRole(UserRole.seller.name);
             ref
-                .read(localUserControllerProvider)
+                .read(localUserControllerProvider.notifier)
                 .saveStage(OnboardingStage.onboarding);
             viewModel.selectRole(UserRole.seller);
             viewModel.confirmSelection(context);
@@ -103,9 +105,11 @@ class RoleSelectionBody extends ConsumerWidget {
           icon: AppAssets.icons.riderIcon.path,
           isSelected: selectedRole == UserRole.rider,
           onTap: () {
-            ref.read(localUserControllerProvider).saveRole(UserRole.rider.name);
             ref
-                .read(localUserControllerProvider)
+                .read(localUserControllerProvider.notifier)
+                .saveRole(UserRole.rider.name);
+            ref
+                .read(localUserControllerProvider.notifier)
                 .saveStage(OnboardingStage.onboarding);
             viewModel.selectRole(UserRole.rider);
             viewModel.confirmSelection(context);

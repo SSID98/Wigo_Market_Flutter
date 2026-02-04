@@ -1,6 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:wigo_flutter/shared/models/login/login_request_dto_class.dart';
 
-import '../../shared/models/login/login_request_DTO.dart';
 import '../../shared/models/login/login_response_model.dart';
 import 'auth_repository.dart';
 

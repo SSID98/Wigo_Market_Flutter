@@ -2,10 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:wigo_flutter/shared/widgets/custom_button.dart';
 import 'package:wigo_flutter/shared/widgets/role_selection_body.dart';
 
+import '../../core/auth/auth_state_notifier.dart';
 import '../../core/constants/app_colors.dart';
 import '../../core/constants/url.dart';
+import '../../core/local/local_user_controller.dart';
+import '../../core/local/secure_storage.dart';
 import '../../gen/assets.gen.dart';
 
 class RoleSelectionScreen extends ConsumerWidget {
@@ -17,10 +21,14 @@ class RoleSelectionScreen extends ConsumerWidget {
     final isWeb = MediaQuery.of(context).size.width > 600;
     return isWeb
         ? _buildWebLayout(context, screenSize)
-        : _buildMobileLayout(context, screenSize);
+        : _buildMobileLayout(context, screenSize, ref);
   }
 
-  Widget _buildMobileLayout(BuildContext context, Size screenSize) {
+  Widget _buildMobileLayout(
+    BuildContext context,
+    Size screenSize,
+    WidgetRef ref,
+  ) {
     return Scaffold(
       body: Stack(
         fit: StackFit.expand,
@@ -46,6 +54,27 @@ class RoleSelectionScreen extends ConsumerWidget {
                       AppAssets.icons.logo.path,
                       height: 49,
                       width: 143.86,
+                    ),
+                    CustomButton(
+                      text: 'RESET ALL',
+                      fontSize: 16,
+                      fontWeight: FontWeight.w700,
+                      onPressed: () async {
+                        final localUserController = ref.read(
+                          localUserControllerProvider.notifier,
+                        );
+                        await localUserController.resetAll();
+
+                        final secureStorage = ref.read(secureStorageProvider);
+                        await secureStorage.clear();
+                        await ref.read(authStateProvider.notifier).logout();
+                        if (!context.mounted) return;
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                            content: Text("User data reset successfully"),
+                          ),
+                        );
+                      },
                     ),
                     const SizedBox(height: 30),
                     RoleSelectionBody(

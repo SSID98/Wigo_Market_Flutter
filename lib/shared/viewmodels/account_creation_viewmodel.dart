@@ -46,22 +46,6 @@ class RegisterViewModel extends StateNotifier<RegisterState> {
 
   void updateFullName(String value) => state = state.copyWith(fullName: value);
 
-  // void updateEmail(String value) {
-  //   final error = FormValidators.validateEmail(value);
-  //
-  //   state = state.copyWith(email: value, emailError: error);
-  // }
-  //
-  // void updatePassword(String value) {
-  //   final error = FormValidators.validateSignupPassword(value);
-  //
-  //   state = state.copyWith(password: value, passwordError: error);
-  // }
-
-  // void updateEmail(String value) => state = state.copyWith(email: value);
-  //
-  // void updatePassword(String value) => state = state.copyWith(password: value);
-
   void updateEmail(String value) {
     state = state.copyWith(email: value, emailError: null);
   }
@@ -92,7 +76,6 @@ class RegisterViewModel extends StateNotifier<RegisterState> {
   void updateModeOfTransport(String? value) =>
       state = state.copyWith(modeOfTransport: value);
 
-  // error/clear
   void clearError() => state = state.copyWith(errorMessage: null);
 
   Future<Map<String, dynamic>> _registerByRole(
@@ -123,27 +106,6 @@ class RegisterViewModel extends StateNotifier<RegisterState> {
   // Submit
   Future<bool> submit(BuildContext context) async {
     // Validate client-side
-    // mark that user attempted submission
-    // state = state.copyWith(hasSubmitted: true);
-
-    // final emailError = FormValidators.validateEmail(state.email);
-    // final passwordError = FormValidators.validateSignupPassword(state.password);
-    //
-    // state = state.copyWith(
-    //   hasSubmitted: true,
-    //   emailError: emailError,
-    //   passwordError: passwordError,
-    // );
-    //
-    // if (emailError != null || passwordError != null) {
-    //   state = state.copyWith(errorMessage: 'Please fix the highlighted fields');
-    //   print(
-    //     'hasSubmitted=${state.hasSubmitted}, '
-    //     'emailError=${state.emailError}',
-    //   );
-    //   return false;
-    // }
-
     if (!state.canSubmit) {
       state = state.copyWith(
         errorMessage: 'Please fill all required fields for ${state.role.name}.',
@@ -164,7 +126,6 @@ class RegisterViewModel extends StateNotifier<RegisterState> {
         residentialAddress: state.residentialAddress,
         city: state.city,
         state: state.residentialState,
-        // gender: state.gender,
         gender: state.gender?.toLowerCase().trim(),
         nameOfNok: state.nameOfNok,
         nextOfKinPhone: state.nextOfKinPhone,
@@ -175,7 +136,6 @@ class RegisterViewModel extends StateNotifier<RegisterState> {
       debugPrint('REGISTER PAYLOAD => $payload');
       debugPrint('Gender => ${state.gender}');
       debugPrint('MOT => ${state.modeOfTransport}');
-      // final res = await api.registerRider(payload);
       final res = await _registerByRole(state.role, payload);
 
       if (context.mounted) {

@@ -140,16 +140,25 @@ class AccountCreationScreen extends ConsumerWidget {
                                     );
 
                                     final ok = await notifier.submit(context);
+
                                     if (ok) {
                                       // navigate to verification or next screen
-                                      if (!context.mounted) return;
-                                      context.go(
-                                        '/verification',
-                                        extra: {'email': state.email},
-                                      );
-                                      ref
-                                          .read(localUserControllerProvider)
+                                      await ref
+                                          .read(
+                                            localUserControllerProvider
+                                                .notifier,
+                                          )
+                                          .saveEmail(state.email);
+
+                                      await ref
+                                          .read(
+                                            localUserControllerProvider
+                                                .notifier,
+                                          )
                                           .saveStage(OnboardingStage.otp);
+
+                                      if (!context.mounted) return;
+                                      context.go('/verification');
                                     } else {
                                       // show error via snackBar or inline UI from state.errorMessage
                                       if (!context.mounted) return;
@@ -182,21 +191,6 @@ class AccountCreationScreen extends ConsumerWidget {
       ),
     );
   }
-
-  // onPressed: () {
-  //   isBuyer
-  //       ? Navigator.push(
-  //         context,
-  //         MaterialPageRoute(
-  //           builder:
-  //               (_) => EmailVerificationScreen(
-  //                 email: '',
-  //                 isBuyer: isBuyer,
-  //               ),
-  //         ),
-  //       )
-  //       : context.push('/verification');
-  // },
 
   Widget _buildWebLayout(screenSize, context, bool isBuyer, bool isSeller) {
     return Scaffold(

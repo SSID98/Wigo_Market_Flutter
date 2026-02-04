@@ -60,6 +60,7 @@ class UserDropDownMenu extends ConsumerWidget {
         'label': 'Log out',
         'onPressed': () {
           ref.read(authStateProvider.notifier).logout();
+          onAction?.call();
         },
       },
     ];

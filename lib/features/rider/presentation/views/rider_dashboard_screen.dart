@@ -6,8 +6,10 @@ import 'package:wigo_flutter/features/rider/models/rider_dashboard_state.dart';
 import 'package:wigo_flutter/features/rider/presentation/widgets/dashboard_screen_widgets/earning_history_widget.dart';
 import 'package:wigo_flutter/features/rider/presentation/widgets/switch.dart';
 import 'package:wigo_flutter/features/rider/viewmodels/rider_dashboard_viewmodel.dart';
+import 'package:wigo_flutter/shared/widgets/custom_button.dart';
 
 import '../../../../../core/constants/app_colors.dart';
+import '../../../../core/auth/auth_state_notifier.dart';
 import '../../../../gen/assets.gen.dart';
 import '../widgets/dashboard_screen_widgets/account_setup_status_widget.dart';
 import '../widgets/dashboard_screen_widgets/current_location_widget.dart';
@@ -24,8 +26,8 @@ class RiderDashboardScreen extends ConsumerWidget {
     final screenSize = MediaQuery.of(context).size;
     final isWeb = MediaQuery.of(context).size.width > 600;
     return isWeb
-        ? _buildWebLayout(screenSize, viewModel, state)
-        : _buildMobileLayout(screenSize, viewModel, state);
+        ? _buildWebLayout(screenSize, viewModel, state, ref)
+        : _buildMobileLayout(screenSize, viewModel, state, ref);
   }
 
   final steps = [
@@ -57,6 +59,7 @@ class RiderDashboardScreen extends ConsumerWidget {
     Size screenSize,
     RiderDashboardViewModel viewModel,
     RiderDashboardState state,
+    WidgetRef ref,
   ) {
     return Scaffold(
       backgroundColor: AppColors.backgroundLight,
@@ -76,6 +79,7 @@ class RiderDashboardScreen extends ConsumerWidget {
                 thumbDiameter: 12,
                 viewModel: viewModel,
                 state: state,
+                ref: ref,
               ),
               AccountSetup(
                 title: 'Complete Your Account Setup',
@@ -103,6 +107,7 @@ class RiderDashboardScreen extends ConsumerWidget {
     Size screenSize,
     RiderDashboardViewModel viewModel,
     RiderDashboardState state,
+    WidgetRef ref,
   ) {
     return Scaffold(
       backgroundColor: AppColors.backgroundLight,
@@ -122,6 +127,7 @@ class RiderDashboardScreen extends ConsumerWidget {
                   switchWidth: 49.0,
                   thumbDiameter: 20.0,
                   state: state,
+                  ref: ref,
                 ),
                 const SizedBox(height: 10.0),
                 AccountSetup(
@@ -169,6 +175,7 @@ class RiderDashboardScreen extends ConsumerWidget {
     required double thumbDiameter,
     required RiderDashboardViewModel viewModel,
     required RiderDashboardState state,
+    required WidgetRef ref,
   }) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -182,6 +189,14 @@ class RiderDashboardScreen extends ConsumerWidget {
           ),
         ),
         const SizedBox(height: 5.0),
+        CustomButton(
+          text: 'Logout',
+          fontSize: 16,
+          fontWeight: FontWeight.w600,
+          onPressed: () {
+            ref.read(authStateProvider.notifier).logout();
+          },
+        ),
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [

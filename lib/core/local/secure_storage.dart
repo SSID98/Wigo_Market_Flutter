@@ -31,15 +31,6 @@ class SecureStorage {
   Future<void> clear() async {
     await _storage.deleteAll();
   }
-
-  // STORE FIRST TIME FLAG
-  Future<void> saveHasOnboarded() async {
-    await _storage.write(key: 'hasOnboarded', value: 'true');
-  }
-
-  Future<bool> getHasOnboarded() async {
-    return await _storage.read(key: 'hasOnboarded') == 'true';
-  }
 }
 
 final secureStorageProvider = Provider((ref) => SecureStorage());

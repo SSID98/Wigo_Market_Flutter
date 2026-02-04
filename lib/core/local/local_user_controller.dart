@@ -12,58 +12,91 @@ enum OnboardingStage {
   completed,
 }
 
-class LocalUserController {
+class LocalUserState {
+  final String? role;
+  final OnboardingStage stage;
+  final bool hasOnboarded;
+  final String? email;
+
+  LocalUserState({
+    this.role,
+    this.stage = OnboardingStage.none,
+    this.hasOnboarded = false,
+    this.email,
+  });
+
+  LocalUserState copyWith({
+    String? role,
+    String? email,
+    OnboardingStage? stage,
+    bool? hasOnboarded,
+  }) {
+    return LocalUserState(
+      role: role ?? this.role,
+      email: email ?? this.email,
+      stage: stage ?? this.stage,
+      hasOnboarded: hasOnboarded ?? this.hasOnboarded,
+    );
+  }
+}
+
+class LocalUserController extends StateNotifier<LocalUserState> {
   static const _roleKey = 'user_role';
+  static const _emailKey = 'user_email';
   static const _stageKey = 'onboarding_stage';
   static const _hasOnboardedKey = 'has_onboarded';
 
   final SharedPreferences prefs;
 
-  LocalUserController(this.prefs);
+  // Initialize state by reading from prefs immediately
+  LocalUserController(this.prefs) : super(LocalUserState()) {
+    _init();
+  }
 
-  // ----------------------------
-  // ROLE
-  // ----------------------------
+  void _init() {
+    final role = prefs.getString(_roleKey);
+    final email = prefs.getString(_emailKey);
+    final stageIndex = prefs.getInt(_stageKey) ?? 0;
+    final hasOnboarded = prefs.getBool(_hasOnboardedKey) ?? false;
+
+    state = LocalUserState(
+      role: role,
+      email: email,
+      stage: OnboardingStage.values[stageIndex],
+      hasOnboarded: hasOnboarded,
+    );
+  }
+
   Future<void> saveRole(String role) async {
     await prefs.setString(_roleKey, role);
+    state = state.copyWith(role: role); // 👈 This triggers the redirect!
   }
 
-  String? get role => prefs.getString(_roleKey);
+  Future<void> saveEmail(String email) async {
+    await prefs.setString(_emailKey, email);
+    state = state.copyWith(email: email); // 👈 This triggers the redirect!
+  }
 
-  // ----------------------------
-  // ONBOARDING STAGE
-  // ----------------------------
   Future<void> saveStage(OnboardingStage stage) async {
     await prefs.setInt(_stageKey, stage.index);
+    state = state.copyWith(stage: stage); // 👈 This triggers the redirect!
   }
 
-  OnboardingStage get stage {
-    final index = prefs.getInt(_stageKey);
-    if (index == null || index < 0 || index >= OnboardingStage.values.length) {
-      return OnboardingStage.none;
-    }
-    return OnboardingStage.values[index];
-  }
-
-  // ----------------------------
-  // HAS ONBOARDED
-  // ----------------------------
   Future<void> saveHasOnboarded(bool value) async {
     await prefs.setBool(_hasOnboardedKey, value);
+    state = state.copyWith(
+      hasOnboarded: value,
+    ); // 👈 This triggers the redirect!
   }
 
-  bool get hasOnboarded => prefs.getBool(_hasOnboardedKey) ?? false;
-
-  // ----------------------------
-  // FULL RESET
-  // ----------------------------
   Future<void> resetAll() async {
-    await prefs.remove(_roleKey);
-    await prefs.remove(_stageKey);
-    await prefs.remove(_hasOnboardedKey);
+    await prefs.clear();
+    state = LocalUserState(); // Reset state
   }
 }
 
-final localUserControllerProvider = Provider<LocalUserController>((ref) {
-  throw UnimplementedError("Initialize in main.dart with SharedPrefs");
-});
+// Update the provider type
+final localUserControllerProvider =
+    StateNotifierProvider<LocalUserController, LocalUserState>((ref) {
+      throw UnimplementedError("Initialize in main.dart");
+    });

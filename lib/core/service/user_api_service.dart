@@ -11,8 +11,8 @@ class UserApiService {
           Dio(
             BaseOptions(
               baseUrl: dotenv.env['BASE_URL'] ?? '',
-              connectTimeout: const Duration(seconds: 15),
-              receiveTimeout: const Duration(seconds: 15),
+              connectTimeout: const Duration(seconds: 20),
+              receiveTimeout: const Duration(seconds: 20),
               headers: {'Content-Type': 'application/json'},
             ),
           );

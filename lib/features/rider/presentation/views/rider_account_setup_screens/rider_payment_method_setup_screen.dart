@@ -295,7 +295,7 @@ class RiderPaymentMethodSetupScreen extends ConsumerWidget {
           text: 'Continue',
           onPressed: () {
             ref
-                .read(localUserControllerProvider)
+                .read(localUserControllerProvider.notifier)
                 .saveStage(OnboardingStage.success);
             context.go('/successful');
           },

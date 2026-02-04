@@ -1,4 +1,5 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:wigo_flutter/core/auth/auth_repository.dart';
 
 import '../../shared/models/login/login_response_model.dart';
 import '../local/secure_storage.dart';
@@ -6,33 +7,28 @@ import 'auth_state.dart';
 
 class AuthStateNotifier extends StateNotifier<AuthState> {
   final SecureStorage storage;
+  final AuthRepository authRepository;
 
-  AuthStateNotifier(this.storage) : super(AuthState.loading()) {
+  AuthStateNotifier(this.storage, this.authRepository)
+    : super(AuthState.loading()) {
     _init();
   }
 
   Future<void> _init() async {
     final token = await storage.getToken();
 
-    // NO TOKEN BUT ALREADY OPENED BEFORE
     if (token == null) {
       state = AuthState.loggedOut();
       return;
     }
 
-    final userId = await storage.getUserId();
-    final role = await storage.getRole();
-
-    // TOKEN EXISTS → user logged in
-    state = AuthState.loggedIn(
-      LoginResponseModel(
-        id: userId ?? '',
-        activeRole: role ?? '',
-        token: token,
-        role: [],
-        status: '',
-      ),
-    );
+    try {
+      final profile = await authRepository.getMe();
+      state = AuthState.loggedIn(profile);
+    } catch (_) {
+      await storage.clear();
+      state = AuthState.loggedOut();
+    }
   }
 
   Future<void> login(LoginResponseModel model) async {
@@ -52,5 +48,8 @@ class AuthStateNotifier extends StateNotifier<AuthState> {
 final authStateProvider = StateNotifierProvider<AuthStateNotifier, AuthState>((
   ref,
 ) {
-  return AuthStateNotifier(ref.read(secureStorageProvider));
+  return AuthStateNotifier(
+    ref.read(secureStorageProvider),
+    ref.read(authRepositoryProvider),
+  );
 });

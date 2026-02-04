@@ -64,7 +64,7 @@ class OnboardingViewModel extends ChangeNotifier {
     } else {
       if (!context.mounted) return;
       ref
-          .read(localUserControllerProvider)
+          .read(localUserControllerProvider.notifier)
           .saveStage(OnboardingStage.registration);
       showLoadingDialog(context);
       await Future.delayed(const Duration(seconds: 1));
@@ -82,7 +82,7 @@ class OnboardingViewModel extends ChangeNotifier {
       );
     } else {
       ref
-          .read(localUserControllerProvider)
+          .read(localUserControllerProvider.notifier)
           .saveStage(OnboardingStage.registration);
       showLoadingDialog(context);
       await Future.delayed(const Duration(seconds: 1));
@@ -100,7 +100,7 @@ class OnboardingViewModel extends ChangeNotifier {
       );
     } else {
       ref
-          .read(localUserControllerProvider)
+          .read(localUserControllerProvider.notifier)
           .saveStage(OnboardingStage.registration);
       showLoadingDialog(context);
       await Future.delayed(const Duration(seconds: 1));

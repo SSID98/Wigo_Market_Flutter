@@ -127,13 +127,13 @@ class EmailVerificationScreen extends ConsumerWidget {
                               if (isBuyer) {
                                 if (!context.mounted) return;
                                 ref
-                                    .read(localUserControllerProvider)
+                                    .read(localUserControllerProvider.notifier)
                                     .saveStage(OnboardingStage.success);
                                 context.go('/successful');
                               } else {
                                 if (!context.mounted) return;
                                 ref
-                                    .read(localUserControllerProvider)
+                                    .read(localUserControllerProvider.notifier)
                                     .saveStage(OnboardingStage.ninVerification);
                                 context.go('/rider/verification');
                               }

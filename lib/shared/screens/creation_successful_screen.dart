@@ -222,9 +222,11 @@ class CreationSuccessfulScreen extends ConsumerWidget {
             text: 'Continue',
             onPressed: () async {
               ref
-                  .read(localUserControllerProvider)
+                  .read(localUserControllerProvider.notifier)
                   .saveStage(OnboardingStage.completed);
-              ref.read(localUserControllerProvider).saveHasOnboarded(true);
+              ref
+                  .read(localUserControllerProvider.notifier)
+                  .saveHasOnboarded(true);
               if (!context.mounted) return;
               isBuyer ? context.go('/buyerHomeScreen') : context.go('/login');
             },

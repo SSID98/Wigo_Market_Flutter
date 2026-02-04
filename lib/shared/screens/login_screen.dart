@@ -182,7 +182,6 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
         padding: const EdgeInsets.symmetric(vertical: 20.0, horizontal: 100.0),
         child: Row(
           children: [
-            // Left section: Image and Bottom Text
             Expanded(
               child: Container(
                 color: AppColors.backgroundWhite,
@@ -299,6 +298,13 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                                       _emailError != null ||
                                       _passwordError != null;
                                   if (!hasAnyError) {
+                                    debugPrint(
+                                      'Email: "${vm.emailController.text}"',
+                                    );
+                                    debugPrint(
+                                      'Password: "${vm.passwordController.text}"',
+                                    );
+
                                     vm.login(formKey, context);
                                   }
                                 },

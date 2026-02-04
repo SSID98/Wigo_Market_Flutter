@@ -324,7 +324,7 @@ class RiderAccountNinVerificationScreen extends ConsumerWidget {
           text: 'Verify',
           onPressed: () {
             ref
-                .read(localUserControllerProvider)
+                .read(localUserControllerProvider.notifier)
                 .saveStage(OnboardingStage.bankSetup);
             context.push('/rider/account/setup');
           },
