@@ -92,7 +92,7 @@ class RegisterState {
 
   bool get isBuyer => role == UserRole.buyer;
 
-  bool get isRider => role == UserRole.rider;
+  bool get isRider => role == UserRole.dispatch;
 
   bool get canSubmit {
     if (hasValidationErrors) return false;

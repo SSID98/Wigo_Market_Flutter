@@ -83,7 +83,7 @@ class RegisterViewModel extends StateNotifier<RegisterState> {
     Map<String, dynamic> payload,
   ) {
     switch (role) {
-      case UserRole.rider:
+      case UserRole.dispatch:
         return api.registerRider(payload);
       case UserRole.buyer:
         return api.registerBuyer(payload);

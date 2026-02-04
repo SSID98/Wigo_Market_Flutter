@@ -79,7 +79,7 @@ final routerProvider = Provider<GoRouter>((ref) {
       // 3️⃣ If logged in and at a public/login page, send them to their dashboard
       if (loggedIn && (isPublicRoute || loc == '/login')) {
         if (local.role == 'buyer') return '/buyerHomeScreen';
-        if (local.role == 'rider') return '/riderMainScreen';
+        if (local.role == 'dispatch') return '/riderMainScreen';
       }
 
       debugPrint('Router decision role = ${local.role}');

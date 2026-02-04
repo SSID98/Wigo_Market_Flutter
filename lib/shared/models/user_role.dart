@@ -1,5 +1,1 @@
-enum UserRole {
-  buyer,
-  seller,
-  rider,
-}
+enum UserRole { buyer, seller, dispatch }

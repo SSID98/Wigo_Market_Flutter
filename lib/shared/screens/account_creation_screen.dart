@@ -136,7 +136,7 @@ class AccountCreationScreen extends ConsumerWidget {
                                           ? UserRole.buyer
                                           : isSeller
                                           ? UserRole.seller
-                                          : UserRole.rider,
+                                          : UserRole.dispatch,
                                     );
 
                                     final ok = await notifier.submit(context);

@@ -103,15 +103,15 @@ class RoleSelectionBody extends ConsumerWidget {
           description:
               'Earn money delivering orders around campus. No experience needed!',
           icon: AppAssets.icons.riderIcon.path,
-          isSelected: selectedRole == UserRole.rider,
+          isSelected: selectedRole == UserRole.dispatch,
           onTap: () {
             ref
                 .read(localUserControllerProvider.notifier)
-                .saveRole(UserRole.rider.name);
+                .saveRole(UserRole.dispatch.name);
             ref
                 .read(localUserControllerProvider.notifier)
                 .saveStage(OnboardingStage.onboarding);
-            viewModel.selectRole(UserRole.rider);
+            viewModel.selectRole(UserRole.dispatch);
             viewModel.confirmSelection(context);
           },
           backgroundColor: AppColors.riderCardColor,

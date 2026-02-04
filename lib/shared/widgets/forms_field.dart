@@ -33,7 +33,7 @@ class FormFields extends ConsumerWidget {
     final spacing = const SizedBox(height: 16);
     final role = ref.watch(userRoleProvider);
     final isSeller = role == UserRole.seller;
-    final isRider = role == UserRole.rider;
+    final isRider = role == UserRole.dispatch;
 
     return Column(
       children: [

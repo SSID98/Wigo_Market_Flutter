@@ -18,7 +18,7 @@ class WelcomeScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final Size screenSize = MediaQuery.of(context).size;
     final role = ref.watch(userRoleProvider);
-    final isRider = role == UserRole.rider;
+    final isRider = role == UserRole.dispatch;
     final isSeller = role == UserRole.seller;
     return LayoutBuilder(
       builder: (context, constraints) {

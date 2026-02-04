@@ -20,7 +20,7 @@ class MockStateController<T> extends Mock implements StateController<T> {}
 void main() {
   // 1. Register fallback values for methods that take complex, non-primitive types.
   setUpAll(() {
-    registerFallbackValue(UserRole.rider);
+    registerFallbackValue(UserRole.dispatch);
   });
 
   group('RoleSelectionViewModel', () {
@@ -69,7 +69,7 @@ void main() {
       'confirmSelection exits after delay if role is selected but context is NOT mounted',
       () async {
         final mockContext = MockBuildContext();
-        const selectedRole = UserRole.rider;
+        const selectedRole = UserRole.dispatch;
 
         // Stub Ref: Return a selected role
         when(() => mockRef.read(userRoleProvider)).thenReturn(selectedRole);
