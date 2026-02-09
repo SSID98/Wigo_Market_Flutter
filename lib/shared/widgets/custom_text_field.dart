@@ -40,6 +40,9 @@ class CustomTextField extends ConsumerStatefulWidget {
   final String? errorMessage;
   final bool? enabled;
   final double? borderRadius;
+  final Widget? labelRichText;
+  final bool isRichText;
+  final FontStyle? hintFontStyle;
 
   const CustomTextField({
     super.key,
@@ -87,6 +90,9 @@ class CustomTextField extends ConsumerStatefulWidget {
     this.minLines,
     this.enabled,
     this.borderRadius,
+    this.labelRichText,
+    this.isRichText = false,
+    this.hintFontStyle,
   });
 
   @override
@@ -120,14 +126,17 @@ class _CustomTextFieldState extends ConsumerState<CustomTextField> {
       children: [
         GestureDetector(
           onTap: widget.labelOnTap,
-          child: Text(
-            widget.label,
-            style: GoogleFonts.hind(
-              fontWeight: widget.labelFontWeight ?? FontWeight.w500,
-              fontSize: widget.labelFontSize ?? 16.0,
-              color: widget.labelTextColor ?? AppColors.textBlack,
-            ),
-          ),
+          child:
+              widget.isRichText
+                  ? widget.labelRichText
+                  : Text(
+                    widget.label,
+                    style: GoogleFonts.hind(
+                      fontWeight: widget.labelFontWeight ?? FontWeight.w500,
+                      fontSize: widget.labelFontSize ?? 16.0,
+                      color: widget.labelTextColor ?? AppColors.textBlack,
+                    ),
+                  ),
         ),
         SizedBox(height: widget.spacing ?? 4),
         SizedBox(
@@ -236,6 +245,7 @@ class _CustomTextFieldState extends ConsumerState<CustomTextField> {
                   fontWeight: FontWeight.w400,
                   fontSize: widget.hintFontSize ?? 14.0,
                   color: widget.hintTextColor ?? AppColors.textBodyText,
+                  fontStyle: widget.hintFontStyle,
                 ),
                 helperText: widget.helperText,
                 helperMaxLines: 2,

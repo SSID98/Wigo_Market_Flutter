@@ -14,6 +14,7 @@ import 'package:wigo_flutter/features/buyer/presentation/views/privacy_policy_sc
 import 'package:wigo_flutter/features/buyer/presentation/views/refund_policy_screen.dart';
 import 'package:wigo_flutter/features/buyer/presentation/views/saved_product_view.dart';
 import 'package:wigo_flutter/features/buyer/presentation/views/search_results_view.dart';
+import 'package:wigo_flutter/features/seller/presentation/views/business_info_screen.dart';
 import 'package:wigo_flutter/shared/screens/support_screen.dart';
 
 import '../../features/buyer/models/product_model.dart';
@@ -22,7 +23,6 @@ import '../../features/buyer/presentation/views/buyer_product_details_screens/pr
 import '../../features/buyer/presentation/views/buyer_shell.dart';
 import '../../features/rider/presentation/views/main_screen.dart';
 import '../../features/rider/presentation/views/rider_account_setup_screens/rider_account_nin_verification_screen.dart';
-import '../../features/rider/presentation/views/rider_account_setup_screens/rider_payment_method_setup_screen.dart';
 import '../../features/rider/presentation/views/rider_settings_screens/rider_settings_main_screen.dart';
 import '../../shared/screens/account_creation_screen.dart';
 import '../../shared/screens/change_password_screen.dart';
@@ -30,20 +30,22 @@ import '../../shared/screens/creation_successful_screen.dart';
 import '../../shared/screens/email_verification_screen.dart';
 import '../../shared/screens/login_screen.dart';
 import '../../shared/screens/onboarding_screen.dart';
+import '../../shared/screens/payment_method_setup_screen.dart';
 import '../../shared/screens/reset_password_email_verification_screen.dart';
 import '../../shared/screens/reset_password_enter_email_screen.dart';
 import '../../shared/screens/role_selection_screen.dart';
 import '../../shared/screens/welcome_screen.dart';
 import '../auth/auth_state.dart';
+import '../constants/url.dart';
 import '../local/local_user_controller.dart';
 
 final routerProvider = Provider<GoRouter>((ref) {
   final routerNotifier = ref.watch(routerNotifierProvider);
   return GoRouter(
-    initialLocation: '/',
+    initialLocation: '/seller/businessInfo',
     refreshListenable: routerNotifier,
     redirect: (context, state) {
-      // if (kDevMode) return null;
+      if (kDevMode) return null;
       final status = routerNotifier.authStatus;
       final local = routerNotifier.localUserState;
       if (status == AuthStatus.loading) return null;
@@ -63,9 +65,9 @@ final routerProvider = Provider<GoRouter>((ref) {
       // 1️⃣ Create a list of "Public" routes that don't require login
       final isPublicRoute =
           loc == '/' ||
-          loc == '/welcome' ||
-          loc == '/onboarding' ||
-          loc == '/accountCreation';
+              loc == '/welcome' ||
+              loc == '/onboarding' ||
+              loc == '/accountCreation';
 
       // 2️⃣ Allow users to stay on public routes if they aren't logged in
       if (!loggedIn) {
@@ -102,8 +104,10 @@ final routerProvider = Provider<GoRouter>((ref) {
           return '/verification';
         case OnboardingStage.ninVerification:
           return '/rider/verification';
+        case OnboardingStage.businessInfo:
+          return '/seller/businessInfo';
         case OnboardingStage.bankSetup:
-          return '/rider/account/setup';
+          return '/account/setup';
         case OnboardingStage.success:
           return '/successful';
         default:
@@ -111,6 +115,7 @@ final routerProvider = Provider<GoRouter>((ref) {
       }
     },
     routes: [
+      //general routes
       GoRoute(
         path: '/',
         builder: (context, state) => const RoleSelectionScreen(),
@@ -143,24 +148,20 @@ final routerProvider = Provider<GoRouter>((ref) {
           );
         },
       ),
-      GoRoute(path: '/login', builder: (context, state) => const LoginScreen()),
       GoRoute(
-        path: '/rider/verification',
-        builder: (context, state) => const RiderAccountNinVerificationScreen(),
-      ),
-      GoRoute(
-        path: '/rider/account/setup',
-        builder: (context, state) => const RiderPaymentMethodSetupScreen(),
+        path: '/account/setup',
+        builder: (context, state) => const PaymentMethodSetupScreen(),
       ),
       GoRoute(
         path: '/successful',
         builder: (context, state) => const CreationSuccessfulScreen(),
       ),
+      GoRoute(path: '/login', builder: (context, state) => const LoginScreen()),
       GoRoute(
         path: '/resetPassword/verification',
         builder:
             (context, state) =>
-                const ResetPasswordEmailVerificationScreen(email: ''),
+        const ResetPasswordEmailVerificationScreen(email: ''),
       ),
       GoRoute(
         path: '/resetPassword/enterEmail',
@@ -170,6 +171,12 @@ final routerProvider = Provider<GoRouter>((ref) {
         path: '/changePassword',
         builder: (context, state) => const ChangePasswordScreen(),
       ),
+
+      //rider routes
+      GoRoute(
+        path: '/rider/verification',
+        builder: (context, state) => const RiderAccountNinVerificationScreen(),
+      ),
       GoRoute(
         path: '/riderMainScreen',
         builder: (context, state) => RiderMainScreen(),
@@ -178,6 +185,8 @@ final routerProvider = Provider<GoRouter>((ref) {
         path: '/riderSettingsMainScreen',
         builder: (context, state) => RiderSettingsMainScreen(),
       ),
+
+      //buyer routes
       ShellRoute(
         builder: (context, state, child) => BuyerShell(child: child),
         routes: [
@@ -258,6 +267,12 @@ final routerProvider = Provider<GoRouter>((ref) {
             builder: (context, state) => BuyerAccountScreen(),
           ),
         ],
+      ),
+
+      //seller routes
+      GoRoute(
+        path: '/seller/businessInfo',
+        builder: (context, state) => BusinessInfoScreen(),
       ),
     ],
   );

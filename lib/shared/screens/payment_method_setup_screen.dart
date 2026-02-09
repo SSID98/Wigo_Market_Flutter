@@ -4,15 +4,15 @@ import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:wigo_flutter/gen/assets.gen.dart';
 
-import '../../../../../core/constants/app_colors.dart';
-import '../../../../../core/constants/url.dart';
-import '../../../../../core/local/local_user_controller.dart';
-import '../../../../../shared/widgets/custom_button.dart';
-import '../../../../../shared/widgets/custom_text_field.dart';
-import '../../../viewmodels/account_setup_viewmodels/rider_payment_method_setup_viewmodel.dart';
+import '../../core/constants/app_colors.dart';
+import '../../core/constants/url.dart';
+import '../../core/local/local_user_controller.dart';
+import '../../features/rider/viewmodels/account_setup_viewmodels/rider_payment_method_setup_viewmodel.dart';
+import '../widgets/custom_button.dart';
+import '../widgets/custom_text_field.dart';
 
-class RiderPaymentMethodSetupScreen extends ConsumerWidget {
-  const RiderPaymentMethodSetupScreen({super.key});
+class PaymentMethodSetupScreen extends ConsumerWidget {
+  const PaymentMethodSetupScreen({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -309,7 +309,12 @@ class RiderPaymentMethodSetupScreen extends ConsumerWidget {
         ),
         CustomButton(
           text: 'Skip',
-          onPressed: () {},
+          onPressed: () {
+            ref
+                .read(localUserControllerProvider.notifier)
+                .saveStage(OnboardingStage.success);
+            context.go('/successful');
+          },
           suffixIcon: AppAssets.icons.arrowRight2.svg(),
           fontSize: 18,
           fontWeight: FontWeight.w500,

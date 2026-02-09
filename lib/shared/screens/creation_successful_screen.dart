@@ -22,15 +22,18 @@ class CreationSuccessfulScreen extends ConsumerWidget {
     final role = ref.watch(userRoleProvider);
 
     final isBuyer = role == UserRole.buyer;
+    final isSeller = role == UserRole.seller;
+
     return isWeb
-        ? _buildWebLayout(screenSize, context, isBuyer, ref)
-        : _buildMobileLayout(screenSize, context, isBuyer, ref);
+        ? _buildWebLayout(screenSize, context, isBuyer, isSeller, ref)
+        : _buildMobileLayout(screenSize, context, isBuyer, isSeller, ref);
   }
 
   Widget _buildMobileLayout(
     Size screenSize,
     BuildContext context,
-    isBuyer,
+    bool isBuyer,
+    bool isSeller,
     WidgetRef ref,
   ) {
     return Scaffold(
@@ -87,6 +90,7 @@ class CreationSuccessfulScreen extends ConsumerWidget {
                           context: context,
                           ref: ref,
                           isBuyer: isBuyer,
+                          isSeller: isSeller,
                         ),
                       ],
                     ),
@@ -104,6 +108,7 @@ class CreationSuccessfulScreen extends ConsumerWidget {
     Size screenSize,
     BuildContext context,
     bool isBuyer,
+    bool isSeller,
     WidgetRef ref,
   ) {
     return Scaffold(
@@ -156,6 +161,7 @@ class CreationSuccessfulScreen extends ConsumerWidget {
                           context: context,
                           ref: ref,
                           isBuyer: isBuyer,
+                          isSeller: isSeller,
                         ),
                         const SizedBox(height: 20.0),
                       ],
@@ -172,6 +178,7 @@ class CreationSuccessfulScreen extends ConsumerWidget {
 
   Widget _buildBody({
     required bool isBuyer,
+    required bool isSeller,
     required double screenSize,
     required double imageSize,
     required double fontSize1,
@@ -205,6 +212,8 @@ class CreationSuccessfulScreen extends ConsumerWidget {
           Text(
             !isBuyer
                 ? 'You are just one click away from making your first earn on wiGO MARKET.'
+                : isSeller
+                ? 'You can now list products, manage your shop, and start selling to students Instantly.'
                 : 'You are just one click away from making your first purchase on wiGO MARKET.',
             textAlign: TextAlign.center,
             style: GoogleFonts.hind(

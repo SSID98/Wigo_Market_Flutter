@@ -24,24 +24,6 @@ class RegisterViewModel extends StateNotifier<RegisterState> {
     : api = apiService ?? UserApiService(),
       super(const RegisterState());
 
-  // update methods called from UI
-  void setStateValue(String? value) {
-    if (value != null) {
-      final newFilteredCities = nigeriaStatesAndCities[value] ?? [];
-      state = state.copyWith(
-        residentialState: value,
-        filteredCities: newFilteredCities,
-        clearCity: true,
-      );
-    } else {
-      state = state.copyWith(
-        residentialState: '',
-        filteredCities: [],
-        clearCity: true,
-      );
-    }
-  }
-
   void setRole(UserRole role) => state = state.copyWith(role: role);
 
   void updateFullName(String value) => state = state.copyWith(fullName: value);
@@ -59,8 +41,25 @@ class RegisterViewModel extends StateNotifier<RegisterState> {
   void updateResidentialAddress(String value) =>
       state = state.copyWith(residentialAddress: value);
 
-  void updateResidentialState(String value) =>
-      state = state.copyWith(residentialState: value, city: '');
+  // void updateResidentialState(String value) =>
+  //     state = state.copyWith(residentialState: value, city: '');
+
+  void updateResidentialState(String? value) {
+    if (value != null) {
+      final newFilteredCities = nigeriaStatesAndCities[value] ?? [];
+      state = state.copyWith(
+        residentialState: value,
+        filteredCities: newFilteredCities,
+        clearCity: true,
+      );
+    } else {
+      state = state.copyWith(
+        residentialState: '',
+        filteredCities: [],
+        clearCity: true,
+      );
+    }
+  }
 
   void updateCity(String? value) => state = state.copyWith(city: value ?? '');
 

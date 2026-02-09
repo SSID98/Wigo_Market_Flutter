@@ -1,4 +1,3 @@
-import 'package:dotted_border/dotted_border.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -10,6 +9,7 @@ import '../../../../../core/constants/app_colors.dart';
 import '../../../../../core/constants/url.dart';
 import '../../../../../core/local/local_user_controller.dart';
 import '../../../../../shared/widgets/custom_button.dart';
+import '../../../../../shared/widgets/upload_box.dart';
 import '../../../viewmodels/account_setup_viewmodels/rider_account_nin_verification_viewmodel.dart';
 
 class RiderAccountNinVerificationScreen extends ConsumerWidget {
@@ -237,53 +237,59 @@ class RiderAccountNinVerificationScreen extends ConsumerWidget {
           ),
           const Divider(thickness: 1),
           const SizedBox(height: 10),
-          Text(
-            'Upload your NIN document for Verification',
-            textAlign: TextAlign.center,
-            style: GoogleFonts.hind(
-              fontSize: 16.0,
-              fontWeight: FontWeight.w500,
-              color: AppColors.textBlack,
-            ),
+          UploadBox(
+            hintText: "JPEG, PNG, PDG, and MP4 formats, up to 50MB",
+            label: 'Upload your NIN document for Verification',
+            prefixIcon1: AppAssets.icons.cloud.svg(),
+            prefixIcon2: AppAssets.icons.cloud.svg(),
+            hintTextColor: AppColors.textBodyText,
+            labelFontSize: 16,
           ),
-          const SizedBox(height: 8),
-          DottedBorder(
-            color: AppColors.textIconGrey,
-            strokeWidth: 1.0,
-            borderType: BorderType.RRect,
-            radius: Radius.circular(8.0),
-            dashPattern: [6, 6],
-            child: SizedBox(
-              height: 60.0,
-              width: containerWidth,
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.only(left: 18.0),
-                    child: AppAssets.icons.cloud.svg(),
-                  ),
-                  if (web)
-                    Padding(
-                      padding: const EdgeInsets.only(right: 18.0),
-                      child: CustomButton(
-                        text: 'Upload',
-                        onPressed: () {},
-                        fontSize: 10,
-                        fontWeight: FontWeight.w500,
-                        prefixIcon: AppAssets.icons.cloud.svg(),
-                        height: 30.0,
-                        width: 84.0,
-                        padding: EdgeInsets.zero,
-                        borderRadius: 4,
-                      ),
-                    )
-                  else
-                    ...[],
-                ],
-              ),
-            ),
-          ),
+          // Text(
+          //   'Upload your NIN document for Verification',
+          //   textAlign: TextAlign.center,
+          //   style: GoogleFonts.hind(
+          //     fontSize: 16.0,
+          //     fontWeight: FontWeight.w500,
+          //     color: AppColors.textBlack,
+          //   ),
+          // ),
+          // const SizedBox(height: 8),
+          // DottedBorder(
+          //   color: AppColors.textIconGrey,
+          //   strokeWidth: 1.0,
+          //   borderType: BorderType.RRect,
+          //   radius: Radius.circular(8.0),
+          //   dashPattern: [6, 6],
+          //   child: SizedBox(
+          //     height: 60.0,
+          //     width: containerWidth,
+          //     child: Row(
+          //       mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          //       children: [
+          //         Padding(
+          //           padding: const EdgeInsets.only(left: 18.0),
+          //           child: AppAssets.icons.cloud.svg(),
+          //         ),
+          //         if (web)
+          //           Padding(
+          //             padding: const EdgeInsets.only(right: 18.0),
+          //             child: CustomButton(
+          //               text: 'Upload',
+          //               onPressed: () {},
+          //               fontSize: 10,
+          //               fontWeight: FontWeight.w500,
+          //               prefixIcon: AppAssets.icons.cloud.svg(),
+          //               height: 30.0,
+          //               width: 84.0,
+          //               padding: EdgeInsets.zero,
+          //               borderRadius: 4,
+          //             ),
+          //           ),
+          //       ],
+          //     ),
+          //   ),
+          // ),
           const SizedBox(height: 25),
           Row(
             mainAxisSize: MainAxisSize.min,
@@ -326,7 +332,7 @@ class RiderAccountNinVerificationScreen extends ConsumerWidget {
             ref
                 .read(localUserControllerProvider.notifier)
                 .saveStage(OnboardingStage.bankSetup);
-            context.push('/rider/account/setup');
+            context.push('/account/setup');
           },
           fontSize: buttonTextFontSize,
           fontWeight: FontWeight.w500,
@@ -336,10 +342,15 @@ class RiderAccountNinVerificationScreen extends ConsumerWidget {
           buttonColor: AppColors.primaryLightGreen,
           width: double.infinity,
         ),
-        if (web) SizedBox(height: 60) else ...[],
+        if (web) SizedBox(height: 60),
         CustomButton(
           text: 'Skip',
-          onPressed: () {},
+          onPressed: () {
+            ref
+                .read(localUserControllerProvider.notifier)
+                .saveStage(OnboardingStage.bankSetup);
+            context.push('/account/setup');
+          },
           suffixIcon: AppAssets.icons.arrowRight2.svg(),
           fontSize: 18,
           fontWeight: FontWeight.w500,

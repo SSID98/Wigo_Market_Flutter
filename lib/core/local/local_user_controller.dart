@@ -7,6 +7,7 @@ enum OnboardingStage {
   registration,
   otp,
   ninVerification,
+  businessInfo,
   bankSetup,
   success,
   completed,

@@ -1,0 +1,334 @@
+import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'package:wigo_flutter/core/constants/app_colors.dart';
+import 'package:wigo_flutter/shared/widgets/custom_button.dart';
+
+import '../../../../core/constants/url.dart';
+import '../../../../core/local/local_user_controller.dart';
+import '../widgets/business_info_formfields.dart';
+
+class BusinessInfoScreen extends ConsumerWidget {
+  const BusinessInfoScreen({super.key});
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final screenSize = MediaQuery.of(context).size;
+    final isWeb = MediaQuery.of(context).size.width > 600;
+    return isWeb
+        ? _buildWebLayout(screenSize, context, isWeb)
+        : _buildMobileLayout(screenSize, context, ref, isWeb);
+  }
+
+  Widget _buildMobileLayout(
+    Size screenSize,
+    BuildContext context,
+    WidgetRef ref,
+    bool isWeb,
+  ) {
+    return Scaffold(
+      backgroundColor: AppColors.backgroundWhite,
+      body: Stack(
+        children: [
+          Image.network(
+            '$networkImageUrl/onboardingRiderMobile.png',
+            fit: BoxFit.cover,
+            color: AppColors.backGroundOverlay,
+            colorBlendMode: BlendMode.overlay,
+          ),
+          Padding(
+            padding: const EdgeInsets.only(top: 90.0),
+            child: Align(
+              alignment: Alignment.topCenter,
+              child: Container(
+                height: screenSize.height * 0.82,
+                width: screenSize.width * 0.95,
+                constraints: BoxConstraints(maxWidth: 400),
+                decoration: BoxDecoration(
+                  color: AppColors.backgroundWhite,
+                  borderRadius: BorderRadius.circular(16.0),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withValues(alpha: 0.2),
+                      spreadRadius: 1,
+                      blurRadius: 5,
+                      offset: const Offset(0, 3),
+                    ),
+                  ],
+                ),
+                child: Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const SizedBox(height: 5),
+                      _buildHeader(0.0, isWeb),
+                      const Divider(thickness: 1.3),
+                      const SizedBox(height: 10),
+                      Expanded(
+                        child: SingleChildScrollView(
+                          child: BusinessInfoFormFields(
+                            iconHeight: 20,
+                            iconWidth: 20,
+                            hintFontSize: 11,
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: 24),
+                      Center(
+                        child: CustomButton(
+                          text: 'Continue',
+                          onPressed: () {
+                            ref
+                                .read(localUserControllerProvider.notifier)
+                                .saveStage(OnboardingStage.bankSetup);
+                            context.push('/account/setup');
+                          },
+                          // state.isLoading
+                          //     ? null
+                          //     : () async {
+                          //       notifier.validateOnSubmit();
+                          //
+                          //       final currentState = ref.read(
+                          //         registerViewModelProvider,
+                          //       );
+                          //
+                          //       if (currentState.emailError != null ||
+                          //           currentState.passwordError != null) {
+                          //         ScaffoldMessenger.of(
+                          //           context,
+                          //         ).showSnackBar(
+                          //           const SnackBar(
+                          //             content: Text(
+                          //               'Please fix the highlighted fields',
+                          //             ),
+                          //           ),
+                          //         );
+                          //         return;
+                          //       }
+                          //
+                          //       // set role before submit if you have separate path
+                          //       notifier.setRole(
+                          //         isBuyer
+                          //             ? UserRole.buyer
+                          //             : isSeller
+                          //             ? UserRole.seller
+                          //             : UserRole.dispatch,
+                          //       );
+                          //
+                          //       final ok = await notifier.submit(context);
+                          //
+                          //       if (ok) {
+                          //         // navigate to verification or next screen
+                          //         await ref
+                          //             .read(
+                          //               localUserControllerProvider
+                          //                   .notifier,
+                          //             )
+                          //             .saveEmail(state.email);
+                          //
+                          //         await ref
+                          //             .read(
+                          //               localUserControllerProvider
+                          //                   .notifier,
+                          //             )
+                          //             .saveStage(OnboardingStage.otp);
+                          //
+                          //         if (!context.mounted) return;
+                          //         context.go('/verification');
+                          //       } else {
+                          //         // show error via snackBar or inline UI from state.errorMessage
+                          //         if (!context.mounted) return;
+                          //         ScaffoldMessenger.of(
+                          //           context,
+                          //         ).showSnackBar(
+                          //           SnackBar(
+                          //             content: Text(
+                          //               state.errorMessage ??
+                          //                   'An error occurred',
+                          //             ),
+                          //           ),
+                          //         );
+                          //       }
+                          //     },
+                          fontSize: 18,
+                          fontWeight: FontWeight.w500,
+                          width: double.infinity,
+                          height: 50,
+                          borderRadius: 6.0,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildWebLayout(screenSize, context, bool isWeb) {
+    return Scaffold(
+      body: Stack(
+        children: [
+          Image.network(
+            '$networkImageUrl/onboardingRiderWeb.png',
+            fit: BoxFit.cover,
+            color: AppColors.backGroundOverlay,
+            colorBlendMode: BlendMode.overlay,
+          ),
+          Padding(
+            padding: const EdgeInsets.only(top: 105.0),
+            child: Align(
+              alignment: Alignment.topCenter,
+              child: Container(
+                width: screenSize.width * 0.95,
+                height: screenSize.height * 0.85,
+                constraints: BoxConstraints(maxWidth: 1005),
+                decoration: BoxDecoration(
+                  color: AppColors.backgroundWhite,
+                  borderRadius: BorderRadius.circular(16.0),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withValues(alpha: 0.2),
+                      spreadRadius: 1,
+                      blurRadius: 5,
+                      offset: const Offset(0, 3),
+                    ),
+                  ],
+                ),
+                child: Center(
+                  child: ConstrainedBox(
+                    constraints: const BoxConstraints(maxWidth: 700),
+                    child: SingleChildScrollView(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const SizedBox(height: 32),
+                          _buildHeader(20, isWeb),
+                          Padding(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 20.0,
+                            ),
+                            child: Column(
+                              children: [
+                                const Divider(thickness: 1.3),
+                                const SizedBox(height: 15),
+                                BusinessInfoFormFields(
+                                  iconHeight: 20,
+                                  iconWidth: 40,
+                                  hintFontSize: 6,
+                                  web: true,
+                                ),
+                                const SizedBox(height: 32),
+                                Padding(
+                                  padding: const EdgeInsets.only(bottom: 24.0),
+                                  child: Center(
+                                    child: CustomButton(
+                                      text: 'Continue',
+                                      onPressed: () {
+                                        context.push('/verification');
+                                      },
+                                      fontSize: 18,
+                                      fontWeight: FontWeight.w500,
+                                      width: 680,
+                                      height: 50,
+                                      borderRadius: 6.0,
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildHeader(double headerPadding, bool isWeb) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Center(
+          child: Text(
+            textAlign: TextAlign.center,
+            'Complete Account Setup',
+            style: GoogleFonts.hind(
+              fontWeight: FontWeight.w700,
+              fontSize: isWeb ? 36 : 20,
+              color: AppColors.textDarkGreen,
+            ),
+          ),
+        ),
+        const SizedBox(height: 15),
+        if (isWeb)
+          Column(
+            children: [
+              Center(
+                child: Text(
+                  'Let’s get your store ready to start selling on WIGOMARKET.',
+                  style: GoogleFonts.hind(
+                    fontWeight: FontWeight.w500,
+                    fontSize: isWeb ? 18 : 14,
+                    color: AppColors.textBlackGrey,
+                  ),
+                ),
+              ),
+              SizedBox(height: 19),
+            ],
+          )
+        else ...[
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 40),
+            child: Text(
+              textAlign: TextAlign.center,
+              'Let’s get your store ready to start selling on WIGOMARKET.',
+              style: GoogleFonts.hind(
+                fontWeight: FontWeight.w500,
+                fontSize: isWeb ? 18 : 14,
+                color: AppColors.textBlackGrey,
+              ),
+            ),
+          ),
+        ],
+        const SizedBox(height: 20),
+        Padding(
+          padding: EdgeInsets.symmetric(horizontal: headerPadding),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                'Business/Shop information',
+                style: GoogleFonts.hind(
+                  fontWeight: FontWeight.w700,
+                  fontSize: isWeb ? 24 : 18,
+                  color: AppColors.textBlackGrey,
+                ),
+              ),
+              const SizedBox(height: 12),
+              Text(
+                'Help buyers trust your store by sharing a few details about what you sell and where you\'re located.',
+                style: GoogleFonts.hind(
+                  fontWeight: FontWeight.w500,
+                  fontSize: isWeb ? 16 : 14,
+                  color: AppColors.textBlackGrey,
+                ),
+              ),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+}

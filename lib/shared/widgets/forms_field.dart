@@ -153,7 +153,7 @@ class FormFields extends ConsumerWidget {
                           ? null
                           : regState.residentialState,
                   onChanged: (val) {
-                    notifier.updateResidentialState(val ?? '');
+                    notifier.updateResidentialState(val);
                   },
                 ),
               ),
@@ -179,7 +179,7 @@ class FormFields extends ConsumerWidget {
                     ? null
                     : regState.residentialState,
             onChanged: (val) {
-              notifier.setStateValue(val);
+              notifier.updateResidentialState(val);
             },
           ),
           spacing,

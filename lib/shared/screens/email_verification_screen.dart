@@ -39,6 +39,7 @@ class EmailVerificationScreen extends ConsumerWidget {
     final role = ref.watch(userRoleProvider);
     final notifier = ref.read(emailVerificationProvider.notifier);
     final isBuyer = role == UserRole.buyer;
+    final isSeller = role == UserRole.seller;
     final verificationState = ref.watch(emailVerificationProvider);
     return isWeb
         ? _buildWebLayout(screenSize, maskedEmail)
@@ -47,6 +48,7 @@ class EmailVerificationScreen extends ConsumerWidget {
           maskedEmail,
           context,
           isBuyer,
+          isSeller,
           notifier,
           ref,
           verificationState,
@@ -58,6 +60,7 @@ class EmailVerificationScreen extends ConsumerWidget {
     String maskedEmail,
     BuildContext context,
     bool isBuyer,
+    bool isSeller,
     EmailVerificationViewModel notifier,
     WidgetRef ref,
     EmailVerificationState state,
@@ -130,6 +133,12 @@ class EmailVerificationScreen extends ConsumerWidget {
                                     .read(localUserControllerProvider.notifier)
                                     .saveStage(OnboardingStage.success);
                                 context.go('/successful');
+                              } else if (isSeller) {
+                                if (!context.mounted) return;
+                                ref
+                                    .read(localUserControllerProvider.notifier)
+                                    .saveStage(OnboardingStage.businessInfo);
+                                context.go('/seller/businessInfo');
                               } else {
                                 if (!context.mounted) return;
                                 ref
