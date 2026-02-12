@@ -302,7 +302,7 @@ class _EditBankAccountScreenState extends ConsumerState<EditBankAccountScreen> {
                                     _banks.contains(_selectedBankName)
                                         ? _selectedBankName
                                         : null,
-                                height: isWeb ? 52 : 40,
+                                sizeBoxHeight: isWeb ? 52 : 40,
                                 items: _banks,
                               );
                             case 3:

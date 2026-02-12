@@ -21,6 +21,10 @@ class $AssetsIconsGen {
   SvgGenImage get actionFailed =>
       const SvgGenImage('assets/icons/actionFailed.svg');
 
+  /// File path: assets/icons/activeProduct.svg
+  SvgGenImage get activeProduct =>
+      const SvgGenImage('assets/icons/activeProduct.svg');
+
   /// File path: assets/icons/arrowDown.svg
   SvgGenImage get arrowDown => const SvgGenImage('assets/icons/arrowDown.svg');
 
@@ -70,6 +74,10 @@ class $AssetsIconsGen {
 
   /// File path: assets/icons/bus.svg
   SvgGenImage get bus => const SvgGenImage('assets/icons/bus.svg');
+
+  /// File path: assets/icons/businessInfo.svg
+  SvgGenImage get businessInfo =>
+      const SvgGenImage('assets/icons/businessInfo.svg');
 
   /// File path: assets/icons/buyerIcon.svg
   SvgGenImage get buyerIcon => const SvgGenImage('assets/icons/buyerIcon.svg');
@@ -127,6 +135,10 @@ class $AssetsIconsGen {
   /// File path: assets/icons/customerService.svg
   SvgGenImage get customerService =>
       const SvgGenImage('assets/icons/customerService.svg');
+
+  /// File path: assets/icons/dashboardCart.svg
+  SvgGenImage get dashboardCart =>
+      const SvgGenImage('assets/icons/dashboardCart.svg');
 
   /// File path: assets/icons/defaultContainer.svg
   SvgGenImage get defaultContainer =>
@@ -211,6 +223,10 @@ class $AssetsIconsGen {
   /// File path: assets/icons/group.svg
   SvgGenImage get group => const SvgGenImage('assets/icons/group.svg');
 
+  /// File path: assets/icons/help-circle.svg
+  SvgGenImage get helpCircle =>
+      const SvgGenImage('assets/icons/help-circle.svg');
+
   /// File path: assets/icons/home.svg
   SvgGenImage get home => const SvgGenImage('assets/icons/home.svg');
 
@@ -225,6 +241,10 @@ class $AssetsIconsGen {
 
   /// File path: assets/icons/linkedin.svg
   SvgGenImage get linkedin => const SvgGenImage('assets/icons/linkedin.svg');
+
+  /// File path: assets/icons/listProduct.svg
+  SvgGenImage get listProduct =>
+      const SvgGenImage('assets/icons/listProduct.svg');
 
   /// File path: assets/icons/locationContainer.svg
   SvgGenImage get locationContainer =>
@@ -245,6 +265,10 @@ class $AssetsIconsGen {
   /// File path: assets/icons/mailContainer.svg
   SvgGenImage get mailContainer =>
       const SvgGenImage('assets/icons/mailContainer.svg');
+
+  /// File path: assets/icons/manageInventory.svg
+  SvgGenImage get manageInventory =>
+      const SvgGenImage('assets/icons/manageInventory.svg');
 
   /// File path: assets/icons/map.svg
   SvgGenImage get map => const SvgGenImage('assets/icons/map.svg');
@@ -314,6 +338,13 @@ class $AssetsIconsGen {
   /// File path: assets/icons/privacy.svg
   SvgGenImage get privacy => const SvgGenImage('assets/icons/privacy.svg');
 
+  /// File path: assets/icons/products.svg
+  SvgGenImage get products => const SvgGenImage('assets/icons/products.svg');
+
+  /// File path: assets/icons/quickActionCart.svg
+  SvgGenImage get quickActionCart =>
+      const SvgGenImage('assets/icons/quickActionCart.svg');
+
   /// File path: assets/icons/received.svg
   SvgGenImage get received => const SvgGenImage('assets/icons/received.svg');
 
@@ -344,6 +375,10 @@ class $AssetsIconsGen {
   /// File path: assets/icons/security-check.svg
   SvgGenImage get securityCheck =>
       const SvgGenImage('assets/icons/security-check.svg');
+
+  /// File path: assets/icons/sellerEarning.svg
+  SvgGenImage get sellerEarning =>
+      const SvgGenImage('assets/icons/sellerEarning.svg');
 
   /// File path: assets/icons/sellerIcon.svg
   SvgGenImage get sellerIcon =>
@@ -407,6 +442,9 @@ class $AssetsIconsGen {
   SvgGenImage get totalEarningWeb =>
       const SvgGenImage('assets/icons/totalEarningWeb.svg');
 
+  /// File path: assets/icons/totalSale.svg
+  SvgGenImage get totalSale => const SvgGenImage('assets/icons/totalSale.svg');
+
   /// File path: assets/icons/tv.svg
   SvgGenImage get tv => const SvgGenImage('assets/icons/tv.svg');
 
@@ -461,6 +499,7 @@ class $AssetsIconsGen {
   /// List of all assets
   List<SvgGenImage> get values => [
     actionFailed,
+    activeProduct,
     arrowDown,
     arrowLeft,
     arrowRight,
@@ -475,6 +514,7 @@ class $AssetsIconsGen {
     bone,
     brownWallet,
     bus,
+    businessInfo,
     buyerIcon,
     buyerLogout,
     calender,
@@ -492,6 +532,7 @@ class $AssetsIconsGen {
     completed,
     computer,
     customerService,
+    dashboardCart,
     defaultContainer,
     delete,
     delivered,
@@ -516,17 +557,20 @@ class $AssetsIconsGen {
     greenStar,
     greenWallet,
     group,
+    helpCircle,
     home,
     home2,
     home3,
     instagram,
     linkedin,
+    listProduct,
     locationContainer,
     lock,
     logo,
     logoWeb,
     mail,
     mailContainer,
+    manageInventory,
     map,
     menu,
     mobileFilter,
@@ -547,6 +591,8 @@ class $AssetsIconsGen {
     pendingPayout,
     phoneContainer,
     privacy,
+    products,
+    quickActionCart,
     received,
     recentDeliveries,
     recycle,
@@ -556,6 +602,7 @@ class $AssetsIconsGen {
     runningShoes,
     search,
     securityCheck,
+    sellerEarning,
     sellerIcon,
     setting,
     settingsNotify,
@@ -573,6 +620,7 @@ class $AssetsIconsGen {
     todayEarning,
     totalEarning,
     totalEarningWeb,
+    totalSale,
     tv,
     underpants,
     upload,

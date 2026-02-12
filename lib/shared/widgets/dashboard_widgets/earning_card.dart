@@ -1,24 +1,28 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:wigo_flutter/core/constants/app_colors.dart';
 
 class EarningCard extends StatelessWidget {
   final String title;
   final Widget leadingIcon;
   final Widget? watermarkIcon;
   final Widget amountWidget;
-  final Color borderColor, titleColor;
+  final Color? borderColor;
+  final Color titleColor;
   final Color? backgroundColor;
   final double borderRadius;
   final double borderWidth;
   final double titleFontSize;
   final FontWeight titleFontWeight;
   final double? stackTop, stackBottom, stackRight, stackLeft;
+  final bool iSeller;
+  final Gradient? gradient;
 
   const EarningCard({
     super.key,
     required this.leadingIcon,
     this.watermarkIcon,
-    required this.borderColor,
+    this.borderColor = Colors.transparent,
     required this.titleColor,
     required this.title,
     required this.amountWidget,
@@ -31,6 +35,8 @@ class EarningCard extends StatelessWidget {
     this.stackBottom,
     this.stackRight,
     this.stackLeft,
+    this.iSeller = false,
+    this.gradient,
   });
 
   @override
@@ -51,7 +57,8 @@ class EarningCard extends StatelessWidget {
           decoration: BoxDecoration(
             color: backgroundColor,
             borderRadius: BorderRadius.circular(borderRadius),
-            border: Border.all(color: borderColor, width: borderWidth),
+            border: Border.all(color: borderColor!, width: borderWidth),
+            gradient: gradient,
           ),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -68,13 +75,31 @@ class EarningCard extends StatelessWidget {
                       color: titleColor,
                     ),
                   ),
-                  leadingIcon,
+                  iSeller
+                      ? Container(
+                        height: 30,
+                        width: 30,
+                        decoration: BoxDecoration(
+                          color: AppColors.backgroundWhite,
+                          borderRadius: BorderRadius.circular(67.14),
+                        ),
+                        child: Center(child: leadingIcon),
+                      )
+                      : leadingIcon,
                 ],
               ),
               amountWidget,
             ],
           ),
         ),
+        if (watermarkIcon != null && iSeller)
+          Positioned(
+            right: stackRight,
+            bottom: stackBottom,
+            top: stackTop,
+            left: stackLeft,
+            child: watermarkIcon!,
+          ),
       ],
     );
   }

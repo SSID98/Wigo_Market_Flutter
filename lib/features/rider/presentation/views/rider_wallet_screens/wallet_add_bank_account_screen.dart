@@ -155,76 +155,71 @@ class AddBankAccountScreen extends ConsumerWidget {
     String? payout2,
     String? withdraw,
   }) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Card(
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(16),
-            side: const BorderSide(color: AppColors.borderColor, width: 1),
-          ),
-          elevation: 0,
-          margin: EdgeInsets.zero,
-          color: AppColors.backgroundWhite,
-          child: Padding(
-            padding: const EdgeInsets.fromLTRB(30.0, 16, 80, 16),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  title,
-                  style: GoogleFonts.hind(
-                    fontWeight: FontWeight.w600,
-                    fontSize: 16,
-                    color: AppColors.textBlackGrey,
-                  ),
-                ),
-                const SizedBox(height: 5),
-                RichText(
-                  text: TextSpan(
-                    children: [
-                      TextSpan(
-                        text: body,
-                        style: GoogleFonts.hind(
-                          fontSize: isWeb ? 14 : 12,
-                          fontWeight: FontWeight.w400,
-                          color: AppColors.textBlackGrey,
-                        ),
-                      ),
-                      if (isPayouts)
-                        TextSpan(
-                          text: payout1,
-                          style: GoogleFonts.hind(
-                            fontSize: isWeb ? 14 : 12,
-                            fontWeight: FontWeight.w700,
-                            color: AppColors.textBlackGrey,
-                          ),
-                        ),
-                      TextSpan(
-                        text: payout2,
-                        style: GoogleFonts.hind(
-                          fontSize: isWeb ? 14 : 12,
-                          fontWeight: FontWeight.w400,
-                          color: AppColors.textBlackGrey,
-                        ),
-                      ),
-                      if (isWithdraw)
-                        TextSpan(
-                          text: withdraw,
-                          style: GoogleFonts.notoSans(
-                            fontSize: isWeb ? 14 : 12,
-                            fontWeight: FontWeight.w700,
-                            color: AppColors.textBlackGrey,
-                          ),
-                        ),
-                    ],
-                  ),
-                ),
-              ],
+    return Card(
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(16),
+        side: const BorderSide(color: AppColors.borderColor, width: 1),
+      ),
+      elevation: 0,
+      margin: EdgeInsets.zero,
+      color: AppColors.backgroundWhite,
+      child: Padding(
+        padding: const EdgeInsets.fromLTRB(30.0, 16, 80, 16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              title,
+              style: GoogleFonts.hind(
+                fontWeight: FontWeight.w600,
+                fontSize: 16,
+                color: AppColors.textBlackGrey,
+              ),
             ),
-          ),
+            const SizedBox(height: 5),
+            RichText(
+              text: TextSpan(
+                children: [
+                  TextSpan(
+                    text: body,
+                    style: GoogleFonts.hind(
+                      fontSize: isWeb ? 14 : 12,
+                      fontWeight: FontWeight.w400,
+                      color: AppColors.textBlackGrey,
+                    ),
+                  ),
+                  if (isPayouts)
+                    TextSpan(
+                      text: payout1,
+                      style: GoogleFonts.hind(
+                        fontSize: isWeb ? 14 : 12,
+                        fontWeight: FontWeight.w700,
+                        color: AppColors.textBlackGrey,
+                      ),
+                    ),
+                  TextSpan(
+                    text: payout2,
+                    style: GoogleFonts.hind(
+                      fontSize: isWeb ? 14 : 12,
+                      fontWeight: FontWeight.w400,
+                      color: AppColors.textBlackGrey,
+                    ),
+                  ),
+                  if (isWithdraw)
+                    TextSpan(
+                      text: withdraw,
+                      style: GoogleFonts.notoSans(
+                        fontSize: isWeb ? 14 : 12,
+                        fontWeight: FontWeight.w700,
+                        color: AppColors.textBlackGrey,
+                      ),
+                    ),
+                ],
+              ),
+            ),
+          ],
         ),
-      ],
+      ),
     );
   }
 

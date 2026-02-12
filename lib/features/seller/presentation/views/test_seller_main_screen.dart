@@ -1,27 +1,26 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:wigo_flutter/features/rider/presentation/views/delivery_task_screen.dart';
-import 'package:wigo_flutter/features/rider/presentation/views/rider_dashboard_screen.dart';
-import 'package:wigo_flutter/features/rider/presentation/views/rider_settings_screens/rider_settings_main_screen.dart';
-import 'package:wigo_flutter/features/rider/presentation/views/rider_tracking_screen.dart';
-import 'package:wigo_flutter/features/rider/presentation/views/rider_wallet_screens/wallet_main_screen.dart';
+import 'package:wigo_flutter/features/seller/presentation/views/seller_dashboard_screen.dart';
 
 import '../../../../core/constants/app_colors.dart';
+import '../../../../core/providers/role_selection_provider.dart';
 import '../../../../gen/assets.gen.dart';
+import '../../../../shared/models/user_role.dart';
 import '../../../../shared/widgets/dashboard_widgets/custom_app_bar.dart';
 import '../../../../shared/widgets/dashboard_widgets/web_side_bar.dart';
-import '../../viewmodels/global_navigation_viewmodel.dart';
+import '../../../rider/viewmodels/global_navigation_viewmodel.dart';
 
-class RiderMainScreen extends ConsumerStatefulWidget {
-  const RiderMainScreen({super.key});
+class SellerMainScreen extends ConsumerStatefulWidget {
+  const SellerMainScreen({super.key});
 
   @override
-  ConsumerState<RiderMainScreen> createState() => _RiderMainScreenState();
+  ConsumerState<SellerMainScreen> createState() => _SellerMainScreenState();
 }
 
-class _RiderMainScreenState extends ConsumerState<RiderMainScreen> {
+class _SellerMainScreenState extends ConsumerState<SellerMainScreen> {
   final List<GlobalKey<NavigatorState>> _navigatorKeys = [
+    GlobalKey<NavigatorState>(),
     GlobalKey<NavigatorState>(),
     GlobalKey<NavigatorState>(),
     GlobalKey<NavigatorState>(),
@@ -33,6 +32,8 @@ class _RiderMainScreenState extends ConsumerState<RiderMainScreen> {
   Widget build(BuildContext context) {
     final navState = ref.watch(globalNavigationViewModelProvider);
     final navNotifier = ref.read(globalNavigationViewModelProvider.notifier);
+    final role = ref.watch(userRoleProvider);
+    final isSeller = role == UserRole.seller;
     final isWeb = MediaQuery.of(context).size.width > 600;
     const hiddenAppBarIndices = [4];
 
@@ -68,11 +69,14 @@ class _RiderMainScreenState extends ConsumerState<RiderMainScreen> {
                             child: IndexedStack(
                               index: navState.currentIndex,
                               children: [
-                                _buildNavigator(0, RiderDashboardScreen()),
-                                _buildNavigator(1, DeliveryTaskScreen()),
-                                _buildNavigator(2, TrackingScreen()),
-                                _buildNavigator(3, WalletMainScreen()),
-                                _buildNavigator(4, RiderSettingsMainScreen()),
+                                _buildNavigator(0, SellerDashboardScreen()),
+                                _buildNavigator(1, Placeholder()),
+                                _buildNavigator(2, Placeholder()),
+                                _buildNavigator(3, Placeholder()),
+                                _buildNavigator(4, Placeholder()),
+                                // if (isSeller) ...[
+                                //   _buildNavigator(5, Placeholder()),
+                                // ],
                               ],
                             ),
                           ),
@@ -84,11 +88,11 @@ class _RiderMainScreenState extends ConsumerState<RiderMainScreen> {
                 : IndexedStack(
                   index: navState.currentIndex,
                   children: [
-                    _buildNavigator(0, RiderDashboardScreen()),
-                    _buildNavigator(1, DeliveryTaskScreen()),
-                    _buildNavigator(2, TrackingScreen()),
-                    _buildNavigator(3, WalletMainScreen()),
-                    _buildNavigator(4, RiderSettingsMainScreen()),
+                    _buildNavigator(0, SellerDashboardScreen()),
+                    _buildNavigator(1, Placeholder()),
+                    _buildNavigator(2, Placeholder()),
+                    _buildNavigator(3, Placeholder()),
+                    _buildNavigator(4, Placeholder()),
                   ],
                 ),
 
@@ -114,9 +118,9 @@ class _RiderMainScreenState extends ConsumerState<RiderMainScreen> {
   ) {
     List<String> icons = [
       AppAssets.icons.home2.path,
-      AppAssets.icons.menu.path,
-      AppAssets.icons.map.path,
-      AppAssets.icons.wallet.path,
+      AppAssets.icons.dashboardCart.path,
+      AppAssets.icons.products.path,
+      AppAssets.icons.sellerEarning.path,
       AppAssets.icons.setting.path,
     ];
 
@@ -155,7 +159,10 @@ class _RiderMainScreenState extends ConsumerState<RiderMainScreen> {
 
                             BlendMode.srcIn,
                           )
-                          : null,
+                          : ColorFilter.mode(
+                            AppColors.textIconGrey,
+                            BlendMode.srcIn,
+                          ),
                 ),
               ),
             );

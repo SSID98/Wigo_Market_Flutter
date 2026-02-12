@@ -15,13 +15,13 @@ import 'package:wigo_flutter/features/buyer/presentation/views/refund_policy_scr
 import 'package:wigo_flutter/features/buyer/presentation/views/saved_product_view.dart';
 import 'package:wigo_flutter/features/buyer/presentation/views/search_results_view.dart';
 import 'package:wigo_flutter/features/seller/presentation/views/business_info_screen.dart';
+import 'package:wigo_flutter/features/seller/presentation/views/test_seller_main_screen.dart';
 import 'package:wigo_flutter/shared/screens/support_screen.dart';
 
 import '../../features/buyer/models/product_model.dart';
 import '../../features/buyer/presentation/views/buyer_homepage_screens/buyer_home_screen.dart';
 import '../../features/buyer/presentation/views/buyer_product_details_screens/product_details_screen.dart';
 import '../../features/buyer/presentation/views/buyer_shell.dart';
-import '../../features/rider/presentation/views/main_screen.dart';
 import '../../features/rider/presentation/views/rider_account_setup_screens/rider_account_nin_verification_screen.dart';
 import '../../features/rider/presentation/views/rider_settings_screens/rider_settings_main_screen.dart';
 import '../../shared/screens/account_creation_screen.dart';
@@ -33,6 +33,7 @@ import '../../shared/screens/onboarding_screen.dart';
 import '../../shared/screens/payment_method_setup_screen.dart';
 import '../../shared/screens/reset_password_email_verification_screen.dart';
 import '../../shared/screens/reset_password_enter_email_screen.dart';
+import '../../shared/screens/rider_seller_main_screen.dart';
 import '../../shared/screens/role_selection_screen.dart';
 import '../../shared/screens/welcome_screen.dart';
 import '../auth/auth_state.dart';
@@ -42,7 +43,7 @@ import '../local/local_user_controller.dart';
 final routerProvider = Provider<GoRouter>((ref) {
   final routerNotifier = ref.watch(routerNotifierProvider);
   return GoRouter(
-    initialLocation: '/seller/businessInfo',
+    initialLocation: '/sellerMainScreen',
     refreshListenable: routerNotifier,
     redirect: (context, state) {
       if (kDevMode) return null;
@@ -65,9 +66,9 @@ final routerProvider = Provider<GoRouter>((ref) {
       // 1️⃣ Create a list of "Public" routes that don't require login
       final isPublicRoute =
           loc == '/' ||
-              loc == '/welcome' ||
-              loc == '/onboarding' ||
-              loc == '/accountCreation';
+          loc == '/welcome' ||
+          loc == '/onboarding' ||
+          loc == '/accountCreation';
 
       // 2️⃣ Allow users to stay on public routes if they aren't logged in
       if (!loggedIn) {
@@ -161,7 +162,7 @@ final routerProvider = Provider<GoRouter>((ref) {
         path: '/resetPassword/verification',
         builder:
             (context, state) =>
-        const ResetPasswordEmailVerificationScreen(email: ''),
+                const ResetPasswordEmailVerificationScreen(email: ''),
       ),
       GoRoute(
         path: '/resetPassword/enterEmail',
@@ -179,7 +180,7 @@ final routerProvider = Provider<GoRouter>((ref) {
       ),
       GoRoute(
         path: '/riderMainScreen',
-        builder: (context, state) => RiderMainScreen(),
+        builder: (context, state) => RiderAndSellerMainScreen(),
       ),
       GoRoute(
         path: '/riderSettingsMainScreen',
@@ -273,6 +274,10 @@ final routerProvider = Provider<GoRouter>((ref) {
       GoRoute(
         path: '/seller/businessInfo',
         builder: (context, state) => BusinessInfoScreen(),
+      ),
+      GoRoute(
+        path: '/sellerMainScreen',
+        builder: (context, state) => SellerMainScreen(),
       ),
     ],
   );

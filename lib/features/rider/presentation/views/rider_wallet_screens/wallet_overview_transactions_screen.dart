@@ -157,7 +157,7 @@ class WalletOverviewAndTransactionsScreen extends ConsumerWidget {
                       child: CustomDropdownField(
                         radius: 4,
                         menuItemPadding: EdgeInsets.only(left: 11),
-                        colorFilter: ColorFilter.mode(
+                        iconColorFilter: ColorFilter.mode(
                           AppColors.primaryDarkGreen,
                           BlendMode.srcIn,
                         ),
@@ -167,7 +167,7 @@ class WalletOverviewAndTransactionsScreen extends ConsumerWidget {
                         focusedBorderColor: AppColors.primaryDarkGreen,
                         hintFontSize: isWeb ? 14 : 12,
                         hintTextColor: AppColors.primaryDarkGreen,
-                        height: 37,
+                        sizeBoxHeight: 37,
                         iconHeight: 14,
                         iconWidth: 14,
                         itemsFontSize: isWeb ? 14 : 12,
@@ -195,7 +195,7 @@ class WalletOverviewAndTransactionsScreen extends ConsumerWidget {
                       child: CustomDropdownField(
                         menuItemPadding: EdgeInsets.only(left: 11),
                         radius: 4,
-                        colorFilter: ColorFilter.mode(
+                        iconColorFilter: ColorFilter.mode(
                           AppColors.primaryDarkGreen,
                           BlendMode.srcIn,
                         ),
@@ -206,7 +206,7 @@ class WalletOverviewAndTransactionsScreen extends ConsumerWidget {
                         focusedBorderColor: AppColors.primaryDarkGreen,
                         hintFontSize: isWeb ? 14 : 12,
                         hintTextColor: AppColors.primaryDarkGreen,
-                        height: 37,
+                        sizeBoxHeight: 37,
                         iconHeight: 14,
                         iconWidth: 14,
                         hintText: 'Year',

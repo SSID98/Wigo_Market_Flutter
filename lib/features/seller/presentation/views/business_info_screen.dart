@@ -186,7 +186,7 @@ class BusinessInfoScreen extends ConsumerWidget {
               alignment: Alignment.topCenter,
               child: Container(
                 width: screenSize.width * 0.95,
-                height: screenSize.height * 0.85,
+                height: screenSize.sizeBoxHeight * 0.85,
                 constraints: BoxConstraints(maxWidth: 1005),
                 decoration: BoxDecoration(
                   color: AppColors.backgroundWhite,

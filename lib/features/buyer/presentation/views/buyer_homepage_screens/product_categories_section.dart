@@ -114,7 +114,7 @@ class ProductCategoriesSection extends StatelessWidget {
                         hintFontSize: isWeb ? 14 : 12,
                         hintTextColor: AppColors.textBlackGrey,
                         menuItemPadding: EdgeInsets.only(left: 5),
-                        height: 37,
+                        sizeBoxHeight: 37,
                         iconHeight: 14,
                         iconWidth: 14,
                         itemsFontSize: isWeb ? 14 : 12,

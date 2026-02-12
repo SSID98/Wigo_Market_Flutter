@@ -320,7 +320,7 @@ class CustomDropdownField extends ConsumerStatefulWidget {
   final List<String> items;
   final double? iconHeight,
       iconWidth,
-      height,
+      sizeBoxHeight,
       hintFontSize,
       radius,
       itemsFontSize,
@@ -335,8 +335,8 @@ class CustomDropdownField extends ConsumerStatefulWidget {
       enabledBorderColor,
       focusedBorderColor,
       itemTextColor;
-  final ColorFilter? colorFilter;
-  final FontWeight? labelFontWeight;
+  final ColorFilter? iconColorFilter;
+  final FontWeight? labelFontWeight, hintFontWeight;
   final EdgeInsetsGeometry? padding, menuItemPadding;
   final double? dropMenuWidth;
 
@@ -352,7 +352,7 @@ class CustomDropdownField extends ConsumerStatefulWidget {
     this.value,
     this.hintTextColor,
     this.labelTextColor,
-    this.height,
+    this.sizeBoxHeight,
     this.hintFontSize,
     this.fillColor,
     this.enabledBorderColor,
@@ -360,13 +360,14 @@ class CustomDropdownField extends ConsumerStatefulWidget {
     this.radius,
     this.itemsFontSize,
     this.itemTextColor,
-    this.colorFilter,
+    this.iconColorFilter,
     this.validatorText,
     this.labelFontSize,
     this.labelFontWeight,
     this.padding,
     this.dropMenuWidth,
     this.menuItemPadding,
+    this.hintFontWeight,
   });
 
   @override
@@ -401,7 +402,7 @@ class _CustomDropdownFieldState extends ConsumerState<CustomDropdownField> {
           const SizedBox(height: 4),
         ],
         SizedBox(
-          height: widget.height,
+          height: widget.sizeBoxHeight,
           child: DropdownButtonFormField2<String>(
             isExpanded: true,
             value: widget.value,
@@ -417,24 +418,24 @@ class _CustomDropdownFieldState extends ConsumerState<CustomDropdownField> {
               ),
               offset: const Offset(0, 0),
             ),
-            buttonStyleData: ButtonStyleData(height: widget.height),
+            buttonStyleData: ButtonStyleData(height: widget.sizeBoxHeight),
             iconStyleData: IconStyleData(
               icon: AppAssets.icons.arrowDown.svg(
                 height: widget.iconHeight ?? 20,
                 width: widget.iconWidth ?? 20,
-                colorFilter: widget.colorFilter,
+                colorFilter: widget.iconColorFilter,
               ),
               iconSize: 0,
               openMenuIcon: AppAssets.icons.arrowDown.svg(
                 height: widget.iconHeight ?? 20,
                 width: widget.iconWidth ?? 20,
-                colorFilter: widget.colorFilter,
+                colorFilter: widget.iconColorFilter,
               ),
             ),
             hint: Text(
               widget.hintText ?? '',
               style: GoogleFonts.hind(
-                fontWeight: FontWeight.w400,
+                fontWeight: widget.hintFontWeight ?? FontWeight.w400,
                 color: widget.hintTextColor ?? AppColors.textIconGrey,
                 fontSize: widget.hintFontSize ?? 14,
               ),

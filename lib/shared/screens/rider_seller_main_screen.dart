@@ -1,0 +1,196 @@
+import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_svg/svg.dart';
+import 'package:wigo_flutter/features/rider/presentation/views/delivery_task_screen.dart';
+import 'package:wigo_flutter/features/rider/presentation/views/rider_dashboard_screen.dart';
+import 'package:wigo_flutter/features/rider/presentation/views/rider_settings_screens/rider_settings_main_screen.dart';
+import 'package:wigo_flutter/features/rider/presentation/views/rider_tracking_screen.dart';
+import 'package:wigo_flutter/features/rider/presentation/views/rider_wallet_screens/wallet_main_screen.dart';
+
+import '../../core/constants/app_colors.dart';
+import '../../core/providers/role_selection_provider.dart';
+import '../../features/rider/viewmodels/global_navigation_viewmodel.dart';
+import '../../gen/assets.gen.dart';
+import '../models/user_role.dart';
+import '../widgets/dashboard_widgets/custom_app_bar.dart';
+import '../widgets/dashboard_widgets/web_side_bar.dart';
+
+class RiderAndSellerMainScreen extends ConsumerStatefulWidget {
+  const RiderAndSellerMainScreen({super.key});
+
+  @override
+  ConsumerState<RiderAndSellerMainScreen> createState() =>
+      _RiderAndSellerMainScreenState();
+}
+
+class _RiderAndSellerMainScreenState
+    extends ConsumerState<RiderAndSellerMainScreen> {
+  final List<GlobalKey<NavigatorState>> _navigatorKeys = [
+    GlobalKey<NavigatorState>(),
+    GlobalKey<NavigatorState>(),
+    GlobalKey<NavigatorState>(),
+    GlobalKey<NavigatorState>(),
+    GlobalKey<NavigatorState>(),
+    GlobalKey<NavigatorState>(),
+  ];
+
+  @override
+  Widget build(BuildContext context) {
+    final navState = ref.watch(globalNavigationViewModelProvider);
+    final navNotifier = ref.read(globalNavigationViewModelProvider.notifier);
+    final role = ref.watch(userRoleProvider);
+    final isSeller = role == UserRole.seller;
+    final isWeb = MediaQuery.of(context).size.width > 600;
+    const hiddenAppBarIndices = [4];
+
+    return PopScope(
+      canPop: false,
+      onPopInvokedWithResult: (didPop, result) async {
+        final currentNavigator =
+            _navigatorKeys[navState.currentIndex].currentState!;
+        if (currentNavigator.canPop()) {
+          currentNavigator.pop();
+          return;
+        }
+        final shouldExit = navNotifier.popIndexStack();
+        if (shouldExit) {
+          Navigator.of(context).maybePop();
+        }
+      },
+      child: Scaffold(
+        appBar:
+            isWeb || hiddenAppBarIndices.contains(navState.currentIndex)
+                ? null
+                : CustomAppBar(isWeb: isWeb),
+        body:
+            isWeb
+                ? Row(
+                  children: [
+                    const WebSideBar(),
+                    Expanded(
+                      child: Column(
+                        children: [
+                          CustomAppBar(isWeb: isWeb),
+                          Expanded(
+                            child: IndexedStack(
+                              index: navState.currentIndex,
+                              children: [
+                                _buildNavigator(0, RiderDashboardScreen()),
+                                _buildNavigator(1, DeliveryTaskScreen()),
+                                _buildNavigator(2, TrackingScreen()),
+                                _buildNavigator(3, WalletMainScreen()),
+                                _buildNavigator(4, RiderSettingsMainScreen()),
+                                // if (isSeller) ...[
+                                //   _buildNavigator(5, Placeholder()),
+                                // ],
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                )
+                : IndexedStack(
+                  index: navState.currentIndex,
+                  children: [
+                    _buildNavigator(0, RiderDashboardScreen()),
+                    _buildNavigator(1, DeliveryTaskScreen()),
+                    _buildNavigator(2, TrackingScreen()),
+                    _buildNavigator(3, WalletMainScreen()),
+                    _buildNavigator(4, RiderSettingsMainScreen()),
+                  ],
+                ),
+
+        bottomNavigationBar:
+            !isWeb ? _buildBottomNavBar(context, navState, navNotifier) : null,
+      ),
+    );
+  }
+
+  Widget _buildNavigator(int index, Widget child) {
+    return Navigator(
+      key: _navigatorKeys[index],
+      onGenerateRoute: (settings) {
+        return MaterialPageRoute(builder: (_) => child);
+      },
+    );
+  }
+
+  Widget _buildBottomNavBar(
+    BuildContext context,
+    GlobalNavigationState navState,
+    GlobalNavigationViewModel navNotifier,
+  ) {
+    List<String> icons = [
+      AppAssets.icons.home2.path,
+      AppAssets.icons.menu.path,
+      AppAssets.icons.map.path,
+      AppAssets.icons.wallet.path,
+      AppAssets.icons.setting.path,
+    ];
+
+    return Stack(
+      children: [
+        BottomNavigationBar(
+          type: BottomNavigationBarType.fixed,
+          backgroundColor: AppColors.backgroundWhite,
+          currentIndex: navState.currentIndex,
+          onTap: (value) {
+            if (value < _navigatorKeys.length) {
+              if (navState.currentIndex == value) {
+                _navigatorKeys[value].currentState?.popUntil((r) => r.isFirst);
+              } else {
+                ref
+                    .read(globalNavigationViewModelProvider.notifier)
+                    .setIndex(value);
+              }
+            } else {
+              // handle other indices (map, wallet, setting) when you add them
+              // e.g. push a screen, open modal, etc.
+            }
+          },
+
+          items: List.generate(icons.length, (i) {
+            return BottomNavigationBarItem(
+              label: '',
+              icon: Padding(
+                padding: const EdgeInsets.only(top: 15.0),
+                child: SvgPicture.asset(
+                  icons[i],
+                  colorFilter:
+                      navState.currentIndex == i
+                          ? ColorFilter.mode(
+                            AppColors.primaryDarkGreen,
+
+                            BlendMode.srcIn,
+                          )
+                          : ColorFilter.mode(
+                            AppColors.textIconGrey,
+                            BlendMode.srcIn,
+                          ),
+                ),
+              ),
+            );
+          }),
+        ),
+
+        Positioned(
+          top: 0,
+          left: MediaQuery.of(context).size.width / 5 * navState.currentIndex,
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 15.0),
+            child: Container(
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(3.0),
+                color: AppColors.primaryDarkGreen,
+              ),
+              height: 4,
+              width: MediaQuery.of(context).size.width / 8,
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+}

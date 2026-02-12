@@ -4,8 +4,10 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import '../../../core/constants/app_colors.dart';
+import '../../../core/providers/role_selection_provider.dart';
 import '../../../features/rider/viewmodels/global_navigation_viewmodel.dart';
 import '../../../gen/assets.gen.dart';
+import '../../models/user_role.dart';
 
 class WebSideBar extends ConsumerWidget {
   const WebSideBar({super.key});
@@ -14,6 +16,8 @@ class WebSideBar extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final navState = ref.watch(globalNavigationViewModelProvider);
     final navNotifier = ref.read(globalNavigationViewModelProvider.notifier);
+    final role = ref.watch(userRoleProvider);
+    final isSeller = role == UserRole.seller;
 
     final List<Map<String, dynamic>> navItems = [
       {
@@ -22,21 +26,35 @@ class WebSideBar extends ConsumerWidget {
         'activeIcon': AppAssets.icons.home2.path,
       },
       {
-        'label': 'Deliveries',
-        'icon': AppAssets.icons.menu.path,
-        'activeIcon': AppAssets.icons.menu.path,
+        'label': isSeller ? 'Orders' : 'Deliveries',
+        'icon':
+            isSeller
+                ? AppAssets.icons.dashboardCart.path
+                : AppAssets.icons.menu.path,
+        'activeIcon':
+            isSeller
+                ? AppAssets.icons.dashboardCart.path
+                : AppAssets.icons.menu.path,
       },
       // Placeholder
       {
-        'label': 'Map',
-        'icon': AppAssets.icons.map.path,
-        'activeIcon': AppAssets.icons.map.path,
+        'label': isSeller ? 'Products' : 'Map',
+        'icon':
+            isSeller ? AppAssets.icons.products.path : AppAssets.icons.map.path,
+        'activeIcon':
+            isSeller ? AppAssets.icons.products.path : AppAssets.icons.map.path,
       },
       // Placeholder
       {
-        'label': 'Wallet',
-        'icon': AppAssets.icons.wallet.path,
-        'activeIcon': AppAssets.icons.wallet.path,
+        'label': isSeller ? 'Earning' : 'Wallet',
+        'icon':
+            isSeller
+                ? AppAssets.icons.sellerEarning.path
+                : AppAssets.icons.wallet.path,
+        'activeIcon':
+            isSeller
+                ? AppAssets.icons.sellerEarning.path
+                : AppAssets.icons.wallet.path,
       },
       // Placeholder
       {
@@ -45,6 +63,13 @@ class WebSideBar extends ConsumerWidget {
         'activeIcon': AppAssets.icons.setting.path,
       },
       // Placeholder
+      if (isSeller) ...[
+        {
+          'label': 'Help and Support',
+          'icon': AppAssets.icons.helpCircle.path,
+          'activeIcon': AppAssets.icons.helpCircle.path,
+        },
+      ],
     ];
 
     return Container(

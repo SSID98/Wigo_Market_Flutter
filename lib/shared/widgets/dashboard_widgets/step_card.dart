@@ -11,12 +11,14 @@ class StepCard extends StatelessWidget {
   final AccountSetupStep step;
   final double? width;
   final double height;
+  final Color? cardColor;
 
   const StepCard({
     super.key,
     required this.step,
     this.width,
     required this.height,
+    this.cardColor,
   });
 
   @override
@@ -31,7 +33,7 @@ class StepCard extends StatelessWidget {
         width: width,
         height: height,
         decoration: BoxDecoration(
-          color: AppColors.backgroundWhite,
+          color: cardColor ?? AppColors.backgroundWhite,
           borderRadius: BorderRadius.circular(7.04),
           border: Border.all(color: AppColors.accentGrey),
           boxShadow: [

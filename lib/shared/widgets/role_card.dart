@@ -43,7 +43,7 @@ class RoleCard extends StatelessWidget {
           borderRadius: BorderRadius.circular(8),
           side: BorderSide(
             color: isSelected ? borderColor : unselectedCardBorderColor,
-            width: isSelected ? 1.0 : 1.0, // Thicker border when selected
+            width: isSelected ? 1.0 : 1.0,
           ),
         ),
         child: Padding(
