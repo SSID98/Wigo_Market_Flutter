@@ -33,7 +33,23 @@ class RoleSelectionScreen extends ConsumerWidget {
       body: Stack(
         fit: StackFit.expand,
         children: [
-          Image.network('$networkImageUrl/login.png', fit: BoxFit.cover),
+          Image.network(
+            '$networkImageUrl/login.png',
+            fit: BoxFit.cover,
+            errorBuilder: (
+              BuildContext context,
+              Object exception,
+              StackTrace? stackTrace,
+            ) {
+              return const Center(
+                child: Icon(
+                  Icons.broken_image,
+                  color: AppColors.textIconGrey,
+                  size: 50.0,
+                ),
+              );
+            },
+          ),
           Center(
             child: Container(
               width: screenSize.width * 0.95,

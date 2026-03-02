@@ -8,6 +8,7 @@ class StatusChip extends StatelessWidget {
   final double? prefixIconWidth, fontSize;
   final double? width, height;
   final Alignment? alignment;
+  final double? borderRadius, topPadding;
 
   const StatusChip({
     super.key,
@@ -20,6 +21,8 @@ class StatusChip extends StatelessWidget {
     this.height,
     this.alignment,
     this.fontSize,
+    this.borderRadius,
+    this.topPadding,
   });
 
   @override
@@ -29,7 +32,7 @@ class StatusChip extends StatelessWidget {
       width: width ?? double.infinity,
       decoration: BoxDecoration(
         color: containerColor,
-        borderRadius: BorderRadius.circular(20.0),
+        borderRadius: BorderRadius.circular(borderRadius ?? 20.0),
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
@@ -41,12 +44,15 @@ class StatusChip extends StatelessWidget {
           ],
           Align(
             alignment: alignment ?? Alignment.center,
-            child: Text(
-              status,
-              style: GoogleFonts.hind(
-                fontSize: fontSize ?? 12,
-                fontWeight: FontWeight.w500,
-                color: statusColor,
+            child: Padding(
+              padding: EdgeInsets.only(top: topPadding ?? 0),
+              child: Text(
+                status,
+                style: GoogleFonts.hind(
+                  fontSize: fontSize ?? 12,
+                  fontWeight: FontWeight.w500,
+                  color: statusColor,
+                ),
               ),
             ),
           ),

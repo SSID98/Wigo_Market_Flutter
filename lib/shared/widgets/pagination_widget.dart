@@ -18,6 +18,7 @@ class PaginationWidget extends ConsumerWidget {
     required this.onPressedStart,
     this.isDeliveries = false,
     this.isEarning = false,
+    this.showPage = false,
   });
 
   final int totalPages, currentPage, count;
@@ -25,7 +26,7 @@ class PaginationWidget extends ConsumerWidget {
       onPressedBack,
       onPressedForward,
       onPressedEnd;
-  final bool isEarning, isDeliveries;
+  final bool isEarning, isDeliveries, showPage;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -36,7 +37,7 @@ class PaginationWidget extends ConsumerWidget {
     final notifier = ref.read(walletOverviewTransactionProvider.notifier);
     final isWeb = MediaQuery.of(context).size.width > 800;
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 5.0, horizontal: 12),
+      padding: EdgeInsets.symmetric(vertical: 5.0, horizontal: isWeb ? 12 : 0),
       child: Row(
         children: [
           if (isDeliveries)
@@ -54,50 +55,56 @@ class PaginationWidget extends ConsumerWidget {
                 Text(
                   "Rows per page",
                   style: GoogleFonts.hind(
-                    fontSize: isWeb ? 16 : 12,
+                    fontSize: isWeb ? 16 : 13,
                     fontWeight: FontWeight.w500,
                     color: AppColors.textEdufacilisBlack,
                   ),
                 ),
-                const SizedBox(width: 15),
+                SizedBox(width: isWeb ? 15 : 7),
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 8),
+                  height: 30,
+                  width: 60,
+                  // padding: const EdgeInsets.symmetric(horizontal: 8),
                   decoration: BoxDecoration(
                     color: AppColors.backgroundWhite,
                     borderRadius: BorderRadius.circular(5),
                     border: Border.all(color: AppColors.borderColor1, width: 1),
                   ),
                   child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       // Current value
                       Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 4.0),
+                        padding: const EdgeInsets.only(
+                          left: 4.0,
+                          right: 4.0,
+                          top: 3,
+                        ),
                         child: Text(
                           state.rowsPerPage.toString(),
                           style: GoogleFonts.hind(
-                            fontSize: isWeb ? 16 : 12,
+                            fontSize: isWeb ? 16 : 14,
                             fontWeight: FontWeight.w500,
                             color: AppColors.textEdufacilisBlack,
                           ),
                         ),
                       ),
                       Padding(
-                        padding: const EdgeInsets.only(bottom: 4.0),
+                        padding: const EdgeInsets.only(bottom: 6.0),
                         child: Column(
                           mainAxisSize: MainAxisSize.min,
                           children: [
                             SizedBox(
                               height: 9,
                               width: 13,
-                              child: InkWell(
+                              child: GestureDetector(
                                 onTap:
                                     state.rowsPerPage < 10
                                         ? () => notifier.setRowsPerPage(
                                           state.rowsPerPage + 1,
                                         )
                                         : null,
-                                borderRadius: BorderRadius.circular(4),
                                 child: Icon(
                                   Icons.keyboard_arrow_up,
                                   size: 16,
@@ -108,14 +115,13 @@ class PaginationWidget extends ConsumerWidget {
                             SizedBox(
                               height: 9,
                               width: 13,
-                              child: InkWell(
+                              child: GestureDetector(
                                 onTap:
                                     state.rowsPerPage > 1
                                         ? () => notifier.setRowsPerPage(
                                           state.rowsPerPage - 1,
                                         )
                                         : null,
-                                borderRadius: BorderRadius.circular(4),
                                 child: Icon(
                                   Icons.keyboard_arrow_down,
                                   size: 16,
@@ -132,16 +138,16 @@ class PaginationWidget extends ConsumerWidget {
               ],
             ),
           const Spacer(),
-          if (isWeb && isEarning)
+          if (isWeb && isEarning || showPage)
             Text(
               "Page $currentPage of $totalPages",
               style: GoogleFonts.hind(
-                fontSize: isWeb ? 16 : 12,
+                fontSize: isWeb ? 16 : 13,
                 fontWeight: FontWeight.w500,
                 color: AppColors.textEdufacilisBlack,
               ),
             ),
-          if ((isEarning && !isWeb) || isDeliveries)
+          if ((isEarning && !isWeb && !showPage) || isDeliveries)
             Text(
               '$currentPage',
               style: GoogleFonts.hind(
@@ -157,7 +163,7 @@ class PaginationWidget extends ConsumerWidget {
               height: isWeb ? 18 : 12,
               width: isWeb ? 18 : 12,
             ),
-            isWeb ? 32 : 22,
+            isWeb ? 32 : 27,
           ),
           const SizedBox(width: 5),
           _buildPaginationIconContainer(
@@ -167,7 +173,7 @@ class PaginationWidget extends ConsumerWidget {
               size: isWeb ? 18 : 12,
               color: AppColors.textBlackGrey,
             ),
-            isWeb ? 32 : 22,
+            isWeb ? 32 : 27,
           ),
           const SizedBox(width: 5),
           _buildPaginationIconContainer(
@@ -177,7 +183,7 @@ class PaginationWidget extends ConsumerWidget {
               size: isWeb ? 18 : 12,
               color: AppColors.textBlackGrey,
             ),
-            isWeb ? 32 : 22,
+            isWeb ? 32 : 27,
           ),
           const SizedBox(width: 5),
           _buildPaginationIconContainer(
@@ -186,10 +192,10 @@ class PaginationWidget extends ConsumerWidget {
               height: isWeb ? 18 : 12,
               width: isWeb ? 18 : 12,
             ),
-            isWeb ? 32 : 22,
+            isWeb ? 32 : 27,
           ),
           const SizedBox(width: 5),
-          if ((isEarning && !isWeb) || isDeliveries)
+          if ((isEarning && !isWeb && !showPage) || isDeliveries)
             Text(
               '$totalPages',
               style: GoogleFonts.hind(

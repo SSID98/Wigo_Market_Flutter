@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:wigo_flutter/gen/assets.gen.dart';
 
@@ -40,6 +39,19 @@ class PaymentMethodSetupScreen extends ConsumerWidget {
               fit: BoxFit.cover,
               color: AppColors.backGroundOverlay,
               colorBlendMode: BlendMode.overlay,
+              errorBuilder: (
+                BuildContext context,
+                Object exception,
+                StackTrace? stackTrace,
+              ) {
+                return const Center(
+                  child: Icon(
+                    Icons.broken_image,
+                    color: AppColors.textIconGrey,
+                    size: 50.0,
+                  ),
+                );
+              },
             ),
             Padding(
               padding: const EdgeInsets.only(top: 70.0),
@@ -113,6 +125,19 @@ class PaymentMethodSetupScreen extends ConsumerWidget {
               fit: BoxFit.cover,
               color: AppColors.backGroundOverlay,
               colorBlendMode: BlendMode.overlay,
+              errorBuilder: (
+                BuildContext context,
+                Object exception,
+                StackTrace? stackTrace,
+              ) {
+                return const Center(
+                  child: Icon(
+                    Icons.broken_image,
+                    color: AppColors.textIconGrey,
+                    size: 50.0,
+                  ),
+                );
+              },
             ),
             Padding(
               padding: const EdgeInsets.only(top: 70.0),
@@ -297,7 +322,6 @@ class PaymentMethodSetupScreen extends ConsumerWidget {
             ref
                 .read(localUserControllerProvider.notifier)
                 .saveStage(OnboardingStage.success);
-            context.go('/successful');
           },
           fontSize: 18,
           fontWeight: FontWeight.w500,
@@ -313,7 +337,6 @@ class PaymentMethodSetupScreen extends ConsumerWidget {
             ref
                 .read(localUserControllerProvider.notifier)
                 .saveStage(OnboardingStage.success);
-            context.go('/successful');
           },
           suffixIcon: AppAssets.icons.arrowRight2.svg(),
           fontSize: 18,

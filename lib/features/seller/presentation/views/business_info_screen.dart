@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:wigo_flutter/core/constants/app_colors.dart';
 import 'package:wigo_flutter/shared/widgets/custom_button.dart';
@@ -36,6 +35,19 @@ class BusinessInfoScreen extends ConsumerWidget {
             fit: BoxFit.cover,
             color: AppColors.backGroundOverlay,
             colorBlendMode: BlendMode.overlay,
+            errorBuilder: (
+              BuildContext context,
+              Object exception,
+              StackTrace? stackTrace,
+            ) {
+              return const Center(
+                child: Icon(
+                  Icons.broken_image,
+                  color: AppColors.textIconGrey,
+                  size: 50.0,
+                ),
+              );
+            },
           ),
           Padding(
             padding: const EdgeInsets.only(top: 90.0),
@@ -83,7 +95,6 @@ class BusinessInfoScreen extends ConsumerWidget {
                             ref
                                 .read(localUserControllerProvider.notifier)
                                 .saveStage(OnboardingStage.bankSetup);
-                            context.push('/account/setup');
                           },
                           // state.isLoading
                           //     ? null
@@ -179,6 +190,19 @@ class BusinessInfoScreen extends ConsumerWidget {
             fit: BoxFit.cover,
             color: AppColors.backGroundOverlay,
             colorBlendMode: BlendMode.overlay,
+            errorBuilder: (
+              BuildContext context,
+              Object exception,
+              StackTrace? stackTrace,
+            ) {
+              return const Center(
+                child: Icon(
+                  Icons.broken_image,
+                  color: AppColors.textIconGrey,
+                  size: 50.0,
+                ),
+              );
+            },
           ),
           Padding(
             padding: const EdgeInsets.only(top: 105.0),

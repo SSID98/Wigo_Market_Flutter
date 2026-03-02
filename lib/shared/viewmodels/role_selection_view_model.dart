@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:go_router/go_router.dart';
 import 'package:wigo_flutter/core/providers/role_selection_provider.dart';
 
 import '../../core/utils/helper_methods.dart';
@@ -25,7 +24,7 @@ class RoleSelectionViewModel extends StateNotifier<UserRole?> {
     await Future.delayed(const Duration(seconds: 1));
     if (!context.mounted) return;
     Navigator.of(context, rootNavigator: true).pop();
-    context.push('/welcome');
+    // context.push('/welcome');
   }
 }
 

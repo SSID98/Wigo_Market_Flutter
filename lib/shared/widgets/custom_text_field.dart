@@ -46,7 +46,7 @@ class CustomTextField extends ConsumerStatefulWidget {
 
   const CustomTextField({
     super.key,
-    required this.label,
+    this.label = '',
     this.hintText,
     this.fieldKey,
     this.isPassword = false,
@@ -124,21 +124,23 @@ class _CustomTextFieldState extends ConsumerState<CustomTextField> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        GestureDetector(
-          onTap: widget.labelOnTap,
-          child:
-              widget.isRichText
-                  ? widget.labelRichText
-                  : Text(
-                    widget.label,
-                    style: GoogleFonts.hind(
-                      fontWeight: widget.labelFontWeight ?? FontWeight.w500,
-                      fontSize: widget.labelFontSize ?? 16.0,
-                      color: widget.labelTextColor ?? AppColors.textBlack,
+        if (widget.label.isNotEmpty) ...[
+          GestureDetector(
+            onTap: widget.labelOnTap,
+            child:
+                widget.isRichText
+                    ? widget.labelRichText
+                    : Text(
+                      widget.label,
+                      style: GoogleFonts.hind(
+                        fontWeight: widget.labelFontWeight ?? FontWeight.w500,
+                        fontSize: widget.labelFontSize ?? 16.0,
+                        color: widget.labelTextColor ?? AppColors.textBlack,
+                      ),
                     ),
-                  ),
-        ),
-        SizedBox(height: widget.spacing ?? 4),
+          ),
+          SizedBox(height: widget.spacing ?? 4),
+        ],
         SizedBox(
           height: widget.height,
           child: Focus(

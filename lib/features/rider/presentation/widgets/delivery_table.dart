@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:wigo_flutter/shared/widgets/dashboard_widgets/status_chip.dart';
 
-import '../../../core/constants/app_colors.dart';
-import '../../../core/constants/dashboard_helpers.dart';
-import '../../../features/rider/models/delivery.dart';
+import '../../../../core/constants/app_colors.dart';
+import '../../../../core/constants/dashboard_helpers.dart';
+import '../../models/delivery.dart';
 
 class DeliveryTable extends StatelessWidget {
   final List<Delivery> deliveries;

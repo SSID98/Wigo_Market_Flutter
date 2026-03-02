@@ -37,16 +37,14 @@ import '../../shared/screens/rider_seller_main_screen.dart';
 import '../../shared/screens/role_selection_screen.dart';
 import '../../shared/screens/welcome_screen.dart';
 import '../auth/auth_state.dart';
-import '../constants/url.dart';
 import '../local/local_user_controller.dart';
 
 final routerProvider = Provider<GoRouter>((ref) {
   final routerNotifier = ref.watch(routerNotifierProvider);
   return GoRouter(
-    initialLocation: '/sellerMainScreen',
+    initialLocation: '/',
     refreshListenable: routerNotifier,
     redirect: (context, state) {
-      if (kDevMode) return null;
       final status = routerNotifier.authStatus;
       final local = routerNotifier.localUserState;
       if (status == AuthStatus.loading) return null;
@@ -83,6 +81,7 @@ final routerProvider = Provider<GoRouter>((ref) {
       if (loggedIn && (isPublicRoute || loc == '/login')) {
         if (local.role == 'buyer') return '/buyerHomeScreen';
         if (local.role == 'dispatch') return '/riderMainScreen';
+        if (local.role == 'seller') return '/sellerMainScreen';
       }
 
       debugPrint('Router decision role = ${local.role}');
@@ -97,6 +96,8 @@ final routerProvider = Provider<GoRouter>((ref) {
 
       // 5️⃣ Logged in but onboarding incomplete
       switch (local.stage) {
+        case OnboardingStage.welcome:
+          return '/welcome';
         case OnboardingStage.onboarding:
           return '/onboarding';
         case OnboardingStage.registration:

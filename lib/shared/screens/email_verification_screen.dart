@@ -1,14 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:go_router/go_router.dart';
 import 'package:wigo_flutter/core/utils/masked_email.dart';
 
 import '../../../../core/constants/app_colors.dart';
 import '../../core/constants/url.dart';
 import '../../core/local/local_user_controller.dart';
 import '../../core/providers/otp_code_provider.dart';
-import '../../core/providers/role_selection_provider.dart';
 import '../../gen/assets.gen.dart';
 import '../models/user_role.dart';
 import '../viewmodels/email_verification_viewmodel.dart';
@@ -36,10 +34,12 @@ class EmailVerificationScreen extends ConsumerWidget {
     final String maskedEmail = MaskedEmail.maskEmail(displayEmail);
     final screenSize = MediaQuery.of(context).size;
     final isWeb = MediaQuery.of(context).size.width > 600;
-    final role = ref.watch(userRoleProvider);
+    // final role = ref.watch(userRoleProvider);
+    final localUser = ref.watch(localUserControllerProvider);
+    final role = localUser.role;
     final notifier = ref.read(emailVerificationProvider.notifier);
-    final isBuyer = role == UserRole.buyer;
-    final isSeller = role == UserRole.seller;
+    final isBuyer = role == UserRole.buyer.name;
+    final isSeller = role == UserRole.seller.name;
     final verificationState = ref.watch(emailVerificationProvider);
     return isWeb
         ? _buildWebLayout(screenSize, maskedEmail)
@@ -74,6 +74,19 @@ class EmailVerificationScreen extends ConsumerWidget {
             fit: BoxFit.cover,
             color: AppColors.backGroundOverlay,
             colorBlendMode: BlendMode.overlay,
+            errorBuilder: (
+              BuildContext context,
+              Object exception,
+              StackTrace? stackTrace,
+            ) {
+              return const Center(
+                child: Icon(
+                  Icons.broken_image,
+                  color: AppColors.textIconGrey,
+                  size: 50.0,
+                ),
+              );
+            },
           ),
           SingleChildScrollView(
             child: Padding(
@@ -132,19 +145,16 @@ class EmailVerificationScreen extends ConsumerWidget {
                                 ref
                                     .read(localUserControllerProvider.notifier)
                                     .saveStage(OnboardingStage.success);
-                                context.go('/successful');
                               } else if (isSeller) {
                                 if (!context.mounted) return;
                                 ref
                                     .read(localUserControllerProvider.notifier)
                                     .saveStage(OnboardingStage.businessInfo);
-                                context.go('/seller/businessInfo');
                               } else {
                                 if (!context.mounted) return;
                                 ref
                                     .read(localUserControllerProvider.notifier)
                                     .saveStage(OnboardingStage.ninVerification);
-                                context.go('/rider/verification');
                               }
                             }
                           },
@@ -173,6 +183,19 @@ class EmailVerificationScreen extends ConsumerWidget {
               fit: BoxFit.cover,
               color: AppColors.backGroundOverlay,
               colorBlendMode: BlendMode.overlay,
+              errorBuilder: (
+                BuildContext context,
+                Object exception,
+                StackTrace? stackTrace,
+              ) {
+                return const Center(
+                  child: Icon(
+                    Icons.broken_image,
+                    color: AppColors.textIconGrey,
+                    size: 50.0,
+                  ),
+                );
+              },
             ),
             Padding(
               padding: const EdgeInsets.only(top: 105.0),

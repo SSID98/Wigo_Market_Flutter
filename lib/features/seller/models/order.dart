@@ -1,10 +1,13 @@
+import 'order_task_state.dart';
+
 class Order {
   final String orderId;
   final DateTime date;
   final String customerName, customerPhone;
   final String item;
   final double amount;
-  final String status;
+  final OrderFilter status;
+  final String deliveryType;
   final String pickupLocation;
   final String deliveryLocation;
 
@@ -18,5 +21,21 @@ class Order {
     required this.status,
     required this.deliveryLocation,
     required this.pickupLocation,
+    required this.deliveryType,
   });
+
+  Order copyWith({OrderFilter? status}) {
+    return Order(
+      orderId: orderId,
+      date: date,
+      customerName: customerName,
+      customerPhone: customerPhone,
+      item: item,
+      amount: amount,
+      status: status ?? this.status,
+      deliveryType: deliveryType,
+      deliveryLocation: deliveryLocation,
+      pickupLocation: pickupLocation,
+    );
+  }
 }

@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:go_router/go_router.dart';
 
 import '../../core/constants/url.dart';
 import '../../core/local/local_user_controller.dart';
@@ -62,15 +61,13 @@ class OnboardingViewModel extends ChangeNotifier {
         curve: Curves.easeInOut,
       );
     } else {
-      if (!context.mounted) return;
-      ref
-          .read(localUserControllerProvider.notifier)
-          .saveStage(OnboardingStage.registration);
       showLoadingDialog(context);
       await Future.delayed(const Duration(seconds: 1));
       if (!context.mounted) return;
       Navigator.of(context, rootNavigator: true).pop();
-      context.go('/accountCreation');
+      ref
+          .read(localUserControllerProvider.notifier)
+          .saveStage(OnboardingStage.registration);
     }
   }
 
@@ -81,14 +78,13 @@ class OnboardingViewModel extends ChangeNotifier {
         curve: Curves.easeInOut,
       );
     } else {
-      ref
-          .read(localUserControllerProvider.notifier)
-          .saveStage(OnboardingStage.registration);
       showLoadingDialog(context);
       await Future.delayed(const Duration(seconds: 1));
       if (!context.mounted) return;
       Navigator.of(context, rootNavigator: true).pop();
-      context.go('/accountCreation');
+      ref
+          .read(localUserControllerProvider.notifier)
+          .saveStage(OnboardingStage.registration);
     }
   }
 
@@ -99,14 +95,13 @@ class OnboardingViewModel extends ChangeNotifier {
         curve: Curves.easeInOut,
       );
     } else {
-      ref
-          .read(localUserControllerProvider.notifier)
-          .saveStage(OnboardingStage.registration);
       showLoadingDialog(context);
       await Future.delayed(const Duration(seconds: 1));
       if (!context.mounted) return;
       Navigator.of(context, rootNavigator: true).pop();
-      context.go('/accountCreation');
+      ref
+          .read(localUserControllerProvider.notifier)
+          .saveStage(OnboardingStage.registration);
     }
   }
 

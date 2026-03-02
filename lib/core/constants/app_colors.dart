@@ -74,4 +74,5 @@ class AppColors {
   static const Color textDeliveryFee = Color(0xff007AFF);
   static const Color textNeutral950 = Color(0xff292929);
   static const Color textBlueishBlack = Color(0xff000C21);
+  static const Color textVidaGreen800 = Color(0xff385222);
 }

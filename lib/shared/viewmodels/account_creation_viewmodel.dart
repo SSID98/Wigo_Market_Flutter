@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../core/local/local_user_controller.dart';
 import '../../core/service/user_api_service.dart';
 import '../../core/utils/helper_methods.dart';
 import '../../core/utils/validation_utils.dart';
@@ -10,9 +11,21 @@ import '../models/register_state.dart';
 import '../models/user_role.dart';
 
 final registerViewModelProvider =
-    StateNotifierProvider<RegisterViewModel, RegisterState>(
-      (ref) => RegisterViewModel(ref.read),
-    );
+    StateNotifierProvider<RegisterViewModel, RegisterState>((ref) {
+      final localUser = ref.read(localUserControllerProvider);
+      final roleString = localUser.role;
+
+      final roleEnum = UserRole.values.firstWhere(
+        (e) => e.name == roleString,
+        orElse: () => UserRole.buyer,
+      );
+
+      return RegisterViewModel(ref.read, initialRole: roleEnum);
+    });
+// final registerViewModelProvider =
+//     StateNotifierProvider<RegisterViewModel, RegisterState>(
+//       (ref) => RegisterViewModel(ref.read),
+//     );
 
 typedef Reader = T Function<T>(ProviderListenable<T> provider);
 
@@ -20,9 +33,12 @@ class RegisterViewModel extends StateNotifier<RegisterState> {
   final Reader read;
   final UserApiService api;
 
-  RegisterViewModel(this.read, {UserApiService? apiService})
-    : api = apiService ?? UserApiService(),
-      super(const RegisterState());
+  RegisterViewModel(
+    this.read, {
+    UserApiService? apiService,
+    required UserRole initialRole,
+  }) : api = apiService ?? UserApiService(),
+       super(RegisterState(role: initialRole));
 
   void setRole(UserRole role) => state = state.copyWith(role: role);
 

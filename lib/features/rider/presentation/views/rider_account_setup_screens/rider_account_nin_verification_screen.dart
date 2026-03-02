@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:wigo_flutter/gen/assets.gen.dart';
 import 'package:wigo_flutter/shared/widgets/custom_checkbox_widget.dart';
@@ -332,7 +331,6 @@ class RiderAccountNinVerificationScreen extends ConsumerWidget {
             ref
                 .read(localUserControllerProvider.notifier)
                 .saveStage(OnboardingStage.bankSetup);
-            context.push('/account/setup');
           },
           fontSize: buttonTextFontSize,
           fontWeight: FontWeight.w500,
@@ -349,7 +347,6 @@ class RiderAccountNinVerificationScreen extends ConsumerWidget {
             ref
                 .read(localUserControllerProvider.notifier)
                 .saveStage(OnboardingStage.bankSetup);
-            context.push('/account/setup');
           },
           suffixIcon: AppAssets.icons.arrowRight2.svg(),
           fontSize: 18,

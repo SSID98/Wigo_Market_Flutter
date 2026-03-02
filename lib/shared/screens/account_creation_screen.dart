@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:wigo_flutter/core/constants/app_colors.dart';
 import 'package:wigo_flutter/shared/models/register_state.dart';
@@ -9,7 +8,6 @@ import 'package:wigo_flutter/shared/widgets/forms_field.dart';
 
 import '../../core/constants/url.dart';
 import '../../core/local/local_user_controller.dart';
-import '../../core/providers/role_selection_provider.dart';
 import '../models/user_role.dart';
 import '../viewmodels/account_creation_viewmodel.dart';
 
@@ -22,9 +20,11 @@ class AccountCreationScreen extends ConsumerWidget {
     final isWeb = MediaQuery.of(context).size.width > 600;
     final notifier = ref.read(registerViewModelProvider.notifier);
     final state = ref.watch(registerViewModelProvider);
-    final role = ref.watch(userRoleProvider);
-    final isBuyer = role == UserRole.buyer;
-    final isSeller = role == UserRole.seller;
+    // final role = ref.watch(userRoleProvider);
+    final localUser = ref.watch(localUserControllerProvider);
+    final role = localUser.role;
+    final isBuyer = role == UserRole.buyer.name;
+    final isSeller = role == UserRole.seller.name;
     return isWeb
         ? _buildWebLayout(screenSize, context, isBuyer, isSeller)
         : _buildMobileLayout(
@@ -56,6 +56,19 @@ class AccountCreationScreen extends ConsumerWidget {
             fit: BoxFit.cover,
             color: AppColors.backGroundOverlay,
             colorBlendMode: BlendMode.overlay,
+            errorBuilder: (
+              BuildContext context,
+              Object exception,
+              StackTrace? stackTrace,
+            ) {
+              return const Center(
+                child: Icon(
+                  Icons.broken_image,
+                  color: AppColors.textIconGrey,
+                  size: 50.0,
+                ),
+              );
+            },
           ),
           Padding(
             padding: const EdgeInsets.only(top: 90.0),
@@ -130,14 +143,14 @@ class AccountCreationScreen extends ConsumerWidget {
                                       return;
                                     }
 
-                                    // set role before submit if you have separate path
-                                    notifier.setRole(
-                                      isBuyer
-                                          ? UserRole.buyer
-                                          : isSeller
-                                          ? UserRole.seller
-                                          : UserRole.dispatch,
-                                    );
+                                    // // set role before submit if you have separate path
+                                    // notifier.setRole(
+                                    //   isBuyer
+                                    //       ? UserRole.buyer
+                                    //       : isSeller
+                                    //       ? UserRole.seller
+                                    //       : UserRole.dispatch,
+                                    // );
 
                                     final ok = await notifier.submit(context);
 
@@ -156,9 +169,6 @@ class AccountCreationScreen extends ConsumerWidget {
                                                 .notifier,
                                           )
                                           .saveStage(OnboardingStage.otp);
-
-                                      if (!context.mounted) return;
-                                      context.go('/verification');
                                     } else {
                                       // show error via snackBar or inline UI from state.errorMessage
                                       if (!context.mounted) return;
@@ -201,6 +211,19 @@ class AccountCreationScreen extends ConsumerWidget {
             fit: BoxFit.cover,
             color: AppColors.backGroundOverlay,
             colorBlendMode: BlendMode.overlay,
+            errorBuilder: (
+              BuildContext context,
+              Object exception,
+              StackTrace? stackTrace,
+            ) {
+              return const Center(
+                child: Icon(
+                  Icons.broken_image,
+                  color: AppColors.textIconGrey,
+                  size: 50.0,
+                ),
+              );
+            },
           ),
           Padding(
             padding: const EdgeInsets.only(top: 105.0),

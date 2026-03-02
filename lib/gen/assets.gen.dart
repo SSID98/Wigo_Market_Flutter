@@ -17,6 +17,9 @@ import 'package:vector_graphics/vector_graphics.dart' as _vg;
 class $AssetsIconsGen {
   const $AssetsIconsGen();
 
+  /// File path: assets/icons/action.svg
+  SvgGenImage get action => const SvgGenImage('assets/icons/action.svg');
+
   /// File path: assets/icons/actionFailed.svg
   SvgGenImage get actionFailed =>
       const SvgGenImage('assets/icons/actionFailed.svg');
@@ -89,6 +92,10 @@ class $AssetsIconsGen {
   /// File path: assets/icons/calender.svg
   SvgGenImage get calender => const SvgGenImage('assets/icons/calender.svg');
 
+  /// File path: assets/icons/cancel-square.svg
+  SvgGenImage get cancelSquare =>
+      const SvgGenImage('assets/icons/cancel-square.svg');
+
   /// File path: assets/icons/cancelled.svg
   SvgGenImage get cancelled => const SvgGenImage('assets/icons/cancelled.svg');
 
@@ -119,6 +126,10 @@ class $AssetsIconsGen {
   SvgGenImage get checkmarkCircle =>
       const SvgGenImage('assets/icons/checkmark-circle.svg');
 
+  /// File path: assets/icons/circle-arrow-left.svg
+  SvgGenImage get circleArrowLeft =>
+      const SvgGenImage('assets/icons/circle-arrow-left.svg');
+
   /// File path: assets/icons/cloud.svg
   SvgGenImage get cloud => const SvgGenImage('assets/icons/cloud.svg');
 
@@ -131,6 +142,10 @@ class $AssetsIconsGen {
 
   /// File path: assets/icons/computer.svg
   SvgGenImage get computer => const SvgGenImage('assets/icons/computer.svg');
+
+  /// File path: assets/icons/contactCusto.svg
+  SvgGenImage get contactCusto =>
+      const SvgGenImage('assets/icons/contactCusto.svg');
 
   /// File path: assets/icons/customerService.svg
   SvgGenImage get customerService =>
@@ -284,6 +299,10 @@ class $AssetsIconsGen {
   SvgGenImage get mobileMenu =>
       const SvgGenImage('assets/icons/mobileMenu.svg');
 
+  /// File path: assets/icons/mobileMore.svg
+  SvgGenImage get mobileMore =>
+      const SvgGenImage('assets/icons/mobileMore.svg');
+
   /// File path: assets/icons/mobileSearch.svg
   SvgGenImage get mobileSearch =>
       const SvgGenImage('assets/icons/mobileSearch.svg');
@@ -315,8 +334,20 @@ class $AssetsIconsGen {
   /// File path: assets/icons/onTheWay.svg
   SvgGenImage get onTheWay => const SvgGenImage('assets/icons/onTheWay.svg');
 
+  /// File path: assets/icons/orderConfirmed.svg
+  SvgGenImage get orderConfirmed =>
+      const SvgGenImage('assets/icons/orderConfirmed.svg');
+
+  /// File path: assets/icons/orderReceived.svg
+  SvgGenImage get orderReceived =>
+      const SvgGenImage('assets/icons/orderReceived.svg');
+
   /// File path: assets/icons/otp.svg
   SvgGenImage get otp => const SvgGenImage('assets/icons/otp.svg');
+
+  /// File path: assets/icons/outForDelivery.svg
+  SvgGenImage get outForDelivery =>
+      const SvgGenImage('assets/icons/outForDelivery.svg');
 
   /// File path: assets/icons/package.svg
   SvgGenImage get package => const SvgGenImage('assets/icons/package.svg');
@@ -335,8 +366,16 @@ class $AssetsIconsGen {
   SvgGenImage get phoneContainer =>
       const SvgGenImage('assets/icons/phoneContainer.svg');
 
+  /// File path: assets/icons/prepForDelivery.svg
+  SvgGenImage get prepForDelivery =>
+      const SvgGenImage('assets/icons/prepForDelivery.svg');
+
   /// File path: assets/icons/privacy.svg
   SvgGenImage get privacy => const SvgGenImage('assets/icons/privacy.svg');
+
+  /// File path: assets/icons/productDelivered.svg
+  SvgGenImage get productDelivered =>
+      const SvgGenImage('assets/icons/productDelivered.svg');
 
   /// File path: assets/icons/products.svg
   SvgGenImage get products => const SvgGenImage('assets/icons/products.svg');
@@ -344,6 +383,10 @@ class $AssetsIconsGen {
   /// File path: assets/icons/quickActionCart.svg
   SvgGenImage get quickActionCart =>
       const SvgGenImage('assets/icons/quickActionCart.svg');
+
+  /// File path: assets/icons/readyForPickup.svg
+  SvgGenImage get readyForPickup =>
+      const SvgGenImage('assets/icons/readyForPickup.svg');
 
   /// File path: assets/icons/received.svg
   SvgGenImage get received => const SvgGenImage('assets/icons/received.svg');
@@ -402,6 +445,9 @@ class $AssetsIconsGen {
   SvgGenImage get smartWatch =>
       const SvgGenImage('assets/icons/smart-watch.svg');
 
+  /// File path: assets/icons/sortBy.svg
+  SvgGenImage get sortBy => const SvgGenImage('assets/icons/sortBy.svg');
+
   /// File path: assets/icons/star.svg
   SvgGenImage get star => const SvgGenImage('assets/icons/star.svg');
 
@@ -452,6 +498,10 @@ class $AssetsIconsGen {
   SvgGenImage get underpants =>
       const SvgGenImage('assets/icons/underpants.svg');
 
+  /// File path: assets/icons/updateStats.svg
+  SvgGenImage get updateStats =>
+      const SvgGenImage('assets/icons/updateStats.svg');
+
   /// File path: assets/icons/upload.svg
   SvgGenImage get upload => const SvgGenImage('assets/icons/upload.svg');
 
@@ -476,6 +526,9 @@ class $AssetsIconsGen {
   SvgGenImage get vehicleDoc =>
       const SvgGenImage('assets/icons/vehicleDoc.svg');
 
+  /// File path: assets/icons/viewOrder.svg
+  SvgGenImage get viewOrder => const SvgGenImage('assets/icons/viewOrder.svg');
+
   /// File path: assets/icons/wallet.svg
   SvgGenImage get wallet => const SvgGenImage('assets/icons/wallet.svg');
 
@@ -498,6 +551,7 @@ class $AssetsIconsGen {
 
   /// List of all assets
   List<SvgGenImage> get values => [
+    action,
     actionFailed,
     activeProduct,
     arrowDown,
@@ -518,6 +572,7 @@ class $AssetsIconsGen {
     buyerIcon,
     buyerLogout,
     calender,
+    cancelSquare,
     cancelled,
     car,
     cartCheckIn,
@@ -527,10 +582,12 @@ class $AssetsIconsGen {
     cash,
     chair,
     checkmarkCircle,
+    circleArrowLeft,
     cloud,
     cloudWhite,
     completed,
     computer,
+    contactCusto,
     customerService,
     dashboardCart,
     defaultContainer,
@@ -575,6 +632,7 @@ class $AssetsIconsGen {
     menu,
     mobileFilter,
     mobileMenu,
+    mobileMore,
     mobileSearch,
     moneyBag,
     motorbike,
@@ -584,15 +642,21 @@ class $AssetsIconsGen {
     note,
     notification,
     onTheWay,
+    orderConfirmed,
+    orderReceived,
     otp,
+    outForDelivery,
     package,
     payInfo,
     pending,
     pendingPayout,
     phoneContainer,
+    prepForDelivery,
     privacy,
+    productDelivered,
     products,
     quickActionCart,
+    readyForPickup,
     received,
     recentDeliveries,
     recycle,
@@ -609,6 +673,7 @@ class $AssetsIconsGen {
     shirt,
     smallPackage,
     smartWatch,
+    sortBy,
     star,
     starOutline,
     statusChip1,
@@ -623,6 +688,7 @@ class $AssetsIconsGen {
     totalSale,
     tv,
     underpants,
+    updateStats,
     upload,
     uploaded,
     userCircle,
@@ -630,6 +696,7 @@ class $AssetsIconsGen {
     user2,
     vegetarianFood,
     vehicleDoc,
+    viewOrder,
     wallet,
     webLogoutButton,
     womenCloth,

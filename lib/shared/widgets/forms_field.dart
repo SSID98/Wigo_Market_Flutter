@@ -4,7 +4,7 @@ import 'package:wigo_flutter/core/constants/app_colors.dart';
 import 'package:wigo_flutter/shared/models/location_data.dart';
 import 'package:wigo_flutter/shared/widgets/custom_text_field.dart';
 
-import '../../core/providers/role_selection_provider.dart';
+import '../../core/local/local_user_controller.dart';
 import '../../gen/assets.gen.dart';
 import '../models/user_role.dart';
 import '../viewmodels/account_creation_viewmodel.dart';
@@ -31,9 +31,11 @@ class FormFields extends ConsumerWidget {
     final regState = ref.watch(registerViewModelProvider);
     final notifier = ref.read(registerViewModelProvider.notifier);
     final spacing = const SizedBox(height: 16);
-    final role = ref.watch(userRoleProvider);
-    final isSeller = role == UserRole.seller;
-    final isRider = role == UserRole.dispatch;
+    // final role = ref.watch(userRoleProvider);
+    final localUser = ref.watch(localUserControllerProvider);
+    final role = localUser.role;
+    final isSeller = role == UserRole.seller.name;
+    final isRider = role == UserRole.dispatch.name;
 
     return Column(
       children: [

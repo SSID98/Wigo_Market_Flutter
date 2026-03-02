@@ -1,13 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import '../../core/constants/app_colors.dart';
 import '../../core/constants/url.dart';
 import '../../core/local/local_user_controller.dart';
-import '../../core/providers/role_selection_provider.dart';
+import '../../core/utils/helper_methods.dart';
 import '../../gen/assets.gen.dart';
 import '../models/user_role.dart';
 import '../widgets/custom_button.dart';
@@ -19,10 +18,12 @@ class CreationSuccessfulScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final screenSize = MediaQuery.of(context).size;
     final isWeb = MediaQuery.of(context).size.width > 600;
-    final role = ref.watch(userRoleProvider);
+    // final role = ref.watch(userRoleProvider);
+    final localUser = ref.watch(localUserControllerProvider);
+    final role = localUser.role;
 
-    final isBuyer = role == UserRole.buyer;
-    final isSeller = role == UserRole.seller;
+    final isBuyer = role == UserRole.buyer.name;
+    final isSeller = role == UserRole.seller.name;
 
     return isWeb
         ? _buildWebLayout(screenSize, context, isBuyer, isSeller, ref)
@@ -46,6 +47,19 @@ class CreationSuccessfulScreen extends ConsumerWidget {
               fit: BoxFit.cover,
               color: AppColors.backGroundOverlay,
               colorBlendMode: BlendMode.overlay,
+              errorBuilder: (
+                BuildContext context,
+                Object exception,
+                StackTrace? stackTrace,
+              ) {
+                return const Center(
+                  child: Icon(
+                    Icons.broken_image,
+                    color: AppColors.textIconGrey,
+                    size: 50.0,
+                  ),
+                );
+              },
             ),
             Padding(
               padding: const EdgeInsets.only(top: 105.0),
@@ -121,6 +135,19 @@ class CreationSuccessfulScreen extends ConsumerWidget {
               fit: BoxFit.cover,
               color: AppColors.backGroundOverlay,
               colorBlendMode: BlendMode.overlay,
+              errorBuilder: (
+                BuildContext context,
+                Object exception,
+                StackTrace? stackTrace,
+              ) {
+                return const Center(
+                  child: Icon(
+                    Icons.broken_image,
+                    color: AppColors.textIconGrey,
+                    size: 50.0,
+                  ),
+                );
+              },
             ),
             Padding(
               padding: const EdgeInsets.only(top: 100.0),
@@ -210,11 +237,11 @@ class CreationSuccessfulScreen extends ConsumerWidget {
           ),
           const SizedBox(height: 20),
           Text(
-            !isBuyer
-                ? 'You are just one click away from making your first earn on wiGO MARKET.'
+            isBuyer
+                ? 'You are just one click away from making your first purchase on wiGO MARKET.'
                 : isSeller
                 ? 'You can now list products, manage your shop, and start selling to students Instantly.'
-                : 'You are just one click away from making your first purchase on wiGO MARKET.',
+                : 'You are just one click away from making your first earn on wiGO MARKET.',
             textAlign: TextAlign.center,
             style: GoogleFonts.hind(
               fontSize: fontSize2,
@@ -230,14 +257,21 @@ class CreationSuccessfulScreen extends ConsumerWidget {
           CustomButton(
             text: 'Continue',
             onPressed: () async {
+              showLoadingDialog(context);
+
+              await Future.delayed(const Duration(seconds: 1));
+
+              if (!context.mounted) return;
+
+              Navigator.of(context, rootNavigator: true).pop();
               ref
                   .read(localUserControllerProvider.notifier)
                   .saveStage(OnboardingStage.completed);
               ref
                   .read(localUserControllerProvider.notifier)
                   .saveHasOnboarded(true);
-              if (!context.mounted) return;
-              isBuyer ? context.go('/buyerHomeScreen') : context.go('/login');
+              // if (!context.mounted) return;
+              // isBuyer ? context.go('/buyerHomeScreen') : context.go('/login');
             },
             fontSize: 18,
             fontWeight: FontWeight.w500,

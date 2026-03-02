@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:wigo_flutter/features/seller/presentation/views/order_management_screen.dart';
 import 'package:wigo_flutter/features/seller/presentation/views/seller_dashboard_screen.dart';
 
 import '../../../../core/constants/app_colors.dart';
@@ -70,7 +71,7 @@ class _SellerMainScreenState extends ConsumerState<SellerMainScreen> {
                               index: navState.currentIndex,
                               children: [
                                 _buildNavigator(0, SellerDashboardScreen()),
-                                _buildNavigator(1, Placeholder()),
+                                _buildNavigator(1, OrderManagementScreen()),
                                 _buildNavigator(2, Placeholder()),
                                 _buildNavigator(3, Placeholder()),
                                 _buildNavigator(4, Placeholder()),
@@ -89,7 +90,7 @@ class _SellerMainScreenState extends ConsumerState<SellerMainScreen> {
                   index: navState.currentIndex,
                   children: [
                     _buildNavigator(0, SellerDashboardScreen()),
-                    _buildNavigator(1, Placeholder()),
+                    _buildNavigator(1, OrderManagementScreen()),
                     _buildNavigator(2, Placeholder()),
                     _buildNavigator(3, Placeholder()),
                     _buildNavigator(4, Placeholder()),

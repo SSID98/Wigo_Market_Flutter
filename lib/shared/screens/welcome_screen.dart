@@ -1,13 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:wigo_flutter/gen/assets.gen.dart';
 import 'package:wigo_flutter/shared/widgets/custom_button.dart';
 
 import '../../core/constants/app_colors.dart';
 import '../../core/constants/url.dart';
-import '../../core/providers/role_selection_provider.dart';
+import '../../core/local/local_user_controller.dart';
 import '../../core/utils/helper_methods.dart';
 import '../models/user_role.dart';
 
@@ -17,13 +16,21 @@ class WelcomeScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final Size screenSize = MediaQuery.of(context).size;
-    final role = ref.watch(userRoleProvider);
-    final isRider = role == UserRole.dispatch;
-    final isSeller = role == UserRole.seller;
+    // final role = ref.watch(userRoleProvider);
+    final localUser = ref.watch(localUserControllerProvider);
+    final role = localUser.role;
+    final isRider = role == UserRole.dispatch.name;
+    final isSeller = role == UserRole.seller.name;
     return LayoutBuilder(
       builder: (context, constraints) {
         if (constraints.maxWidth < 600) {
-          return _buildMobileLayout(context, screenSize, isRider, isSeller);
+          return _buildMobileLayout(
+            context,
+            screenSize,
+            isRider,
+            isSeller,
+            ref,
+          );
         } else {
           return _buildWebLayout(context, screenSize);
         }
@@ -36,6 +43,7 @@ class WelcomeScreen extends ConsumerWidget {
     Size screenSize,
     bool isRider,
     bool isSeller,
+    WidgetRef ref,
   ) {
     final double contentContainerHeight = screenSize.height * 0.60;
     return Scaffold(
@@ -51,6 +59,19 @@ class WelcomeScreen extends ConsumerWidget {
                   ? '$networkImageUrl/sellerMobileWelcome.png'
                   : '$networkImageUrl/buyerWelcomeMobile.png',
               fit: BoxFit.contain,
+              errorBuilder: (
+                BuildContext context,
+                Object exception,
+                StackTrace? stackTrace,
+              ) {
+                return const Center(
+                  child: Icon(
+                    Icons.broken_image,
+                    color: AppColors.textIconGrey,
+                    size: 50.0,
+                  ),
+                );
+              },
             ),
           ),
           Positioned(
@@ -117,7 +138,9 @@ class WelcomeScreen extends ConsumerWidget {
                         await Future.delayed(const Duration(seconds: 1));
                         if (!context.mounted) return;
                         Navigator.of(context, rootNavigator: true).pop();
-                        context.push('/onboarding');
+                        ref
+                            .read(localUserControllerProvider.notifier)
+                            .saveStage(OnboardingStage.onboarding);
                       },
                       fontSize: 18,
                       fontWeight: FontWeight.w500,
@@ -223,7 +246,22 @@ class WelcomeScreen extends ConsumerWidget {
                 child: SizedBox(
                   width: webContentWidth,
                   height: webContentHeight,
-                  child: Image.network('$networkImageUrl/welcomeRiderWeb.png'),
+                  child: Image.network(
+                    '$networkImageUrl/welcomeRiderWeb.png',
+                    errorBuilder: (
+                      BuildContext context,
+                      Object exception,
+                      StackTrace? stackTrace,
+                    ) {
+                      return const Center(
+                        child: Icon(
+                          Icons.broken_image,
+                          color: AppColors.textIconGrey,
+                          size: 50.0,
+                        ),
+                      );
+                    },
+                  ),
                 ),
               ),
             ),

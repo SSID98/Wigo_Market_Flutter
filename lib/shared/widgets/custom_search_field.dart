@@ -62,7 +62,7 @@ class CustomSearchField extends StatelessWidget {
         elevation: const WidgetStatePropertyAll(0),
         shape: WidgetStatePropertyAll(
           RoundedRectangleBorder(
-            side: BorderSide(color: AppColors.borderColor),
+            side: BorderSide(color: borderColor ?? AppColors.borderColor),
             borderRadius: BorderRadius.circular(8),
           ),
         ),

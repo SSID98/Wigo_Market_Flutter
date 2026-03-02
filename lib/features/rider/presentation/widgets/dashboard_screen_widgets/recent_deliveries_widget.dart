@@ -6,7 +6,7 @@ import 'package:wigo_flutter/features/rider/viewmodels/delivery_task_viewmodel.d
 import 'package:wigo_flutter/shared/widgets/custom_button.dart';
 
 import '../../../../../gen/assets.gen.dart';
-import '../../../../../shared/widgets/dashboard_widgets/delivery_table.dart';
+import '../delivery_table.dart';
 
 class RecentDeliveriesWidget extends ConsumerWidget {
   const RecentDeliveriesWidget({super.key});

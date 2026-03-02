@@ -6,7 +6,7 @@ import 'package:wigo_flutter/shared/widgets/onboarding_pageview.dart';
 
 import '../../core/constants/app_colors.dart';
 import '../../core/constants/url.dart';
-import '../../core/providers/role_selection_provider.dart';
+import '../../core/local/local_user_controller.dart';
 import '../../gen/assets.gen.dart';
 import '../models/user_role.dart';
 import '../widgets/custom_button.dart';
@@ -19,9 +19,11 @@ class OnboardingScreen extends ConsumerWidget {
     final viewModel = ref.watch(onboardingViewModelProvider);
     final screenSize = MediaQuery.of(context).size;
     final isWeb = MediaQuery.of(context).size.width < 600;
-    final role = ref.watch(userRoleProvider);
-    final isBuyer = role == UserRole.buyer;
-    final isSeller = role == UserRole.seller;
+    final localUser = ref.watch(localUserControllerProvider);
+    final role = localUser.role;
+    // final role = ref.watch(userRoleProvider);
+    final isBuyer = role == UserRole.buyer.name;
+    final isSeller = role == UserRole.seller.name;
     return isWeb
         ? _buildMobileLayout(
           context,
@@ -60,6 +62,19 @@ class OnboardingScreen extends ConsumerWidget {
               fit: BoxFit.cover,
               color: AppColors.backGroundOverlay,
               colorBlendMode: BlendMode.overlay,
+              errorBuilder: (
+                BuildContext context,
+                Object exception,
+                StackTrace? stackTrace,
+              ) {
+                return const Center(
+                  child: Icon(
+                    Icons.broken_image,
+                    color: AppColors.textIconGrey,
+                    size: 50.0,
+                  ),
+                );
+              },
             ),
             Padding(
               padding: const EdgeInsets.only(top: 105.0),
@@ -150,6 +165,19 @@ class OnboardingScreen extends ConsumerWidget {
               fit: BoxFit.cover,
               color: AppColors.backGroundOverlay,
               colorBlendMode: BlendMode.overlay,
+              errorBuilder: (
+                BuildContext context,
+                Object exception,
+                StackTrace? stackTrace,
+              ) {
+                return const Center(
+                  child: Icon(
+                    Icons.broken_image,
+                    color: AppColors.textIconGrey,
+                    size: 50.0,
+                  ),
+                );
+              },
             ),
             Padding(
               padding: const EdgeInsets.only(top: 105.0),

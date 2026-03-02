@@ -9,9 +9,9 @@ import '../../../../../gen/assets.gen.dart';
 import '../../../../../shared/widgets/custom_button.dart';
 import '../../../../../shared/widgets/custom_search_field.dart';
 import '../../../../../shared/widgets/custom_text_field.dart';
-import '../../../../../shared/widgets/dashboard_widgets/delivery_table.dart';
 import '../../../../../shared/widgets/pagination_widget.dart';
 import '../../../models/delivery.dart';
+import '../../widgets/delivery_table.dart';
 
 class WalletOverviewAndTransactionsScreen extends ConsumerWidget {
   const WalletOverviewAndTransactionsScreen({

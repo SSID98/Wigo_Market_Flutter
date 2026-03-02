@@ -56,7 +56,23 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
       body: Stack(
         fit: StackFit.expand,
         children: [
-          Image.network('$networkImageUrl/login.png', fit: BoxFit.cover),
+          Image.network(
+            '$networkImageUrl/login.png',
+            fit: BoxFit.cover,
+            errorBuilder: (
+              BuildContext context,
+              Object exception,
+              StackTrace? stackTrace,
+            ) {
+              return const Center(
+                child: Icon(
+                  Icons.broken_image,
+                  color: AppColors.textIconGrey,
+                  size: 50.0,
+                ),
+              );
+            },
+          ),
           BottomTextBuilder.buildMobileBottomText(),
           Center(
             child: SingleChildScrollView(
