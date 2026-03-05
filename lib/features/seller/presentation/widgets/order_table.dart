@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:wigo_flutter/features/seller/presentation/views/order_detail_screen.dart';
 import 'package:wigo_flutter/shared/widgets/custom_button.dart';
-import 'package:wigo_flutter/shared/widgets/dashboard_widgets/status_chip.dart';
 
 import '../../../../core/constants/app_colors.dart';
 import '../../../../core/constants/dashboard_helpers.dart';
@@ -13,6 +13,7 @@ import '../../models/order.dart';
 import '../../models/order_task_state.dart';
 import '../../viewmodels/dropdown_providers.dart';
 import '../../viewmodels/order_task_viewmodel.dart';
+import 'order_status_container.dart';
 
 enum ActionMenuView { main, updateStatus }
 
@@ -21,49 +22,6 @@ class OrderTable extends ConsumerWidget {
   final bool isExpanded;
 
   const OrderTable({super.key, required this.orders, this.isExpanded = false});
-
-  Widget _buildStatusContainer(OrderFilter status) {
-    Color containerColor;
-    Color textColor;
-
-    switch (status) {
-      case OrderFilter.pending:
-        containerColor = Color(0xffF5F593).withValues(alpha: 0.50);
-        textColor = AppColors.textYellow;
-        break;
-      case OrderFilter.delivered:
-        containerColor = AppColors.textStatusGreen.withValues(alpha: 0.15);
-        textColor = AppColors.textStatusGreen;
-        break;
-      case OrderFilter.cancelled:
-        containerColor = AppColors.textRed.withValues(alpha: 0.15);
-        textColor = AppColors.textRed;
-      case OrderFilter.preparing:
-        containerColor = Color(0xffE08D40).withValues(alpha: 0.15);
-        textColor = Color(0xffE08D40);
-      case OrderFilter.pickUpReady:
-        containerColor = Color(0xffBA29FF).withValues(alpha: 0.15);
-        textColor = Color(0xffBA29FF);
-      case OrderFilter.inTransit:
-        containerColor = Color(0xff6226EF).withValues(alpha: 0.15);
-        textColor = Color(0xff6226EF);
-      case OrderFilter.confirmed:
-        containerColor = Color(0xff3463ED).withValues(alpha: 0.25);
-        textColor = Color(0xff3463ED);
-        break;
-      default:
-        // Default to a neutral style for unknown statuses
-        containerColor = AppColors.textIconGrey.withValues(alpha: 0.1);
-        textColor = AppColors.textBlackGrey;
-    }
-    return StatusChip(
-      statusColor: textColor,
-      containerColor: containerColor,
-      status: status.displayName,
-      borderRadius: 4.5,
-      topPadding: 1.5,
-    );
-  }
 
   TextStyle _getStyle({required bool isHeader, required Color color}) {
     return GoogleFonts.hind(
@@ -317,7 +275,7 @@ class OrderTable extends ConsumerWidget {
                     SizedBox(
                       width: isWeb ? 200.0 : 150.0,
                       child: Text(
-                        d.deliveryType,
+                        d.deliveryType.displayName,
                         style: _getStyle(
                           isHeader: false,
                           color: AppColors.textBlackGrey,
@@ -340,7 +298,7 @@ class OrderTable extends ConsumerWidget {
                         alignment: Alignment.centerLeft,
                         child: SizedBox(
                           width: 80,
-                          child: _buildStatusContainer(d.status),
+                          child: OrderStatusContainer(status: d.status),
                         ),
                       ),
                     ),
@@ -388,7 +346,15 @@ class OrderTable extends ConsumerWidget {
                             menuChildren: [
                               MenuItemButton(
                                 leadingIcon: AppAssets.icons.viewOrder.svg(),
-                                onPressed: () {},
+                                onPressed: () {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder:
+                                          (_) => OrderDetailScreen(order: d),
+                                    ),
+                                  );
+                                },
                                 child: Text(
                                   "View Order",
                                   style: GoogleFonts.hind(
@@ -398,6 +364,8 @@ class OrderTable extends ConsumerWidget {
                                   ),
                                 ),
                               ),
+
+                              //update status
                               isWeb
                                   ? _buildUpdateStatusSubmenuWeb(d, ref)
                                   : Padding(
@@ -473,9 +441,6 @@ class OrderTable extends ConsumerWidget {
                                                 d.orderId,
                                                 status,
                                               );
-
-                                          // 2. IMPORTANT: Manually close the MenuAnchor
-                                          // You might need to pass the controller or use a GlobalKey
                                         },
                                         child: Padding(
                                           padding: const EdgeInsets.only(

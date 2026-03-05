@@ -37,14 +37,16 @@ import '../../shared/screens/rider_seller_main_screen.dart';
 import '../../shared/screens/role_selection_screen.dart';
 import '../../shared/screens/welcome_screen.dart';
 import '../auth/auth_state.dart';
+import '../constants/url.dart';
 import '../local/local_user_controller.dart';
 
 final routerProvider = Provider<GoRouter>((ref) {
   final routerNotifier = ref.watch(routerNotifierProvider);
   return GoRouter(
-    initialLocation: '/',
+    initialLocation: '/sellerMainScreen',
     refreshListenable: routerNotifier,
     redirect: (context, state) {
+      if (kDevMode) return null;
       final status = routerNotifier.authStatus;
       final local = routerNotifier.localUserState;
       if (status == AuthStatus.loading) return null;

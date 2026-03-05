@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:wigo_flutter/features/rider/models/rider_dashboard_state.dart';
 import 'package:wigo_flutter/features/rider/presentation/widgets/dashboard_screen_widgets/earning_history_widget.dart';
-import 'package:wigo_flutter/features/rider/viewmodels/rider_dashboard_viewmodel.dart';
 import 'package:wigo_flutter/features/seller/presentation/widgets/dashboard_widgets/business_analytics_widget.dart';
 import 'package:wigo_flutter/features/seller/presentation/widgets/dashboard_widgets/getting_started_widget.dart';
 import 'package:wigo_flutter/features/seller/presentation/widgets/dashboard_widgets/quick_action_widget.dart';
@@ -21,8 +19,8 @@ class SellerDashboardScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final viewModel = ref.watch(riderDashboardViewModelProvider.notifier);
-    final state = ref.watch(riderDashboardViewModelProvider);
+    // final viewModel = ref.watch(sellerDashboardViewModelProvider.notifier);
+    // final state = ref.watch(sellerDashboardViewModelProvider);
     final screenSize = MediaQuery.of(context).size;
     final isWeb = MediaQuery.of(context).size.width > 600;
     final steps = [
@@ -55,14 +53,12 @@ class SellerDashboardScreen extends ConsumerWidget {
       ),
     ];
     return isWeb
-        ? _buildWebLayout(screenSize, viewModel, state, ref, steps)
-        : _buildMobileLayout(screenSize, viewModel, state, ref, steps);
+        ? _buildWebLayout(screenSize, ref, steps)
+        : _buildMobileLayout(screenSize, ref, steps);
   }
 
   Widget _buildMobileLayout(
     Size screenSize,
-    RiderDashboardViewModel viewModel,
-    RiderDashboardState state,
     WidgetRef ref,
     List<AccountSetupStep> steps,
   ) {
@@ -103,8 +99,6 @@ class SellerDashboardScreen extends ConsumerWidget {
 
   Widget _buildWebLayout(
     Size screenSize,
-    RiderDashboardViewModel viewModel,
-    RiderDashboardState state,
     WidgetRef ref,
     List<AccountSetupStep> steps,
   ) {

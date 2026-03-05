@@ -1,12 +1,4 @@
-enum DropdownType {
-  menu,
-  user,
-  mobileFilter,
-  date,
-  orderStatus,
-  updateStatus,
-  actions,
-}
+enum DropdownType { menu, user }
 
 class DropdownOverlayState {
   final DropdownType? active;

@@ -12,10 +12,10 @@ import '../../../../core/constants/url.dart';
 import '../../../../shared/widgets/custom_button.dart';
 import '../../../../shared/widgets/custom_checkbox_2.dart';
 import '../../../../shared/widgets/custom_text_field.dart';
-import '../../../rider/presentation/widgets/custom_multi_date_picker.dart';
 import '../../models/order.dart';
 import '../../models/order_task_state.dart';
 import '../../viewmodels/dropdown_providers.dart';
+import '../widgets/custom_multi_date_picker.dart';
 
 class OrderManagementScreen extends ConsumerWidget {
   const OrderManagementScreen({super.key});
@@ -146,7 +146,7 @@ class OrderManagementScreen extends ConsumerWidget {
       elevation: 0,
       color: AppColors.backgroundWhite,
       child: Padding(
-        padding: EdgeInsets.symmetric(horizontal: 10, vertical: 15),
+        padding: EdgeInsets.symmetric(horizontal: 12, vertical: 15),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -165,11 +165,12 @@ class OrderManagementScreen extends ConsumerWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
+                    const SizedBox(height: 20),
                     Image.network(
                       '$networkImageUrl/noOrders.png',
+                      height: isWeb ? 347 : 155,
+                      width: isWeb ? 384 : 172,
                       fit: BoxFit.cover,
-                      color: AppColors.backGroundOverlay,
-                      colorBlendMode: BlendMode.overlay,
                       errorBuilder: (
                         BuildContext context,
                         Object exception,
@@ -184,7 +185,7 @@ class OrderManagementScreen extends ConsumerWidget {
                         );
                       },
                     ),
-                    const SizedBox(height: 10.0),
+                    const SizedBox(height: 25.0),
                     Text(
                       "No orders yet",
                       style: GoogleFonts.hind(
@@ -209,7 +210,7 @@ class OrderManagementScreen extends ConsumerWidget {
                                 : AppColors.textBodyText,
                       ),
                     ),
-                    const SizedBox(height: 25.0),
+                    const SizedBox(height: 30.0),
                     CustomButton(
                       text: 'Add product',
                       onPressed: () {},
@@ -224,6 +225,7 @@ class OrderManagementScreen extends ConsumerWidget {
                       padding: EdgeInsets.zero,
                       width: isWeb ? 326 : 251,
                     ),
+                    const SizedBox(height: 20),
                   ],
                 ),
               )
@@ -345,6 +347,7 @@ class OrderHeaderMobile extends ConsumerWidget {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
+            //Filters
             MenuAnchor(
               crossAxisUnconstrained: true,
               alignmentOffset: const Offset(-14, 15),
@@ -394,6 +397,7 @@ class OrderHeaderMobile extends ConsumerWidget {
                           child: Column(
                             mainAxisSize: MainAxisSize.min,
                             children: [
+                              //date filter
                               Padding(
                                 padding: EdgeInsets.only(
                                   top: expandedSection == 'date' ? 10 : 0,
@@ -419,20 +423,16 @@ class OrderHeaderMobile extends ConsumerWidget {
                                   ),
                                   onPressed: () async {
                                     controller?.close();
-                                    // This ensures the calendar shows currently applied dates
                                     vm.syncDateTempWithActive();
                                     showDialog(
                                       context: context,
                                       barrierDismissible: true,
-                                      // Allows tapping outside to cancel/reset
                                       builder: (context) {
-                                        // Use a Consumer here so the Dialog rebuilds when you toggle dates
                                         return Consumer(
                                           builder: (context, ref, child) {
                                             final state = ref.watch(
                                               orderTaskProvider,
                                             );
-
                                             return Dialog(
                                               backgroundColor:
                                                   Colors.transparent,
@@ -444,13 +444,10 @@ class OrderHeaderMobile extends ConsumerWidget {
                                                 initialSelectedDates:
                                                     state.tempSelectedDates,
                                                 onDateToggled: (date) {
-                                                  // This updates the orange circles in the UI
                                                   vm.toggleDateSelection(date);
                                                 },
                                                 onApply: () {
-                                                  // This moves temp dates to active and filters the table
                                                   vm.applyDateFilters();
-                                                  // Close the dialog
                                                   Navigator.pop(context);
                                                 },
                                               ),
@@ -463,6 +460,8 @@ class OrderHeaderMobile extends ConsumerWidget {
                                   itemText: 'Custom Date',
                                 ),
                               ],
+
+                              //status filter
                               Padding(
                                 padding: EdgeInsets.only(
                                   top: expandedSection == 'status' ? 10 : 0,
@@ -558,11 +557,34 @@ class OrderHeaderMobile extends ConsumerWidget {
                                 ),
                                 child: _buildMenuButton(
                                   ref: ref,
-                                  sectionKey: 'status',
+                                  sectionKey: 'orderType',
                                   isExpanded: expandedSection == 'orderType',
                                   menuText: "Order Type",
                                 ),
                               ),
+                              if (expandedSection == 'orderType') ...[
+                                _buildMenuItem(
+                                  onPressed: () {
+                                    vm.setDeliveryType(DeliveryType.all);
+                                    controller?.close();
+                                  },
+                                  itemText: 'All',
+                                ),
+                                _buildMenuItem(
+                                  onPressed: () {
+                                    vm.setDeliveryType(DeliveryType.pickUp);
+                                    controller?.close();
+                                  },
+                                  itemText: 'Pick up',
+                                ),
+                                _buildMenuItem(
+                                  onPressed: () {
+                                    vm.setDeliveryType(DeliveryType.delivery);
+                                    controller?.close();
+                                  },
+                                  itemText: 'Delivery',
+                                ),
+                              ],
                             ],
                           ),
                         ),
@@ -595,12 +617,71 @@ class OrderHeaderMobile extends ConsumerWidget {
 
             const SizedBox(width: 12),
 
-            GestureDetector(
-              onTap: () {},
-              child: FilterButton(
-                label: 'Sort by',
-                icon: AppAssets.icons.sortBy.svg(),
+            //Sort By
+            MenuAnchor(
+              crossAxisUnconstrained: true,
+              alignmentOffset: const Offset(-40, 15),
+              builder: (context, controller, child) {
+                return GestureDetector(
+                  onTap: () {
+                    if (!controller.isOpen) {
+                      ref.read(orderTaskProvider.notifier).syncTempWithActive();
+
+                      ref.read(mobileFilterExpansionProvider.notifier).state =
+                          null;
+
+                      controller.open();
+                    } else {
+                      controller.close();
+                    }
+                  },
+                  child: FilterButton(
+                    label: 'Sort By',
+                    icon: AppAssets.icons.sortBy.svg(),
+                  ),
+                );
+              },
+              style: MenuStyle(
+                backgroundColor: WidgetStateProperty.all(
+                  AppColors.backgroundWhite,
+                ),
+                elevation: WidgetStateProperty.all(6),
+                shape: WidgetStateProperty.all(
+                  RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                ),
+                padding: WidgetStateProperty.all(EdgeInsets.zero),
               ),
+              menuChildren: [
+                Builder(
+                  builder: (menuContext) {
+                    final controller = MenuController.maybeOf(menuContext);
+                    return Padding(
+                      padding: EdgeInsets.only(left: 50, right: 50, top: 8),
+                      child: Column(
+                        children: [
+                          _buildMenuItem(
+                            onPressed: () {},
+                            isNotAccordion: true,
+                            itemText: 'Recent Orders',
+                          ),
+                          _buildMenuItem(
+                            onPressed: () {},
+                            isNotAccordion: true,
+                            itemText: 'Ongoing Orders',
+                          ),
+                          _buildMenuItem(
+                            onPressed: () {},
+                            isNotAccordion: true,
+                            itemText: 'Order History',
+                          ),
+                        ],
+                      ),
+                    );
+                  },
+                ),
+              ],
             ),
           ],
         ),
@@ -612,18 +693,22 @@ class OrderHeaderMobile extends ConsumerWidget {
     required void Function()? onPressed,
     required itemText,
     Widget? trailingIcon,
+    bool isNotAccordion = false,
   }) {
     return MenuItemButton(
       onPressed: onPressed,
       trailingIcon: trailingIcon,
       child: Padding(
-        padding: const EdgeInsets.only(left: 35),
+        padding: EdgeInsets.only(left: isNotAccordion ? 0 : 35),
         child: Text(
           itemText,
           style: GoogleFonts.hind(
             fontSize: 16,
             fontWeight: FontWeight.w500,
-            color: AppColors.textBodyText,
+            color:
+                isNotAccordion
+                    ? AppColors.textBlackGrey
+                    : AppColors.textBodyText,
           ),
         ),
       ),
@@ -682,85 +767,6 @@ class OrderHeaderMobile extends ConsumerWidget {
           ),
         ),
       ),
-    );
-  }
-
-  Widget _buildOrderFilterSheet({
-    required BuildContext context,
-    required OrderTaskViewmodel vm,
-  }) {
-    return Column(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        ListTile(
-          title: const Text("Date"),
-          trailing: const Icon(Icons.chevron_right),
-          onTap: () {
-            Navigator.pop(context);
-            _showDateSheet(context, vm);
-          },
-        ),
-        ListTile(
-          title: const Text("Order Status"),
-          trailing: const Icon(Icons.chevron_right),
-          onTap: () {
-            Navigator.pop(context);
-            _showStatusSheet(context, vm.setFilter);
-          },
-        ),
-      ],
-    );
-  }
-
-  void _showStatusSheet(
-    BuildContext context,
-    void Function(OrderFilter) onSelected,
-  ) {
-    showModalBottomSheet(
-      context: context,
-      builder:
-          (_) => PopupMenuButton<OrderFilter>(
-            onSelected: onSelected,
-            itemBuilder:
-                (_) =>
-                    OrderFilter.values
-                        .map(
-                          (f) => PopupMenuItem(value: f, child: Text(f.name)),
-                        )
-                        .toList(),
-          ),
-    );
-  }
-
-  void _showDateSheet(BuildContext context, OrderTaskViewmodel vm) {
-    showModalBottomSheet(
-      context: context,
-      builder:
-          (_) => Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              ListTile(
-                title: const Text("Today"),
-                onTap: () {
-                  vm.setTodayFilter();
-                  Navigator.pop(context);
-                },
-              ),
-              ListTile(
-                title: const Text("Custom date"),
-                onTap: () async {
-                  Navigator.pop(context);
-                  final picked = await showDatePicker(
-                    context: context,
-                    firstDate: DateTime(2020),
-                    lastDate: DateTime.now(),
-                    initialDate: DateTime.now(),
-                  );
-                  if (picked != null) vm.setCustomDate(picked);
-                },
-              ),
-            ],
-          ),
     );
   }
 }

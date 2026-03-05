@@ -125,6 +125,30 @@ extension OrderFilterExtension on OrderFilter {
   }
 }
 
+extension DeliveryTypeExtension on DeliveryType {
+  //Backend (JSON)
+  String get toJsonString => name;
+
+  String get displayName {
+    switch (this) {
+      case DeliveryType.pickUp:
+        return 'Pick up';
+      case DeliveryType.delivery:
+        return 'Delivery';
+      default:
+        return name[0].toUpperCase() + name.substring(1);
+    }
+  }
+
+  // convert Backend String -> Enum
+  static DeliveryType fromString(String type) {
+    return DeliveryType.values.firstWhere(
+      (e) => e.name.toLowerCase() == type.replaceAll(' ', '').toLowerCase(),
+      orElse: () => DeliveryType.delivery,
+    );
+  }
+}
+
 // extension OrderTaskSelectors on OrderTaskState {
 //   List<Order> get filteredOrders {
 //     return orders.when(

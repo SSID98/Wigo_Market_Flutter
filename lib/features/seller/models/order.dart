@@ -7,7 +7,7 @@ class Order {
   final String item;
   final double amount;
   final OrderFilter status;
-  final String deliveryType;
+  final DeliveryType deliveryType;
   final String pickupLocation;
   final String deliveryLocation;
 
@@ -24,7 +24,7 @@ class Order {
     required this.deliveryType,
   });
 
-  Order copyWith({OrderFilter? status}) {
+  Order copyWith({OrderFilter? status, DeliveryType? deliveryType}) {
     return Order(
       orderId: orderId,
       date: date,
@@ -33,7 +33,7 @@ class Order {
       item: item,
       amount: amount,
       status: status ?? this.status,
-      deliveryType: deliveryType,
+      deliveryType: deliveryType ?? this.deliveryType,
       deliveryLocation: deliveryLocation,
       pickupLocation: pickupLocation,
     );

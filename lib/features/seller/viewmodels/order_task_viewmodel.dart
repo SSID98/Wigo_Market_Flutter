@@ -44,62 +44,11 @@ class OrderTaskViewmodel extends StateNotifier<OrderTaskState> {
     state = state.copyWith(orderCounts: newCounts);
   }
 
-  // void _applyFilterAndPagination() {
-  //   List<Order> filtered =
-  //       _allOrders.where((d) {
-  //         // If no specific statuses are selected, show all (or handle via OrderFilter.all)
-  //         if (state.activeStatuses.isEmpty ||
-  //             state.activeStatuses.contains(OrderFilter.all)) {
-  //           return true;
-  //         }
-  //         // Check if the order's status is in our "Active" set
-  //         return state.activeStatuses.contains(d.status);
-  //       }).toList();
-  //   // List<Order> filtered =
-  //   //     _allOrders.where((d) {
-  //   //       if (state.selectedFilter == OrderFilter.all) return true;
-  //   //       return d.status == state.selectedFilter;
-  //   //     }).toList();
-  //
-  //   if (state.dateFilterType == DateFilterType.today) {
-  //     final now = DateTime.now();
-  //     filtered =
-  //         filtered.where((d) {
-  //           return d.date.year == now.year &&
-  //               d.date.month == now.month &&
-  //               d.date.day == now.day;
-  //         }).toList();
-  //   }
-  //
-  //   if (state.dateFilterType == DateFilterType.custom &&
-  //       state.customDate != null) {
-  //     final c = state.customDate!;
-  //     filtered =
-  //         filtered.where((d) {
-  //           return d.date.year == c.year &&
-  //               d.date.month == c.month &&
-  //               d.date.day == c.day;
-  //         }).toList();
-  //   }
-  //
-  //   final startIndex = state.currentPage * _pageSize;
-  //   final endIndex = (state.currentPage + 1) * _pageSize;
-  //   final paginated = filtered.sublist(
-  //     startIndex,
-  //     endIndex > filtered.length ? filtered.length : endIndex,
-  //   );
-  //
-  //   state = state.copyWith(
-  //     orders: AsyncValue.data(paginated),
-  //     totalOrdersCount: filtered.length,
-  //   );
-  // }
-
   void _applyFilterAndPagination() {
     // Start with the full list
     List<Order> filtered = List.from(_allOrders);
 
-    // 1. Apply Status Filter (Using the "Active" set)
+    // 1. Status Filter
     if (state.activeStatuses.isNotEmpty &&
         !state.activeStatuses.contains(OrderFilter.all)) {
       filtered =
@@ -129,21 +78,14 @@ class OrderTaskViewmodel extends StateNotifier<OrderTaskState> {
             return state.activeSelectedDates.contains(_normalize(order.date));
           }).toList();
     }
-    // if (state.dateFilterType == DateFilterType.custom &&
-    //     state.customDate != null) {
-    //   final c = state.customDate!;
-    //   filtered =
-    //       filtered
-    //           .where(
-    //             (d) =>
-    //                 d.date.year == c.year &&
-    //                 d.date.month == c.month &&
-    //                 d.date.day == c.day,
-    //           )
-    //           .toList();
-    // }
 
-    // 4. Pagination (Always last)
+    // 4. NEW: Delivery/Order Type Filter
+    if (state.deliveryType != DeliveryType.all) {
+      filtered =
+          filtered.where((d) => d.deliveryType == state.deliveryType).toList();
+    }
+
+    // 5. Pagination (Always last)
     final startIndex = state.currentPage * _pageSize;
     final endIndex = (state.currentPage + 1) * _pageSize;
     final paginated = filtered.sublist(
@@ -272,6 +214,14 @@ class OrderTaskViewmodel extends StateNotifier<OrderTaskState> {
     _applyFilterAndPagination();
   }
 
+  void setDeliveryType(DeliveryType type) {
+    state = state.copyWith(
+      deliveryType: type,
+      currentPage: 0, // Reset pagination when filter changes
+    );
+    _applyFilterAndPagination();
+  }
+
   // void setWalletScreenState(WalletScreenState screenState) {
   //   state = state.copyWith(walletScreenState: screenState);
   // }
@@ -287,7 +237,7 @@ class OrderTaskViewmodel extends StateNotifier<OrderTaskState> {
       customerPhone: '+234 809 876 5432',
       deliveryLocation: 'Sandra 1, Block D Hostel.',
       pickupLocation: 'Campus Cafe, Hall 2',
-      deliveryType: 'Delivery',
+      deliveryType: DeliveryType.delivery,
     ),
     Order(
       orderId: "#WGO-1345",
@@ -299,7 +249,7 @@ class OrderTaskViewmodel extends StateNotifier<OrderTaskState> {
       customerPhone: '+234 809 876 5432',
       deliveryLocation: 'Sandra 1, Block D Hostel.',
       pickupLocation: 'Campus Cafe, Hall 2',
-      deliveryType: 'Delivery',
+      deliveryType: DeliveryType.delivery,
     ),
     Order(
       orderId: "#WGO-1238",
@@ -311,7 +261,7 @@ class OrderTaskViewmodel extends StateNotifier<OrderTaskState> {
       customerPhone: '+234 809 876 5432',
       deliveryLocation: 'Sandra 1, Block D Hostel.',
       pickupLocation: 'Campus Cafe, Hall 2',
-      deliveryType: 'Pick up',
+      deliveryType: DeliveryType.pickUp,
     ),
     Order(
       orderId: "#WGO-9876",
@@ -323,7 +273,7 @@ class OrderTaskViewmodel extends StateNotifier<OrderTaskState> {
       customerPhone: '+234 809 876 5432',
       deliveryLocation: 'Sandra 1, Block D Hostel.',
       pickupLocation: 'Campus Cafe, Hall 2',
-      deliveryType: 'Pick up',
+      deliveryType: DeliveryType.pickUp,
     ),
     Order(
       orderId: "#WGO-9875",
@@ -335,7 +285,7 @@ class OrderTaskViewmodel extends StateNotifier<OrderTaskState> {
       customerPhone: '+234 809 876 5432',
       deliveryLocation: 'Sandra 1, Block D Hostel.',
       pickupLocation: 'Campus Cafe, Hall 2',
-      deliveryType: 'Pick up',
+      deliveryType: DeliveryType.pickUp,
     ),
     Order(
       orderId: "#WGO-9865",
@@ -347,7 +297,7 @@ class OrderTaskViewmodel extends StateNotifier<OrderTaskState> {
       customerPhone: '+234 809 876 5432',
       deliveryLocation: 'Sandra 1, Block D Hostel.',
       pickupLocation: 'Campus Cafe, Hall 2',
-      deliveryType: 'Delivery',
+      deliveryType: DeliveryType.delivery,
     ),
     Order(
       orderId: "#WGO-9865",
@@ -359,7 +309,7 @@ class OrderTaskViewmodel extends StateNotifier<OrderTaskState> {
       customerPhone: '+234 809 876 5432',
       deliveryLocation: 'Sandra 1, Block D Hostel.',
       pickupLocation: 'Campus Cafe, Hall 2',
-      deliveryType: 'Delivery',
+      deliveryType: DeliveryType.delivery,
     ),
   ];
 }
@@ -368,3 +318,9 @@ final orderTaskProvider =
     StateNotifierProvider<OrderTaskViewmodel, OrderTaskState>(
       (ref) => OrderTaskViewmodel(),
     );
+
+final orderByIdProvider = Provider.family<Order?, String>((ref, orderId) {
+  final state = ref.watch(orderTaskProvider);
+
+  return state.orders.value?.firstWhere((o) => o.orderId == orderId);
+});
