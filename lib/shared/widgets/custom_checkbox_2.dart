@@ -8,6 +8,8 @@ class CustomCheckbox2 extends StatelessWidget {
   final double size;
   final Color borderColor;
   final Color fillColor;
+  final Color bgColor;
+  final bool setBgColor;
   final Color checkColor;
   final double checkSize;
   final double? borderRadius;
@@ -22,6 +24,8 @@ class CustomCheckbox2 extends StatelessWidget {
     this.checkColor = AppColors.accentRed,
     this.checkSize = 14,
     this.borderRadius = 5.5,
+    this.bgColor = AppColors.backgroundWhite,
+    this.setBgColor = false,
   });
 
   @override
@@ -32,7 +36,12 @@ class CustomCheckbox2 extends StatelessWidget {
         width: size,
         height: size,
         decoration: BoxDecoration(
-          color: value ? fillColor : Colors.transparent,
+          color:
+              value
+                  ? fillColor
+                  : setBgColor
+                  ? bgColor
+                  : Colors.transparent,
           border: Border.all(color: borderColor),
           borderRadius: BorderRadius.circular(borderRadius!),
         ),

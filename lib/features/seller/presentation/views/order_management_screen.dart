@@ -16,6 +16,7 @@ import '../../models/order.dart';
 import '../../models/order_task_state.dart';
 import '../../viewmodels/dropdown_providers.dart';
 import '../widgets/custom_multi_date_picker.dart';
+import '../widgets/filter_button.dart';
 
 class OrderManagementScreen extends ConsumerWidget {
   const OrderManagementScreen({super.key});
@@ -287,7 +288,7 @@ class OrderHeaderWeb extends ConsumerWidget {
 
         const SizedBox(width: 12),
 
-        _buildStatusDropdown(onSelected: vm.setFilter, isWeb: isWeb),
+        // _buildStatusDropdown(onSelected: vm.setFilter, isWeb: isWeb),
       ],
     );
   }
@@ -334,7 +335,7 @@ class OrderHeaderMobile extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final vm = ref.read(orderTaskProvider.notifier);
     final state = ref.watch(orderTaskProvider);
-    final expandedSection = ref.watch(mobileFilterExpansionProvider);
+    final expandedSection = ref.watch(expandedIdProvider);
     return Container(
       height: 64,
       width: double.infinity,
@@ -357,14 +358,13 @@ class OrderHeaderMobile extends ConsumerWidget {
                     if (!controller.isOpen) {
                       ref.read(orderTaskProvider.notifier).syncTempWithActive();
 
-                      ref.read(mobileFilterExpansionProvider.notifier).state =
-                          null;
+                      ref.read(expandedIdProvider.notifier).state = null;
 
                       controller.open();
                     } else {
                       controller.close();
                     }
-                    // ref.read(mobileFilterExpansionProvider.notifier).state =
+                    // ref.read(expandedIdProvider.notifier).state =
                     //     null;
                     // controller.isOpen ? controller.close() : controller.open();
                   },
@@ -627,8 +627,7 @@ class OrderHeaderMobile extends ConsumerWidget {
                     if (!controller.isOpen) {
                       ref.read(orderTaskProvider.notifier).syncTempWithActive();
 
-                      ref.read(mobileFilterExpansionProvider.notifier).state =
-                          null;
+                      ref.read(expandedIdProvider.notifier).state = null;
 
                       controller.open();
                     } else {
@@ -725,7 +724,7 @@ class OrderHeaderMobile extends ConsumerWidget {
   }) {
     return InkWell(
       onTap: () {
-        final notifier = ref.read(mobileFilterExpansionProvider.notifier);
+        final notifier = ref.read(expandedIdProvider.notifier);
         notifier.state = isExpanded ? null : sectionKey;
       },
       child: Container(
@@ -766,44 +765,6 @@ class OrderHeaderMobile extends ConsumerWidget {
             ],
           ),
         ),
-      ),
-    );
-  }
-}
-
-class FilterButton extends StatelessWidget {
-  const FilterButton({super.key, required this.label, this.icon});
-
-  final String label;
-  final Widget? icon;
-
-  @override
-  Widget build(BuildContext context) {
-    final isWeb = MediaQuery.of(context).size.width > 800;
-    return Container(
-      height: 40,
-      width: isWeb ? 140 : 170,
-      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
-      decoration: BoxDecoration(
-        color: isWeb ? AppColors.buttonLighterGreen : AppColors.backgroundLight,
-        borderRadius: BorderRadius.circular(4),
-      ),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          if (!isWeb && icon != null) icon!,
-          const SizedBox(width: 6),
-          Text(
-            label,
-            style: GoogleFonts.hind(
-              fontWeight: FontWeight.w500,
-              fontSize: isWeb ? 14 : 16,
-              color: AppColors.textBlackGrey,
-            ),
-          ),
-          const SizedBox(width: 6),
-          AppAssets.icons.arrowDown.svg(height: 14),
-        ],
       ),
     );
   }

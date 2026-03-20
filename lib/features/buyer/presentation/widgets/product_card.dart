@@ -24,13 +24,7 @@ class ProductCard extends ConsumerWidget {
         .watch(savedProductsProvider)
         .any((item) => item.productName == product.productName);
     return InkWell(
-      onTap: () async {
-        // showLoadingDialog(context);
-        // await Future.delayed(const Duration(seconds: 1));
-        // if (!context.mounted) return;
-        // Navigator.of(context, rootNavigator: true).pop();
-        // context.push('/buyer/product-details', extra: {'product': product});
-      },
+      onTap: () async {},
       child: Container(
         padding: EdgeInsets.zero,
         margin: const EdgeInsets.only(left: 2, bottom: 15),

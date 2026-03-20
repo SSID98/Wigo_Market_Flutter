@@ -14,6 +14,9 @@ class CustomSearchField extends StatelessWidget {
   final double? height, padding;
   final Color? backgroundColor;
   final void Function(String)? onSubmitted;
+  final double? borderRadius;
+  final void Function(String)? onChanged;
+  final FocusNode? focusNode;
 
   const CustomSearchField({
     super.key,
@@ -27,6 +30,9 @@ class CustomSearchField extends StatelessWidget {
     this.backgroundColor,
     this.padding,
     this.onSubmitted,
+    this.onChanged,
+    this.borderRadius,
+    this.focusNode,
   });
 
   @override
@@ -37,7 +43,9 @@ class CustomSearchField extends StatelessWidget {
       child: SearchBar(
         textInputAction: TextInputAction.search,
         onSubmitted: onSubmitted,
+        onChanged: onChanged,
         controller: searchController,
+        focusNode: focusNode,
         leading:
             leading ??
             Padding(
@@ -63,7 +71,7 @@ class CustomSearchField extends StatelessWidget {
         shape: WidgetStatePropertyAll(
           RoundedRectangleBorder(
             side: BorderSide(color: borderColor ?? AppColors.borderColor),
-            borderRadius: BorderRadius.circular(8),
+            borderRadius: BorderRadius.circular(borderRadius ?? 8),
           ),
         ),
       ),

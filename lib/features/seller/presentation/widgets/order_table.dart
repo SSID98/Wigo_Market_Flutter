@@ -36,7 +36,7 @@ class OrderTable extends ConsumerWidget {
     final isWeb = MediaQuery.of(context).size.width > 600;
     final state = ref.watch(orderTaskProvider);
     final notifier = ref.read(orderTaskProvider.notifier);
-    final expandedId = ref.watch(expandedStatusIdProvider);
+    final expandedId = ref.watch(expandedIdProvider);
     return SingleChildScrollView(
       scrollDirection: Axis.horizontal,
       child: Column(
@@ -317,9 +317,8 @@ class OrderTable extends ConsumerWidget {
                               return IconButton(
                                 icon: AppAssets.icons.action.svg(),
                                 onPressed: () {
-                                  ref
-                                      .read(expandedStatusIdProvider.notifier)
-                                      .state = null;
+                                  ref.read(expandedIdProvider.notifier).state =
+                                      null;
                                   controller.isOpen
                                       ? controller.close()
                                       : controller.open();
@@ -375,7 +374,7 @@ class OrderTable extends ConsumerWidget {
                                     child: InkWell(
                                       onTap: () {
                                         final notifier = ref.read(
-                                          expandedStatusIdProvider.notifier,
+                                          expandedIdProvider.notifier,
                                         );
                                         notifier.state =
                                             (expandedId == d.orderId)

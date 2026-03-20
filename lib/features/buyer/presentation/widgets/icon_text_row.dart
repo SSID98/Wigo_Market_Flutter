@@ -10,6 +10,7 @@ class IconTextRow extends StatelessWidget {
     this.isRating = false,
     this.isAmount = false,
     this.textBlack = false,
+    this.isSeller = false,
     required this.fontSize,
     this.padding,
     this.textPadding,
@@ -19,6 +20,7 @@ class IconTextRow extends StatelessWidget {
   final Widget icon;
   final bool isRating;
   final bool isAmount;
+  final bool isSeller;
   final double fontSize;
   final bool textBlack;
   final EdgeInsetsGeometry? padding;
@@ -29,7 +31,10 @@ class IconTextRow extends StatelessWidget {
     return Container(
       padding: padding ?? EdgeInsets.symmetric(horizontal: 10, vertical: 6),
       decoration: BoxDecoration(
-        color: isRating ? AppColors.textFieldColor : Colors.transparent,
+        color:
+            isRating || isSeller
+                ? AppColors.textFieldColor
+                : Colors.transparent,
         borderRadius: BorderRadius.circular(3.89),
       ),
       child: Row(

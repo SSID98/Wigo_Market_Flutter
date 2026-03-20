@@ -76,11 +76,10 @@ class _UpdateOrderStatusDialogState
                     setState(() {
                       selectedStatus = status;
                     });
-
-                    ref
-                        .read(orderTaskProvider.notifier)
-                        .updateOrderStatus(widget.orderId, status);
-
+                    //
+                    // ref
+                    //     .read(orderTaskProvider.notifier)
+                    //     .updateOrderStatus(widget.orderId, status);
                     Future.delayed(const Duration(milliseconds: 300), () {
                       ref
                           .read(orderTaskProvider.notifier)

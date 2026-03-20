@@ -28,6 +28,14 @@ class $AssetsIconsGen {
   SvgGenImage get activeProduct =>
       const SvgGenImage('assets/icons/activeProduct.svg');
 
+  /// File path: assets/icons/addProductBgOverlay.svg
+  SvgGenImage get addProductBgOverlay =>
+      const SvgGenImage('assets/icons/addProductBgOverlay.svg');
+
+  /// File path: assets/icons/addproductBackArrow.svg
+  SvgGenImage get addproductBackArrow =>
+      const SvgGenImage('assets/icons/addproductBackArrow.svg');
+
   /// File path: assets/icons/arrowDown.svg
   SvgGenImage get arrowDown => const SvgGenImage('assets/icons/arrowDown.svg');
 
@@ -53,6 +61,14 @@ class $AssetsIconsGen {
   /// File path: assets/icons/baby-bottle.svg
   SvgGenImage get babyBottle =>
       const SvgGenImage('assets/icons/baby-bottle.svg');
+
+  /// File path: assets/icons/backCircleArrow2.svg
+  SvgGenImage get backCircleArrow2 =>
+      const SvgGenImage('assets/icons/backCircleArrow2.svg');
+
+  /// File path: assets/icons/backCircleArrow3.svg
+  SvgGenImage get backCircleArrow3 =>
+      const SvgGenImage('assets/icons/backCircleArrow3.svg');
 
   /// File path: assets/icons/bank.svg
   SvgGenImage get bank => const SvgGenImage('assets/icons/bank.svg');
@@ -162,6 +178,10 @@ class $AssetsIconsGen {
   /// File path: assets/icons/delete.svg
   SvgGenImage get delete => const SvgGenImage('assets/icons/delete.svg');
 
+  /// File path: assets/icons/deleteProduct.svg
+  SvgGenImage get deleteProduct =>
+      const SvgGenImage('assets/icons/deleteProduct.svg');
+
   /// File path: assets/icons/delivered.svg
   SvgGenImage get delivered => const SvgGenImage('assets/icons/delivered.svg');
 
@@ -180,6 +200,10 @@ class $AssetsIconsGen {
   /// File path: assets/icons/doubleTickSuccessful.svg
   SvgGenImage get doubleTickSuccessful =>
       const SvgGenImage('assets/icons/doubleTickSuccessful.svg');
+
+  /// File path: assets/icons/doubleTickToast.svg
+  SvgGenImage get doubleTickToast =>
+      const SvgGenImage('assets/icons/doubleTickToast.svg');
 
   /// File path: assets/icons/download.svg
   SvgGenImage get download => const SvgGenImage('assets/icons/download.svg');
@@ -214,6 +238,10 @@ class $AssetsIconsGen {
   /// File path: assets/icons/foot.svg
   SvgGenImage get foot => const SvgGenImage('assets/icons/foot.svg');
 
+  /// File path: assets/icons/frontCircleArrow.svg
+  SvgGenImage get frontCircleArrow =>
+      const SvgGenImage('assets/icons/frontCircleArrow.svg');
+
   /// File path: assets/icons/give-pill.svg
   SvgGenImage get givePill => const SvgGenImage('assets/icons/give-pill.svg');
 
@@ -241,6 +269,14 @@ class $AssetsIconsGen {
   /// File path: assets/icons/help-circle.svg
   SvgGenImage get helpCircle =>
       const SvgGenImage('assets/icons/help-circle.svg');
+
+  /// File path: assets/icons/hideProduct.svg
+  SvgGenImage get hideProduct =>
+      const SvgGenImage('assets/icons/hideProduct.svg');
+
+  /// File path: assets/icons/hideThisProduct.svg
+  SvgGenImage get hideThisProduct =>
+      const SvgGenImage('assets/icons/hideThisProduct.svg');
 
   /// File path: assets/icons/home.svg
   SvgGenImage get home => const SvgGenImage('assets/icons/home.svg');
@@ -310,8 +346,15 @@ class $AssetsIconsGen {
   /// File path: assets/icons/moneyBag.svg
   SvgGenImage get moneyBag => const SvgGenImage('assets/icons/moneyBag.svg');
 
+  /// File path: assets/icons/moreIcon.svg
+  SvgGenImage get moreIcon => const SvgGenImage('assets/icons/moreIcon.svg');
+
   /// File path: assets/icons/motorbike.svg
   SvgGenImage get motorbike => const SvgGenImage('assets/icons/motorbike.svg');
+
+  /// File path: assets/icons/multipleProduct.svg
+  SvgGenImage get multipleProduct =>
+      const SvgGenImage('assets/icons/multipleProduct.svg');
 
   /// File path: assets/icons/naira.svg
   SvgGenImage get naira => const SvgGenImage('assets/icons/naira.svg');
@@ -333,6 +376,10 @@ class $AssetsIconsGen {
 
   /// File path: assets/icons/onTheWay.svg
   SvgGenImage get onTheWay => const SvgGenImage('assets/icons/onTheWay.svg');
+
+  /// File path: assets/icons/orangeCircleBullet.svg
+  SvgGenImage get orangeCircleBullet =>
+      const SvgGenImage('assets/icons/orangeCircleBullet.svg');
 
   /// File path: assets/icons/orderConfirmed.svg
   SvgGenImage get orderConfirmed =>
@@ -401,6 +448,10 @@ class $AssetsIconsGen {
   /// File path: assets/icons/rejected.svg
   SvgGenImage get rejected => const SvgGenImage('assets/icons/rejected.svg');
 
+  /// File path: assets/icons/reuploadImage.svg
+  SvgGenImage get reuploadImage =>
+      const SvgGenImage('assets/icons/reuploadImage.svg');
+
   /// File path: assets/icons/riderIcon.svg
   SvgGenImage get riderIcon => const SvgGenImage('assets/icons/riderIcon.svg');
 
@@ -437,6 +488,10 @@ class $AssetsIconsGen {
   /// File path: assets/icons/shirt.svg
   SvgGenImage get shirt => const SvgGenImage('assets/icons/shirt.svg');
 
+  /// File path: assets/icons/singleproduct.svg
+  SvgGenImage get singleproduct =>
+      const SvgGenImage('assets/icons/singleproduct.svg');
+
   /// File path: assets/icons/smallPackage.svg
   SvgGenImage get smallPackage =>
       const SvgGenImage('assets/icons/smallPackage.svg');
@@ -447,6 +502,10 @@ class $AssetsIconsGen {
 
   /// File path: assets/icons/sortBy.svg
   SvgGenImage get sortBy => const SvgGenImage('assets/icons/sortBy.svg');
+
+  /// File path: assets/icons/squareBullet.svg
+  SvgGenImage get squareBullet =>
+      const SvgGenImage('assets/icons/squareBullet.svg');
 
   /// File path: assets/icons/star.svg
   SvgGenImage get star => const SvgGenImage('assets/icons/star.svg');
@@ -505,6 +564,14 @@ class $AssetsIconsGen {
   /// File path: assets/icons/upload.svg
   SvgGenImage get upload => const SvgGenImage('assets/icons/upload.svg');
 
+  /// File path: assets/icons/uploadProductImage.svg
+  SvgGenImage get uploadProductImage =>
+      const SvgGenImage('assets/icons/uploadProductImage.svg');
+
+  /// File path: assets/icons/uploadProductVideo.svg
+  SvgGenImage get uploadProductVideo =>
+      const SvgGenImage('assets/icons/uploadProductVideo.svg');
+
   /// File path: assets/icons/uploaded.svg
   SvgGenImage get uploaded => const SvgGenImage('assets/icons/uploaded.svg');
 
@@ -554,6 +621,8 @@ class $AssetsIconsGen {
     action,
     actionFailed,
     activeProduct,
+    addProductBgOverlay,
+    addproductBackArrow,
     arrowDown,
     arrowLeft,
     arrowRight,
@@ -561,6 +630,8 @@ class $AssetsIconsGen {
     arrowsBack,
     arrowsFoward,
     babyBottle,
+    backCircleArrow2,
+    backCircleArrow3,
     bank,
     bicycle,
     blueMailContainer,
@@ -592,11 +663,13 @@ class $AssetsIconsGen {
     dashboardCart,
     defaultContainer,
     delete,
+    deleteProduct,
     delivered,
     deliveryContact,
     distribution,
     doubleTickOrange,
     doubleTickSuccessful,
+    doubleTickToast,
     download,
     droplet,
     dumbbell,
@@ -607,6 +680,7 @@ class $AssetsIconsGen {
     facebook,
     fileValidation,
     foot,
+    frontCircleArrow,
     givePill,
     google,
     greenFacebook,
@@ -615,6 +689,8 @@ class $AssetsIconsGen {
     greenWallet,
     group,
     helpCircle,
+    hideProduct,
+    hideThisProduct,
     home,
     home2,
     home3,
@@ -635,13 +711,16 @@ class $AssetsIconsGen {
     mobileMore,
     mobileSearch,
     moneyBag,
+    moreIcon,
     motorbike,
+    multipleProduct,
     naira,
     newRequest,
     noDeliveryTask,
     note,
     notification,
     onTheWay,
+    orangeCircleBullet,
     orderConfirmed,
     orderReceived,
     otp,
@@ -661,6 +740,7 @@ class $AssetsIconsGen {
     recentDeliveries,
     recycle,
     rejected,
+    reuploadImage,
     riderIcon,
     rubiksCube,
     runningShoes,
@@ -671,9 +751,11 @@ class $AssetsIconsGen {
     setting,
     settingsNotify,
     shirt,
+    singleproduct,
     smallPackage,
     smartWatch,
     sortBy,
+    squareBullet,
     star,
     starOutline,
     statusChip1,
@@ -690,6 +772,8 @@ class $AssetsIconsGen {
     underpants,
     updateStats,
     upload,
+    uploadProductImage,
+    uploadProductVideo,
     uploaded,
     userCircle,
     user,

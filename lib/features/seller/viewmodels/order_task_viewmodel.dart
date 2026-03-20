@@ -124,10 +124,10 @@ class OrderTaskViewmodel extends StateNotifier<OrderTaskState> {
     _applyFilterAndPagination();
   }
 
-  void setFilter(OrderFilter filter) {
-    state = state.copyWith(selectedFilter: filter, currentPage: 0);
-    _applyFilterAndPagination();
-  }
+  // void setFilter(OrderFilter filter) {
+  //   state = state.copyWith(selectedFilter: filter, currentPage: 0);
+  //   _applyFilterAndPagination();
+  // }
 
   void toggleSelectStatus(bool? value) {
     state = state.copyWith(selectStatus: value ?? false);
