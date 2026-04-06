@@ -62,36 +62,33 @@ class SellerDashboardScreen extends ConsumerWidget {
     WidgetRef ref,
     List<AccountSetupStep> steps,
   ) {
-    return Scaffold(
-      backgroundColor: AppColors.backgroundLight,
-      body: SingleChildScrollView(
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              const SizedBox(height: 10),
-              _buildHeader(ref: ref),
-              AccountSetup(
-                title: 'Complete Your Account Setup',
-                subtitle:
-                    'You\'re almost there! Add your store details and payment info to start selling on WIGOMARKET.',
-                steps: steps,
-                progress: 0.4,
-                isSeller: true,
-                // optional; omit to compute automatically
-                onCompletePressed: () {},
-                isWeb: false,
-              ),
-              BusinessAnalyticsWidget(),
-              QuickActionWidget(),
-              RecentOrdersWidget(),
-              GettingStartedWidget(),
-              RecentEarningsWidget(),
-              const SizedBox(height: 10),
-            ],
-          ),
+    return SingleChildScrollView(
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 16.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const SizedBox(height: 10),
+            _buildHeader(ref: ref),
+            AccountSetup(
+              title: 'Complete Your Account Setup',
+              subtitle:
+                  'You\'re almost there! Add your store details and payment info to start selling on WIGOMARKET.',
+              steps: steps,
+              progress: 0.4,
+              isSeller: true,
+              // optional; omit to compute automatically
+              onCompletePressed: () {},
+              isWeb: false,
+            ),
+            BusinessAnalyticsWidget(),
+            QuickActionWidget(),
+            RecentOrdersWidget(),
+            GettingStartedWidget(),
+            RecentEarningsWidget(),
+            const SizedBox(height: 10),
+          ],
         ),
       ),
     );
@@ -102,55 +99,52 @@ class SellerDashboardScreen extends ConsumerWidget {
     WidgetRef ref,
     List<AccountSetupStep> steps,
   ) {
-    return Scaffold(
-      backgroundColor: AppColors.backgroundLight,
-      body: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 35),
-          child: SingleChildScrollView(
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                _buildHeader(ref: ref),
-                const SizedBox(height: 10.0),
-                AccountSetup(
-                  title: 'Complete Your Account Setup',
-                  subtitle:
-                      'You\'re almost there! Add your store details and payment info to start selling on WIGOMARKET.',
-                  steps: steps,
-                  progress: 0.4,
-                  // optional; omit to compute automatically
-                  onCompletePressed: () {},
-                  isSeller: true,
-                  isWeb: true,
-                ),
-                Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Expanded(
-                      flex: 2,
-                      child: Column(
-                        children: [
-                          BusinessAnalyticsWidget(),
-                          QuickActionWidget(),
-                          RecentOrdersWidget(),
-                        ],
-                      ),
+    return SafeArea(
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 35),
+        child: SingleChildScrollView(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              _buildHeader(ref: ref),
+              const SizedBox(height: 10.0),
+              AccountSetup(
+                title: 'Complete Your Account Setup',
+                subtitle:
+                    'You\'re almost there! Add your store details and payment info to start selling on WIGOMARKET.',
+                steps: steps,
+                progress: 0.4,
+                // optional; omit to compute automatically
+                onCompletePressed: () {},
+                isSeller: true,
+                isWeb: true,
+              ),
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Expanded(
+                    flex: 2,
+                    child: Column(
+                      children: [
+                        BusinessAnalyticsWidget(),
+                        QuickActionWidget(),
+                        RecentOrdersWidget(),
+                      ],
                     ),
-                    const SizedBox(width: 20),
-                    Expanded(
-                      child: Column(
-                        children: [
-                          GettingStartedWidget(),
-                          EarningHistoryWidget(),
-                        ],
-                      ),
+                  ),
+                  const SizedBox(width: 20),
+                  Expanded(
+                    child: Column(
+                      children: [
+                        GettingStartedWidget(),
+                        EarningHistoryWidget(),
+                      ],
                     ),
-                  ],
-                ),
-                const SizedBox(height: 20),
-              ],
-            ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 20),
+            ],
           ),
         ),
       ),

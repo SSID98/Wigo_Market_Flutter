@@ -43,6 +43,8 @@ class CustomTextField extends ConsumerStatefulWidget {
   final Widget? labelRichText;
   final bool isRichText;
   final FontStyle? hintFontStyle;
+  final InputBorder? border;
+  final double clipRectBorderRadius;
 
   const CustomTextField({
     super.key,
@@ -93,6 +95,8 @@ class CustomTextField extends ConsumerStatefulWidget {
     this.labelRichText,
     this.isRichText = false,
     this.hintFontStyle,
+    this.clipRectBorderRadius = 0,
+    this.border,
   });
 
   @override
@@ -145,142 +149,151 @@ class _CustomTextFieldState extends ConsumerState<CustomTextField> {
           height: widget.height,
           child: Focus(
             onFocusChange: widget.onFocusChange,
-            child: TextFormField(
-              enabled: widget.enabled,
-              validator: widget.validator,
-              style: GoogleFonts.hind(
-                fontWeight: FontWeight.w400,
-                fontSize: widget.fontSize ?? 14.0,
-                color: AppColors.textBlack,
+            child: ClipRRect(
+              borderRadius: BorderRadiusGeometry.circular(
+                widget.clipRectBorderRadius,
               ),
-              maxLines: widget.maxLines ?? 1,
-              minLines: widget.minLines,
-              cursorColor: AppColors.textBlackGrey,
-              inputFormatters: widget.inputFormatters,
-              key: widget.fieldKey,
-              controller: widget.controller,
-              onChanged: widget.onChanged,
-              readOnly: widget.readOnly ?? false,
-              onTap: widget.onTap,
-              keyboardType: widget.keyboardType,
-              autovalidateMode: widget.autoValidateMode,
-              obscureText: _obscureText,
-              obscuringCharacter: '•',
-              maxLength: widget.maxLength,
-              decoration: InputDecoration(
-                contentPadding:
-                    widget.contentPadding ?? EdgeInsets.symmetric(vertical: 15),
-                prefixIconConstraints: BoxConstraints(),
-                filled: true,
-                constraints: BoxConstraints(),
-                fillColor:
-                    widget.hasError
-                        ? AppColors.accentLightRed
-                        : (widget.fillColor ?? AppColors.textFieldColor),
-                enabledBorder: OutlineInputBorder(
-                  borderSide: BorderSide(
-                    color:
-                        widget.errorMessage != null
-                            ? AppColors.accentRed
-                            : (widget.enabledBorderColor ?? Colors.transparent),
-                  ),
-                  borderRadius: BorderRadius.circular(
-                    widget.borderRadius ?? 8.0,
-                  ),
-                ),
-                focusedBorder: OutlineInputBorder(
-                  borderSide: BorderSide(
-                    color:
-                        widget.errorMessage != null
-                            ? AppColors.accentRed
-                            : (widget.focusedBorderColor ?? Colors.transparent),
-                  ),
-                  borderRadius: BorderRadius.circular(
-                    widget.borderRadius ?? 8.0,
-                  ),
-                ),
-                errorBorder: OutlineInputBorder(
-                  borderSide: BorderSide(
-                    color: AppColors.accentRed,
-                    width: 1.0,
-                  ),
-                  borderRadius: BorderRadius.circular(
-                    widget.borderRadius ?? 8.0,
-                  ),
-                ),
-                prefixIcon:
-                    (widget.prefixIcon != null ||
-                            widget.optionalPrefixIcon != null)
-                        ? Padding(
-                          padding:
-                              widget.prefixPadding ??
-                              EdgeInsets.only(
-                                left: widget.prefixIconPadding ?? 17.0,
-                                right: 3.0,
-                                bottom: 1.9,
-                              ),
-                          child: Row(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              if (widget.prefixIcon != null)
-                                SvgPicture.asset(
-                                  widget.prefixIcon!,
-                                  height: widget.iconHeight,
-                                  width: widget.iconWidth,
-                                  colorFilter:
-                                      widget.errorIcon
-                                          ? _resolvePrefixIconColor()
-                                          : null,
-                                ),
-                              if (widget.optionalPrefixIcon != null)
-                                SvgPicture.asset(
-                                  widget.optionalPrefixIcon!,
-                                  height: widget.iconHeight,
-                                  width: widget.iconWidth,
-                                ),
-                            ],
-                          ),
-                        )
-                        : null,
-                hintText: widget.hintText,
-                hintStyle: GoogleFonts.hind(
+              child: TextFormField(
+                enabled: widget.enabled,
+                validator: widget.validator,
+                style: GoogleFonts.hind(
                   fontWeight: FontWeight.w400,
-                  fontSize: widget.hintFontSize ?? 14.0,
-                  color: widget.hintTextColor ?? AppColors.textBodyText,
-                  fontStyle: widget.hintFontStyle,
+                  fontSize: widget.fontSize ?? 14.0,
+                  color: AppColors.textBlack,
                 ),
-                helperText: widget.helperText,
-                helperMaxLines: 2,
-                helperStyle: GoogleFonts.hind(
-                  fontWeight: FontWeight.w400,
-                  fontSize: 15.12,
-                  color: AppColors.textBlackGrey,
+                maxLines: widget.maxLines ?? 1,
+                minLines: widget.minLines,
+                cursorColor: AppColors.textBlackGrey,
+                inputFormatters: widget.inputFormatters,
+                key: widget.fieldKey,
+                controller: widget.controller,
+                onChanged: widget.onChanged,
+                readOnly: widget.readOnly ?? false,
+                onTap: widget.onTap,
+                keyboardType: widget.keyboardType,
+                autovalidateMode: widget.autoValidateMode,
+                obscureText: _obscureText,
+                obscuringCharacter: '•',
+                maxLength: widget.maxLength,
+                decoration: InputDecoration(
+                  border: widget.border,
+                  contentPadding:
+                      widget.contentPadding ??
+                      EdgeInsets.symmetric(vertical: 15),
+                  prefixIconConstraints: BoxConstraints(),
+                  filled: true,
+                  constraints: BoxConstraints(),
+                  fillColor:
+                      widget.hasError
+                          ? AppColors.accentLightRed
+                          : (widget.fillColor ?? AppColors.textFieldColor),
+                  enabledBorder: OutlineInputBorder(
+                    borderSide: BorderSide(
+                      color:
+                          widget.errorMessage != null
+                              ? AppColors.accentRed
+                              : (widget.enabledBorderColor ??
+                                  Colors.transparent),
+                    ),
+                    borderRadius: BorderRadius.circular(
+                      widget.borderRadius ?? 8.0,
+                    ),
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderSide: BorderSide(
+                      color:
+                          widget.errorMessage != null
+                              ? AppColors.accentRed
+                              : (widget.focusedBorderColor ??
+                                  Colors.transparent),
+                    ),
+                    borderRadius: BorderRadius.circular(
+                      widget.borderRadius ?? 8.0,
+                    ),
+                  ),
+                  errorBorder: OutlineInputBorder(
+                    borderSide: BorderSide(
+                      color: AppColors.accentRed,
+                      width: 1.0,
+                    ),
+                    borderRadius: BorderRadius.circular(
+                      widget.borderRadius ?? 8.0,
+                    ),
+                  ),
+                  prefixIcon:
+                      (widget.prefixIcon != null ||
+                              widget.optionalPrefixIcon != null)
+                          ? Padding(
+                            padding:
+                                widget.prefixPadding ??
+                                EdgeInsets.only(
+                                  left: widget.prefixIconPadding ?? 17.0,
+                                  right: 3.0,
+                                  bottom: 1.9,
+                                ),
+                            child: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                if (widget.prefixIcon != null)
+                                  SvgPicture.asset(
+                                    widget.prefixIcon!,
+                                    height: widget.iconHeight,
+                                    width: widget.iconWidth,
+                                    colorFilter:
+                                        widget.errorIcon
+                                            ? _resolvePrefixIconColor()
+                                            : null,
+                                  ),
+                                if (widget.optionalPrefixIcon != null)
+                                  SvgPicture.asset(
+                                    widget.optionalPrefixIcon!,
+                                    height: widget.iconHeight,
+                                    width: widget.iconWidth,
+                                  ),
+                              ],
+                            ),
+                          )
+                          : null,
+                  hintText: widget.hintText,
+                  hintStyle: GoogleFonts.hind(
+                    fontWeight: FontWeight.w400,
+                    fontSize: widget.hintFontSize ?? 14.0,
+                    color: widget.hintTextColor ?? AppColors.textBodyText,
+                    fontStyle: widget.hintFontStyle,
+                  ),
+                  helperText: widget.helperText,
+                  helperMaxLines: 2,
+                  helperStyle: GoogleFonts.hind(
+                    fontWeight: FontWeight.w400,
+                    fontSize: 15.12,
+                    color: AppColors.textBlackGrey,
+                  ),
+                  suffixIcon:
+                      widget.suffixIcon != null
+                          ? Padding(
+                            padding: EdgeInsets.only(
+                              right: widget.suffixIconPadding ?? 25.0,
+                            ),
+                            child:
+                                widget.isPassword
+                                    ? IconButton(
+                                      icon: Icon(
+                                        _obscureText
+                                            ? Icons.visibility_off_outlined
+                                            : Icons.visibility_outlined,
+                                        color: AppColors.textIconGrey,
+                                        size: 22,
+                                      ),
+                                      onPressed: () {
+                                        setState(() {
+                                          _obscureText = !_obscureText;
+                                        });
+                                      },
+                                    )
+                                    : widget.suffixIcon,
+                          )
+                          : null,
                 ),
-                suffixIcon:
-                    widget.suffixIcon != null
-                        ? Padding(
-                          padding: EdgeInsets.only(
-                            right: widget.suffixIconPadding ?? 25.0,
-                          ),
-                          child:
-                              widget.isPassword
-                                  ? IconButton(
-                                    icon: Icon(
-                                      _obscureText
-                                          ? Icons.visibility_off_outlined
-                                          : Icons.visibility_outlined,
-                                      color: AppColors.textIconGrey,
-                                      size: 22,
-                                    ),
-                                    onPressed: () {
-                                      setState(() {
-                                        _obscureText = !_obscureText;
-                                      });
-                                    },
-                                  )
-                                  : widget.suffixIcon,
-                        )
-                        : null,
               ),
             ),
           ),
@@ -341,6 +354,8 @@ class CustomDropdownField extends ConsumerStatefulWidget {
   final FontWeight? labelFontWeight, hintFontWeight;
   final EdgeInsetsGeometry? padding, menuItemPadding;
   final double? dropMenuWidth;
+  final Widget? labelRichText;
+  final bool isRichText;
 
   const CustomDropdownField({
     super.key,
@@ -370,6 +385,8 @@ class CustomDropdownField extends ConsumerStatefulWidget {
     this.dropMenuWidth,
     this.menuItemPadding,
     this.hintFontWeight,
+    this.isRichText = false,
+    this.labelRichText,
   });
 
   @override
@@ -392,15 +409,17 @@ class _CustomDropdownFieldState extends ConsumerState<CustomDropdownField> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        if (widget.label.isNotEmpty) ...[
-          Text(
-            widget.label,
-            style: GoogleFonts.hind(
-              fontWeight: widget.labelFontWeight ?? FontWeight.w500,
-              fontSize: widget.labelFontSize ?? 16.0,
-              color: widget.labelTextColor ?? AppColors.textBlack,
-            ),
-          ),
+        if (widget.label.isNotEmpty || widget.labelRichText != null) ...[
+          widget.isRichText
+              ? widget.labelRichText!
+              : Text(
+                widget.label,
+                style: GoogleFonts.hind(
+                  fontWeight: widget.labelFontWeight ?? FontWeight.w500,
+                  fontSize: widget.labelFontSize ?? 16.0,
+                  color: widget.labelTextColor ?? AppColors.textBlack,
+                ),
+              ),
           const SizedBox(height: 4),
         ],
         SizedBox(

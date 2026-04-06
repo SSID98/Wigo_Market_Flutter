@@ -32,6 +32,10 @@ class $AssetsIconsGen {
   SvgGenImage get addProductBgOverlay =>
       const SvgGenImage('assets/icons/addProductBgOverlay.svg');
 
+  /// File path: assets/icons/addProductBgOverlayy.svg
+  SvgGenImage get addProductBgOverlayy =>
+      const SvgGenImage('assets/icons/addProductBgOverlayy.svg');
+
   /// File path: assets/icons/addproductBackArrow.svg
   SvgGenImage get addproductBackArrow =>
       const SvgGenImage('assets/icons/addproductBackArrow.svg');
@@ -503,6 +507,10 @@ class $AssetsIconsGen {
   /// File path: assets/icons/sortBy.svg
   SvgGenImage get sortBy => const SvgGenImage('assets/icons/sortBy.svg');
 
+  /// File path: assets/icons/squareArrowBack.svg
+  SvgGenImage get squareArrowBack =>
+      const SvgGenImage('assets/icons/squareArrowBack.svg');
+
   /// File path: assets/icons/squareBullet.svg
   SvgGenImage get squareBullet =>
       const SvgGenImage('assets/icons/squareBullet.svg');
@@ -622,6 +630,7 @@ class $AssetsIconsGen {
     actionFailed,
     activeProduct,
     addProductBgOverlay,
+    addProductBgOverlayy,
     addproductBackArrow,
     arrowDown,
     arrowLeft,
@@ -755,6 +764,7 @@ class $AssetsIconsGen {
     smallPackage,
     smartWatch,
     sortBy,
+    squareArrowBack,
     squareBullet,
     star,
     starOutline,

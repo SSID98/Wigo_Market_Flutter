@@ -311,21 +311,6 @@ class OrderHeaderWeb extends ConsumerWidget {
           ],
     );
   }
-
-  Widget _buildStatusDropdown({
-    required void Function(OrderFilter) onSelected,
-    required bool isWeb,
-  }) {
-    return PopupMenuButton<OrderFilter>(
-      onSelected: onSelected,
-      itemBuilder:
-          (_) =>
-              OrderFilter.values
-                  .map((f) => PopupMenuItem(value: f, child: Text(f.name)))
-                  .toList(),
-      child: FilterButton(label: "Order Status"),
-    );
-  }
 }
 
 class OrderHeaderMobile extends ConsumerWidget {
@@ -655,7 +640,6 @@ class OrderHeaderMobile extends ConsumerWidget {
               menuChildren: [
                 Builder(
                   builder: (menuContext) {
-                    final controller = MenuController.maybeOf(menuContext);
                     return Padding(
                       padding: EdgeInsets.only(left: 50, right: 50, top: 8),
                       child: Column(

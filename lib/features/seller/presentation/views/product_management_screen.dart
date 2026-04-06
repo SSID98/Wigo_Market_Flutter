@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:wigo_flutter/features/seller/models/seller_product_model.dart';
 import 'package:wigo_flutter/features/seller/models/seller_product_task_state.dart';
+import 'package:wigo_flutter/features/seller/presentation/views/add_product_screen.dart';
 import 'package:wigo_flutter/features/seller/viewmodels/order_task_viewmodel.dart';
 import 'package:wigo_flutter/features/seller/viewmodels/seller_product_task_viewmodel.dart';
 
@@ -16,6 +17,7 @@ import '../../models/order_task_state.dart';
 import '../../viewmodels/dropdown_providers.dart';
 import '../widgets/filter_button.dart';
 import '../widgets/hide_delete_product_dialog.dart';
+import '../widgets/menu_anchor_buttons.dart';
 import '../widgets/seller_product_card.dart';
 
 class ProductManagementScreen extends ConsumerWidget {
@@ -270,7 +272,12 @@ class ProductManagementScreen extends ConsumerWidget {
                     const SizedBox(height: 30.0),
                     CustomButton(
                       text: 'Add product',
-                      onPressed: () {},
+                      onPressed: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (_) => AddProductScreen()),
+                        );
+                      },
                       fontSize: 16.0,
                       fontWeight: FontWeight.w500,
                       prefixIcon: Icon(
@@ -468,7 +475,7 @@ class OrderHeaderMobile extends ConsumerWidget {
                                               ? 10
                                               : 0,
                                     ),
-                                    child: _buildMenuButton(
+                                    child: buildMenuButton(
                                       ref: ref,
                                       sectionKey: 'category',
                                       isExpanded: expandedSection == 'category',
@@ -488,7 +495,7 @@ class OrderHeaderMobile extends ConsumerWidget {
                                                   ? 10
                                                   : 0,
                                         ),
-                                        child: _buildMenuButton(
+                                        child: buildMenuButton(
                                           ref: ref,
                                           sectionKey: 'productStatus',
                                           isExpanded:
@@ -499,7 +506,7 @@ class OrderHeaderMobile extends ConsumerWidget {
                                       ),
                                       if (expandedSection ==
                                           'productStatus') ...[
-                                        _buildMenuItem(
+                                        buildMenuItem(
                                           onPressed: () {
                                             vm.filterByProductStatus(
                                               SellerProductStatus.all,
@@ -508,7 +515,7 @@ class OrderHeaderMobile extends ConsumerWidget {
                                           },
                                           itemText: 'All',
                                         ),
-                                        _buildMenuItem(
+                                        buildMenuItem(
                                           onPressed: () {
                                             vm.filterByProductStatus(
                                               SellerProductStatus.active,
@@ -517,7 +524,7 @@ class OrderHeaderMobile extends ConsumerWidget {
                                           },
                                           itemText: 'Active',
                                         ),
-                                        _buildMenuItem(
+                                        buildMenuItem(
                                           onPressed: () {
                                             vm.filterByProductStatus(
                                               SellerProductStatus.outOfStock,
@@ -526,7 +533,7 @@ class OrderHeaderMobile extends ConsumerWidget {
                                           },
                                           itemText: 'Out of Stock',
                                         ),
-                                        _buildMenuItem(
+                                        buildMenuItem(
                                           onPressed: () {
                                             vm.filterByProductStatus(
                                               SellerProductStatus.hidden,
@@ -549,7 +556,12 @@ class OrderHeaderMobile extends ConsumerWidget {
                 ),
                 CustomButton(
                   text: 'Add New product',
-                  onPressed: () {},
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (_) => AddProductScreen()),
+                    );
+                  },
                   fontSize: 14.0,
                   borderRadius: 2.7,
                   fontWeight: FontWeight.w500,
@@ -670,87 +682,6 @@ class OrderHeaderMobile extends ConsumerWidget {
                       }).toList(),
             ),
           ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildMenuItem({
-    required void Function()? onPressed,
-    required itemText,
-    Widget? trailingIcon,
-    bool isNotAccordion = false,
-  }) {
-    return MenuItemButton(
-      onPressed: onPressed,
-      trailingIcon: trailingIcon,
-      child: Padding(
-        padding: EdgeInsets.only(left: isNotAccordion ? 0 : 35),
-        child: Text(
-          itemText,
-          style: GoogleFonts.hind(
-            fontSize: 16,
-            fontWeight: FontWeight.w500,
-            color:
-                isNotAccordion
-                    ? AppColors.textBlackGrey
-                    : AppColors.textBodyText,
-          ),
-        ),
-      ),
-    );
-  }
-
-  Widget _buildMenuButton({
-    required bool isExpanded,
-    required String menuText,
-    required WidgetRef ref,
-    required String sectionKey,
-    bool isSelected = true,
-    Color? newColor,
-  }) {
-    return InkWell(
-      onTap: () {
-        final notifier = ref.read(expandedIdProvider.notifier);
-        notifier.state = isExpanded ? null : sectionKey;
-      },
-      child: Container(
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(4),
-          color:
-              isSelected
-                  ? isExpanded
-                      ? AppColors.tableHeader
-                      : Colors.transparent
-                  : newColor,
-        ),
-        child: Padding(
-          padding: const EdgeInsets.only(
-            top: 15,
-            bottom: 15,
-            left: 12,
-            right: 12,
-          ),
-          child: Row(
-            children: [
-              Expanded(
-                child: Text(
-                  menuText,
-                  style: GoogleFonts.hind(
-                    fontSize: 16,
-                    fontWeight: FontWeight.w500,
-                    color: AppColors.textBlackGrey,
-                  ),
-                ),
-              ),
-              const SizedBox(width: 100),
-              Icon(
-                isExpanded
-                    ? Icons.keyboard_arrow_up_rounded
-                    : Icons.keyboard_arrow_down_rounded,
-              ),
-            ],
-          ),
         ),
       ),
     );
