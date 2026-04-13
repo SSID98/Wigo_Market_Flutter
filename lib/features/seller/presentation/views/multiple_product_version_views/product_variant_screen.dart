@@ -378,6 +378,35 @@ class ProductVariantScreen extends ConsumerWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            Container(
+              decoration: BoxDecoration(
+                color: AppColors.tableHeader,
+                borderRadius: BorderRadius.circular(6),
+              ),
+              child: Padding(
+                padding: const EdgeInsets.symmetric(
+                  vertical: 8.0,
+                  horizontal: 10,
+                ),
+                child: Text(
+                  "Color & Size Variant",
+                  style: GoogleFonts.hind(
+                    fontSize: 12,
+                    fontWeight: FontWeight.w500,
+                    color: AppColors.textVidaLocaGreen,
+                  ),
+                ),
+              ),
+            ),
+            const SizedBox(height: 15),
+            Text(
+              "Each row below represents the variant you created. You can choose to edit or delete a variant and you can choose to delete all created variants at once",
+              style: GoogleFonts.hind(
+                fontSize: 15,
+                fontWeight: FontWeight.w500,
+                color: AppColors.textBlackGrey,
+              ),
+            ),
             if (allSelected)
               Align(
                 alignment: AlignmentDirectional.topEnd,
@@ -438,9 +467,15 @@ class ProductVariantScreen extends ConsumerWidget {
                   fontWeight: FontWeight.w500,
                   textColor: AppColors.textVidaLocaGreen,
                   height: 48,
+                  borderWidth: 1.2,
                   borderColor: AppColors.primaryDarkGreen,
                   onPressed: () => vm.setShowVariant(true),
                   buttonColor: Colors.transparent,
+                  prefixIcon: Icon(
+                    Icons.add_circle_outline_rounded,
+                    color: AppColors.primaryDarkGreen,
+                    size: 20,
+                  ),
                 ),
               if (state.showVariant && !anySelected) ...[
                 _buildVariations(isWeb, state, vm, ref),
