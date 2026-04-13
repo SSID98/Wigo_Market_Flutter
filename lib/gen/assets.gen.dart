@@ -478,9 +478,17 @@ class $AssetsIconsGen {
   SvgGenImage get sellerEarning =>
       const SvgGenImage('assets/icons/sellerEarning.svg');
 
+  /// File path: assets/icons/sellerIUploadimage.svg
+  SvgGenImage get sellerIUploadimage =>
+      const SvgGenImage('assets/icons/sellerIUploadimage.svg');
+
   /// File path: assets/icons/sellerIcon.svg
   SvgGenImage get sellerIcon =>
       const SvgGenImage('assets/icons/sellerIcon.svg');
+
+  /// File path: assets/icons/sellerImageUploaded.svg
+  SvgGenImage get sellerImageUploaded =>
+      const SvgGenImage('assets/icons/sellerImageUploaded.svg');
 
   /// File path: assets/icons/setting.svg
   SvgGenImage get setting => const SvgGenImage('assets/icons/setting.svg');
@@ -756,7 +764,9 @@ class $AssetsIconsGen {
     search,
     securityCheck,
     sellerEarning,
+    sellerIUploadimage,
     sellerIcon,
+    sellerImageUploaded,
     setting,
     settingsNotify,
     shirt,

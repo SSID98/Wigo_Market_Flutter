@@ -7,6 +7,7 @@ import 'package:wigo_flutter/features/seller/presentation/views/single_product_v
 import 'package:wigo_flutter/shared/widgets/custom_button.dart';
 
 import '../../../../gen/assets.gen.dart';
+import 'multiple_product_version_views/multiple_product_info_screen.dart';
 
 class AddProductScreen extends ConsumerWidget {
   const AddProductScreen({super.key});
@@ -71,7 +72,12 @@ class AddProductScreen extends ConsumerWidget {
               "Choose this if your product comes in different versions — like sizes, colors, or types.",
           body:
               "Example: You’re selling a pair of sneakers that comes in 3 sizes (40, 41, 42) and 2 colors (black and white). ",
-          onPressed: () {},
+          onPressed: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (_) => MultipleProductInfoScreen()),
+            );
+          },
         ),
       ],
     );

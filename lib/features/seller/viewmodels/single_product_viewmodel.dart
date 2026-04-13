@@ -1,6 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../models/product_category.dart';
+import '../../../core/utils/helper_methods.dart';
 import '../models/single_product_state.dart';
 
 class SingleProductViewModel extends StateNotifier<SingleProductState> {
@@ -107,50 +107,13 @@ class SingleProductViewModel extends StateNotifier<SingleProductState> {
   }
 }
 
-List<ProductCategory> filterCategories(
-  List<ProductCategory> categories,
-  String query,
-) {
-  if (query.isEmpty) return categories;
-
-  final lowerQuery = query.toLowerCase();
-
-  return categories
-      .map((cat) {
-        final matchesCategory = cat.name.toLowerCase().contains(lowerQuery);
-
-        final filteredSubs =
-            cat.subCategories
-                .where((sub) => sub.toLowerCase().contains(lowerQuery))
-                .toList();
-
-        if (matchesCategory) {
-          return ProductCategory(cat.name, cat.subCategories);
-        }
-
-        if (filteredSubs.isNotEmpty) {
-          return ProductCategory(cat.name, filteredSubs);
-        }
-
-        return null;
-      })
-      .whereType<ProductCategory>()
-      .toList();
-}
-
 final singleProductProvider =
     StateNotifierProvider<SingleProductViewModel, SingleProductState>((ref) {
       return SingleProductViewModel();
     });
-
-final isCategoryOpenProvider = StateProvider<bool>((ref) => false);
-final expandedCategoryProvider = StateProvider<String?>((ref) => null);
-final categorySearchQueryProvider = StateProvider.autoDispose<String>(
-  (ref) => '',
-);
 final specsPageProvider = StateProvider<int>((ref) => 1);
 
-void resetAllProductFlow(WidgetRef ref) {
+void resetSingleProductFlow(WidgetRef ref) {
   ref.read(singleProductProvider.notifier).reset();
   ref.read(expandedCategoryProvider.notifier).state = null;
   ref.read(isCategoryOpenProvider.notifier).state = false;

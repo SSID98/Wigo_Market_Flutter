@@ -3,18 +3,21 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:wigo_flutter/features/seller/presentation/views/single_product_version_view/laptops_desktop_specs_screen.dart';
 import 'package:wigo_flutter/features/seller/presentation/views/single_product_version_view/mobile_specs_screen.dart';
+import 'package:wigo_flutter/features/seller/viewmodels/mulitple_products_viewmodel.dart';
 import 'package:wigo_flutter/shared/widgets/custom_button.dart';
 
-import '../../../../../core/constants/app_colors.dart';
-import '../../../../../gen/assets.gen.dart';
-import '../../../viewmodels/single_product_viewmodel.dart';
-import '../../../viewmodels/upload_file_viewmodel.dart';
-import '../../widgets/step_progress_indicator.dart';
-import '../../widgets/upload_box2.dart';
-import '../product_management_screen.dart';
+import '../../../../core/constants/app_colors.dart';
+import '../../../../gen/assets.gen.dart';
+import '../../viewmodels/single_product_viewmodel.dart';
+import '../../viewmodels/upload_file_viewmodel.dart';
+import '../widgets/step_progress_indicator.dart';
+import '../widgets/upload_box2.dart';
+import 'product_management_screen.dart';
 
-class SingleProductUploadScreen extends ConsumerWidget {
-  const SingleProductUploadScreen({super.key});
+class ProductUploadScreen extends ConsumerWidget {
+  final bool isMultiProduct;
+
+  const ProductUploadScreen({super.key, this.isMultiProduct = false});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -29,14 +32,15 @@ class SingleProductUploadScreen extends ConsumerWidget {
                 onTap: () {
                   Navigator.pop(context);
                 },
-                child:
-                    isWeb
-                        ? AppAssets.icons.squareArrowBack.svg()
-                        : AppAssets.icons.addproductBackArrow.svg(),
+                child: isWeb
+                    ? AppAssets.icons.squareArrowBack.svg()
+                    : AppAssets.icons.addproductBackArrow.svg(),
               ),
               SizedBox(width: isWeb ? 10 : 20),
               Text(
-                "Add Single Version Product",
+                isMultiProduct
+                    ? "Add Multiple Version Product"
+                    : "Add Single Version Product",
                 style: GoogleFonts.hind(
                   color: AppColors.textBlackGrey,
                   fontWeight: FontWeight.w600,
@@ -55,7 +59,8 @@ class SingleProductUploadScreen extends ConsumerWidget {
   Widget _buildBody(bool isWeb, WidgetRef ref, BuildContext context) {
     final mainImage = ref.watch(uploadProvider('cover_image'));
     final mainImageNotifier = ref.read(uploadProvider('cover_image').notifier);
-    final vm = ref.read(singleProductProvider.notifier);
+    final singleProductVm = ref.read(singleProductProvider.notifier);
+    final multipleProductVm = ref.read(multipleProductsProvider.notifier);
     Future.microtask(() {
       mainImageNotifier.init(1); // Only 1 box for this identity
       return null;
@@ -82,11 +87,14 @@ class SingleProductUploadScreen extends ConsumerWidget {
                     ),
                   ),
                   StepProgressIndicator(
-                    currentStep: 2,
+                    currentStep: isMultiProduct ? 3 : 2,
                     totalSteps:
-                        vm.needsComputerSpecsScreen || vm.needsMobileSpecsScreen
-                            ? 3
-                            : 2,
+                        singleProductVm.needsComputerSpecsScreen ||
+                            singleProductVm.needsMobileSpecsScreen
+                        ? 3
+                        : isMultiProduct
+                        ? 3
+                        : 2,
                     isWeb: isWeb,
                   ),
                 ],
@@ -107,10 +115,9 @@ class SingleProductUploadScreen extends ConsumerWidget {
                     Text(
                       "Add high-quality visuals that show your product clearly. Great images increase your chances of selling!",
                       style: GoogleFonts.hind(
-                        color:
-                            isWeb
-                                ? AppColors.textBodyText
-                                : AppColors.textBlackGrey,
+                        color: isWeb
+                            ? AppColors.textBodyText
+                            : AppColors.textBlackGrey,
                         fontWeight: FontWeight.w500,
                         fontSize: isWeb ? 18 : 14,
                       ),
@@ -142,20 +149,21 @@ class SingleProductUploadScreen extends ConsumerWidget {
               padding: const EdgeInsets.only(left: 8.0, right: 8, bottom: 50),
               child: CustomButton(
                 text:
-                    vm.needsComputerSpecsScreen || vm.needsMobileSpecsScreen
-                        ? "Next"
-                        : "Publish Product",
+                    singleProductVm.needsComputerSpecsScreen ||
+                        singleProductVm.needsMobileSpecsScreen
+                    ? "Next"
+                    : "Publish Product",
                 fontSize: 18,
                 fontWeight: FontWeight.w500,
                 height: 48,
                 width: double.infinity,
                 onPressed: () {
-                  if (vm.needsMobileSpecsScreen) {
+                  if (singleProductVm.needsMobileSpecsScreen) {
                     Navigator.push(
                       context,
                       MaterialPageRoute(builder: (_) => MobileSpecsScreen()),
                     );
-                  } else if (vm.needsComputerSpecsScreen) {
+                  } else if (singleProductVm.needsComputerSpecsScreen) {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
@@ -163,7 +171,6 @@ class SingleProductUploadScreen extends ConsumerWidget {
                       ),
                     );
                   } else {
-                    // 3. We are on Page 2, so now we navigate to the Dashboard
                     Navigator.pushAndRemoveUntil(
                       context,
                       MaterialPageRoute(
@@ -196,7 +203,7 @@ class SingleProductUploadScreen extends ConsumerWidget {
     final imageNotifier = ref.read(uploadProvider('extra_images').notifier);
     // Initialize once
     Future.microtask(() {
-      imageNotifier.init(4);
+      imageNotifier.init(isMultiProduct ? 6 : 4);
       return null;
     });
 
@@ -209,8 +216,9 @@ class SingleProductUploadScreen extends ConsumerWidget {
         crossAxisCount: 2,
         crossAxisSpacing: 10,
         mainAxisSpacing: 10,
-        mainAxisExtent:
-            imageFiles.any((file) => file?.error != null) ? 190 : 150,
+        mainAxisExtent: imageFiles.any((file) => file?.error != null)
+            ? 190
+            : 150,
       ),
       itemBuilder: (_, index) {
         return Center(
@@ -245,7 +253,9 @@ class SingleProductUploadScreen extends ConsumerWidget {
                 children: [
                   _buildTextOutline(
                     isWeb: isWeb,
-                    text: "Upload (2–5 Product images)",
+                    text: isMultiProduct
+                        ? "Upload (2–7 Product images)"
+                        : "Upload (2–5 Product images)",
                   ),
                   const SizedBox(width: 20),
                   _buildTextOutline(
@@ -257,7 +267,9 @@ class SingleProductUploadScreen extends ConsumerWidget {
             if (!isWeb) ...[
               _buildTextOutline(
                 isWeb: isWeb,
-                text: "Upload (2–5 Product images)",
+                text: isMultiProduct
+                    ? "Upload (2–7 Product images)"
+                    : "Upload (2–5 Product images)",
               ),
               const SizedBox(height: 10),
               _buildTextOutline(

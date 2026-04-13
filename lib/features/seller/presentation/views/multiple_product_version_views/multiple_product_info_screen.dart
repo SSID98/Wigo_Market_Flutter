@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:wigo_flutter/features/seller/presentation/views/product_upload_screen.dart';
+import 'package:wigo_flutter/features/seller/presentation/views/multiple_product_version_views/product_variant_screen.dart';
+import 'package:wigo_flutter/features/seller/viewmodels/mulitple_products_viewmodel.dart';
 import 'package:wigo_flutter/features/seller/viewmodels/seller_product_text_field_providers.dart';
-import 'package:wigo_flutter/features/seller/viewmodels/single_product_viewmodel.dart';
 import 'package:wigo_flutter/shared/widgets/custom_button.dart';
 import 'package:wigo_flutter/shared/widgets/custom_search_field.dart';
 
@@ -11,24 +11,24 @@ import '../../../../../core/constants/app_colors.dart';
 import '../../../../../core/utils/helper_methods.dart';
 import '../../../../../gen/assets.gen.dart';
 import '../../../../../shared/widgets/custom_text_field.dart';
+import '../../../models/multiple_products_state.dart';
 import '../../../models/product_category.dart';
-import '../../../models/single_product_state.dart';
 import '../../../viewmodels/seller_product_task_viewmodel.dart';
 import '../../widgets/step_progress_indicator.dart';
 
-class SingleProductInfoScreen extends ConsumerWidget {
-  const SingleProductInfoScreen({super.key});
+class MultipleProductInfoScreen extends ConsumerWidget {
+  const MultipleProductInfoScreen({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final isWeb = MediaQuery.of(context).size.width > 800;
-    final state = ref.watch(singleProductProvider);
-    final vm = ref.read(singleProductProvider.notifier);
+    final state = ref.watch(multipleProductsProvider);
+    final vm = ref.read(multipleProductsProvider.notifier);
     return PopScope(
       canPop: true,
       onPopInvokedWithResult: (didPop, result) {
         if (didPop) {
-          resetSingleProductFlow(ref);
+          resetMultipleProductFlow(ref);
         }
       },
       child: Padding(
@@ -47,7 +47,7 @@ class SingleProductInfoScreen extends ConsumerWidget {
                 ),
                 SizedBox(width: isWeb ? 10 : 20),
                 Text(
-                  "Add Single Version Product",
+                  "Add Multiple Version Product",
                   style: GoogleFonts.hind(
                     color: AppColors.textBlackGrey,
                     fontWeight: FontWeight.w600,
@@ -66,12 +66,12 @@ class SingleProductInfoScreen extends ConsumerWidget {
 
   Widget _buildBody(
     bool isWeb,
-    SingleProductState state,
-    SingleProductViewModel vm,
+    MultipleProductsState state,
+    MultipleProductsViewModel vm,
     WidgetRef ref,
     BuildContext context,
   ) {
-    String getCategoryDisplay(SingleProductState state) {
+    String getCategoryDisplay(MultipleProductsState state) {
       if (state.category == null) {
         return 'Select a category that fits your product';
       }
@@ -83,7 +83,7 @@ class SingleProductInfoScreen extends ConsumerWidget {
     final filteredCategories = filterCategories(allCategories, query);
     final searchController = ref.watch(searchControllerProvider);
     final isSearching = query.isNotEmpty;
-    final controllers = ref.watch(singleProductTextControllersProvider);
+    final controllers = ref.watch(multipleProductTextControllersProvider);
     return Expanded(
       child: Card(
         elevation: 0,
@@ -139,7 +139,7 @@ class SingleProductInfoScreen extends ConsumerWidget {
                       padding: EdgeInsets.only(top: 10, bottom: 10),
                       shrinkWrap: true,
                       physics: const NeverScrollableScrollPhysics(),
-                      itemCount: 4,
+                      itemCount: 2,
                       gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                         crossAxisCount: isWeb ? 2 : 1,
                         crossAxisSpacing: isWeb ? 13 : 0,
@@ -161,9 +161,6 @@ class SingleProductInfoScreen extends ConsumerWidget {
                               builder: (context, controller, child) {
                                 return GestureDetector(
                                   onTap: () {
-                                    // ref
-                                    //     .read(isCategoryOpenProvider.notifier)
-                                    //     .state ^= true;
                                     controller.isOpen
                                         ? controller.close()
                                         : controller.open();
@@ -173,6 +170,9 @@ class SingleProductInfoScreen extends ConsumerWidget {
                                       enabled: false,
                                       label: 'Category',
                                       hintText: getCategoryDisplay(state),
+                                      hintTextColor: state.category != null
+                                          ? AppColors.textBlack
+                                          : AppColors.textBodyText,
                                       contentPadding: EdgeInsets.only(
                                         left: 10,
                                         top: 15,
@@ -444,36 +444,12 @@ class SingleProductInfoScreen extends ConsumerWidget {
                                 ),
                               ],
                             );
-                          case 2:
-                            return CustomTextField(
-                              label: 'Stock Keeping Unit (SKU)',
-                              hintText:
-                                  'Unique code to identify this product (e.g., SPK-001)',
-                              contentPadding: EdgeInsets.only(left: 10),
-                              onChanged: (val) => vm.updateProductSKU(val),
-                              controller: controllers["productId"],
-                            );
-                          case 3:
-                            return CustomTextField(
-                              label: 'Stock Quantity',
-                              hintText: 'e.g., 20',
-                              contentPadding: EdgeInsets.only(left: 10),
-                              onChanged: (val) => vm.updateStockQuantity(val),
-                              controller: controllers["StockQuantity"],
-                            );
                           default:
                             return const SizedBox.shrink();
                         }
                       },
                     ),
-                    CustomTextField(
-                      label: 'Selling Price',
-                      hintText: 'e.g., 4500',
-                      contentPadding: EdgeInsets.only(left: 10),
-                      onChanged: (val) => vm.updateSellingPrice(val),
-                      controller: controllers["sellingPrice"],
-                    ),
-                    const SizedBox(height: 20),
+                    const SizedBox(height: 10),
                     CustomTextField(
                       label: 'Product Description',
                       hintText:
@@ -503,7 +479,7 @@ class SingleProductInfoScreen extends ConsumerWidget {
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                            builder: (_) => ProductUploadScreen(),
+                            builder: (_) => ProductVariantScreen(),
                           ),
                         );
                       },

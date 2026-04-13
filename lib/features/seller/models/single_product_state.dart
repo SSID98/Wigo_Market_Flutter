@@ -5,7 +5,7 @@ part 'single_product_state.freezed.dart';
 part 'single_product_state.g.dart';
 
 @freezed
-class SingleProductState with _$SingleProductState {
+abstract class SingleProductState with _$SingleProductState {
   const factory SingleProductState({
     @Default('') String productName,
     @Default('') String productId,

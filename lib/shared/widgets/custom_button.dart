@@ -17,6 +17,7 @@ class CustomButton extends StatelessWidget {
   final Widget? prefixIcon, suffixIcon;
   final double? iconHeight, iconWidth;
   final MainAxisAlignment? mainAxisAlignment;
+  final double? elevation;
 
   const CustomButton({
     super.key,
@@ -39,6 +40,7 @@ class CustomButton extends StatelessWidget {
     this.suffixIcon,
     this.prefixIconWidth,
     this.foregroundColor,
+    this.elevation = 0,
   });
 
   @override
@@ -59,9 +61,10 @@ class CustomButton extends StatelessWidget {
               width: borderWidth ?? 0.0,
             ),
           ),
-          elevation: 0,
-          minimumSize:
-              (width == null && height == null) ? const Size(0, 0) : null,
+          elevation: elevation,
+          minimumSize: (width == null && height == null)
+              ? const Size(0, 0)
+              : null,
         ),
         child: FittedBox(
           fit: BoxFit.scaleDown,

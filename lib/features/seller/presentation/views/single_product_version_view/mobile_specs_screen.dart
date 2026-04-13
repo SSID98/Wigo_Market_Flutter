@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:wigo_flutter/features/seller/viewmodels/single_product_text_field_providers.dart';
+import 'package:wigo_flutter/features/seller/viewmodels/seller_product_text_field_providers.dart';
 import 'package:wigo_flutter/features/seller/viewmodels/single_product_viewmodel.dart';
 import 'package:wigo_flutter/shared/widgets/custom_button.dart';
 
@@ -37,10 +37,9 @@ class MobileSpecsScreen extends ConsumerWidget {
                     Navigator.of(context).pop();
                   }
                 },
-                child:
-                    isWeb
-                        ? AppAssets.icons.squareArrowBack.svg()
-                        : AppAssets.icons.addproductBackArrow.svg(),
+                child: isWeb
+                    ? AppAssets.icons.squareArrowBack.svg()
+                    : AppAssets.icons.addproductBackArrow.svg(),
               ),
               SizedBox(width: isWeb ? 10 : 20),
               Text(
@@ -111,10 +110,9 @@ class MobileSpecsScreen extends ConsumerWidget {
                     Text(
                       "Add key details that help buyers understand your product better. Accurate specifications improve search results and build buyer confidence.",
                       style: GoogleFonts.hind(
-                        color:
-                            isWeb
-                                ? AppColors.textBodyText
-                                : AppColors.textBlackGrey,
+                        color: isWeb
+                            ? AppColors.textBodyText
+                            : AppColors.textBlackGrey,
                         fontWeight: isWeb ? FontWeight.w500 : FontWeight.w400,
                         fontSize: isWeb ? 18 : 15,
                       ),
@@ -122,32 +120,29 @@ class MobileSpecsScreen extends ConsumerWidget {
                     const SizedBox(height: 10),
                     isWeb
                         ? Row(
-                          children: [
-                            Expanded(child: _buildPage1(ref)),
-                            const SizedBox(width: 10),
-                            Expanded(child: _buildPage2(ref)),
-                          ],
-                        )
+                            children: [
+                              Expanded(child: _buildPage1(ref)),
+                              const SizedBox(width: 10),
+                              Expanded(child: _buildPage2(ref)),
+                            ],
+                          )
                         : AnimatedSwitcher(
-                          duration: const Duration(milliseconds: 300),
-                          transitionBuilder: (
-                            Widget child,
-                            Animation<double> animation,
-                          ) {
-                            // This adds a nice fade + scale effect
-                            return FadeTransition(
-                              opacity: animation,
-                              child: ScaleTransition(
-                                scale: animation,
-                                child: child,
-                              ),
-                            );
-                          },
-                          child:
-                              currentPage == 1
-                                  ? _buildPage1(ref)
-                                  : _buildPage2(ref),
-                        ),
+                            duration: const Duration(milliseconds: 300),
+                            transitionBuilder:
+                                (Widget child, Animation<double> animation) {
+                                  // This adds a nice fade + scale effect
+                                  return FadeTransition(
+                                    opacity: animation,
+                                    child: ScaleTransition(
+                                      scale: animation,
+                                      child: child,
+                                    ),
+                                  );
+                                },
+                            child: currentPage == 1
+                                ? _buildPage1(ref)
+                                : _buildPage2(ref),
+                          ),
                   ],
                 ),
               ),
@@ -156,53 +151,51 @@ class MobileSpecsScreen extends ConsumerWidget {
             Padding(
               padding: const EdgeInsets.only(left: 8.0, right: 8, bottom: 50),
               child: CustomButton(
-                text:
-                    !isWeb
-                        ? currentPage == 1
-                            ? 'Next'
-                            : 'Publish Product'
-                        : 'Publish Product',
+                text: !isWeb
+                    ? currentPage == 1
+                          ? 'Next'
+                          : 'Publish Product'
+                    : 'Publish Product',
                 fontSize: 18,
                 fontWeight: FontWeight.w500,
                 height: 48,
                 width: double.infinity,
-                onPressed:
-                    isWeb
-                        ? () {
+                onPressed: isWeb
+                    ? () {
+                        Navigator.pushAndRemoveUntil(
+                          context,
+                          MaterialPageRoute(
+                            builder: (_) => const SellerDashboardScreen(),
+                          ),
+                          (route) =>
+                              false, // Clears the navigation stack so they can't "go back" to the form
+                        );
+                      }
+                    : () {
+                        final currentPage = ref.read(specsPageProvider);
+                        final specs = ref.read(singleProductProvider);
+                        if (currentPage == 1) {
+                          if (specs.oS != null && specs.rom != null) {
+                            ref.read(specsPageProvider.notifier).state = 2;
+                          } else {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(
+                                content: Text("Please select OS and RAM"),
+                              ),
+                            );
+                          }
+                        } else {
+                          // 3. We are on Page 2, so now we navigate to the Dashboard
                           Navigator.pushAndRemoveUntil(
                             context,
                             MaterialPageRoute(
-                              builder: (_) => const SellerDashboardScreen(),
+                              builder: (_) => const ProductManagementScreen(),
                             ),
                             (route) =>
                                 false, // Clears the navigation stack so they can't "go back" to the form
                           );
                         }
-                        : () {
-                          final currentPage = ref.read(specsPageProvider);
-                          final specs = ref.read(singleProductProvider);
-                          if (currentPage == 1) {
-                            if (specs.oS != null && specs.rom != null) {
-                              ref.read(specsPageProvider.notifier).state = 2;
-                            } else {
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                const SnackBar(
-                                  content: Text("Please select OS and RAM"),
-                                ),
-                              );
-                            }
-                          } else {
-                            // 3. We are on Page 2, so now we navigate to the Dashboard
-                            Navigator.pushAndRemoveUntil(
-                              context,
-                              MaterialPageRoute(
-                                builder: (_) => const ProductManagementScreen(),
-                              ),
-                              (route) =>
-                                  false, // Clears the navigation stack so they can't "go back" to the form
-                            );
-                          }
-                        },
+                      },
                 suffixIcon: AppAssets.icons.arrowRight.svg(),
               ),
             ),
@@ -215,7 +208,7 @@ class MobileSpecsScreen extends ConsumerWidget {
   Widget _buildPage1(WidgetRef ref) {
     final state = ref.watch(singleProductProvider);
     final vm = ref.read(singleProductProvider.notifier);
-    final controllers = ref.watch(textControllersProvider);
+    final controllers = ref.watch(singleProductTextControllersProvider);
     return Column(
       children: [
         CustomTextField(
@@ -295,7 +288,7 @@ class MobileSpecsScreen extends ConsumerWidget {
   Widget _buildPage2(WidgetRef ref) {
     final state = ref.watch(singleProductProvider);
     final vm = ref.read(singleProductProvider.notifier);
-    final controllers = ref.watch(textControllersProvider);
+    final controllers = ref.watch(singleProductTextControllersProvider);
     return Column(
       children: [
         CustomDropdownField(

@@ -11,7 +11,7 @@ class CustomTextField extends ConsumerStatefulWidget {
   final GlobalKey<FormFieldState<String>>? fieldKey;
   final String label;
   final String? hintText, prefixIcon, optionalPrefixIcon;
-  final Widget? suffixIcon;
+  final Widget? suffixIcon, prefixIcon2;
   final String? helperText;
   final bool isPassword;
   final double? iconHeight, iconWidth;
@@ -41,7 +41,7 @@ class CustomTextField extends ConsumerStatefulWidget {
   final bool? enabled;
   final double? borderRadius;
   final Widget? labelRichText;
-  final bool isRichText;
+  final bool isRichText, autoFocus;
   final FontStyle? hintFontStyle;
   final InputBorder? border;
   final double clipRectBorderRadius;
@@ -97,6 +97,8 @@ class CustomTextField extends ConsumerStatefulWidget {
     this.hintFontStyle,
     this.clipRectBorderRadius = 0,
     this.border,
+    this.prefixIcon2,
+    this.autoFocus = false,
   });
 
   @override
@@ -131,17 +133,16 @@ class _CustomTextFieldState extends ConsumerState<CustomTextField> {
         if (widget.label.isNotEmpty) ...[
           GestureDetector(
             onTap: widget.labelOnTap,
-            child:
-                widget.isRichText
-                    ? widget.labelRichText
-                    : Text(
-                      widget.label,
-                      style: GoogleFonts.hind(
-                        fontWeight: widget.labelFontWeight ?? FontWeight.w500,
-                        fontSize: widget.labelFontSize ?? 16.0,
-                        color: widget.labelTextColor ?? AppColors.textBlack,
-                      ),
+            child: widget.isRichText
+                ? widget.labelRichText
+                : Text(
+                    widget.label,
+                    style: GoogleFonts.hind(
+                      fontWeight: widget.labelFontWeight ?? FontWeight.w500,
+                      fontSize: widget.labelFontSize ?? 16.0,
+                      color: widget.labelTextColor ?? AppColors.textBlack,
                     ),
+                  ),
           ),
           SizedBox(height: widget.spacing ?? 4),
         ],
@@ -154,6 +155,7 @@ class _CustomTextFieldState extends ConsumerState<CustomTextField> {
                 widget.clipRectBorderRadius,
               ),
               child: TextFormField(
+                autofocus: widget.autoFocus,
                 enabled: widget.enabled,
                 validator: widget.validator,
                 style: GoogleFonts.hind(
@@ -183,17 +185,14 @@ class _CustomTextFieldState extends ConsumerState<CustomTextField> {
                   prefixIconConstraints: BoxConstraints(),
                   filled: true,
                   constraints: BoxConstraints(),
-                  fillColor:
-                      widget.hasError
-                          ? AppColors.accentLightRed
-                          : (widget.fillColor ?? AppColors.textFieldColor),
+                  fillColor: widget.hasError
+                      ? AppColors.accentLightRed
+                      : (widget.fillColor ?? AppColors.textFieldColor),
                   enabledBorder: OutlineInputBorder(
                     borderSide: BorderSide(
-                      color:
-                          widget.errorMessage != null
-                              ? AppColors.accentRed
-                              : (widget.enabledBorderColor ??
-                                  Colors.transparent),
+                      color: widget.errorMessage != null
+                          ? AppColors.accentRed
+                          : (widget.enabledBorderColor ?? Colors.transparent),
                     ),
                     borderRadius: BorderRadius.circular(
                       widget.borderRadius ?? 8.0,
@@ -201,11 +200,9 @@ class _CustomTextFieldState extends ConsumerState<CustomTextField> {
                   ),
                   focusedBorder: OutlineInputBorder(
                     borderSide: BorderSide(
-                      color:
-                          widget.errorMessage != null
-                              ? AppColors.accentRed
-                              : (widget.focusedBorderColor ??
-                                  Colors.transparent),
+                      color: widget.errorMessage != null
+                          ? AppColors.accentRed
+                          : (widget.focusedBorderColor ?? Colors.transparent),
                     ),
                     borderRadius: BorderRadius.circular(
                       widget.borderRadius ?? 8.0,
@@ -222,38 +219,40 @@ class _CustomTextFieldState extends ConsumerState<CustomTextField> {
                   ),
                   prefixIcon:
                       (widget.prefixIcon != null ||
-                              widget.optionalPrefixIcon != null)
-                          ? Padding(
-                            padding:
-                                widget.prefixPadding ??
-                                EdgeInsets.only(
-                                  left: widget.prefixIconPadding ?? 17.0,
-                                  right: 3.0,
-                                  bottom: 1.9,
+                          widget.optionalPrefixIcon != null ||
+                          widget.prefixIcon2 != null)
+                      ? Padding(
+                          padding:
+                              widget.prefixPadding ??
+                              EdgeInsets.only(
+                                left: widget.prefixIconPadding ?? 17.0,
+                                right: 3.0,
+                                bottom: 1.9,
+                              ),
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              if (widget.prefixIcon != null)
+                                SvgPicture.asset(
+                                  widget.prefixIcon!,
+                                  height: widget.iconHeight,
+                                  width: widget.iconWidth,
+                                  colorFilter: widget.errorIcon
+                                      ? _resolvePrefixIconColor()
+                                      : null,
                                 ),
-                            child: Row(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                if (widget.prefixIcon != null)
-                                  SvgPicture.asset(
-                                    widget.prefixIcon!,
-                                    height: widget.iconHeight,
-                                    width: widget.iconWidth,
-                                    colorFilter:
-                                        widget.errorIcon
-                                            ? _resolvePrefixIconColor()
-                                            : null,
-                                  ),
-                                if (widget.optionalPrefixIcon != null)
-                                  SvgPicture.asset(
-                                    widget.optionalPrefixIcon!,
-                                    height: widget.iconHeight,
-                                    width: widget.iconWidth,
-                                  ),
-                              ],
-                            ),
-                          )
-                          : null,
+                              if (widget.optionalPrefixIcon != null)
+                                SvgPicture.asset(
+                                  widget.optionalPrefixIcon!,
+                                  height: widget.iconHeight,
+                                  width: widget.iconWidth,
+                                ),
+                              if (widget.prefixIcon2 != null)
+                                widget.prefixIcon2!,
+                            ],
+                          ),
+                        )
+                      : null,
                   hintText: widget.hintText,
                   hintStyle: GoogleFonts.hind(
                     fontWeight: FontWeight.w400,
@@ -268,31 +267,29 @@ class _CustomTextFieldState extends ConsumerState<CustomTextField> {
                     fontSize: 15.12,
                     color: AppColors.textBlackGrey,
                   ),
-                  suffixIcon:
-                      widget.suffixIcon != null
-                          ? Padding(
-                            padding: EdgeInsets.only(
-                              right: widget.suffixIconPadding ?? 25.0,
-                            ),
-                            child:
-                                widget.isPassword
-                                    ? IconButton(
-                                      icon: Icon(
-                                        _obscureText
-                                            ? Icons.visibility_off_outlined
-                                            : Icons.visibility_outlined,
-                                        color: AppColors.textIconGrey,
-                                        size: 22,
-                                      ),
-                                      onPressed: () {
-                                        setState(() {
-                                          _obscureText = !_obscureText;
-                                        });
-                                      },
-                                    )
-                                    : widget.suffixIcon,
-                          )
-                          : null,
+                  suffixIcon: widget.suffixIcon != null
+                      ? Padding(
+                          padding: EdgeInsets.only(
+                            right: widget.suffixIconPadding ?? 25.0,
+                          ),
+                          child: widget.isPassword
+                              ? IconButton(
+                                  icon: Icon(
+                                    _obscureText
+                                        ? Icons.visibility_off_outlined
+                                        : Icons.visibility_outlined,
+                                    color: AppColors.textIconGrey,
+                                    size: 22,
+                                  ),
+                                  onPressed: () {
+                                    setState(() {
+                                      _obscureText = !_obscureText;
+                                    });
+                                  },
+                                )
+                              : widget.suffixIcon,
+                        )
+                      : null,
                 ),
               ),
             ),
@@ -413,13 +410,13 @@ class _CustomDropdownFieldState extends ConsumerState<CustomDropdownField> {
           widget.isRichText
               ? widget.labelRichText!
               : Text(
-                widget.label,
-                style: GoogleFonts.hind(
-                  fontWeight: widget.labelFontWeight ?? FontWeight.w500,
-                  fontSize: widget.labelFontSize ?? 16.0,
-                  color: widget.labelTextColor ?? AppColors.textBlack,
+                  widget.label,
+                  style: GoogleFonts.hind(
+                    fontWeight: widget.labelFontWeight ?? FontWeight.w500,
+                    fontSize: widget.labelFontSize ?? 16.0,
+                    color: widget.labelTextColor ?? AppColors.textBlack,
+                  ),
                 ),
-              ),
           const SizedBox(height: 4),
         ],
         SizedBox(
@@ -464,13 +461,12 @@ class _CustomDropdownFieldState extends ConsumerState<CustomDropdownField> {
             decoration: InputDecoration(
               contentPadding: EdgeInsets.only(right: 10),
               prefixIconConstraints: const BoxConstraints(),
-              prefixIcon:
-                  currentPrefixIcon != null
-                      ? Padding(
-                        padding: const EdgeInsets.only(left: 17.0),
-                        child: currentPrefixIcon!,
-                      )
-                      : null,
+              prefixIcon: currentPrefixIcon != null
+                  ? Padding(
+                      padding: const EdgeInsets.only(left: 17.0),
+                      child: currentPrefixIcon!,
+                    )
+                  : null,
               fillColor: widget.fillColor ?? AppColors.textFieldColor,
               filled: true,
               enabledBorder: OutlineInputBorder(
@@ -494,28 +490,26 @@ class _CustomDropdownFieldState extends ConsumerState<CustomDropdownField> {
                 borderRadius: BorderRadius.circular(widget.radius ?? 8.0),
               ),
             ),
-            items:
-                widget.items
-                    .map(
-                      (e) => DropdownMenuItem<String>(
-                        value: e,
-                        child: Padding(
-                          padding:
-                              widget.padding ?? const EdgeInsets.only(top: 4.0),
-                          child: Text(
-                            e,
-                            overflow: TextOverflow.ellipsis,
-                            style: GoogleFonts.hind(
-                              fontWeight: FontWeight.w400,
-                              color:
-                                  widget.itemTextColor ?? AppColors.textBlack,
-                              fontSize: widget.itemsFontSize ?? 14,
-                            ),
-                          ),
+            items: widget.items
+                .map(
+                  (e) => DropdownMenuItem<String>(
+                    value: e,
+                    child: Padding(
+                      padding:
+                          widget.padding ?? const EdgeInsets.only(top: 4.0),
+                      child: Text(
+                        e,
+                        overflow: TextOverflow.ellipsis,
+                        style: GoogleFonts.hind(
+                          fontWeight: FontWeight.w400,
+                          color: widget.itemTextColor ?? AppColors.textBlack,
+                          fontSize: widget.itemsFontSize ?? 14,
                         ),
                       ),
-                    )
-                    .toList(),
+                    ),
+                  ),
+                )
+                .toList(),
             onChanged: (val) {
               setState(() {
                 selectedItem = val;

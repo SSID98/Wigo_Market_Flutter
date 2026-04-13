@@ -11,10 +11,6 @@ import 'package:wigo_flutter/features/buyer/presentation/views/refund_policy_scr
 import 'package:wigo_flutter/features/buyer/presentation/views/saved_product_view.dart';
 import 'package:wigo_flutter/features/buyer/presentation/views/search_results_view.dart';
 import 'package:wigo_flutter/features/seller/presentation/views/business_info_screen.dart';
-import 'package:wigo_flutter/features/seller/presentation/views/single_product_version_view/laptops_desktop_specs_screen.dart';
-import 'package:wigo_flutter/features/seller/presentation/views/single_product_version_view/mobile_specs_screen.dart';
-import 'package:wigo_flutter/features/seller/presentation/views/single_product_version_view/single_product_info_screen.dart';
-import 'package:wigo_flutter/features/seller/presentation/views/single_product_version_view/single_product_upload_screen.dart';
 import 'package:wigo_flutter/features/seller/presentation/views/test_seller_main_screen.dart';
 import 'package:wigo_flutter/shared/screens/support_screen.dart';
 
@@ -167,9 +163,8 @@ final routerProvider = Provider<GoRouter>((ref) {
       GoRoute(path: '/login', builder: (context, state) => const LoginScreen()),
       GoRoute(
         path: '/resetPassword/verification',
-        builder:
-            (context, state) =>
-                const ResetPasswordEmailVerificationScreen(email: ''),
+        builder: (context, state) =>
+            const ResetPasswordEmailVerificationScreen(email: ''),
       ),
       GoRoute(
         path: '/resetPassword/enterEmail',
@@ -286,22 +281,22 @@ final routerProvider = Provider<GoRouter>((ref) {
         path: '/sellerMainScreen',
         builder: (context, state) => SellerMainScreen(),
       ),
-      GoRoute(
-        path: '/singleProductInfo',
-        builder: (context, state) => SingleProductInfoScreen(),
-      ),
-      GoRoute(
-        path: '/singleProductUpload',
-        builder: (context, state) => SingleProductUploadScreen(),
-      ),
-      GoRoute(
-        path: '/mobileSpecs',
-        builder: (context, state) => MobileSpecsScreen(),
-      ),
-      GoRoute(
-        path: '/laptopSpecs',
-        builder: (context, state) => LaptopsAndDesktopSpecsScreen(),
-      ),
+      // GoRoute(
+      //   path: '/singleProductInfo',
+      //   builder: (context, state) => SingleProductInfoScreen(),
+      // ),
+      // GoRoute(
+      //   path: '/singleProductUpload',
+      //   builder: (context, state) => SingleProductUploadScreen(),
+      // ),
+      // GoRoute(
+      //   path: '/mobileSpecs',
+      //   builder: (context, state) => MobileSpecsScreen(),
+      // ),
+      // GoRoute(
+      //   path: '/laptopSpecs',
+      //   builder: (context, state) => LaptopsAndDesktopSpecsScreen(),
+      // ),
     ],
   );
 });
