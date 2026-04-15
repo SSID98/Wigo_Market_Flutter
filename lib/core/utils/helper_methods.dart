@@ -63,7 +63,10 @@ final categorySearchQueryProvider = StateProvider.autoDispose<String>(
   (ref) => '',
 );
 
-MenuStyle anchorMenuStyle() {
+MenuStyle anchorMenuStyle({
+  double? verticalPad = 8,
+  double? horizontalPad = 16,
+}) {
   return MenuStyle(
     backgroundColor: WidgetStateProperty.all(AppColors.backgroundWhite),
     elevation: WidgetStateProperty.all(6),
@@ -71,7 +74,7 @@ MenuStyle anchorMenuStyle() {
       RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
     ),
     padding: WidgetStateProperty.all(
-      const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+      EdgeInsets.symmetric(vertical: verticalPad!, horizontal: horizontalPad!),
     ),
   );
 }

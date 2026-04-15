@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:wigo_flutter/core/utils/helper_methods.dart';
 import 'package:wigo_flutter/features/seller/presentation/views/order_detail_screen.dart';
 import 'package:wigo_flutter/shared/widgets/custom_button.dart';
 
@@ -45,10 +46,9 @@ class OrderTable extends ConsumerWidget {
           Container(
             height: 50,
             decoration: BoxDecoration(
-              color:
-                  isExpanded
-                      ? AppColors.backgroundLight
-                      : AppColors.tableHeader,
+              color: isExpanded
+                  ? AppColors.backgroundLight
+                  : AppColors.tableHeader,
             ),
             child: Row(
               children: [
@@ -137,12 +137,11 @@ class OrderTable extends ConsumerWidget {
                   ),
                 Padding(
                   padding: EdgeInsets.only(
-                    right:
-                        isWeb
-                            ? 0
-                            : isExpanded
-                            ? 0
-                            : 20.0,
+                    right: isWeb
+                        ? 0
+                        : isExpanded
+                        ? 0
+                        : 20.0,
                   ),
                   child: SizedBox(
                     width: isWeb ? 130.0 : 80.0,
@@ -285,12 +284,11 @@ class OrderTable extends ConsumerWidget {
                     ),
                   Padding(
                     padding: EdgeInsets.only(
-                      right:
-                          isWeb
-                              ? 0
-                              : isExpanded
-                              ? 0
-                              : 20.0,
+                      right: isWeb
+                          ? 0
+                          : isExpanded
+                          ? 0
+                          : 20.0,
                     ),
                     child: SizedBox(
                       width: isWeb ? 130.0 : 80.0,
@@ -325,23 +323,7 @@ class OrderTable extends ConsumerWidget {
                                 },
                               );
                             },
-                            style: MenuStyle(
-                              backgroundColor: WidgetStateProperty.all(
-                                AppColors.backgroundWhite,
-                              ),
-                              elevation: WidgetStateProperty.all(6),
-                              shape: WidgetStateProperty.all(
-                                RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(8),
-                                ),
-                              ),
-                              padding: WidgetStateProperty.all(
-                                const EdgeInsets.symmetric(
-                                  vertical: 8,
-                                  horizontal: 16,
-                                ),
-                              ),
-                            ),
+                            style: anchorMenuStyle(),
                             menuChildren: [
                               MenuItemButton(
                                 leadingIcon: AppAssets.icons.viewOrder.svg(),
@@ -349,8 +331,8 @@ class OrderTable extends ConsumerWidget {
                                   Navigator.push(
                                     context,
                                     MaterialPageRoute(
-                                      builder:
-                                          (_) => OrderDetailScreen(order: d),
+                                      builder: (_) =>
+                                          OrderDetailScreen(order: d),
                                     ),
                                   );
                                 },
@@ -368,65 +350,66 @@ class OrderTable extends ConsumerWidget {
                               isWeb
                                   ? _buildUpdateStatusSubmenuWeb(d, ref)
                                   : Padding(
-                                    padding: EdgeInsets.only(
-                                      top: expandedId == d.orderId ? 10 : 0,
-                                    ),
-                                    child: InkWell(
-                                      onTap: () {
-                                        final notifier = ref.read(
-                                          expandedIdProvider.notifier,
-                                        );
-                                        notifier.state =
-                                            (expandedId == d.orderId)
-                                                ? null
-                                                : d.orderId;
-                                      },
-                                      child: Container(
-                                        decoration: BoxDecoration(
-                                          borderRadius: BorderRadius.circular(
-                                            4,
+                                      padding: EdgeInsets.only(
+                                        top: expandedId == d.orderId ? 10 : 0,
+                                      ),
+                                      child: InkWell(
+                                        onTap: () {
+                                          final notifier = ref.read(
+                                            expandedIdProvider.notifier,
+                                          );
+                                          notifier.state =
+                                              (expandedId == d.orderId)
+                                              ? null
+                                              : d.orderId;
+                                        },
+                                        child: Container(
+                                          decoration: BoxDecoration(
+                                            borderRadius: BorderRadius.circular(
+                                              4,
+                                            ),
+                                            color: expandedId == d.orderId
+                                                ? AppColors.tableHeader
+                                                : Colors.transparent,
                                           ),
-                                          color:
-                                              expandedId == d.orderId
-                                                  ? AppColors.tableHeader
-                                                  : Colors.transparent,
-                                        ),
-                                        child: Padding(
-                                          padding: const EdgeInsets.only(
-                                            top: 15,
-                                            bottom: 15,
-                                            left: 12,
-                                            right: 12,
-                                          ),
-                                          child: Row(
-                                            children: [
-                                              AppAssets.icons.updateStats.svg(),
-                                              const SizedBox(width: 12),
-                                              Expanded(
-                                                child: Text(
-                                                  "Update Status",
-                                                  style: GoogleFonts.hind(
-                                                    fontSize: 16,
-                                                    fontWeight: FontWeight.w500,
-                                                    color:
-                                                        AppColors.textBlackGrey,
+                                          child: Padding(
+                                            padding: const EdgeInsets.only(
+                                              top: 15,
+                                              bottom: 15,
+                                              left: 12,
+                                              right: 12,
+                                            ),
+                                            child: Row(
+                                              children: [
+                                                AppAssets.icons.updateStats
+                                                    .svg(),
+                                                const SizedBox(width: 12),
+                                                Expanded(
+                                                  child: Text(
+                                                    "Update Status",
+                                                    style: GoogleFonts.hind(
+                                                      fontSize: 16,
+                                                      fontWeight:
+                                                          FontWeight.w500,
+                                                      color: AppColors
+                                                          .textBlackGrey,
+                                                    ),
                                                   ),
                                                 ),
-                                              ),
-                                              const SizedBox(width: 50),
-                                              Icon(
-                                                expandedId == d.orderId
-                                                    ? Icons
-                                                        .keyboard_arrow_up_rounded
-                                                    : Icons
-                                                        .keyboard_arrow_down_rounded,
-                                              ),
-                                            ],
+                                                const SizedBox(width: 50),
+                                                Icon(
+                                                  expandedId == d.orderId
+                                                      ? Icons
+                                                            .keyboard_arrow_up_rounded
+                                                      : Icons
+                                                            .keyboard_arrow_down_rounded,
+                                                ),
+                                              ],
+                                            ),
                                           ),
                                         ),
                                       ),
                                     ),
-                                  ),
                               if (expandedId == d.orderId)
                                 ...OrderFilter.values
                                     .where((e) => e != OrderFilter.all)
@@ -458,12 +441,11 @@ class OrderTable extends ConsumerWidget {
                                     ),
                               MenuItemButton(
                                 leadingIcon: AppAssets.icons.contactCusto.svg(),
-                                onPressed:
-                                    () => _showContactCustomerDialog(
-                                      context,
-                                      isWeb,
-                                      d,
-                                    ),
+                                onPressed: () => _showContactCustomerDialog(
+                                  context,
+                                  isWeb,
+                                  d,
+                                ),
                                 child: Text(
                                   "Contact Customer",
                                   style: GoogleFonts.hind(
@@ -476,8 +458,8 @@ class OrderTable extends ConsumerWidget {
                               Padding(
                                 padding: const EdgeInsets.only(left: 1.0),
                                 child: MenuItemButton(
-                                  leadingIcon:
-                                      AppAssets.icons.cancelSquare.svg(),
+                                  leadingIcon: AppAssets.icons.cancelSquare
+                                      .svg(),
                                   onPressed: () {},
                                   child: Text(
                                     "Cancel Order",
@@ -525,26 +507,25 @@ class OrderTable extends ConsumerWidget {
           ),
         ),
         leadingIcon: AppAssets.icons.updateStats.svg(),
-        menuChildren:
-            OrderFilter.values
-                .where((e) => e != OrderFilter.all)
-                .map(
-                  (status) => MenuItemButton(
-                    onPressed: () {
-                      notifier.updateOrderStatus(order.orderId, status);
-                      ref.read(submenuOpenProvider.notifier).state = false;
-                    },
-                    child: Text(
-                      status.displayName,
-                      style: GoogleFonts.hind(
-                        fontSize: 16,
-                        fontWeight: FontWeight.w500,
-                        color: AppColors.textBodyText,
-                      ),
-                    ),
+        menuChildren: OrderFilter.values
+            .where((e) => e != OrderFilter.all)
+            .map(
+              (status) => MenuItemButton(
+                onPressed: () {
+                  notifier.updateOrderStatus(order.orderId, status);
+                  ref.read(submenuOpenProvider.notifier).state = false;
+                },
+                child: Text(
+                  status.displayName,
+                  style: GoogleFonts.hind(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w500,
+                    color: AppColors.textBodyText,
                   ),
-                )
-                .toList(),
+                ),
+              ),
+            )
+            .toList(),
         child: Text(
           "Update Status",
           style: GoogleFonts.hind(

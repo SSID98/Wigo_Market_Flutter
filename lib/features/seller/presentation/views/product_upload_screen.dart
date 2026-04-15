@@ -3,7 +3,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:wigo_flutter/features/seller/presentation/views/single_product_version_view/laptops_desktop_specs_screen.dart';
 import 'package:wigo_flutter/features/seller/presentation/views/single_product_version_view/mobile_specs_screen.dart';
-import 'package:wigo_flutter/features/seller/viewmodels/mulitple_products_viewmodel.dart';
 import 'package:wigo_flutter/shared/widgets/custom_button.dart';
 
 import '../../../../core/constants/app_colors.dart';
@@ -60,7 +59,6 @@ class ProductUploadScreen extends ConsumerWidget {
     final mainImage = ref.watch(uploadProvider('cover_image'));
     final mainImageNotifier = ref.read(uploadProvider('cover_image').notifier);
     final singleProductVm = ref.read(singleProductProvider.notifier);
-    final multipleProductVm = ref.read(multipleProductsProvider.notifier);
     Future.microtask(() {
       mainImageNotifier.init(1); // Only 1 box for this identity
       return null;
@@ -181,7 +179,6 @@ class ProductUploadScreen extends ConsumerWidget {
                     );
                   }
                 },
-                suffixIcon: AppAssets.icons.arrowRight.svg(),
               ),
             ),
           ],

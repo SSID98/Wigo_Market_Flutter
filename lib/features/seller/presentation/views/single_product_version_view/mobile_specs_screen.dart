@@ -196,7 +196,6 @@ class MobileSpecsScreen extends ConsumerWidget {
                           );
                         }
                       },
-                suffixIcon: AppAssets.icons.arrowRight.svg(),
               ),
             ),
           ],

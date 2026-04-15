@@ -551,9 +551,19 @@ class $AssetsIconsGen {
   /// File path: assets/icons/time.svg
   SvgGenImage get time => const SvgGenImage('assets/icons/time.svg');
 
+  /// File path: assets/icons/todayEarn.svg
+  SvgGenImage get todayEarn => const SvgGenImage('assets/icons/todayEarn.svg');
+
   /// File path: assets/icons/todayEarning.svg
   SvgGenImage get todayEarning =>
       const SvgGenImage('assets/icons/todayEarning.svg');
+
+  /// File path: assets/icons/todaysEarning.svg
+  SvgGenImage get todaysEarning =>
+      const SvgGenImage('assets/icons/todaysEarning.svg');
+
+  /// File path: assets/icons/totalEarn.svg
+  SvgGenImage get totalEarn => const SvgGenImage('assets/icons/totalEarn.svg');
 
   /// File path: assets/icons/totalEarning.svg
   SvgGenImage get totalEarning =>
@@ -562,6 +572,10 @@ class $AssetsIconsGen {
   /// File path: assets/icons/totalEarningWeb.svg
   SvgGenImage get totalEarningWeb =>
       const SvgGenImage('assets/icons/totalEarningWeb.svg');
+
+  /// File path: assets/icons/totalEarnings.svg
+  SvgGenImage get totalEarnings =>
+      const SvgGenImage('assets/icons/totalEarnings.svg');
 
   /// File path: assets/icons/totalSale.svg
   SvgGenImage get totalSale => const SvgGenImage('assets/icons/totalSale.svg');
@@ -615,9 +629,20 @@ class $AssetsIconsGen {
   /// File path: assets/icons/wallet.svg
   SvgGenImage get wallet => const SvgGenImage('assets/icons/wallet.svg');
 
+  /// File path: assets/icons/walletEmpty.svg
+  SvgGenImage get walletEmpty =>
+      const SvgGenImage('assets/icons/walletEmpty.svg');
+
   /// File path: assets/icons/webLogoutButton.svg
   SvgGenImage get webLogoutButton =>
       const SvgGenImage('assets/icons/webLogoutButton.svg');
+
+  /// File path: assets/icons/weekEarn.svg
+  SvgGenImage get weekEarn => const SvgGenImage('assets/icons/weekEarn.svg');
+
+  /// File path: assets/icons/weeklyEarnings.svg
+  SvgGenImage get weeklyEarnings =>
+      const SvgGenImage('assets/icons/weeklyEarnings.svg');
 
   /// File path: assets/icons/women-cloth.svg
   SvgGenImage get womenCloth =>
@@ -784,9 +809,13 @@ class $AssetsIconsGen {
     thisWeek,
     tickDouble,
     time,
+    todayEarn,
     todayEarning,
+    todaysEarning,
+    totalEarn,
     totalEarning,
     totalEarningWeb,
+    totalEarnings,
     totalSale,
     tv,
     underpants,
@@ -802,7 +831,10 @@ class $AssetsIconsGen {
     vehicleDoc,
     viewOrder,
     wallet,
+    walletEmpty,
     webLogoutButton,
+    weekEarn,
+    weeklyEarnings,
     womenCloth,
     wrench,
     x,

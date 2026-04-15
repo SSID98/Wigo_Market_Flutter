@@ -198,7 +198,6 @@ class LaptopsAndDesktopSpecsScreen extends ConsumerWidget {
                           );
                         }
                       },
-                suffixIcon: AppAssets.icons.arrowRight.svg(),
               ),
             ),
           ],

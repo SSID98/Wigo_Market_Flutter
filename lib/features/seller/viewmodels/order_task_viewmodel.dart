@@ -26,20 +26,27 @@ class OrderTaskViewmodel extends StateNotifier<OrderTaskState> {
   void _updateCounts() {
     final Map<OrderFilter, int> newCounts = {
       OrderFilter.all: _allOrders.length,
-      OrderFilter.pending:
-          _allOrders.where((d) => d.status == OrderFilter.pending).length,
-      OrderFilter.confirmed:
-          _allOrders.where((d) => d.status == OrderFilter.confirmed).length,
-      OrderFilter.preparing:
-          _allOrders.where((d) => d.status == OrderFilter.preparing).length,
-      OrderFilter.pickUpReady:
-          _allOrders.where((d) => d.status == OrderFilter.pickUpReady).length,
-      OrderFilter.cancelled:
-          _allOrders.where((d) => d.status == OrderFilter.cancelled).length,
-      OrderFilter.inTransit:
-          _allOrders.where((d) => d.status == OrderFilter.inTransit).length,
-      OrderFilter.delivered:
-          _allOrders.where((d) => d.status == OrderFilter.delivered).length,
+      OrderFilter.pending: _allOrders
+          .where((d) => d.status == OrderFilter.pending)
+          .length,
+      OrderFilter.confirmed: _allOrders
+          .where((d) => d.status == OrderFilter.confirmed)
+          .length,
+      OrderFilter.preparing: _allOrders
+          .where((d) => d.status == OrderFilter.preparing)
+          .length,
+      OrderFilter.pickUpReady: _allOrders
+          .where((d) => d.status == OrderFilter.pickUpReady)
+          .length,
+      OrderFilter.cancelled: _allOrders
+          .where((d) => d.status == OrderFilter.cancelled)
+          .length,
+      OrderFilter.inTransit: _allOrders
+          .where((d) => d.status == OrderFilter.inTransit)
+          .length,
+      OrderFilter.delivered: _allOrders
+          .where((d) => d.status == OrderFilter.delivered)
+          .length,
     };
     state = state.copyWith(orderCounts: newCounts);
   }
@@ -51,38 +58,36 @@ class OrderTaskViewmodel extends StateNotifier<OrderTaskState> {
     // 1. Status Filter
     if (state.activeStatuses.isNotEmpty &&
         !state.activeStatuses.contains(OrderFilter.all)) {
-      filtered =
-          filtered
-              .where((d) => state.activeStatuses.contains(d.status))
-              .toList();
+      filtered = filtered
+          .where((d) => state.activeStatuses.contains(d.status))
+          .toList();
     }
 
     // 2. Apply Date Filter (Today)
     if (state.dateFilterType == DateFilterType.today) {
       final now = DateTime.now();
-      filtered =
-          filtered
-              .where(
-                (d) =>
-                    d.date.year == now.year &&
-                    d.date.month == now.month &&
-                    d.date.day == now.day,
-              )
-              .toList();
+      filtered = filtered
+          .where(
+            (d) =>
+                d.date.year == now.year &&
+                d.date.month == now.month &&
+                d.date.day == now.day,
+          )
+          .toList();
     }
 
     // 3. Apply Date Filter (Custom)
     if (state.activeSelectedDates.isNotEmpty) {
-      filtered =
-          filtered.where((order) {
-            return state.activeSelectedDates.contains(_normalize(order.date));
-          }).toList();
+      filtered = filtered.where((order) {
+        return state.activeSelectedDates.contains(_normalize(order.date));
+      }).toList();
     }
 
     // 4. NEW: Delivery/Order Type Filter
     if (state.deliveryType != DeliveryType.all) {
-      filtered =
-          filtered.where((d) => d.deliveryType == state.deliveryType).toList();
+      filtered = filtered
+          .where((d) => d.deliveryType == state.deliveryType)
+          .toList();
     }
 
     // 5. Pagination (Always last)
@@ -192,23 +197,21 @@ class OrderTaskViewmodel extends StateNotifier<OrderTaskState> {
     state = state.copyWith(
       activeSelectedDates: Set.from(state.tempSelectedDates),
       // If dates are selected, we change the filter type to 'custom' or a new 'multiple' type
-      dateFilterType:
-          state.tempSelectedDates.isEmpty
-              ? DateFilterType.all
-              : DateFilterType.custom,
+      dateFilterType: state.tempSelectedDates.isEmpty
+          ? DateFilterType.all
+          : DateFilterType.custom,
       currentPage: 0,
     );
     _applyFilterAndPagination();
   }
 
   void updateOrderStatus(String orderId, OrderFilter newStatus) {
-    _allOrders =
-        _allOrders.map((order) {
-          if (order.orderId == orderId) {
-            return order.copyWith(status: newStatus);
-          }
-          return order;
-        }).toList();
+    _allOrders = _allOrders.map((order) {
+      if (order.orderId == orderId) {
+        return order.copyWith(status: newStatus);
+      }
+      return order;
+    }).toList();
 
     _updateCounts();
     _applyFilterAndPagination();
@@ -221,10 +224,6 @@ class OrderTaskViewmodel extends StateNotifier<OrderTaskState> {
     );
     _applyFilterAndPagination();
   }
-
-  // void setWalletScreenState(WalletScreenState screenState) {
-  //   state = state.copyWith(walletScreenState: screenState);
-  // }
 
   final _mockOrders = <Order>[
     Order(

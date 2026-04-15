@@ -9,9 +9,7 @@ import '../../../../../../shared/widgets/dashboard_widgets/earning_card.dart';
 import '../../../../../shared/widgets/custom_text_field.dart';
 
 class BusinessAnalyticsWidget extends ConsumerWidget {
-  const BusinessAnalyticsWidget({super.key, this.isWallet = false});
-
-  final bool isWallet;
+  const BusinessAnalyticsWidget({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -72,7 +70,6 @@ class BusinessAnalyticsWidget extends ConsumerWidget {
                       title: "Total Sale",
                       amountWidget: _buildEarningAmount(
                         dashboardState.totalSales,
-                        AppColors.textWhite,
                         '54',
                         isWeb,
                       ),
@@ -80,10 +77,6 @@ class BusinessAnalyticsWidget extends ConsumerWidget {
                       watermarkIcon: AppAssets.icons.todayEarning.svg(
                         width: 65.51,
                         height: 64.65,
-                        colorFilter: ColorFilter.mode(
-                          AppColors.backgroundWhite,
-                          BlendMode.srcIn,
-                        ),
                       ),
                       borderColor: Colors.transparent,
                       titleColor: AppColors.textWhite,
@@ -100,7 +93,6 @@ class BusinessAnalyticsWidget extends ConsumerWidget {
                       title: "Pending Orders",
                       amountWidget: _buildEarningAmount(
                         dashboardState.pendingOrders,
-                        AppColors.textWhite,
                         '54',
                         isWeb,
                       ),
@@ -108,10 +100,6 @@ class BusinessAnalyticsWidget extends ConsumerWidget {
                       watermarkIcon: AppAssets.icons.thisWeek.svg(
                         width: 75.65,
                         height: 73.58,
-                        colorFilter: ColorFilter.mode(
-                          AppColors.backgroundWhite,
-                          BlendMode.srcIn,
-                        ),
                       ),
                       borderColor: Colors.transparent,
                       titleColor: AppColors.textWhite,
@@ -128,7 +116,6 @@ class BusinessAnalyticsWidget extends ConsumerWidget {
                       title: "Completed Orders",
                       amountWidget: _buildEarningAmount(
                         dashboardState.completedOrders,
-                        AppColors.textWhite,
                         '54',
                         isWeb,
                       ),
@@ -136,10 +123,6 @@ class BusinessAnalyticsWidget extends ConsumerWidget {
                       watermarkIcon: AppAssets.icons.totalEarning.svg(
                         width: 60.37,
                         height: 73.64,
-                        colorFilter: ColorFilter.mode(
-                          AppColors.backgroundWhite,
-                          BlendMode.srcIn,
-                        ),
                       ),
                       borderColor: Colors.transparent,
                       titleColor: AppColors.textWhite,
@@ -156,7 +139,6 @@ class BusinessAnalyticsWidget extends ConsumerWidget {
                       title: "Active Product",
                       amountWidget: _buildEarningAmount(
                         dashboardState.activeProduct,
-                        AppColors.backgroundWhite,
                         '54',
                         isWeb,
                       ),
@@ -164,10 +146,6 @@ class BusinessAnalyticsWidget extends ConsumerWidget {
                       watermarkIcon: AppAssets.icons.pendingPayout.svg(
                         height: 65,
                         width: 71.56,
-                        colorFilter: ColorFilter.mode(
-                          AppColors.backgroundWhite,
-                          BlendMode.srcIn,
-                        ),
                       ),
                       borderColor: Colors.transparent,
                       titleColor: AppColors.textWhite,
@@ -191,7 +169,7 @@ class BusinessAnalyticsWidget extends ConsumerWidget {
     );
   }
 
-  Widget _buildRow(String amount, String percentage, Color color, bool isWeb) {
+  Widget _buildRow(String amount, String percentage, bool isWeb) {
     return Row(
       children: [
         Text(
@@ -199,7 +177,7 @@ class BusinessAnalyticsWidget extends ConsumerWidget {
           style: GoogleFonts.notoSans(
             fontSize: isWeb ? 32 : 24.0,
             fontWeight: FontWeight.w600,
-            color: color,
+            color: AppColors.textWhite,
           ),
         ),
         const SizedBox(width: 5),
@@ -230,30 +208,27 @@ class BusinessAnalyticsWidget extends ConsumerWidget {
 
   Widget _buildEarningAmount(
     AsyncValue<String> asyncValue,
-    Color color,
     String percentage,
     bool isWeb,
   ) {
     return asyncValue.when(
-      data: (amount) => _buildRow(amount, percentage, color, isWeb),
-      loading:
-          () => SizedBox(
-            width: 50,
-            height: 20,
-            child: LinearProgressIndicator(
-              backgroundColor: color.withValues(alpha: 0.3),
-              valueColor: AlwaysStoppedAnimation(color),
-            ),
-          ),
-      error:
-          (e, _) => Text(
-            "Error",
-            style: GoogleFonts.hind(
-              fontSize: 16.0,
-              fontWeight: FontWeight.w500,
-              color: AppColors.accentRed,
-            ),
-          ),
+      data: (amount) => _buildRow(amount, percentage, isWeb),
+      loading: () => SizedBox(
+        width: 50,
+        height: 20,
+        child: LinearProgressIndicator(
+          backgroundColor: AppColors.backgroundWhite.withValues(alpha: 0.3),
+          valueColor: AlwaysStoppedAnimation(AppColors.backgroundWhite),
+        ),
+      ),
+      error: (e, _) => Text(
+        "Error",
+        style: GoogleFonts.hind(
+          fontSize: 16.0,
+          fontWeight: FontWeight.w500,
+          color: AppColors.accentRed,
+        ),
+      ),
     );
   }
 
