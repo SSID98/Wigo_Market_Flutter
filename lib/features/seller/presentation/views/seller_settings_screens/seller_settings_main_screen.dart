@@ -2,19 +2,18 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:wigo_flutter/features/rider/presentation/views/rider_settings_screens/rider_notification_screen.dart';
-import 'package:wigo_flutter/features/rider/presentation/views/rider_settings_screens/rider_privacy_security_screen.dart';
-import 'package:wigo_flutter/features/rider/presentation/views/rider_settings_screens/rider_profile_account_screen.dart';
-import 'package:wigo_flutter/features/rider/presentation/views/rider_settings_screens/vehicle_documents_screen.dart';
-import 'package:wigo_flutter/shared/screens/support_screen.dart';
+import 'package:wigo_flutter/features/seller/presentation/views/seller_settings_screens/profile_account_screens/seller_profile_account_main_screen.dart';
+import 'package:wigo_flutter/features/seller/presentation/views/seller_settings_screens/seller_help_support_screens/seller_help_support_main_screen.dart';
+import 'package:wigo_flutter/features/seller/presentation/views/seller_settings_screens/seller_notification_screen.dart';
+import 'package:wigo_flutter/features/seller/presentation/views/seller_settings_screens/seller_privacy_security_screen.dart';
 
 import '../../../../../core/constants/app_colors.dart';
 import '../../../../../core/utils/context_extensions.dart';
 import '../../../../../gen/assets.gen.dart';
 import '../../../../../shared/viewmodels/settings_navg_viewmodel.dart';
 
-class RiderSettingsMainScreen extends ConsumerWidget {
-  const RiderSettingsMainScreen({super.key});
+class SellerSettingsMainScreen extends ConsumerWidget {
+  const SellerSettingsMainScreen({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -23,28 +22,24 @@ class RiderSettingsMainScreen extends ConsumerWidget {
 
     final List<String> settings = [
       "Profile & Account",
-      "Vehicle & Documents",
       "Notifications",
       "Privacy & Security",
-      "Help & Others",
+      "Help & Support",
     ];
 
     final Map<String, String> settingsIcons = {
       "Profile & Account": AppAssets.icons.user2.path,
-      "Vehicle & Documents": AppAssets.icons.fileValidation.path,
       "Notifications": AppAssets.icons.settingsNotify.path,
       "Privacy & Security": AppAssets.icons.privacy.path,
-      "Help & Others": AppAssets.icons.customerService.path,
+      "Help & Support": AppAssets.icons.customerService.path,
     };
 
     final Map<String, String> settingSubTitle = {
       "Profile & Account":
-          'Manage your personal information and account details',
-      "Vehicle & Documents":
-          'Update vehicle information and other related documents',
+          'Manage your personal information and Shop account details',
       "Notifications": 'Control how you receive updates and alerts',
-      "Privacy & Security": 'Manage your Privacy and security settings',
-      "Help & Others": 'Get Help and Contact Support. We’re here to help.',
+      "Privacy & Security": 'Manage your Privacy and Security settings',
+      "Help & Support": 'Get Help and Contact Support. We’re here to help.',
     };
 
     return Scaffold(
@@ -249,17 +244,15 @@ class RiderSettingsMainScreen extends ConsumerWidget {
   Widget _buildDetailScreen(int index) {
     switch (index) {
       case 0:
-        return const RiderProfileAndAccountScreen();
+        return const SellerProfileAccountMainScreen();
       case 1:
-        return const VehicleAndDocumentsScreen();
+        return const SellerNotificationScreen();
       case 2:
-        return const RiderNotificationScreen();
+        return const SellerPrivacyAndSecurityScreen();
       case 3:
-        return const PrivacyAndSecurityScreen();
-      case 4:
-        return const SupportScreen();
+        return const SellerHelpAndSupportMainScreen();
       default:
-        return const Center(child: Text("Coming soon..."));
+        return const SellerProfileAccountMainScreen();
     }
   }
 }

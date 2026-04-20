@@ -4,6 +4,7 @@ import 'package:flutter_svg/svg.dart';
 import 'package:wigo_flutter/features/seller/presentation/views/order_management_screen.dart';
 import 'package:wigo_flutter/features/seller/presentation/views/product_management_screen.dart';
 import 'package:wigo_flutter/features/seller/presentation/views/seller_dashboard_screen.dart';
+import 'package:wigo_flutter/features/seller/presentation/views/seller_settings_screens/seller_settings_main_screen.dart';
 
 import '../../../../core/constants/app_colors.dart';
 import '../../../../core/providers/role_selection_provider.dart';
@@ -77,7 +78,7 @@ class _SellerMainScreenState extends ConsumerState<SellerMainScreen> {
                                 3,
                                 EarningsAndTransactionsScreen(),
                               ),
-                              _buildNavigator(4, Placeholder()),
+                              _buildNavigator(4, SellerSettingsMainScreen()),
                               // if (isSeller) ...[
                               //   _buildNavigator(5, Placeholder()),
                               // ],
@@ -96,7 +97,7 @@ class _SellerMainScreenState extends ConsumerState<SellerMainScreen> {
                   _buildNavigator(1, OrderManagementScreen()),
                   _buildNavigator(2, ProductManagementScreen()),
                   _buildNavigator(3, EarningsAndTransactionsScreen()),
-                  _buildNavigator(4, Placeholder()),
+                  _buildNavigator(4, SellerSettingsMainScreen()),
                 ],
               ),
 

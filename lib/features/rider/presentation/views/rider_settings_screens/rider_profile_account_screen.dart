@@ -6,116 +6,107 @@ import 'package:wigo_flutter/shared/widgets/contact_text_field.dart';
 import 'package:wigo_flutter/shared/widgets/custom_button.dart';
 
 import '../../../../../core/constants/app_colors.dart';
+import '../../../../../core/utils/context_extensions.dart';
 import '../../../../../gen/assets.gen.dart';
 import '../../../../../shared/models/location_data.dart';
 import '../../../../../shared/widgets/custom_avatar.dart';
 import '../../../../../shared/widgets/custom_text_field.dart';
 
-class ProfileAndAccountScreen extends StatelessWidget {
-  final VoidCallback? onBack;
-
-  const ProfileAndAccountScreen({super.key, this.onBack});
+class RiderProfileAndAccountScreen extends StatelessWidget {
+  const RiderProfileAndAccountScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
-    final isWeb = MediaQuery.of(context).size.width > 800;
-
     final vehicleInfoSection = _RiderInfoSection(
-      showSaveInside: isWeb,
+      showSaveInside: context.isWeb,
       showUpdatePassword: true,
     );
 
     return Scaffold(
-      appBar:
-          isWeb
-              ? null
-              : AppBar(
-                bottom: PreferredSize(
-                  preferredSize: Size.fromHeight(10),
-                  child: Padding(
-                    padding: const EdgeInsets.only(left: 20.0),
-                    child: Row(
-                      children: [
-                        GestureDetector(
-                          child: AppAssets.icons.arrowLeft.svg(),
-                          onTap: () {
-                            Navigator.pop(context);
-                          },
-                        ),
-                        const SizedBox(width: 20),
-                        Text(
-                          "Back",
-                          style: GoogleFonts.hind(
-                            fontSize: 18,
-                            fontWeight: FontWeight.w400,
-                            color: AppColors.textBlackGrey,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-                surfaceTintColor: Colors.transparent,
-                backgroundColor: AppColors.backgroundWhite,
-                automaticallyImplyLeading: false,
-              ),
-      backgroundColor:
-          isWeb ? AppColors.backgroundLight : AppColors.backgroundWhite,
-      body: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 20.0),
-        child:
-            isWeb
-                ? Expanded(
-                  child: SingleChildScrollView(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Card(
-                          margin: EdgeInsets.only(bottom: 20, top: 20),
-                          shadowColor: Colors.white70.withValues(alpha: 0.06),
-                          color: AppColors.backgroundWhite,
-                          elevation: 1,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(16.0),
-                          ),
-                          child: Padding(
-                            padding: const EdgeInsets.all(16),
-                            child: vehicleInfoSection,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                )
-                : Card(
-                  elevation: 0,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(16.0),
-                    side: BorderSide(
-                      color: AppColors.shadowColor.withValues(alpha: 0.09),
-                      width: 3,
-                    ),
-                  ),
-                  margin: EdgeInsets.only(bottom: 20, top: 10),
-                  color: AppColors.backgroundWhite,
-                  child: Column(
+      appBar: context.isWeb
+          ? null
+          : AppBar(
+              bottom: PreferredSize(
+                preferredSize: Size.fromHeight(10),
+                child: Padding(
+                  padding: const EdgeInsets.only(left: 20.0),
+                  child: Row(
                     children: [
-                      Expanded(
-                        child: SingleChildScrollView(child: vehicleInfoSection),
+                      GestureDetector(
+                        child: AppAssets.icons.arrowLeft.svg(),
+                        onTap: () {
+                          Navigator.pop(context);
+                        },
                       ),
-                      const SizedBox(height: 20),
-                      CustomButton(
-                        text: 'Save',
-                        onPressed: () {},
-                        fontSize: 18,
-                        fontWeight: FontWeight.w500,
-                        height: 45,
-                        width: 335,
+                      const SizedBox(width: 20),
+                      Text(
+                        "Back",
+                        style: GoogleFonts.hind(
+                          fontSize: 18,
+                          fontWeight: FontWeight.w400,
+                          color: AppColors.textBlackGrey,
+                        ),
                       ),
-                      const SizedBox(height: 20),
                     ],
                   ),
                 ),
+              ),
+              surfaceTintColor: Colors.transparent,
+              backgroundColor: AppColors.backgroundWhite,
+              automaticallyImplyLeading: false,
+            ),
+      backgroundColor: context.isWeb
+          ? AppColors.backgroundLight
+          : AppColors.backgroundWhite,
+      body: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 20.0),
+        child: context.isWeb
+            ? Expanded(
+                child: SingleChildScrollView(
+                  child: Card(
+                    margin: EdgeInsets.only(bottom: 20, top: 20),
+                    shadowColor: Colors.white70.withValues(alpha: 0.06),
+                    color: AppColors.backgroundWhite,
+                    elevation: 1,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(16.0),
+                    ),
+                    child: Padding(
+                      padding: const EdgeInsets.all(16),
+                      child: vehicleInfoSection,
+                    ),
+                  ),
+                ),
+              )
+            : Card(
+                elevation: 0,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(16.0),
+                  side: BorderSide(
+                    color: AppColors.shadowColor.withValues(alpha: 0.09),
+                    width: 3,
+                  ),
+                ),
+                margin: EdgeInsets.only(bottom: 20, top: 10),
+                color: AppColors.backgroundWhite,
+                child: Column(
+                  children: [
+                    Expanded(
+                      child: SingleChildScrollView(child: vehicleInfoSection),
+                    ),
+                    const SizedBox(height: 20),
+                    CustomButton(
+                      text: 'Save',
+                      onPressed: () {},
+                      fontSize: 18,
+                      fontWeight: FontWeight.w500,
+                      height: 45,
+                      width: 335,
+                    ),
+                    const SizedBox(height: 20),
+                  ],
+                ),
+              ),
       ),
     );
   }
@@ -132,7 +123,6 @@ class _RiderInfoSection extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final isWeb = MediaQuery.of(context).size.width > 800;
     final viewModel = ref.watch(riderProfileAccountViewModelProvider);
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 15.0, vertical: 25.0),
@@ -145,8 +135,8 @@ class _RiderInfoSection extends ConsumerWidget {
               Text(
                 "Personal Information",
                 style: GoogleFonts.hind(
-                  fontSize: isWeb ? 24 : 16,
-                  fontWeight: isWeb ? FontWeight.w600 : FontWeight.w700,
+                  fontSize: context.isWeb ? 24 : 16,
+                  fontWeight: context.isWeb ? FontWeight.w600 : FontWeight.w700,
                   color: AppColors.textBlackGrey,
                 ),
               ),
@@ -172,11 +162,12 @@ class _RiderInfoSection extends ConsumerWidget {
           const SizedBox(height: 15),
           CustomAvatar(
             crossAxisAlignment: CrossAxisAlignment.center,
-            avatarAlign:
-                isWeb ? MainAxisAlignment.start : MainAxisAlignment.center,
+            avatarAlign: context.isWeb
+                ? MainAxisAlignment.start
+                : MainAxisAlignment.center,
             radius: 50,
-            showLeftTexts: isWeb ? true : false,
-            showBottomText: isWeb ? false : true,
+            showLeftTexts: context.isWeb ? true : false,
+            showBottomText: context.isWeb ? false : true,
           ),
           GridView.builder(
             padding: EdgeInsets.only(top: 10),
@@ -184,8 +175,8 @@ class _RiderInfoSection extends ConsumerWidget {
             physics: const NeverScrollableScrollPhysics(),
             itemCount: 6,
             gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: isWeb ? 2 : 1,
-              crossAxisSpacing: isWeb ? 13 : 0,
+              crossAxisCount: context.isWeb ? 2 : 1,
+              crossAxisSpacing: context.isWeb ? 13 : 0,
               mainAxisSpacing: 13,
               mainAxisExtent: 85,
             ),
@@ -208,12 +199,16 @@ class _RiderInfoSection extends ConsumerWidget {
                 case 2:
                   return CustomPhoneNumberField(
                     label: 'Phone Number',
-                    contentPadding: EdgeInsets.only(bottom: isWeb ? 3.5 : 0),
+                    contentPadding: EdgeInsets.only(
+                      bottom: context.isWeb ? 3.5 : 0,
+                    ),
                   );
                 case 3:
                   return CustomPhoneNumberField(
                     label: 'Next of Kin Contact',
-                    contentPadding: EdgeInsets.only(bottom: isWeb ? 3.5 : 0),
+                    contentPadding: EdgeInsets.only(
+                      bottom: context.isWeb ? 3.5 : 0,
+                    ),
                   );
                 case 4:
                   return CustomDropdownField(
@@ -257,8 +252,8 @@ class _RiderInfoSection extends ConsumerWidget {
             physics: const NeverScrollableScrollPhysics(),
             itemCount: 2,
             gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: isWeb ? 2 : 1,
-              crossAxisSpacing: isWeb ? 13 : 0,
+              crossAxisCount: context.isWeb ? 2 : 1,
+              crossAxisSpacing: context.isWeb ? 13 : 0,
               mainAxisSpacing: 5,
               mainAxisExtent: 85,
             ),
@@ -293,7 +288,7 @@ class _RiderInfoSection extends ConsumerWidget {
                 Text(
                   "Update Password",
                   style: GoogleFonts.hind(
-                    fontSize: isWeb ? 24 : 20,
+                    fontSize: context.isWeb ? 24 : 20,
                     fontWeight: FontWeight.w600,
                     color: AppColors.textBlackGrey,
                   ),

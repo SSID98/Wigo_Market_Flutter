@@ -47,22 +47,21 @@ class EditBankAccountViewModel extends StateNotifier<WalletState> {
     // required WidgetRef ref,
     // required WalletScreenState returnToState,
   }) {
-    final updatedList =
-        state.bankDetailsList.map((bank) {
-          if (bank.id == bankId) {
-            return bank.copyWith(
-              bankName: newBankName,
-              accountNumber: newAccountNumber,
-              accountHolderName: newAccountHolderName,
-              phoneNumber: newPhoneNumber,
-              isDefault: newIsDefault,
-              isEmpty: false,
-            );
-          } else if (newIsDefault == true) {
-            return bank.copyWith(isDefault: false);
-          }
-          return bank;
-        }).toList();
+    final updatedList = state.bankDetailsList.map((bank) {
+      if (bank.id == bankId) {
+        return bank.copyWith(
+          bankName: newBankName,
+          accountNumber: newAccountNumber,
+          accountHolderName: newAccountHolderName,
+          phoneNumber: newPhoneNumber,
+          isDefault: newIsDefault,
+          isEmpty: false,
+        );
+      } else if (newIsDefault == true) {
+        return bank.copyWith(isDefault: false);
+      }
+      return bank;
+    }).toList();
 
     state = state.copyWith(
       bankDetailsList: updatedList,
@@ -73,16 +72,16 @@ class EditBankAccountViewModel extends StateNotifier<WalletState> {
   }
 
   void clearBankDetails(String bankId) {
-    final clearedBankWasDefault =
-        state.bankDetailsList.firstWhere((b) => b.id == bankId).isDefault;
+    final clearedBankWasDefault = state.bankDetailsList
+        .firstWhere((b) => b.id == bankId)
+        .isDefault;
 
-    final updatedList =
-        state.bankDetailsList.map((bank) {
-          if (bank.id == bankId) {
-            return BankDetails.empty(bankId);
-          }
-          return bank;
-        }).toList();
+    final updatedList = state.bankDetailsList.map((bank) {
+      if (bank.id == bankId) {
+        return BankDetails.empty(bankId);
+      }
+      return bank;
+    }).toList();
 
     if (clearedBankWasDefault) {
       final firstTile = updatedList.firstWhere(
@@ -90,13 +89,12 @@ class EditBankAccountViewModel extends StateNotifier<WalletState> {
         orElse: () => updatedList.first,
       );
       if (firstTile.isEmpty) {
-        final listWithNewDefault =
-            updatedList.map((bank) {
-              if (bank.id == firstTile.id) {
-                return bank.copyWith(isDefault: true);
-              }
-              return bank.copyWith(isDefault: false);
-            }).toList();
+        final listWithNewDefault = updatedList.map((bank) {
+          if (bank.id == firstTile.id) {
+            return bank.copyWith(isDefault: true);
+          }
+          return bank.copyWith(isDefault: false);
+        }).toList();
         state = state.copyWith(
           bankDetailsList: listWithNewDefault,
           walletScreenState: WalletScreenState.addBankAccount,
@@ -119,6 +117,10 @@ class EditBankAccountViewModel extends StateNotifier<WalletState> {
     }
 
     return defaultBank;
+  }
+
+  void navigateBackToList(WidgetRef ref) {
+    ref.read(editBankAccountProvider.notifier).cancelEditBankAccount();
   }
 }
 

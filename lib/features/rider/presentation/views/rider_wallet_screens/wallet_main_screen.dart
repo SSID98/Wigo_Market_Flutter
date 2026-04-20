@@ -38,10 +38,6 @@ class WalletMainScreen extends ConsumerWidget {
     );
   }
 
-  void _navigateBackToList(WidgetRef ref) {
-    ref.read(editBankAccountProvider.notifier).cancelEditBankAccount();
-  }
-
   Widget _buildHeader(
     EditBankAccountViewModel notifier,
     bool isWeb,
@@ -63,7 +59,7 @@ class WalletMainScreen extends ConsumerWidget {
                 children: [
                   InkWell(
                     onTap: () {
-                      _navigateBackToList(ref);
+                      notifier.navigateBackToList(ref);
                     },
                     child: AppAssets.icons.arrowLeft.svg(),
                   ),
@@ -162,10 +158,9 @@ class WalletMainScreen extends ConsumerWidget {
             final storage = LocalStorageService(prefs);
 
             if (filter == EarningFilter.paymentMethods) {
-              final nextState =
-                  storage.isPinSetupCompleted
-                      ? WalletScreenState.addBankAccount
-                      : WalletScreenState.setupPin;
+              final nextState = storage.isPinSetupCompleted
+                  ? WalletScreenState.addBankAccount
+                  : WalletScreenState.setupPin;
               notifier.setWalletScreenState(nextState);
             } else {
               notifier.setWalletScreenState(
@@ -174,20 +169,17 @@ class WalletMainScreen extends ConsumerWidget {
             }
           },
           child: Container(
-            color:
-                isSelected ? AppColors.primaryLightGreen : Colors.transparent,
+            color: isSelected
+                ? AppColors.primaryLightGreen
+                : Colors.transparent,
             padding: const EdgeInsets.symmetric(horizontal: 26, vertical: 10),
-            child: Row(
-              children: [
-                Text(
-                  name,
-                  style: GoogleFonts.hind(
-                    fontWeight: FontWeight.w500,
-                    fontSize: isWeb ? 18 : 12,
-                    color: AppColors.textDarkDarkerGreen,
-                  ),
-                ),
-              ],
+            child: Text(
+              name,
+              style: GoogleFonts.hind(
+                fontWeight: FontWeight.w500,
+                fontSize: isWeb ? 18 : 12,
+                color: AppColors.textDarkDarkerGreen,
+              ),
             ),
           ),
         );
@@ -250,9 +242,7 @@ class WalletMainScreen extends ConsumerWidget {
           });
           return const Center(child: CircularProgressIndicator());
         }
-        return EditBankAccountScreen(
-          bankDetails: bankToEdit, // Pass the destination state
-        );
+        return EditBankAccountScreen(bankDetails: bankToEdit);
     }
   }
 }

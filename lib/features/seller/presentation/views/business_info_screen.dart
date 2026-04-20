@@ -35,19 +35,20 @@ class BusinessInfoScreen extends ConsumerWidget {
             fit: BoxFit.cover,
             color: AppColors.backGroundOverlay,
             colorBlendMode: BlendMode.overlay,
-            errorBuilder: (
-              BuildContext context,
-              Object exception,
-              StackTrace? stackTrace,
-            ) {
-              return const Center(
-                child: Icon(
-                  Icons.broken_image,
-                  color: AppColors.textIconGrey,
-                  size: 50.0,
-                ),
-              );
-            },
+            errorBuilder:
+                (
+                  BuildContext context,
+                  Object exception,
+                  StackTrace? stackTrace,
+                ) {
+                  return const Center(
+                    child: Icon(
+                      Icons.broken_image,
+                      color: AppColors.textIconGrey,
+                      size: 50.0,
+                    ),
+                  );
+                },
           ),
           Padding(
             padding: const EdgeInsets.only(top: 90.0),
@@ -190,19 +191,20 @@ class BusinessInfoScreen extends ConsumerWidget {
             fit: BoxFit.cover,
             color: AppColors.backGroundOverlay,
             colorBlendMode: BlendMode.overlay,
-            errorBuilder: (
-              BuildContext context,
-              Object exception,
-              StackTrace? stackTrace,
-            ) {
-              return const Center(
-                child: Icon(
-                  Icons.broken_image,
-                  color: AppColors.textIconGrey,
-                  size: 50.0,
-                ),
-              );
-            },
+            errorBuilder:
+                (
+                  BuildContext context,
+                  Object exception,
+                  StackTrace? stackTrace,
+                ) {
+                  return const Center(
+                    child: Icon(
+                      Icons.broken_image,
+                      color: AppColors.textIconGrey,
+                      size: 50.0,
+                    ),
+                  );
+                },
           ),
           Padding(
             padding: const EdgeInsets.only(top: 105.0),
@@ -245,7 +247,6 @@ class BusinessInfoScreen extends ConsumerWidget {
                                   iconHeight: 20,
                                   iconWidth: 40,
                                   hintFontSize: 6,
-                                  web: true,
                                 ),
                                 const SizedBox(height: 32),
                                 Padding(

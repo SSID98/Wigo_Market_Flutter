@@ -23,6 +23,7 @@ class CustomPhoneNumberField extends StatefulWidget {
   final void Function(String)? onChanged;
   final bool isOtherDesign;
   final Color? hintTextColor;
+  final bool? enabled;
 
   const CustomPhoneNumberField({
     super.key,
@@ -44,6 +45,7 @@ class CustomPhoneNumberField extends StatefulWidget {
     this.onChanged,
     this.isOtherDesign = false,
     this.hintTextColor,
+    this.enabled,
   });
 
   @override
@@ -73,43 +75,28 @@ class _CustomPhoneNumberFieldState extends State<CustomPhoneNumberField> {
         const SizedBox(height: 4),
         !widget.isOtherDesign
             ? Container(
-              height: widget.height,
-              decoration: BoxDecoration(
-                color: widget.fillColor ?? AppColors.textFieldColor,
-                borderRadius: BorderRadius.circular(10),
-                border: BoxBorder.fromBorderSide(
-                  BorderSide(color: widget.borderColor),
-                ),
-              ),
-              padding:
-                  widget.padding ??
-                  EdgeInsets.symmetric(horizontal: 17, vertical: 12),
-              child: Row(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  _countryCodePicker1(),
-                  Expanded(child: _buildInputField()),
-                ],
-              ),
-            )
-            : Row(
-              children: [
-                Container(
-                  height: widget.height,
-                  decoration: BoxDecoration(
-                    color: widget.fillColor ?? AppColors.textFieldColor,
-                    borderRadius: BorderRadius.circular(4),
-                    border: BoxBorder.fromBorderSide(
-                      BorderSide(color: widget.borderColor),
-                    ),
+                height: widget.height,
+                decoration: BoxDecoration(
+                  color: widget.fillColor ?? AppColors.textFieldColor,
+                  borderRadius: BorderRadius.circular(10),
+                  border: BoxBorder.fromBorderSide(
+                    BorderSide(color: widget.borderColor),
                   ),
-                  padding:
-                      widget.padding ?? EdgeInsets.symmetric(horizontal: 12),
-                  child: _countryCodePicker2(),
                 ),
-                const SizedBox(width: 6),
-                Expanded(
-                  child: Container(
+                padding:
+                    widget.padding ??
+                    EdgeInsets.symmetric(horizontal: 17, vertical: 12),
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    _countryCodePicker1(),
+                    Expanded(child: _buildInputField()),
+                  ],
+                ),
+              )
+            : Row(
+                children: [
+                  Container(
                     height: widget.height,
                     decoration: BoxDecoration(
                       color: widget.fillColor ?? AppColors.textFieldColor,
@@ -119,13 +106,28 @@ class _CustomPhoneNumberFieldState extends State<CustomPhoneNumberField> {
                       ),
                     ),
                     padding:
-                        widget.padding ??
-                        EdgeInsets.symmetric(horizontal: 17, vertical: 12),
-                    child: _buildInputField(),
+                        widget.padding ?? EdgeInsets.symmetric(horizontal: 12),
+                    child: _countryCodePicker2(),
                   ),
-                ),
-              ],
-            ),
+                  const SizedBox(width: 6),
+                  Expanded(
+                    child: Container(
+                      height: widget.height,
+                      decoration: BoxDecoration(
+                        color: widget.fillColor ?? AppColors.textFieldColor,
+                        borderRadius: BorderRadius.circular(4),
+                        border: BoxBorder.fromBorderSide(
+                          BorderSide(color: widget.borderColor),
+                        ),
+                      ),
+                      padding:
+                          widget.padding ??
+                          EdgeInsets.symmetric(horizontal: 17, vertical: 12),
+                      child: _buildInputField(),
+                    ),
+                  ),
+                ],
+              ),
       ],
     );
   }
@@ -221,6 +223,7 @@ class _CustomPhoneNumberFieldState extends State<CustomPhoneNumberField> {
 
   Widget _buildInputField() {
     return TextFormField(
+      enabled: widget.enabled,
       style: GoogleFonts.hind(
         fontSize: widget.inputFontSize ?? 15.11,
         fontWeight: widget.inputFontWeight ?? FontWeight.w400,

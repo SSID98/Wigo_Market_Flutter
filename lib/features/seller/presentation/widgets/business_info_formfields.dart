@@ -6,19 +6,18 @@ import 'package:wigo_flutter/features/seller/viewmodels/business_info_viewmodel.
 import 'package:wigo_flutter/shared/models/location_data.dart';
 import 'package:wigo_flutter/shared/widgets/custom_text_field.dart';
 
+import '../../../../core/utils/context_extensions.dart';
 import '../../../../gen/assets.gen.dart';
 import '../../../../shared/widgets/custom_checkbox_2.dart';
 import '../../../../shared/widgets/upload_box.dart';
 
 class BusinessInfoFormFields extends ConsumerWidget {
-  final bool web;
   final double iconHeight;
   final double iconWidth;
   final double hintFontSize;
 
   const BusinessInfoFormFields({
     super.key,
-    this.web = false,
     required this.iconHeight,
     required this.iconWidth,
     required this.hintFontSize,
@@ -66,7 +65,7 @@ class BusinessInfoFormFields extends ConsumerWidget {
           onChanged: notifier.updateBusinessAddress,
         ),
         spacing,
-        if (web)
+        if (context.isWeb)
           Row(
             children: [
               Expanded(
@@ -74,8 +73,9 @@ class BusinessInfoFormFields extends ConsumerWidget {
                   label: 'State',
                   items: nigeriaStatesAndCities.keys.toList(),
                   hintText: 'Select State',
-                  value:
-                      state.businessState.isEmpty ? null : state.businessState,
+                  value: state.businessState.isEmpty
+                      ? null
+                      : state.businessState,
                   onChanged: (val) {
                     notifier.updateBusinessState(val);
                   },
@@ -222,7 +222,7 @@ class BusinessInfoFormFields extends ConsumerWidget {
                 child: Text(
                   " I agree to allow Wigo Market to track my shop location to be used for deliveries and customer navigation. Your location is only shared with buyers and delivery agents for order fulfillment and is protected under our privacy policy.",
                   style: GoogleFonts.hind(
-                    fontSize: web ? 16 : 14,
+                    fontSize: context.isWeb ? 16 : 14,
                     fontWeight: FontWeight.w400,
                     color: AppColors.textBlackGrey,
                   ),

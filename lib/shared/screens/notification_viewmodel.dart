@@ -1,22 +1,22 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-class RNotificationState {
+class NotificationState {
   final bool pushNotify;
   final bool promoNotify;
   final bool emailNotify;
 
-  const RNotificationState({
+  const NotificationState({
     this.pushNotify = false,
     this.emailNotify = false,
     this.promoNotify = false,
   });
 
-  RNotificationState copyWith({
+  NotificationState copyWith({
     bool? pushNotify,
     bool? promoNotify,
     bool? emailNotify,
   }) {
-    return RNotificationState(
+    return NotificationState(
       pushNotify: pushNotify ?? this.pushNotify,
       promoNotify: promoNotify ?? this.promoNotify,
       emailNotify: emailNotify ?? this.emailNotify,
@@ -24,8 +24,8 @@ class RNotificationState {
   }
 }
 
-class RiderNotificationViewModel extends StateNotifier<RNotificationState> {
-  RiderNotificationViewModel() : super(const RNotificationState());
+class NotificationViewModel extends StateNotifier<NotificationState> {
+  NotificationViewModel() : super(const NotificationState());
 
   void toggleSwitch1(bool newValue) {
     state = state.copyWith(pushNotify: newValue);
@@ -40,7 +40,7 @@ class RiderNotificationViewModel extends StateNotifier<RNotificationState> {
   }
 }
 
-final riderNotificationViewModelProvider =
-    StateNotifierProvider<RiderNotificationViewModel, RNotificationState>(
-      (ref) => RiderNotificationViewModel(),
+final notificationViewModelProvider =
+    StateNotifierProvider<NotificationViewModel, NotificationState>(
+      (ref) => NotificationViewModel(),
     );

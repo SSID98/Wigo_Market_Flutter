@@ -4,6 +4,7 @@ import 'package:wigo_flutter/shared/widgets/contact_text_field.dart';
 import 'package:wigo_flutter/shared/widgets/custom_button.dart';
 
 import '../../core/constants/app_colors.dart';
+import '../../core/utils/context_extensions.dart';
 import '../../core/utils/helper_methods.dart';
 import '../../gen/assets.gen.dart';
 import '../widgets/custom_text_field.dart';
@@ -15,73 +16,71 @@ class SupportScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final isWeb = MediaQuery.of(context).size.width > 800;
     bool isHandlingBack = false;
-    return isWeb
+    return context.isWeb
         ? Scaffold(
-          backgroundColor: AppColors.backgroundLight,
-
-          body: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 20.0),
-            child: Expanded(
-              child: SingleChildScrollView(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Card(
-                      margin: EdgeInsets.only(bottom: 20, top: 20),
-                      shadowColor: Colors.white70.withValues(alpha: 0.06),
-                      color: AppColors.backgroundWhite,
-                      elevation: 1,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(16.0),
+            backgroundColor: AppColors.backgroundLight,
+            body: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 20.0),
+              child: Expanded(
+                child: SingleChildScrollView(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Card(
+                        margin: EdgeInsets.only(bottom: 20, top: 20),
+                        shadowColor: Colors.white70.withValues(alpha: 0.06),
+                        color: AppColors.backgroundWhite,
+                        elevation: 1,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(16.0),
+                        ),
+                        child: Padding(
+                          padding: const EdgeInsets.all(16),
+                          child: ContactSupportSection(),
+                        ),
                       ),
-                      child: Padding(
-                        padding: const EdgeInsets.all(16),
-                        child: _ContactSupportSection(),
+                      const SizedBox(width: 16),
+                      Card(
+                        margin: EdgeInsets.only(bottom: 150, top: 20),
+                        shadowColor: Colors.white70.withValues(alpha: 0.06),
+                        color: AppColors.backgroundWhite,
+                        elevation: 1,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(16.0),
+                        ),
+                        child: Padding(
+                          padding: const EdgeInsets.all(16),
+                          child: SubmitFormSection(),
+                        ),
                       ),
-                    ),
-                    const SizedBox(width: 16),
-                    Card(
-                      margin: EdgeInsets.only(bottom: 150, top: 20),
-                      shadowColor: Colors.white70.withValues(alpha: 0.06),
-                      color: AppColors.backgroundWhite,
-                      elevation: 1,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(16.0),
-                      ),
-                      child: Padding(
-                        padding: const EdgeInsets.all(16),
-                        child: _SubmitFormSection(),
-                      ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
               ),
             ),
-          ),
-        )
+          )
         : isBuyer
         ? PopScope(
-          canPop: false,
-          onPopInvokedWithResult: (didPop, result) async {
-            if (isHandlingBack || didPop) return;
-            isHandlingBack = true;
-            showLoadingDialog(context);
-            await Future.delayed(const Duration(seconds: 1));
-            if (!context.mounted) return;
-            Navigator.of(context, rootNavigator: true).pop();
-            Navigator.of(context).pop(result);
-          },
-          child: _mobileBuild(context, isBuyer),
-        )
-        : Scaffold(
-          backgroundColor: AppColors.backgroundWhite,
-          body: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 20.0),
+            canPop: false,
+            onPopInvokedWithResult: (didPop, result) async {
+              if (isHandlingBack || didPop) return;
+              isHandlingBack = true;
+              showLoadingDialog(context);
+              await Future.delayed(const Duration(seconds: 1));
+              if (!context.mounted) return;
+              Navigator.of(context, rootNavigator: true).pop();
+              Navigator.of(context).pop(result);
+            },
             child: _mobileBuild(context, isBuyer),
-          ),
-        );
+          )
+        : Scaffold(
+            backgroundColor: AppColors.backgroundWhite,
+            body: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 20.0),
+              child: _mobileBuild(context, isBuyer),
+            ),
+          );
   }
 
   Widget _mobileBuild(BuildContext context, bool isBuyer) {
@@ -120,10 +119,29 @@ class SupportScreen extends StatelessWidget {
               padding: EdgeInsets.symmetric(horizontal: 10),
               child: Column(
                 children: [
+                  Text(
+                    "Contact Support",
+                    style: GoogleFonts.hind(
+                      fontSize: context.isWeb ? 28 : 16,
+                      fontWeight: FontWeight.w600,
+                      color: AppColors.textBlackGrey,
+                    ),
+                  ),
                   const SizedBox(height: 10),
-                  _ContactSupportSection(),
+                  Text(
+                    "Need Help? Contact Wigo market Support",
+                    style: GoogleFonts.hind(
+                      fontSize: context.isWeb ? 18 : 14,
+                      fontWeight: context.isWeb
+                          ? FontWeight.w500
+                          : FontWeight.w400,
+                      color: AppColors.textBlackGrey,
+                    ),
+                  ),
+                  const SizedBox(height: 10),
+                  ContactSupportSection(),
                   const SizedBox(height: 35),
-                  _SubmitFormSection(),
+                  SubmitFormSection(),
                   const SizedBox(height: 15),
                 ],
               ),
@@ -134,10 +152,30 @@ class SupportScreen extends StatelessWidget {
             padding: EdgeInsets.symmetric(horizontal: 10),
             child: Column(
               children: [
+                Text(
+                  "Contact Support",
+                  style: GoogleFonts.hind(
+                    fontSize: context.isWeb ? 28 : 16,
+                    fontWeight: FontWeight.w600,
+                    color: AppColors.textBlackGrey,
+                  ),
+                ),
                 const SizedBox(height: 10),
-                _ContactSupportSection(),
+                Text(
+                  "Need Help? Contact Wigo market Support",
+                  style: GoogleFonts.hind(
+                    fontSize: context.isWeb ? 18 : 14,
+                    fontWeight: context.isWeb
+                        ? FontWeight.w500
+                        : FontWeight.w400,
+                    color: AppColors.textBlackGrey,
+                  ),
+                ),
+
+                SizedBox(height: context.isWeb ? 30 : 40),
+                ContactSupportSection(),
                 const SizedBox(height: 35),
-                _SubmitFormSection(),
+                SubmitFormSection(),
                 const SizedBox(height: 15),
               ],
             ),
@@ -147,38 +185,20 @@ class SupportScreen extends StatelessWidget {
   }
 }
 
-class _ContactSupportSection extends StatelessWidget {
-  const _ContactSupportSection();
+class ContactSupportSection extends StatelessWidget {
+  const ContactSupportSection({super.key, this.connectPadding = 60});
+
+  final double? connectPadding;
 
   @override
   Widget build(BuildContext context) {
-    final isWeb = MediaQuery.of(context).size.width > 800;
-
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          "Contact Support",
-          style: GoogleFonts.hind(
-            fontSize: isWeb ? 28 : 16,
-            fontWeight: FontWeight.w600,
-            color: AppColors.textBlackGrey,
-          ),
-        ),
-        const SizedBox(height: 10),
-        Text(
-          "Need Help? Contact Wigo market Support",
-          style: GoogleFonts.hind(
-            fontSize: isWeb ? 18 : 14,
-            fontWeight: isWeb ? FontWeight.w500 : FontWeight.w400,
-            color: AppColors.textBlackGrey,
-          ),
-        ),
-        SizedBox(height: isWeb ? 20 : 30),
-        Text(
           "Get in Touch",
           style: GoogleFonts.hind(
-            fontSize: isWeb ? 28 : 18,
+            fontSize: context.isWeb ? 28 : 18,
             fontWeight: FontWeight.w600,
             color: AppColors.textBlackGrey,
           ),
@@ -187,8 +207,8 @@ class _ContactSupportSection extends StatelessWidget {
         Text(
           "Have questions or need assistance? We're here to help. Drop us a message or reach out through any of the channels below.",
           style: GoogleFonts.hind(
-            fontSize: isWeb ? 18 : 14,
-            fontWeight: isWeb ? FontWeight.w500 : FontWeight.w400,
+            fontSize: context.isWeb ? 18 : 14,
+            fontWeight: context.isWeb ? FontWeight.w500 : FontWeight.w400,
             color: AppColors.textBlackGrey,
           ),
         ),
@@ -198,8 +218,8 @@ class _ContactSupportSection extends StatelessWidget {
           physics: const NeverScrollableScrollPhysics(),
           itemCount: 4,
           gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-            crossAxisCount: isWeb ? 2 : 1,
-            crossAxisSpacing: isWeb ? 13 : 0,
+            crossAxisCount: context.isWeb ? 2 : 1,
+            crossAxisSpacing: context.isWeb ? 13 : 0,
             mainAxisSpacing: 8,
             mainAxisExtent: 85,
           ),
@@ -208,40 +228,40 @@ class _ContactSupportSection extends StatelessWidget {
               case 0:
                 return _buildListTile(
                   leading: AppAssets.icons.phoneContainer.svg(
-                    height: isWeb ? 56 : 42,
-                    width: isWeb ? 56 : 42,
+                    height: context.isWeb ? 56 : 42,
+                    width: context.isWeb ? 56 : 42,
                   ),
                   "Phone",
-                  isWeb,
+                  context.isWeb,
                   5,
                   subtitle: '(234)906342567',
                 );
               case 1:
                 return _buildListTile(
                   leading: AppAssets.icons.mailContainer.svg(
-                    height: isWeb ? 56 : 42,
-                    width: isWeb ? 56 : 42,
+                    height: context.isWeb ? 56 : 42,
+                    width: context.isWeb ? 56 : 42,
                   ),
                   "Email",
-                  isWeb,
+                  context.isWeb,
                   5,
                   subtitle: 'wigomarket@gmail.com',
                 );
               case 2:
                 return _buildListTile(
                   leading: AppAssets.icons.locationContainer.svg(
-                    height: isWeb ? 56 : 42,
-                    width: isWeb ? 56 : 42,
+                    height: context.isWeb ? 56 : 42,
+                    width: context.isWeb ? 56 : 42,
                   ),
                   "Location",
-                  isWeb,
+                  context.isWeb,
                   5,
                   subtitle: 'Benin Edo State',
                 );
               case 3:
                 return _buildListTile(
                   "Connect With Us",
-                  isWeb,
+                  context.isWeb,
                   0,
                   isConnect: true,
                 );
@@ -253,41 +273,38 @@ class _ContactSupportSection extends StatelessWidget {
       ],
     );
   }
-}
 
-Widget _buildListTile(
-  String title,
-  bool isWeb,
-  double bottomPadding, {
-  bool isConnect = false,
-  Widget? leading,
-  String? subtitle,
-}) {
-  return Card(
-    margin: EdgeInsets.symmetric(vertical: 0),
-    elevation: 0,
-    color: AppColors.backgroundLight,
-    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8.69)),
-    child: Center(
-      child: ListTile(
-        leading: leading,
-        title: Padding(
-          padding: EdgeInsets.only(bottom: bottomPadding),
-          child: Text(
-            title,
-            style: GoogleFonts.hind(
-              fontSize: isWeb ? 20 : 16,
-              fontWeight: isConnect ? FontWeight.w700 : FontWeight.w600,
-              color:
-                  isConnect
-                      ? AppColors.textBlackGrey
-                      : AppColors.textDarkerGreen,
+  Widget _buildListTile(
+    String title,
+    bool isWeb,
+    double bottomPadding, {
+    bool isConnect = false,
+    Widget? leading,
+    String? subtitle,
+  }) {
+    return Card(
+      margin: EdgeInsets.symmetric(vertical: 0),
+      elevation: 0,
+      color: AppColors.backgroundLight,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8.69)),
+      child: Center(
+        child: ListTile(
+          leading: leading,
+          title: Padding(
+            padding: EdgeInsets.only(bottom: bottomPadding),
+            child: Text(
+              title,
+              style: GoogleFonts.hind(
+                fontSize: isWeb ? 20 : 16,
+                fontWeight: isConnect ? FontWeight.w700 : FontWeight.w600,
+                color: isConnect
+                    ? AppColors.textBlackGrey
+                    : AppColors.textDarkerGreen,
+              ),
             ),
           ),
-        ),
-        subtitle:
-            subtitle != null
-                ? Text(
+          subtitle: subtitle != null
+              ? Text(
                   subtitle,
                   style: GoogleFonts.hind(
                     fontSize: isWeb ? 16 : 14,
@@ -295,9 +312,9 @@ Widget _buildListTile(
                     color: AppColors.textBlackGrey,
                   ),
                 )
-                : isConnect
-                ? Padding(
-                  padding: EdgeInsets.only(right: 60.0),
+              : isConnect
+              ? Padding(
+                  padding: EdgeInsets.only(right: connectPadding!),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
@@ -324,18 +341,18 @@ Widget _buildListTile(
                     ],
                   ),
                 )
-                : null,
+              : null,
+        ),
       ),
-    ),
-  );
+    );
+  }
 }
 
-class _SubmitFormSection extends StatelessWidget {
-  const _SubmitFormSection();
+class SubmitFormSection extends StatelessWidget {
+  const SubmitFormSection({super.key});
 
   @override
   Widget build(BuildContext context) {
-    final isWeb = MediaQuery.of(context).size.width > 800;
     return Card(
       elevation: 0,
       margin: EdgeInsets.zero,
@@ -349,10 +366,19 @@ class _SubmitFormSection extends StatelessWidget {
             Text(
               "Submit a support request via email and receive a response within 24 hours.",
               style: GoogleFonts.hind(
-                fontSize: isWeb ? 20 : 16,
-                fontWeight: isWeb ? FontWeight.w600 : FontWeight.w500,
+                fontSize: context.isWeb ? 20 : 16,
+                fontWeight: context.isWeb ? FontWeight.w600 : FontWeight.w500,
                 color: AppColors.textBlackGrey,
               ),
+            ),
+            SizedBox(height: 10),
+            CustomTextField(
+              fillColor: AppColors.backgroundWhite,
+              hintText: 'eg. John Doe',
+              label: 'Full Name',
+              prefixIcon: AppAssets.icons.user.path,
+              focusedBorderColor: AppColors.borderColor,
+              enabledBorderColor: AppColors.borderColor,
             ),
             SizedBox(height: 10),
             GridView.builder(
@@ -361,10 +387,10 @@ class _SubmitFormSection extends StatelessWidget {
               physics: const NeverScrollableScrollPhysics(),
               itemCount: 2,
               gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: isWeb ? 2 : 1,
-                crossAxisSpacing: isWeb ? 13 : 0,
+                crossAxisCount: context.isWeb ? 2 : 1,
+                crossAxisSpacing: context.isWeb ? 13 : 0,
                 mainAxisSpacing: 15,
-                mainAxisExtent: isWeb ? 95 : 85,
+                mainAxisExtent: context.isWeb ? 95 : 85,
               ),
               itemBuilder: (context, index) {
                 switch (index) {
@@ -382,7 +408,9 @@ class _SubmitFormSection extends StatelessWidget {
                       label: 'Phone Number',
                       fillColor: AppColors.backgroundWhite,
                       borderColor: AppColors.borderColor,
-                      contentPadding: EdgeInsets.only(bottom: isWeb ? 3.5 : 0),
+                      contentPadding: EdgeInsets.only(
+                        bottom: context.isWeb ? 3.5 : 0,
+                      ),
                     );
                   default:
                     return const SizedBox.shrink();
@@ -401,7 +429,7 @@ class _SubmitFormSection extends StatelessWidget {
             ),
             const SizedBox(height: 50),
             CustomButton(
-              text: 'Save',
+              text: 'Send',
               onPressed: () {},
               fontSize: 18,
               fontWeight: FontWeight.w500,

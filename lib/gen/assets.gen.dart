@@ -28,6 +28,9 @@ class $AssetsIconsGen {
   SvgGenImage get activeProduct =>
       const SvgGenImage('assets/icons/activeProduct.svg');
 
+  /// File path: assets/icons/addProd.svg
+  SvgGenImage get addProd => const SvgGenImage('assets/icons/addProd.svg');
+
   /// File path: assets/icons/addProductBgOverlay.svg
   SvgGenImage get addProductBgOverlay =>
       const SvgGenImage('assets/icons/addProductBgOverlay.svg');
@@ -65,6 +68,10 @@ class $AssetsIconsGen {
   /// File path: assets/icons/baby-bottle.svg
   SvgGenImage get babyBottle =>
       const SvgGenImage('assets/icons/baby-bottle.svg');
+
+  /// File path: assets/icons/backCircleArrow.svg
+  SvgGenImage get backCircleArrow =>
+      const SvgGenImage('assets/icons/backCircleArrow.svg');
 
   /// File path: assets/icons/backCircleArrow2.svg
   SvgGenImage get backCircleArrow2 =>
@@ -193,6 +200,10 @@ class $AssetsIconsGen {
   SvgGenImage get deliveryContact =>
       const SvgGenImage('assets/icons/deliveryContact.svg');
 
+  /// File path: assets/icons/diamondBullet.svg
+  SvgGenImage get diamondBullet =>
+      const SvgGenImage('assets/icons/diamondBullet.svg');
+
   /// File path: assets/icons/distribution.svg
   SvgGenImage get distribution =>
       const SvgGenImage('assets/icons/distribution.svg');
@@ -251,6 +262,10 @@ class $AssetsIconsGen {
 
   /// File path: assets/icons/google.svg
   SvgGenImage get google => const SvgGenImage('assets/icons/google.svg');
+
+  /// File path: assets/icons/greenBullet.svg
+  SvgGenImage get greenBullet =>
+      const SvgGenImage('assets/icons/greenBullet.svg');
 
   /// File path: assets/icons/greenFacebook.svg
   SvgGenImage get greenFacebook =>
@@ -324,6 +339,10 @@ class $AssetsIconsGen {
   /// File path: assets/icons/manageInventory.svg
   SvgGenImage get manageInventory =>
       const SvgGenImage('assets/icons/manageInventory.svg');
+
+  /// File path: assets/icons/manageOrders.svg
+  SvgGenImage get manageOrders =>
+      const SvgGenImage('assets/icons/manageOrders.svg');
 
   /// File path: assets/icons/map.svg
   SvgGenImage get map => const SvgGenImage('assets/icons/map.svg');
@@ -405,6 +424,10 @@ class $AssetsIconsGen {
 
   /// File path: assets/icons/payInfo.svg
   SvgGenImage get payInfo => const SvgGenImage('assets/icons/payInfo.svg');
+
+  /// File path: assets/icons/pencilEdit.svg
+  SvgGenImage get pencilEdit =>
+      const SvgGenImage('assets/icons/pencilEdit.svg');
 
   /// File path: assets/icons/pending.svg
   SvgGenImage get pending => const SvgGenImage('assets/icons/pending.svg');
@@ -580,6 +603,10 @@ class $AssetsIconsGen {
   /// File path: assets/icons/totalSale.svg
   SvgGenImage get totalSale => const SvgGenImage('assets/icons/totalSale.svg');
 
+  /// File path: assets/icons/trackSales.svg
+  SvgGenImage get trackSales =>
+      const SvgGenImage('assets/icons/trackSales.svg');
+
   /// File path: assets/icons/tv.svg
   SvgGenImage get tv => const SvgGenImage('assets/icons/tv.svg');
 
@@ -662,6 +689,7 @@ class $AssetsIconsGen {
     action,
     actionFailed,
     activeProduct,
+    addProd,
     addProductBgOverlay,
     addProductBgOverlayy,
     addproductBackArrow,
@@ -672,6 +700,7 @@ class $AssetsIconsGen {
     arrowsBack,
     arrowsFoward,
     babyBottle,
+    backCircleArrow,
     backCircleArrow2,
     backCircleArrow3,
     bank,
@@ -708,6 +737,7 @@ class $AssetsIconsGen {
     deleteProduct,
     delivered,
     deliveryContact,
+    diamondBullet,
     distribution,
     doubleTickOrange,
     doubleTickSuccessful,
@@ -725,6 +755,7 @@ class $AssetsIconsGen {
     frontCircleArrow,
     givePill,
     google,
+    greenBullet,
     greenFacebook,
     greenHeart,
     greenStar,
@@ -746,6 +777,7 @@ class $AssetsIconsGen {
     mail,
     mailContainer,
     manageInventory,
+    manageOrders,
     map,
     menu,
     mobileFilter,
@@ -769,6 +801,7 @@ class $AssetsIconsGen {
     outForDelivery,
     package,
     payInfo,
+    pencilEdit,
     pending,
     pendingPayout,
     phoneContainer,
@@ -817,6 +850,7 @@ class $AssetsIconsGen {
     totalEarningWeb,
     totalEarnings,
     totalSale,
+    trackSales,
     tv,
     underpants,
     updateStats,
