@@ -6,7 +6,7 @@ import 'package:google_fonts/google_fonts.dart';
 
 import '../../../../../core/constants/app_colors.dart';
 import '../../../../../core/constants/url.dart';
-import '../../../../../core/utils/helper_methods.dart';
+import '../../../../../core/utils/helper_methods_classes.dart';
 import '../../../../../gen/assets.gen.dart';
 import '../../../../../shared/widgets/custom_button.dart';
 import '../../../../../shared/widgets/custom_checkbox_2.dart';
@@ -34,32 +34,31 @@ class BuyerDeliveryDetailsScreen extends ConsumerWidget {
       },
       child: SingleChildScrollView(
         padding: const EdgeInsets.all(20.0),
-        child:
-            isWeb
-                ? Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Expanded(flex: 3, child: DeliveryDetailsSection()),
-                    const SizedBox(width: 30),
-                    Expanded(
-                      flex: 2,
-                      child: OrderSummaryCard(
-                        isCheckoutScreens: true,
-                        isCustomerInfo: true,
-                      ),
-                    ),
-                  ],
-                )
-                : Column(
-                  children: [
-                    DeliveryDetailsSection(),
-                    const SizedBox(height: 30),
-                    OrderSummaryCard(
+        child: isWeb
+            ? Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Expanded(flex: 3, child: DeliveryDetailsSection()),
+                  const SizedBox(width: 30),
+                  Expanded(
+                    flex: 2,
+                    child: OrderSummaryCard(
                       isCheckoutScreens: true,
                       isCustomerInfo: true,
                     ),
-                  ],
-                ),
+                  ),
+                ],
+              )
+            : Column(
+                children: [
+                  DeliveryDetailsSection(),
+                  const SizedBox(height: 30),
+                  OrderSummaryCard(
+                    isCheckoutScreens: true,
+                    isCustomerInfo: true,
+                  ),
+                ],
+              ),
       ),
     );
   }
@@ -89,13 +88,17 @@ class DeliveryDetailsSection extends ConsumerWidget {
       children: [
         Padding(
           padding: const EdgeInsets.only(left: 8.0),
-          child: _iconTextRow(isWeb, onTap: () async {
-            showLoadingDialog(context);
-            await Future.delayed(const Duration(seconds: 1));
-            if (!context.mounted) return;
-            Navigator.of(context, rootNavigator: true).pop();
-            Navigator.of(context).pop();
-          }, text: "Back"),
+          child: _iconTextRow(
+            isWeb,
+            onTap: () async {
+              showLoadingDialog(context);
+              await Future.delayed(const Duration(seconds: 1));
+              if (!context.mounted) return;
+              Navigator.of(context, rootNavigator: true).pop();
+              Navigator.of(context).pop();
+            },
+            text: "Back",
+          ),
         ),
         const SizedBox(height: 20),
         _iconTextRow(isWeb, isDelivery: true, text: "Delivery Details"),
@@ -182,29 +185,29 @@ class DeliveryDetailsSection extends ConsumerWidget {
                   data: themeData,
                   child: RadioListTile<String>(
                     title: Row(
-                      mainAxisAlignment:
-                          isWeb
-                              ? MainAxisAlignment.start
-                              : MainAxisAlignment.spaceBetween,
+                      mainAxisAlignment: isWeb
+                          ? MainAxisAlignment.start
+                          : MainAxisAlignment.spaceBetween,
                       children: [
                         const Text('Paystack'),
                         Image.network(
                           '$networkImageUrl/visa.png',
                           height: isWeb ? 23.14 : 15,
                           width: isWeb ? 245 : 172,
-                          errorBuilder: (
-                            BuildContext context,
-                            Object exception,
-                            StackTrace? stackTrace,
-                          ) {
-                            return const Center(
-                              child: Icon(
-                                Icons.broken_image,
-                                color: AppColors.textIconGrey,
-                                size: 50.0,
-                              ),
-                            );
-                          },
+                          errorBuilder:
+                              (
+                                BuildContext context,
+                                Object exception,
+                                StackTrace? stackTrace,
+                              ) {
+                                return const Center(
+                                  child: Icon(
+                                    Icons.broken_image,
+                                    color: AppColors.textIconGrey,
+                                    size: 50.0,
+                                  ),
+                                );
+                              },
                         ),
                       ],
                     ),
@@ -300,20 +303,19 @@ class DeliveryDetailsSection extends ConsumerWidget {
           isDelivery
               ? AppAssets.icons.checkmarkCircle.svg()
               : Icon(
-                Icons.keyboard_arrow_left_rounded,
-                size: isWeb ? 24 : 18,
-                color: AppColors.primaryDarkGreen,
-              ),
+                  Icons.keyboard_arrow_left_rounded,
+                  size: isWeb ? 24 : 18,
+                  color: AppColors.primaryDarkGreen,
+                ),
           const SizedBox(width: 4),
           Text(
             text,
             style: GoogleFonts.hind(
               fontSize: isWeb ? 24 : 18,
               fontWeight: isDelivery ? FontWeight.w600 : FontWeight.w400,
-              color:
-                  isDelivery
-                      ? AppColors.textBlack
-                      : AppColors.textVidaLocaGreen,
+              color: isDelivery
+                  ? AppColors.textBlack
+                  : AppColors.textVidaLocaGreen,
             ),
           ),
         ],

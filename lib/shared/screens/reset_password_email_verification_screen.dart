@@ -1,36 +1,43 @@
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:go_router/go_router.dart';
+import 'package:wigo_flutter/shared/viewmodels/reset_password_viewmodel.dart';
 import 'package:wigo_flutter/shared/widgets/bottom_text.dart';
 
 import '../../core/constants/app_colors.dart';
 import '../../core/constants/url.dart';
-import '../../core/utils/masked_email.dart';
+import '../../core/utils/context_extensions.dart';
+import '../../core/utils/helper_methods_classes.dart';
 import '../../gen/assets.gen.dart';
+import '../models/reset_password_state.dart';
 import '../widgets/verification_widget.dart';
 
-class ResetPasswordEmailVerificationScreen extends StatelessWidget {
-  final String email;
-
-  const ResetPasswordEmailVerificationScreen({super.key, required this.email});
+class ResetPasswordEmailVerificationScreen extends ConsumerWidget {
+  const ResetPasswordEmailVerificationScreen({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    final String displayEmail = kDebugMode ? 'chu******osy@gmail.com' : email;
+  Widget build(BuildContext context, WidgetRef ref) {
+    final state = ref.watch(resetPasswordVerificationProvider);
+    final vm = ref.read(resetPasswordVerificationProvider.notifier);
+    final String displayEmail = state.email.isEmpty
+        ? 'chu******osy@gmail.com'
+        : state.email;
     final String maskedEmail = MaskedEmail.maskEmail(displayEmail);
     final screenSize = MediaQuery.of(context).size;
-    final isWeb = MediaQuery.of(context).size.width > 600;
-    return isWeb
+
+    return context.isWeb
         ? _buildWebLayout(screenSize, maskedEmail)
-        : _buildMobileLayout(screenSize, maskedEmail, context);
+        : _buildMobileLayout(screenSize, maskedEmail, context, vm, ref, state);
   }
 
-  //Mobile Layout
   Widget _buildMobileLayout(
     Size screenSize,
     String maskedEmail,
     BuildContext context,
+    ResetPasswordViewmodel vm,
+    WidgetRef ref,
+    ResetPasswordState state,
   ) {
     return Scaffold(
       body: Stack(
@@ -39,19 +46,20 @@ class ResetPasswordEmailVerificationScreen extends StatelessWidget {
           Image.network(
             '$networkImageUrl/login.png',
             fit: BoxFit.cover,
-            errorBuilder: (
-              BuildContext context,
-              Object exception,
-              StackTrace? stackTrace,
-            ) {
-              return const Center(
-                child: Icon(
-                  Icons.broken_image,
-                  color: AppColors.textIconGrey,
-                  size: 50.0,
-                ),
-              );
-            },
+            errorBuilder:
+                (
+                  BuildContext context,
+                  Object exception,
+                  StackTrace? stackTrace,
+                ) {
+                  return const Center(
+                    child: Icon(
+                      Icons.broken_image,
+                      color: AppColors.textIconGrey,
+                      size: 50.0,
+                    ),
+                  );
+                },
           ),
           BottomTextBuilder.buildMobileBottomText(),
           Center(
@@ -78,11 +86,17 @@ class ResetPasswordEmailVerificationScreen extends StatelessWidget {
                       ),
                       const SizedBox(height: 5.0),
                       VerificationWidgetBuilder.buildMobileBody(
+                        hasError: state.codeError != null,
+                        errorMessage: state.codeError,
+                        inputFormatters: <TextInputFormatter>[
+                          LengthLimitingTextInputFormatter(6),
+                        ],
                         email: maskedEmail,
+                        onChanged: vm.updateCode,
                         bodyText:
-                            'Please enter the 6- digit OTP sent to your email at $email to reset your password',
+                            'Please enter the 6- digit OTP sent to your email at ${state.email} to reset your password',
                         onPressed: () {
-                          context.go('/changePassword');
+                          vm.verifyToken(context: context);
                         },
                       ),
                       const SizedBox(height: 33),
@@ -111,7 +125,6 @@ class ResetPasswordEmailVerificationScreen extends StatelessWidget {
           ),
           child: Row(
             children: [
-              // Left section: Image and Bottom Text
               Expanded(
                 child: Container(
                   color: AppColors.backgroundWhite,
@@ -145,7 +158,6 @@ class ResetPasswordEmailVerificationScreen extends StatelessWidget {
                   ),
                 ),
               ),
-              // Right form section
               Expanded(
                 child: Padding(
                   padding: const EdgeInsets.only(top: 100),

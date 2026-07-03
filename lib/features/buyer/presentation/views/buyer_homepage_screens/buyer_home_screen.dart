@@ -7,10 +7,7 @@ import 'package:wigo_flutter/features/buyer/presentation/views/buyer_homepage_sc
 import 'package:wigo_flutter/features/buyer/presentation/views/buyer_homepage_screens/products_you_like_section.dart';
 import 'package:wigo_flutter/features/buyer/presentation/views/buyer_homepage_screens/top_shops_section.dart';
 import 'package:wigo_flutter/features/buyer/presentation/widgets/self_delivery_card.dart';
-import 'package:wigo_flutter/shared/widgets/custom_button.dart';
 
-import '../../../../../core/auth/auth_state_notifier.dart';
-import '../../../../../shared/models/login/login_response_model.dart';
 import '../../../viewmodels/buyer_home_viewmodel.dart';
 import 'close_shops_section.dart';
 
@@ -26,39 +23,40 @@ class BuyerHomeScreen extends ConsumerWidget {
           // if (state.isSearchFieldVisible)
           //   const SizedBox(height: 40),
           // const SizedBox(height: 10),
-          CustomButton(
-            text: 'Test login',
-            fontSize: 14,
-            fontWeight: FontWeight.w600,
-            onPressed: () {
-              ref
-                  .read(authStateProvider.notifier)
-                  .login(
-                    LoginResponseModel(
-                      id: 'dev-id',
-                      activeRole: 'buyer',
-                      token: 'fake-token',
-                      role: [],
-                      status: '',
-                    ),
-                  );
-            },
-          ),
+          // CustomButton(
+          //   text: 'Test login',
+          //   fontSize: 14,
+          //   fontWeight: FontWeight.w600,
+          //   onPressed: () {
+          //     ref
+          //         .read(authStateProvider.notifier)
+          //         .login(
+          //           LoginResponseModel(
+          //             id: 'dev-id',
+          //             activeRole: 'buyer',
+          //             token: 'fake-token',
+          //             role: [],
+          //             status: '',
+          //           ),
+          //         );
+          //   },
+          // ),
           Image.network(
             '$networkImageUrl/sellYourProducts.png',
-            errorBuilder: (
-              BuildContext context,
-              Object exception,
-              StackTrace? stackTrace,
-            ) {
-              return const Center(
-                child: Icon(
-                  Icons.broken_image,
-                  color: AppColors.textIconGrey,
-                  size: 50.0,
-                ),
-              );
-            },
+            errorBuilder:
+                (
+                  BuildContext context,
+                  Object exception,
+                  StackTrace? stackTrace,
+                ) {
+                  return const Center(
+                    child: Icon(
+                      Icons.broken_image,
+                      color: AppColors.textIconGrey,
+                      size: 50.0,
+                    ),
+                  );
+                },
           ),
           const SizedBox(height: 25),
           TopShopsSection(),

@@ -248,7 +248,7 @@ class LaptopsAndDesktopSpecsScreen extends ConsumerWidget {
             "64 GB",
           ],
           onChanged: vm.updateRam,
-          value: state.ramSize,
+          value: vm.selectedRam,
         ),
         const SizedBox(height: 15),
         CustomDropdownField(
@@ -263,7 +263,7 @@ class LaptopsAndDesktopSpecsScreen extends ConsumerWidget {
             "2 TB SSD",
           ],
           onChanged: vm.updateRom,
-          value: state.rom,
+          value: vm.selectedRom,
         ),
         const SizedBox(height: 15),
         CustomDropdownField(
@@ -271,7 +271,7 @@ class LaptopsAndDesktopSpecsScreen extends ConsumerWidget {
           hintText: 'e.g., 2023',
           items: years,
           onChanged: vm.updateModelYear,
-          value: state.modelYear,
+          value: vm.selectedModelYear,
         ),
         const SizedBox(height: 15),
         CustomTextField(
@@ -320,7 +320,7 @@ class LaptopsAndDesktopSpecsScreen extends ConsumerWidget {
             "Thunderbolt 4 + USB-C",
           ],
           onChanged: vm.updateUsbPorts,
-          value: state.usbPorts,
+          value: vm.selectedUSBPort,
         ),
         const SizedBox(height: 15),
         CustomDropdownField(
@@ -337,7 +337,7 @@ class LaptopsAndDesktopSpecsScreen extends ConsumerWidget {
             "GPS + GLONASS",
           ],
           onChanged: vm.updateConnectivity,
-          value: state.connectivity,
+          value: vm.selectedConnectivity,
         ),
         const SizedBox(height: 15),
         CustomTextField(
@@ -383,7 +383,7 @@ class LaptopsAndDesktopSpecsScreen extends ConsumerWidget {
           hintText: 'e.g., 1 Year',
           items: const ["6 Months", "1 Year", "2 Years", "3 Years", "5 Years"],
           onChanged: vm.updateWarranty,
-          value: state.warranty,
+          value: vm.selectedWarranty,
         ),
       ],
     );

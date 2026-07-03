@@ -1,9 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_riverpod/legacy.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'package:go_router/go_router.dart';
+import 'package:wigo_flutter/core/constants/app_colors.dart';
+import 'package:wigo_flutter/shared/widgets/custom_loading_overlay.dart';
 
 import '../../core/constants/url.dart';
 import '../../core/local/local_user_controller.dart';
-import '../../core/utils/helper_methods.dart';
 
 class OnboardingViewModel extends ChangeNotifier {
   final PageController pageController = PageController();
@@ -61,13 +65,13 @@ class OnboardingViewModel extends ChangeNotifier {
         curve: Curves.easeInOut,
       );
     } else {
-      showLoadingDialog(context);
-      await Future.delayed(const Duration(seconds: 1));
-      if (!context.mounted) return;
-      Navigator.of(context, rootNavigator: true).pop();
-      ref
-          .read(localUserControllerProvider.notifier)
-          .saveStage(OnboardingStage.registration);
+      await runWithOverlay(context, () async {
+        await Future.delayed(const Duration(seconds: 1));
+        ref
+            .read(localUserControllerProvider.notifier)
+            .saveStage(OnboardingStage.registration);
+        if (context.mounted) context.push('/accountCreation');
+      }, spinner: SpinKitDualRing(color: AppColors.primaryDarkGreen));
     }
   }
 
@@ -78,13 +82,13 @@ class OnboardingViewModel extends ChangeNotifier {
         curve: Curves.easeInOut,
       );
     } else {
-      showLoadingDialog(context);
-      await Future.delayed(const Duration(seconds: 1));
-      if (!context.mounted) return;
-      Navigator.of(context, rootNavigator: true).pop();
-      ref
-          .read(localUserControllerProvider.notifier)
-          .saveStage(OnboardingStage.registration);
+      await runWithOverlay(context, () async {
+        await Future.delayed(const Duration(seconds: 1));
+        ref
+            .read(localUserControllerProvider.notifier)
+            .saveStage(OnboardingStage.registration);
+        if (context.mounted) context.push('/accountCreation');
+      }, spinner: SpinKitDualRing(color: AppColors.primaryDarkGreen));
     }
   }
 
@@ -95,13 +99,13 @@ class OnboardingViewModel extends ChangeNotifier {
         curve: Curves.easeInOut,
       );
     } else {
-      showLoadingDialog(context);
-      await Future.delayed(const Duration(seconds: 1));
-      if (!context.mounted) return;
-      Navigator.of(context, rootNavigator: true).pop();
-      ref
-          .read(localUserControllerProvider.notifier)
-          .saveStage(OnboardingStage.registration);
+      await runWithOverlay(context, () async {
+        await Future.delayed(const Duration(seconds: 1));
+        ref
+            .read(localUserControllerProvider.notifier)
+            .saveStage(OnboardingStage.registration);
+        if (context.mounted) context.push('/accountCreation');
+      }, spinner: SpinKitDualRing(color: AppColors.primaryDarkGreen));
     }
   }
 

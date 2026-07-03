@@ -6,7 +6,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:wigo_flutter/features/buyer/presentation/widgets/self_delivery_card.dart';
 
 import '../../../../../core/constants/app_colors.dart';
-import '../../../../../core/utils/helper_methods.dart';
+import '../../../../../core/utils/helper_methods_classes.dart';
 import '../../../viewmodels/order_viewmodel.dart';
 import '../../widgets/order_card.dart';
 
@@ -50,43 +50,42 @@ class OrdersScreen extends ConsumerWidget {
         Navigator.of(context).pop(result);
       },
       child: SingleChildScrollView(
-        child:
-            orders.isEmpty
-                ? const Center(child: Text("You haven't made any orders yet."))
-                : Column(
-                  children: [
-                    _iconTextRow(
-                      isWeb,
-                      onTap: () async {
-                        showLoadingDialog(context);
-                        await Future.delayed(const Duration(seconds: 1));
-                        if (!context.mounted) return;
-                        Navigator.of(context, rootNavigator: true).pop();
-                        Navigator.of(context).pop();
-                      },
-                      text: "Back",
-                    ),
-                    SizedBox(height: 20),
-                    _iconTextRow(isWeb, text: "Your Orders", isDelivery: true),
-                    ListView.builder(
-                      shrinkWrap: true,
-                      physics: const NeverScrollableScrollPhysics(),
-                      padding: const EdgeInsets.all(16),
-                      itemCount: orders.length,
-                      itemBuilder: (context, index) {
-                        return Column(
-                          children: [
-                            OrderCard(order: orders[index]),
-                            Divider(),
-                          ],
-                        );
-                      },
-                    ),
+        child: orders.isEmpty
+            ? const Center(child: Text("You haven't made any orders yet."))
+            : Column(
+                children: [
+                  _iconTextRow(
+                    isWeb,
+                    onTap: () async {
+                      showLoadingDialog(context);
+                      await Future.delayed(const Duration(seconds: 1));
+                      if (!context.mounted) return;
+                      Navigator.of(context, rootNavigator: true).pop();
+                      Navigator.of(context).pop();
+                    },
+                    text: "Back",
+                  ),
+                  SizedBox(height: 20),
+                  _iconTextRow(isWeb, text: "Your Orders", isDelivery: true),
+                  ListView.builder(
+                    shrinkWrap: true,
+                    physics: const NeverScrollableScrollPhysics(),
+                    padding: const EdgeInsets.all(16),
+                    itemCount: orders.length,
+                    itemBuilder: (context, index) {
+                      return Column(
+                        children: [
+                          OrderCard(order: orders[index]),
+                          Divider(),
+                        ],
+                      );
+                    },
+                  ),
 
-                    const SizedBox(height: 150),
-                    SelfDeliveryPromoCard(),
-                  ],
-                ),
+                  const SizedBox(height: 150),
+                  SelfDeliveryPromoCard(),
+                ],
+              ),
       ),
     );
   }
@@ -104,20 +103,19 @@ class OrdersScreen extends ConsumerWidget {
           isDelivery
               ? SizedBox.shrink()
               : Icon(
-                Icons.keyboard_arrow_left_rounded,
-                size: isWeb ? 30 : 18,
-                color: AppColors.primaryDarkGreen,
-              ),
+                  Icons.keyboard_arrow_left_rounded,
+                  size: isWeb ? 30 : 18,
+                  color: AppColors.primaryDarkGreen,
+                ),
           const SizedBox(width: 4),
           Text(
             text,
             style: GoogleFonts.hind(
               fontSize: isWeb ? 30 : 18,
               fontWeight: isDelivery ? FontWeight.w600 : FontWeight.w400,
-              color:
-                  isDelivery
-                      ? AppColors.textBlack
-                      : AppColors.textVidaLocaGreen,
+              color: isDelivery
+                  ? AppColors.textBlack
+                  : AppColors.textVidaLocaGreen,
             ),
           ),
         ],

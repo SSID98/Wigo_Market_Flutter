@@ -24,22 +24,20 @@ class ProgressCard extends StatelessWidget {
     final pct = (progress * 100).round();
 
     return Container(
-      width:
-          isSeller
-              ? isWeb
-                  ? 167
-                  : 181
-              : isWeb
-              ? 167
-              : double.infinity,
-      height:
-          isSeller
-              ? isWeb
-                  ? 200
-                  : 87
-              : isWeb
-              ? 200
-              : 220,
+      width: isSeller
+          ? isWeb
+                ? 167
+                : 181
+          : isWeb
+          ? 167
+          : double.infinity,
+      height: isSeller
+          ? isWeb
+                ? 200
+                : 87
+          : isWeb
+          ? 200
+          : 220,
       padding: EdgeInsets.fromLTRB(
         isWeb
             ? 16
@@ -79,6 +77,7 @@ class ProgressCard extends StatelessWidget {
         children: [
           SizedBox(height: isSeller && !isWeb ? 0 : 5),
           Row(
+            mainAxisAlignment: MainAxisAlignment.center,
             children: [
               SizedBox(
                 height: isSeller && !isWeb ? 60 : 90,
@@ -106,10 +105,9 @@ class ProgressCard extends StatelessWidget {
                           Text(
                             '$pct%',
                             style: GoogleFonts.hind(
-                              fontWeight:
-                                  isSeller && !isWeb
-                                      ? FontWeight.w700
-                                      : FontWeight.w600,
+                              fontWeight: isSeller && !isWeb
+                                  ? FontWeight.w700
+                                  : FontWeight.w600,
                               fontSize: isSeller && !isWeb ? 15 : 22,
                               color: AppColors.textVidaLocaGreen,
                             ),
@@ -117,15 +115,13 @@ class ProgressCard extends StatelessWidget {
                           Row(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
-                              if (!isSeller && isWeb)
-                                AppAssets.icons.completed.svg(),
+                              if (!isSeller) AppAssets.icons.completed.svg(),
                               Text(
                                 'Completed',
                                 style: GoogleFonts.hind(
-                                  fontWeight:
-                                      isSeller && !isWeb
-                                          ? FontWeight.w700
-                                          : FontWeight.w600,
+                                  fontWeight: isSeller && !isWeb
+                                      ? FontWeight.w700
+                                      : FontWeight.w600,
                                   fontSize: isSeller && !isWeb ? 7 : 8,
                                   color: AppColors.textBlackGrey,
                                 ),

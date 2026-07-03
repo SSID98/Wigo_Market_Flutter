@@ -1,13 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:wigo_flutter/gen/assets.gen.dart';
 import 'package:wigo_flutter/shared/widgets/custom_button.dart';
+import 'package:wigo_flutter/shared/widgets/custom_loading_overlay.dart';
 
 import '../../core/constants/app_colors.dart';
 import '../../core/constants/url.dart';
 import '../../core/local/local_user_controller.dart';
-import '../../core/utils/helper_methods.dart';
 import '../models/user_role.dart';
 
 class WelcomeScreen extends ConsumerWidget {
@@ -16,7 +18,6 @@ class WelcomeScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final Size screenSize = MediaQuery.of(context).size;
-    // final role = ref.watch(userRoleProvider);
     final localUser = ref.watch(localUserControllerProvider);
     final role = localUser.role;
     final isRider = role == UserRole.dispatch.name;
@@ -59,19 +60,20 @@ class WelcomeScreen extends ConsumerWidget {
                   ? '$networkImageUrl/sellerMobileWelcome.png'
                   : '$networkImageUrl/buyerWelcomeMobile.png',
               fit: BoxFit.contain,
-              errorBuilder: (
-                BuildContext context,
-                Object exception,
-                StackTrace? stackTrace,
-              ) {
-                return const Center(
-                  child: Icon(
-                    Icons.broken_image,
-                    color: AppColors.textIconGrey,
-                    size: 50.0,
-                  ),
-                );
-              },
+              errorBuilder:
+                  (
+                    BuildContext context,
+                    Object exception,
+                    StackTrace? stackTrace,
+                  ) {
+                    return const Center(
+                      child: Icon(
+                        Icons.broken_image,
+                        color: AppColors.textIconGrey,
+                        size: 50.0,
+                      ),
+                    );
+                  },
             ),
           ),
           Positioned(
@@ -134,13 +136,19 @@ class WelcomeScreen extends ConsumerWidget {
                     CustomButton(
                       text: 'Get Started',
                       onPressed: () async {
-                        showLoadingDialog(context);
-                        await Future.delayed(const Duration(seconds: 1));
-                        if (!context.mounted) return;
-                        Navigator.of(context, rootNavigator: true).pop();
-                        ref
-                            .read(localUserControllerProvider.notifier)
-                            .saveStage(OnboardingStage.onboarding);
+                        await runWithOverlay(
+                          context,
+                          () async {
+                            await Future.delayed(const Duration(seconds: 1));
+                            ref
+                                .read(localUserControllerProvider.notifier)
+                                .saveStage(OnboardingStage.onboarding);
+                            if (context.mounted) context.push('/onboarding');
+                          },
+                          spinner: SpinKitDualRing(
+                            color: AppColors.primaryDarkGreen,
+                          ),
+                        );
                       },
                       fontSize: 18,
                       fontWeight: FontWeight.w500,
@@ -248,19 +256,20 @@ class WelcomeScreen extends ConsumerWidget {
                   height: webContentHeight,
                   child: Image.network(
                     '$networkImageUrl/welcomeRiderWeb.png',
-                    errorBuilder: (
-                      BuildContext context,
-                      Object exception,
-                      StackTrace? stackTrace,
-                    ) {
-                      return const Center(
-                        child: Icon(
-                          Icons.broken_image,
-                          color: AppColors.textIconGrey,
-                          size: 50.0,
-                        ),
-                      );
-                    },
+                    errorBuilder:
+                        (
+                          BuildContext context,
+                          Object exception,
+                          StackTrace? stackTrace,
+                        ) {
+                          return const Center(
+                            child: Icon(
+                              Icons.broken_image,
+                              color: AppColors.textIconGrey,
+                              size: 50.0,
+                            ),
+                          );
+                        },
                   ),
                 ),
               ),

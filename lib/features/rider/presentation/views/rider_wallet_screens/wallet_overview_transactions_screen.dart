@@ -27,7 +27,7 @@ class WalletOverviewAndTransactionsScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final state = ref.watch(walletOverviewTransactionProvider);
     final notifier = ref.read(walletOverviewTransactionProvider.notifier);
-    final totalPages = (state.totalDeliveriesCount / state.rowsPerPage).ceil();
+    final totalPages = (state.totalOrdersCount / state.rowsPerPage).ceil();
     final currentPage = state.currentPage + 1;
 
     return Expanded(
@@ -46,10 +46,10 @@ class WalletOverviewAndTransactionsScreen extends ConsumerWidget {
                 ),
               _buildRecentEarning(
                 isWeb,
-                state.deliveries.value ?? [],
+                state.orders.value ?? [],
                 totalPages,
                 currentPage,
-                state.totalDeliveriesCount,
+                state.totalOrdersCount,
                 state.currentPage > 0
                     ? () => notifier.goToPage(state.currentPage - 1)
                     : null,

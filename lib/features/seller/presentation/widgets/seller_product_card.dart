@@ -7,7 +7,7 @@ import 'package:wigo_flutter/features/seller/presentation/widgets/hide_delete_pr
 import 'package:wigo_flutter/features/seller/presentation/widgets/product_status_container.dart';
 
 import '../../../../core/constants/app_colors.dart';
-import '../../../../core/utils/price_formatter.dart';
+import '../../../../core/utils/helper_methods_classes.dart';
 import '../../../../gen/assets.gen.dart';
 import '../../../../shared/widgets/custom_checkbox_2.dart';
 import '../../../buyer/presentation/widgets/icon_text_row.dart';
@@ -65,19 +65,20 @@ class SellerProductCard extends ConsumerWidget {
                   fit: BoxFit.cover,
                   height: 70,
                   width: 60,
-                  errorBuilder: (
-                    BuildContext context,
-                    Object exception,
-                    StackTrace? stackTrace,
-                  ) {
-                    return const Center(
-                      child: Icon(
-                        Icons.broken_image,
-                        color: AppColors.textIconGrey,
-                        size: 50.0,
-                      ),
-                    );
-                  },
+                  errorBuilder:
+                      (
+                        BuildContext context,
+                        Object exception,
+                        StackTrace? stackTrace,
+                      ) {
+                        return const Center(
+                          child: Icon(
+                            Icons.broken_image,
+                            color: AppColors.textIconGrey,
+                            size: 50.0,
+                          ),
+                        );
+                      },
                 ),
               ),
             ),
@@ -309,10 +310,9 @@ class SellerProductCard extends ConsumerWidget {
             borderRadius: 2,
             size: 16,
             checkSize: 13,
-            borderColor:
-                state.selectedProductIds.contains(product.productId)
-                    ? AppColors.primaryDarkGreen
-                    : AppColors.borderColor1,
+            borderColor: state.selectedProductIds.contains(product.productId)
+                ? AppColors.primaryDarkGreen
+                : AppColors.borderColor1,
             checkColor: AppColors.primaryDarkGreen,
             setBgColor: true,
             fillColor: AppColors.backgroundWhite,
@@ -347,21 +347,19 @@ class SellerProductCard extends ConsumerWidget {
                 style: GoogleFonts.hind(
                   fontSize: 12,
                   fontWeight: FontWeight.w500,
-                  color:
-                      isBodyText
-                          ? AppColors.textBodyText
-                          : AppColors.textBlackGrey,
+                  color: isBodyText
+                      ? AppColors.textBodyText
+                      : AppColors.textBlackGrey,
                 ),
               ),
               TextSpan(
                 text: info,
                 style: GoogleFonts.hind(
-                  color:
-                      isBodyText1
-                          ? AppColors.textBodyText
-                          : isIconGrey
-                          ? AppColors.textIconGrey
-                          : AppColors.textVidaGreen800,
+                  color: isBodyText1
+                      ? AppColors.textBodyText
+                      : isIconGrey
+                      ? AppColors.textIconGrey
+                      : AppColors.textVidaGreen800,
                   fontSize: isPrice ? 14 : 12,
                   fontWeight: isBolder ? FontWeight.w600 : FontWeight.w500,
                 ),

@@ -6,7 +6,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:wigo_flutter/core/constants/app_colors.dart';
 
 import '../../../../core/auth/auth_state_notifier.dart';
-import '../../../../core/utils/helper_methods.dart';
+import '../../../../core/utils/helper_methods_classes.dart';
 import '../../../../gen/assets.gen.dart';
 
 class UserDropDownMenu extends ConsumerWidget {
@@ -98,10 +98,9 @@ class UserDropDownMenu extends ConsumerWidget {
                           item['label'] as String,
                           style: GoogleFonts.hind(
                             fontSize: isWeb ? 14 : 12,
-                            color:
-                                isLastItem
-                                    ? AppColors.textLightRed
-                                    : AppColors.primaryDarkGreen,
+                            color: isLastItem
+                                ? AppColors.textLightRed
+                                : AppColors.primaryDarkGreen,
                             fontWeight: FontWeight.w500,
                           ),
                         ),

@@ -1,44 +1,45 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_riverpod/legacy.dart';
+import 'package:wigo_flutter/features/rider/models/wallet_overview_transaction_state.dart';
 
 import '../models/delivery.dart';
-import '../models/delivery_task_state.dart';
 import '../models/wallet_state.dart';
 
 class WalletOverviewTransactionViewModel
-    extends StateNotifier<DeliveryTaskState> {
-  WalletOverviewTransactionViewModel() : super(const DeliveryTaskState()) {
-    _loadDeliveries();
+    extends StateNotifier<WalletOverviewTransactionState> {
+  WalletOverviewTransactionViewModel()
+    : super(const WalletOverviewTransactionState()) {
+    _loadOrders();
   }
 
-  late final List<Delivery> _allDeliveries;
+  late final List<Delivery> _allOrders;
 
-  Future<void> _loadDeliveries() async {
-    state = state.copyWith(deliveries: const AsyncValue.loading());
+  Future<void> _loadOrders() async {
+    state = state.copyWith(orders: const AsyncValue.loading());
     try {
       await Future.delayed(const Duration(milliseconds: 500));
-      _allDeliveries = _mockDeliveries;
+      _allOrders = _mockOrders;
       _applyFilterAndPagination();
     } catch (e, st) {
-      state = state.copyWith(deliveries: AsyncValue.error(e, st));
+      state = state.copyWith(orders: AsyncValue.error(e, st));
     }
   }
 
   void _applyFilterAndPagination() {
-    List<Delivery> filtered =
-        _allDeliveries.where((d) {
-          switch (state.selectedFilter) {
-            case DeliveryFilter.all:
-              return true;
-            case DeliveryFilter.newRequest:
-              return d.status == "New Request";
-            case DeliveryFilter.ongoing:
-              return d.status == "On-going";
-            case DeliveryFilter.completed:
-              return d.status == "Delivered";
-            case DeliveryFilter.cancelled:
-              return d.status == "Cancelled";
-          }
-        }).toList();
+    List<Delivery> filtered = _allOrders.where((d) {
+      switch (state.selectedFilter) {
+        case OrderFilter.all:
+          return true;
+        case OrderFilter.newRequest:
+          return d.status == "New Request";
+        case OrderFilter.ongoing:
+          return d.status == "On-going";
+        case OrderFilter.completed:
+          return d.status == "Delivered";
+        case OrderFilter.cancelled:
+          return d.status == "Cancelled";
+      }
+    }).toList();
 
     final rowsPerPage = state.rowsPerPage;
     final startIndex = state.currentPage * rowsPerPage;
@@ -49,19 +50,19 @@ class WalletOverviewTransactionViewModel
     );
 
     state = state.copyWith(
-      deliveries: AsyncValue.data(paginated),
-      totalDeliveriesCount: filtered.length,
+      orders: AsyncValue.data(paginated),
+      totalOrdersCount: filtered.length,
     );
   }
 
-  // void setFilter(DeliveryFilter filter) {
+  // void setFilter(OrderFilter filter) {
   //   state = state.copyWith(selectedFilter: filter, currentPage: 0);
   //   _applyFilterAndPagination();
   // }
 
   void goToPage(int page) {
     if (page >= 0 &&
-        page <= (state.totalDeliveriesCount / state.rowsPerPage).ceil() - 1) {
+        page <= (state.totalOrdersCount / state.rowsPerPage).ceil() - 1) {
       state = state.copyWith(currentPage: page);
       _applyFilterAndPagination();
     }
@@ -76,7 +77,7 @@ class WalletOverviewTransactionViewModel
     _applyFilterAndPagination();
   }
 
-  final _mockDeliveries = <Delivery>[
+  final _mockOrders = <Delivery>[
     Delivery(
       orderId: "#WGO-4532",
       date: DateTime.now().subtract(const Duration(hours: 2)),
@@ -190,7 +191,8 @@ class WalletOverviewTransactionViewModel
   ];
 }
 
-final walletOverviewTransactionProvider = StateNotifierProvider<
-  WalletOverviewTransactionViewModel,
-  DeliveryTaskState
->((ref) => WalletOverviewTransactionViewModel());
+final walletOverviewTransactionProvider =
+    StateNotifierProvider<
+      WalletOverviewTransactionViewModel,
+      WalletOverviewTransactionState
+    >((ref) => WalletOverviewTransactionViewModel());

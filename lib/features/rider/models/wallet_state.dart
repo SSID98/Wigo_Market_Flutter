@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 
 import '../../../core/constants/app_colors.dart';
 import '../../../gen/assets.gen.dart';
+import '../../../shared/models/bank_model.dart';
 import 'bank_details.dart';
 
 Map<String, ({Color color, Widget icon})> bankTileConfig = {
@@ -43,22 +44,50 @@ class WalletState {
   final WalletScreenState walletScreenState;
   final List<BankDetails> bankDetailsList;
   final BankDetails? selectedBankDetails;
+  final bool isLoading;
+  final bool fetchWalletLoading;
+  final String? errorMessage;
+  final bool hasWallet;
+  final List<Bank> banks;
+  final bool hasSubmitted;
+  final bool isDefault;
 
   const WalletState({
     this.walletScreenState = WalletScreenState.overview,
     required this.bankDetailsList,
     this.selectedBankDetails,
+    this.isLoading = false,
+    this.errorMessage,
+    this.hasWallet = false,
+    this.banks = const [],
+    this.hasSubmitted = false,
+    this.isDefault = false,
+    this.fetchWalletLoading = false,
   });
 
   WalletState copyWith({
     WalletScreenState? walletScreenState,
     List<BankDetails>? bankDetailsList,
     BankDetails? selectedBankDetails,
+    bool? isLoading,
+    String? errorMessage,
+    bool? hasWallet,
+    List<Bank>? banks,
+    bool? hasSubmitted,
+    bool? isDefault,
+    bool? fetchWalletLoading,
   }) {
     return WalletState(
       walletScreenState: walletScreenState ?? this.walletScreenState,
       bankDetailsList: bankDetailsList ?? this.bankDetailsList,
-      selectedBankDetails: selectedBankDetails,
+      selectedBankDetails: selectedBankDetails ?? this.selectedBankDetails,
+      isLoading: isLoading ?? this.isLoading,
+      errorMessage: errorMessage,
+      hasWallet: hasWallet ?? this.hasWallet,
+      banks: banks ?? this.banks,
+      hasSubmitted: hasSubmitted ?? this.hasSubmitted,
+      isDefault: isDefault ?? this.isDefault,
+      fetchWalletLoading: fetchWalletLoading ?? this.fetchWalletLoading,
     );
   }
 }

@@ -1,4 +1,5 @@
 import 'package:dropdown_button2/dropdown_button2.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -6,6 +7,8 @@ import 'package:flutter_svg/svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:wigo_flutter/core/constants/app_colors.dart';
 import 'package:wigo_flutter/gen/assets.gen.dart';
+
+import '../../core/utils/context_extensions.dart';
 
 class CustomTextField extends ConsumerStatefulWidget {
   final GlobalKey<FormFieldState<String>>? fieldKey;
@@ -45,6 +48,7 @@ class CustomTextField extends ConsumerStatefulWidget {
   final FontStyle? hintFontStyle;
   final InputBorder? border;
   final double clipRectBorderRadius;
+  final BlendMode? blendMode;
 
   const CustomTextField({
     super.key,
@@ -99,6 +103,7 @@ class CustomTextField extends ConsumerStatefulWidget {
     this.border,
     this.prefixIcon2,
     this.autoFocus = false,
+    this.blendMode,
   });
 
   @override
@@ -110,10 +115,16 @@ class _CustomTextFieldState extends ConsumerState<CustomTextField> {
 
   ColorFilter? _resolvePrefixIconColor() {
     if (widget.hasError) {
-      return const ColorFilter.mode(AppColors.accentRed, BlendMode.srcIn);
+      return ColorFilter.mode(
+        AppColors.accentRed,
+        widget.blendMode ?? BlendMode.srcIn,
+      );
     }
     if (widget.prefixIconColor != null) {
-      return ColorFilter.mode(widget.prefixIconColor!, BlendMode.srcIn);
+      return ColorFilter.mode(
+        widget.prefixIconColor!,
+        widget.blendMode ?? BlendMode.srcIn,
+      );
     }
     return null; //
   }
@@ -126,26 +137,23 @@ class _CustomTextFieldState extends ConsumerState<CustomTextField> {
 
   @override
   Widget build(BuildContext context) {
-    final isWeb = MediaQuery.of(context).size.width > 600;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        if (widget.label.isNotEmpty) ...[
-          GestureDetector(
-            onTap: widget.labelOnTap,
-            child: widget.isRichText
-                ? widget.labelRichText
-                : Text(
-                    widget.label,
-                    style: GoogleFonts.hind(
-                      fontWeight: widget.labelFontWeight ?? FontWeight.w500,
-                      fontSize: widget.labelFontSize ?? 16.0,
-                      color: widget.labelTextColor ?? AppColors.textBlack,
-                    ),
+        GestureDetector(
+          onTap: widget.labelOnTap,
+          child: widget.isRichText && widget.label.isEmpty
+              ? widget.labelRichText
+              : Text(
+                  widget.label,
+                  style: GoogleFonts.hind(
+                    fontWeight: widget.labelFontWeight ?? FontWeight.w500,
+                    fontSize: widget.labelFontSize ?? 16.0,
+                    color: widget.labelTextColor ?? AppColors.textBlack,
                   ),
-          ),
-          SizedBox(height: widget.spacing ?? 4),
-        ],
+                ),
+        ),
+        SizedBox(height: widget.spacing ?? 4),
         SizedBox(
           height: widget.height,
           child: Focus(
@@ -178,6 +186,12 @@ class _CustomTextFieldState extends ConsumerState<CustomTextField> {
                 obscuringCharacter: '•',
                 maxLength: widget.maxLength,
                 decoration: InputDecoration(
+                  disabledBorder: OutlineInputBorder(
+                    borderSide: BorderSide(color: Colors.transparent),
+                    borderRadius: BorderRadius.circular(
+                      widget.borderRadius ?? 8.0,
+                    ),
+                  ),
                   border: widget.border,
                   contentPadding:
                       widget.contentPadding ??
@@ -301,11 +315,10 @@ class _CustomTextFieldState extends ConsumerState<CustomTextField> {
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // Your custom error icon
                 Icon(
                   Icons.error,
                   color: AppColors.accentRed,
-                  size: isWeb ? 18 : 14,
+                  size: context.isWeb ? 18 : 14,
                 ),
                 const SizedBox(width: 6),
                 Expanded(
@@ -313,7 +326,7 @@ class _CustomTextFieldState extends ConsumerState<CustomTextField> {
                     widget.errorMessage!,
                     style: GoogleFonts.hind(
                       fontWeight: FontWeight.w400,
-                      fontSize: isWeb ? 14 : 10,
+                      fontSize: context.isWeb ? 14 : 11,
                       color: AppColors.accentRed,
                     ),
                     overflow: TextOverflow.ellipsis,
@@ -340,7 +353,7 @@ class CustomDropdownField extends ConsumerStatefulWidget {
   final String? hintText, validatorText;
   final Widget? prefixIcon;
   final void Function(String?)? onChanged;
-  final String? value;
+  final ValueListenable<String?>? value;
   final Color? hintTextColor,
       labelTextColor,
       fillColor,
@@ -353,6 +366,11 @@ class CustomDropdownField extends ConsumerStatefulWidget {
   final double? dropMenuWidth;
   final Widget? labelRichText;
   final bool isRichText;
+  final bool hasError;
+  final Color? prefixIconColor;
+  final String? errorMessage;
+  final ValueListenable<Iterable<String>>? multiValue;
+  final VoidCallback? onTap;
 
   const CustomDropdownField({
     super.key,
@@ -384,6 +402,11 @@ class CustomDropdownField extends ConsumerStatefulWidget {
     this.hintFontWeight,
     this.isRichText = false,
     this.labelRichText,
+    this.hasError = false,
+    this.prefixIconColor,
+    this.errorMessage,
+    this.onTap,
+    this.multiValue,
   });
 
   @override
@@ -419,124 +442,170 @@ class _CustomDropdownFieldState extends ConsumerState<CustomDropdownField> {
                 ),
           const SizedBox(height: 4),
         ],
-        SizedBox(
-          height: widget.sizeBoxHeight,
-          child: DropdownButtonFormField2<String>(
-            isExpanded: true,
-            value: widget.value,
-            menuItemStyleData: MenuItemStyleData(
-              padding:
-                  widget.menuItemPadding ?? EdgeInsets.only(left: 13, right: 5),
-            ),
-            dropdownStyleData: DropdownStyleData(
-              width: widget.dropMenuWidth,
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(widget.radius ?? 8),
-                color: AppColors.backgroundWhite,
-              ),
-              offset: const Offset(0, 0),
-            ),
-            buttonStyleData: ButtonStyleData(height: widget.sizeBoxHeight),
-            iconStyleData: IconStyleData(
-              icon: AppAssets.icons.arrowDown.svg(
-                height: widget.iconHeight ?? 20,
-                width: widget.iconWidth ?? 20,
-                colorFilter: widget.iconColorFilter,
-              ),
-              iconSize: 0,
-              openMenuIcon: AppAssets.icons.arrowDown.svg(
-                height: widget.iconHeight ?? 20,
-                width: widget.iconWidth ?? 20,
-                colorFilter: widget.iconColorFilter,
-              ),
-            ),
-            hint: Text(
-              widget.hintText ?? '',
-              style: GoogleFonts.hind(
-                fontWeight: widget.hintFontWeight ?? FontWeight.w400,
-                color: widget.hintTextColor ?? AppColors.textIconGrey,
-                fontSize: widget.hintFontSize ?? 14,
-              ),
-            ),
-            decoration: InputDecoration(
-              contentPadding: EdgeInsets.only(right: 10),
-              prefixIconConstraints: const BoxConstraints(),
-              prefixIcon: currentPrefixIcon != null
-                  ? Padding(
-                      padding: const EdgeInsets.only(left: 17.0),
-                      child: currentPrefixIcon!,
-                    )
-                  : null,
-              fillColor: widget.fillColor ?? AppColors.textFieldColor,
-              filled: true,
-              enabledBorder: OutlineInputBorder(
-                borderSide: BorderSide(
-                  color: widget.enabledBorderColor ?? Colors.transparent,
+        TapRegion(
+          onTapInside: (v) {
+            if (widget.onTap != null) {
+              widget.onTap!();
+            }
+          },
+          child: SizedBox(
+            height: widget.sizeBoxHeight,
+            child: IgnorePointer(
+              ignoring: widget.onChanged == null,
+              child: DropdownButtonFormField2<String>(
+                isExpanded: true,
+                valueListenable: widget.value,
+                multiValueListenable: widget.multiValue,
+                menuItemStyleData: MenuItemStyleData(
+                  padding:
+                      widget.menuItemPadding ??
+                      EdgeInsets.only(left: 13, right: 5),
                 ),
-                borderRadius: BorderRadius.circular(widget.radius ?? 8.0),
-              ),
-              focusedBorder: OutlineInputBorder(
-                borderSide: BorderSide(
-                  color: widget.focusedBorderColor ?? Colors.transparent,
+                dropdownStyleData: DropdownStyleData(
+                  width: widget.dropMenuWidth,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(widget.radius ?? 8),
+                    color: AppColors.backgroundWhite,
+                  ),
+                  offset: const Offset(0, 0),
                 ),
-                borderRadius: BorderRadius.circular(widget.radius ?? 8.0),
-              ),
-              errorBorder: OutlineInputBorder(
-                borderSide: const BorderSide(color: AppColors.accentRed),
-                borderRadius: BorderRadius.circular(widget.radius ?? 8.0),
-              ),
-              focusedErrorBorder: OutlineInputBorder(
-                borderSide: const BorderSide(color: AppColors.accentRed),
-                borderRadius: BorderRadius.circular(widget.radius ?? 8.0),
-              ),
-            ),
-            items: widget.items
-                .map(
-                  (e) => DropdownMenuItem<String>(
-                    value: e,
-                    child: Padding(
-                      padding:
-                          widget.padding ?? const EdgeInsets.only(top: 4.0),
-                      child: Text(
-                        e,
-                        overflow: TextOverflow.ellipsis,
-                        style: GoogleFonts.hind(
-                          fontWeight: FontWeight.w400,
-                          color: widget.itemTextColor ?? AppColors.textBlack,
-                          fontSize: widget.itemsFontSize ?? 14,
+                buttonStyleData: FormFieldButtonStyleData(
+                  height: widget.sizeBoxHeight,
+                ),
+                iconStyleData: IconStyleData(
+                  icon: AppAssets.icons.arrowDown.svg(
+                    height: widget.iconHeight ?? 20,
+                    width: widget.iconWidth ?? 20,
+                    colorFilter: widget.iconColorFilter,
+                  ),
+                  iconSize: 0,
+                  openMenuIcon: AppAssets.icons.arrowDown.svg(
+                    height: widget.iconHeight ?? 20,
+                    width: widget.iconWidth ?? 20,
+                    colorFilter: widget.iconColorFilter,
+                  ),
+                ),
+                hint: Text(
+                  widget.hintText ?? '',
+                  style: GoogleFonts.hind(
+                    fontWeight: widget.hintFontWeight ?? FontWeight.w400,
+                    color: widget.hintTextColor ?? AppColors.textIconGrey,
+                    fontSize: widget.hintFontSize ?? 14,
+                  ),
+                ),
+                decoration: InputDecoration(
+                  contentPadding: EdgeInsets.only(right: 10),
+                  prefixIconConstraints: const BoxConstraints(),
+                  prefixIcon: currentPrefixIcon != null
+                      ? Padding(
+                          padding: const EdgeInsets.only(left: 17.0),
+                          child: currentPrefixIcon!,
+                        )
+                      : null,
+                  fillColor: widget.hasError
+                      ? AppColors.accentLightRed
+                      : (widget.fillColor ?? AppColors.textFieldColor),
+                  filled: true,
+                  enabledBorder: OutlineInputBorder(
+                    borderSide: BorderSide(
+                      color: widget.errorMessage != null
+                          ? AppColors.accentRed
+                          : (widget.enabledBorderColor ?? Colors.transparent),
+                    ),
+                    borderRadius: BorderRadius.circular(widget.radius ?? 8.0),
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderSide: BorderSide(
+                      color: widget.errorMessage != null
+                          ? AppColors.accentRed
+                          : (widget.focusedBorderColor ?? Colors.transparent),
+                    ),
+                    borderRadius: BorderRadius.circular(widget.radius ?? 8.0),
+                  ),
+                  errorBorder: OutlineInputBorder(
+                    borderSide: BorderSide(
+                      color: AppColors.accentRed,
+                      width: 1.0,
+                    ),
+                    borderRadius: BorderRadius.circular(widget.radius ?? 8.0),
+                  ),
+                ),
+                items: widget.items
+                    .map(
+                      (e) => DropdownItem<String>(
+                        value: e,
+                        child: Padding(
+                          padding:
+                              widget.padding ?? const EdgeInsets.only(top: 4.0),
+                          child: Text(
+                            e,
+                            overflow: TextOverflow.ellipsis,
+                            style: GoogleFonts.hind(
+                              fontWeight: FontWeight.w400,
+                              color:
+                                  widget.itemTextColor ?? AppColors.textBlack,
+                              fontSize: widget.itemsFontSize ?? 14,
+                            ),
+                          ),
                         ),
                       ),
-                    ),
-                  ),
-                )
-                .toList(),
-            onChanged: (val) {
-              setState(() {
-                selectedItem = val;
-                if (val == 'Bike') {
-                  currentPrefixIcon = AppAssets.icons.motorbike.svg();
-                } else if (val == 'Car') {
-                  currentPrefixIcon = AppAssets.icons.car.svg();
-                } else if (val == 'Feet') {
-                  currentPrefixIcon = AppAssets.icons.foot.svg();
-                } else if (val == 'Bus') {
-                  currentPrefixIcon = AppAssets.icons.bus.svg();
-                } else if (val == 'Bicycle') {
-                  currentPrefixIcon = AppAssets.icons.bicycle.svg();
-                } else {
-                  currentPrefixIcon = widget.prefixIcon;
-                }
-              });
-              widget.onChanged?.call(val);
-            },
-            validator: (value) {
-              if (value == null || value.isEmpty) {
-                return widget.validatorText;
-              }
-              return null;
-            },
+                    )
+                    .toList(),
+                onChanged: (val) {
+                  setState(() {
+                    selectedItem = val;
+                    if (val == 'Bike') {
+                      currentPrefixIcon = AppAssets.icons.motorbike.svg();
+                    } else if (val == 'Car') {
+                      currentPrefixIcon = AppAssets.icons.car.svg();
+                    } else if (val == 'Feet') {
+                      currentPrefixIcon = AppAssets.icons.foot.svg();
+                    } else if (val == 'Bus') {
+                      currentPrefixIcon = AppAssets.icons.bus.svg();
+                    } else if (val == 'Bicycle') {
+                      currentPrefixIcon = AppAssets.icons.bicycle.svg();
+                    } else {
+                      currentPrefixIcon = widget.prefixIcon;
+                    }
+                  });
+                  widget.onChanged?.call(val);
+                },
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return widget.validatorText;
+                  }
+                  return null;
+                },
+              ),
+            ),
           ),
         ),
+        if (widget.hasError && widget.errorMessage != null)
+          Padding(
+            padding: const EdgeInsets.only(top: 4.0),
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Icon(
+                  Icons.error,
+                  color: AppColors.accentRed,
+                  size: context.isWeb ? 18 : 14,
+                ),
+                const SizedBox(width: 6),
+                Expanded(
+                  child: Text(
+                    widget.errorMessage!,
+                    style: GoogleFonts.hind(
+                      fontWeight: FontWeight.w400,
+                      fontSize: context.isWeb ? 14 : 11,
+                      color: AppColors.accentRed,
+                    ),
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ),
+              ],
+            ),
+          ),
       ],
     );
   }

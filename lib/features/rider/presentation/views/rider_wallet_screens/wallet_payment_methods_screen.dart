@@ -2,36 +2,30 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:wigo_flutter/core/local/secure_storage.dart';
 import 'package:wigo_flutter/features/rider/viewmodels/edit_bank_account_viewmodel.dart';
+import 'package:wigo_flutter/shared/widgets/custom_banner.dart';
 import 'package:wigo_flutter/shared/widgets/custom_button.dart';
 import 'package:wigo_flutter/shared/widgets/custom_text_field.dart';
 
+import '../../../../../core/auth/auth_state.dart';
+import '../../../../../core/auth/auth_state_notifier.dart';
 import '../../../../../core/constants/app_colors.dart';
-import '../../../../../core/local/local_storage_service.dart';
+import '../../../../../core/utils/context_extensions.dart';
+import '../../../../../core/utils/helper_methods_classes.dart';
 import '../../../../../core/utils/validation_utils.dart';
 import '../../../../../gen/assets.gen.dart';
 import '../../../models/wallet_state.dart';
 import '../../../viewmodels/wallet_withdrawal_viewmodel.dart';
 
-class PaymentMethodScreen extends ConsumerStatefulWidget {
+class PaymentMethodScreen extends ConsumerWidget {
   const PaymentMethodScreen({super.key});
 
   @override
-  ConsumerState<PaymentMethodScreen> createState() =>
-      _PaymentMethodScreenState();
-}
-
-class _PaymentMethodScreenState extends ConsumerState<PaymentMethodScreen> {
-  String? _pinHasError;
-  String? _confirmPinHasError;
-  AutovalidateMode _autovalidateMode = AutovalidateMode.disabled;
-
-  @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final notifier = ref.read(editBankAccountProvider.notifier);
-    final isWeb = MediaQuery.of(context).size.width > 800;
     final vm = ref.watch(withdrawalViewModelProvider.notifier);
+    final state = ref.watch(withdrawalViewModelProvider);
 
     return Expanded(
       child: SingleChildScrollView(
@@ -40,8 +34,8 @@ class _PaymentMethodScreenState extends ConsumerState<PaymentMethodScreen> {
           color: AppColors.backgroundWhite,
           margin: EdgeInsets.only(
             top: 20,
-            right: isWeb ? 740 : 15,
-            left: isWeb ? 40 : 15,
+            right: context.isWeb ? 740 : 15,
+            left: context.isWeb ? 40 : 15,
           ),
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(0)),
           child: Padding(
@@ -54,14 +48,14 @@ class _PaymentMethodScreenState extends ConsumerState<PaymentMethodScreen> {
                   child: Container(
                     margin: EdgeInsets.only(top: 5.0),
                     width: double.infinity,
-                    height: isWeb ? 54 : 34,
+                    height: context.isWeb ? 54 : 34,
                     color: AppColors.buttonLighterGreen,
                     child: Center(
                       child: Text(
                         "Setting Up withdrawal Pin",
                         style: GoogleFonts.hind(
                           fontWeight: FontWeight.w600,
-                          fontSize: isWeb ? 16 : 14,
+                          fontSize: context.isWeb ? 16 : 14,
                           color: AppColors.textBlackGrey,
                         ),
                       ),
@@ -72,7 +66,7 @@ class _PaymentMethodScreenState extends ConsumerState<PaymentMethodScreen> {
                 Text(
                   "Secure your earnings with a 4-digit PIN. You can reset your PIN anytime in Settings. Make sure to choose a PIN you'll remember.",
                   style: GoogleFonts.hind(
-                    fontSize: isWeb ? 14 : 12,
+                    fontSize: context.isWeb ? 14 : 12,
                     color: AppColors.textBlackGrey,
                     fontWeight: FontWeight.w400,
                   ),
@@ -85,20 +79,27 @@ class _PaymentMethodScreenState extends ConsumerState<PaymentMethodScreen> {
                   prefixIcon: AppAssets.icons.lock.path,
                   hintTextColor: AppColors.textBlackGrey,
                   suffixIcon: Icon(Icons.visibility_off_outlined),
-                  hintFontSize: isWeb ? 16 : 14,
+                  hintFontSize: context.isWeb ? 16 : 14,
                   controller: vm.pinController,
-                  hasError: _pinHasError != null,
-                  validator: (value) => null,
+                  hasError:
+                      state.hasSubmitted &&
+                      (FormValidators.validatePin(state.pin) != null ||
+                          state.pin != state.confirmPin),
                   keyboardType: TextInputType.number,
-                  autoValidateMode: _autovalidateMode,
-                  errorMessage: _pinHasError,
+                  errorMessage: state.hasSubmitted
+                      ? (FormValidators.validatePin(state.pin) ??
+                            FormValidators.validatePinMatch(
+                              state.pin,
+                              state.confirmPin,
+                            ))
+                      : null,
                   inputFormatters: <TextInputFormatter>[
                     FilteringTextInputFormatter.digitsOnly,
                     LengthLimitingTextInputFormatter(4),
                   ],
                   isPassword: true,
-                  height: isWeb ? 48 : 35,
-                  contentPadding: EdgeInsets.only(top: isWeb ? 0 : 10),
+                  height: context.isWeb ? 48 : 35,
+                  contentPadding: EdgeInsets.only(top: context.isWeb ? 0 : 10),
                 ),
                 const SizedBox(height: 20),
                 CustomTextField(
@@ -108,20 +109,27 @@ class _PaymentMethodScreenState extends ConsumerState<PaymentMethodScreen> {
                   prefixIcon: AppAssets.icons.lock.path,
                   hintTextColor: AppColors.textBlackGrey,
                   suffixIcon: Icon(Icons.visibility_off_outlined),
-                  hintFontSize: isWeb ? 16 : 14,
+                  hintFontSize: context.isWeb ? 16 : 14,
                   controller: vm.confirmPinController,
-                  hasError: _confirmPinHasError != null,
-                  validator: (value) => null,
-                  autoValidateMode: _autovalidateMode,
-                  errorMessage: _confirmPinHasError,
+                  hasError:
+                      state.hasSubmitted &&
+                      (FormValidators.validatePin(state.confirmPin) != null ||
+                          state.pin != state.confirmPin),
+                  errorMessage: state.hasSubmitted
+                      ? (FormValidators.validatePin(state.confirmPin) ??
+                            FormValidators.validatePinMatch(
+                              state.pin,
+                              state.confirmPin,
+                            ))
+                      : null,
                   keyboardType: TextInputType.number,
                   inputFormatters: <TextInputFormatter>[
                     FilteringTextInputFormatter.digitsOnly,
                     LengthLimitingTextInputFormatter(4),
                   ],
                   isPassword: true,
-                  height: isWeb ? 48 : 35,
-                  contentPadding: EdgeInsets.only(top: isWeb ? 0 : 10),
+                  height: context.isWeb ? 48 : 35,
+                  contentPadding: EdgeInsets.only(top: context.isWeb ? 0 : 10),
                 ),
                 const SizedBox(height: 35),
                 Row(
@@ -130,10 +138,10 @@ class _PaymentMethodScreenState extends ConsumerState<PaymentMethodScreen> {
                       child: CustomButton(
                         text: 'Cancel',
                         onPressed: () {},
-                        fontSize: isWeb ? 18 : 16,
+                        fontSize: context.isWeb ? 18 : 16,
                         fontWeight: FontWeight.w500,
                         textColor: AppColors.textDarkDarkerGreen,
-                        height: isWeb ? 48 : 40,
+                        height: context.isWeb ? 48 : 40,
                         buttonColor: AppColors.buttonLighterGreen,
                       ),
                     ),
@@ -143,49 +151,21 @@ class _PaymentMethodScreenState extends ConsumerState<PaymentMethodScreen> {
                         text: 'Continue',
                         onPressed: () async {
                           FocusManager.instance.primaryFocus?.unfocus();
-                          final pinLengthError = FormValidators.validatePin(
-                            vm.pinController.text,
-                          );
-                          final confirmPinLengthError =
-                              FormValidators.validatePin(
-                                vm.confirmPinController.text,
-                              );
-                          String? mismatchError;
-                          if (pinLengthError == null &&
-                              confirmPinLengthError == null) {
-                            if (vm.pinController.text !=
-                                vm.confirmPinController.text) {
-                              mismatchError =
-                                  'Pins do not match. Please re-enter.';
-                            }
-                          }
-
-                          setState(() {
-                            _pinHasError = pinLengthError ?? mismatchError;
-                            _confirmPinHasError =
-                                confirmPinLengthError ?? mismatchError;
-
-                            _autovalidateMode = AutovalidateMode.always;
-                          });
-
-                          final hasAnyError =
-                              _pinHasError != null ||
-                              _confirmPinHasError != null;
-                          if (!hasAnyError) {
-                            vm.setLoading(true);
-                            vm.pinController.clear();
-                            vm.confirmPinController.clear();
+                          final result = await vm.setUserPin(context: context);
+                          if (result) {
                             if (!context.mounted) return;
-                            _showSuccessDialog(context, notifier);
+                            _showSuccessDialog(context, notifier, ref);
+                          } else {
+                            final freshState = ref.read(
+                              withdrawalViewModelProvider,
+                            );
+                            if (!context.mounted) return;
+                            showErrorBanner(freshState.errorMessage!, context);
                           }
-                          await Future.delayed(
-                            const Duration(milliseconds: 500),
-                          );
-                          vm.setLoading(false);
                         },
-                        fontSize: isWeb ? 18 : 16,
+                        fontSize: context.isWeb ? 18 : 16,
                         fontWeight: FontWeight.w500,
-                        height: isWeb ? 48 : 40,
+                        height: context.isWeb ? 48 : 40,
                       ),
                     ),
                   ],
@@ -201,8 +181,8 @@ class _PaymentMethodScreenState extends ConsumerState<PaymentMethodScreen> {
   Future<void> _showSuccessDialog(
     BuildContext context,
     EditBankAccountViewModel notifier,
+    WidgetRef ref,
   ) async {
-    final isWeb = MediaQuery.of(context).size.width > 600;
     return showDialog(
       context: context,
       barrierDismissible: false,
@@ -218,7 +198,7 @@ class _PaymentMethodScreenState extends ConsumerState<PaymentMethodScreen> {
             children: [
               const SizedBox(width: 10),
               IconButton(
-                padding: EdgeInsets.only(right: isWeb ? 0 : 25),
+                padding: EdgeInsets.only(right: context.isWeb ? 0 : 25),
                 icon: const Icon(Icons.close),
                 onPressed: () {
                   Navigator.of(dialogContext).pop();
@@ -230,7 +210,7 @@ class _PaymentMethodScreenState extends ConsumerState<PaymentMethodScreen> {
             ],
           ),
           content: Padding(
-            padding: EdgeInsets.symmetric(horizontal: isWeb ? 45.0 : 0),
+            padding: EdgeInsets.symmetric(horizontal: context.isWeb ? 45.0 : 0),
             child: Column(
               mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.center,
@@ -241,7 +221,7 @@ class _PaymentMethodScreenState extends ConsumerState<PaymentMethodScreen> {
                   "New Pin Successfully Created",
                   style: GoogleFonts.hind(
                     fontWeight: FontWeight.w600,
-                    fontSize: isWeb ? 20 : 14,
+                    fontSize: context.isWeb ? 20 : 14,
                     color: AppColors.textBlack,
                   ),
                 ),
@@ -249,7 +229,7 @@ class _PaymentMethodScreenState extends ConsumerState<PaymentMethodScreen> {
                 Text(
                   "This is the Pin will protect your funds and ensures only you can request a payout.",
                   style: GoogleFonts.hind(
-                    fontSize: isWeb ? 16 : 12,
+                    fontSize: context.isWeb ? 16 : 12,
                     color: AppColors.textBodyText,
                     fontWeight: FontWeight.w400,
                   ),
@@ -259,18 +239,28 @@ class _PaymentMethodScreenState extends ConsumerState<PaymentMethodScreen> {
                 CustomButton(
                   text: 'Continue',
                   onPressed: () async {
-                    final prefs = await SharedPreferences.getInstance();
-                    final storage = LocalStorageService(prefs);
+                    final storage = SecureStorage();
+                    // final prefs = await SharedPreferences.getInstance();
+                    // final storage = LocalStorageService(prefs);
 
-                    await storage.setPinSetupCompleted();
+                    final authState = ref.watch(authStateProvider);
+                    if (authState.status == AuthStatus.loggedIn &&
+                        authState.user != null) {
+                      final user = authState.user!;
+                      final userId = user.id;
+                      await storage.storeData(
+                        key: userKey('pinSetUpCompleted', userId),
+                        data: 'true',
+                      );
+                    }
                     if (!dialogContext.mounted) return;
                     Navigator.of(dialogContext).pop();
                     notifier.setWalletScreenState(
                       WalletScreenState.addBankAccount,
                     );
                   },
-                  fontSize: isWeb ? 18 : 12,
-                  height: isWeb ? 48 : 45,
+                  fontSize: context.isWeb ? 18 : 12,
+                  height: context.isWeb ? 48 : 45,
                   fontWeight: FontWeight.w500,
                   width: double.infinity,
                 ),

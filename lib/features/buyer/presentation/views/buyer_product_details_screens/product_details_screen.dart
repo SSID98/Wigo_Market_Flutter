@@ -5,7 +5,7 @@ import 'package:wigo_flutter/features/buyer/presentation/views/buyer_product_det
 import 'package:wigo_flutter/features/buyer/presentation/views/buyer_product_details_screens/product_specfics_section.dart';
 import 'package:wigo_flutter/features/buyer/presentation/views/saved_product_view.dart';
 
-import '../../../../../core/utils/helper_methods.dart';
+import '../../../../../core/utils/helper_methods_classes.dart';
 import '../../../models/product_model.dart';
 import '../../widgets/self_delivery_card.dart';
 import 'comment_review_section.dart';

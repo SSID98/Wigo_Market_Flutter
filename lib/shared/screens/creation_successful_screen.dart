@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:wigo_flutter/shared/widgets/custom_loading_overlay.dart';
 
 import '../../core/constants/app_colors.dart';
 import '../../core/constants/url.dart';
 import '../../core/local/local_user_controller.dart';
-import '../../core/utils/helper_methods.dart';
 import '../../gen/assets.gen.dart';
 import '../models/user_role.dart';
 import '../widgets/custom_button.dart';
@@ -18,7 +19,6 @@ class CreationSuccessfulScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final screenSize = MediaQuery.of(context).size;
     final isWeb = MediaQuery.of(context).size.width > 600;
-    // final role = ref.watch(userRoleProvider);
     final localUser = ref.watch(localUserControllerProvider);
     final role = localUser.role;
 
@@ -47,19 +47,20 @@ class CreationSuccessfulScreen extends ConsumerWidget {
               fit: BoxFit.cover,
               color: AppColors.backGroundOverlay,
               colorBlendMode: BlendMode.overlay,
-              errorBuilder: (
-                BuildContext context,
-                Object exception,
-                StackTrace? stackTrace,
-              ) {
-                return const Center(
-                  child: Icon(
-                    Icons.broken_image,
-                    color: AppColors.textIconGrey,
-                    size: 50.0,
-                  ),
-                );
-              },
+              errorBuilder:
+                  (
+                    BuildContext context,
+                    Object exception,
+                    StackTrace? stackTrace,
+                  ) {
+                    return const Center(
+                      child: Icon(
+                        Icons.broken_image,
+                        color: AppColors.textIconGrey,
+                        size: 50.0,
+                      ),
+                    );
+                  },
             ),
             Padding(
               padding: const EdgeInsets.only(top: 105.0),
@@ -135,19 +136,20 @@ class CreationSuccessfulScreen extends ConsumerWidget {
               fit: BoxFit.cover,
               color: AppColors.backGroundOverlay,
               colorBlendMode: BlendMode.overlay,
-              errorBuilder: (
-                BuildContext context,
-                Object exception,
-                StackTrace? stackTrace,
-              ) {
-                return const Center(
-                  child: Icon(
-                    Icons.broken_image,
-                    color: AppColors.textIconGrey,
-                    size: 50.0,
-                  ),
-                );
-              },
+              errorBuilder:
+                  (
+                    BuildContext context,
+                    Object exception,
+                    StackTrace? stackTrace,
+                  ) {
+                    return const Center(
+                      child: Icon(
+                        Icons.broken_image,
+                        color: AppColors.textIconGrey,
+                        size: 50.0,
+                      ),
+                    );
+                  },
             ),
             Padding(
               padding: const EdgeInsets.only(top: 100.0),
@@ -256,22 +258,17 @@ class CreationSuccessfulScreen extends ConsumerWidget {
           ],
           CustomButton(
             text: 'Continue',
-            onPressed: () async {
-              showLoadingDialog(context);
-
-              await Future.delayed(const Duration(seconds: 1));
-
-              if (!context.mounted) return;
-
-              Navigator.of(context, rootNavigator: true).pop();
-              ref
-                  .read(localUserControllerProvider.notifier)
-                  .saveStage(OnboardingStage.completed);
-              ref
-                  .read(localUserControllerProvider.notifier)
-                  .saveHasOnboarded(true);
-              // if (!context.mounted) return;
-              // isBuyer ? context.go('/buyerHomeScreen') : context.go('/login');
+            onPressed: () {
+              runWithOverlay(
+                context,
+                () async {
+                  await Future.delayed(const Duration(seconds: 1));
+                  await ref
+                      .read(localUserControllerProvider.notifier)
+                      .completeOnboarding();
+                },
+                spinner: SpinKitDualRing(color: AppColors.primaryDarkGreen),
+              );
             },
             fontSize: 18,
             fontWeight: FontWeight.w500,

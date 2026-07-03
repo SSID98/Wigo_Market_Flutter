@@ -36,7 +36,9 @@ class VerificationWidgetBuilder {
     buttonTextColor,
     labelTextColor,
     double? hintTextSize,
+    TextEditingController? controller,
     FontWeight? labelTextFontWeight,
+    List<TextInputFormatter>? inputFormatters,
     bool showFooter = true,
   }) {
     return Column(
@@ -93,9 +95,8 @@ class VerificationWidgetBuilder {
                 onChanged: onChanged,
                 hasError: hasError,
                 errorMessage: errorMessage,
-                inputFormatters: <TextInputFormatter>[
-                  LengthLimitingTextInputFormatter(6),
-                ],
+                controller: controller,
+                inputFormatters: inputFormatters,
               ),
             ),
           ],
@@ -108,7 +109,7 @@ class VerificationWidgetBuilder {
           borderRadius: 6.0,
           height: 49,
           textColor: buttonTextColor ?? AppColors.textVidaLocaWhite,
-          buttonColor: buttonColor ?? AppColors.primaryLightGreen,
+          buttonColor: buttonColor ?? AppColors.primaryDarkGreen,
           width: double.infinity,
         ),
         const SizedBox(height: 20.0),
@@ -159,6 +160,8 @@ class VerificationWidgetBuilder {
     hasError = false,
     String? errorMessage,
     void Function()? onPressed,
+    TextEditingController? controller,
+    List<TextInputFormatter>? inputFormatters,
   }) => _buildBody(
     email: email,
     titleText: titleText,
@@ -188,6 +191,8 @@ class VerificationWidgetBuilder {
     onChanged: onChanged,
     hasError: hasError,
     errorMessage: errorMessage,
+    controller: controller,
+    inputFormatters: inputFormatters,
   );
 
   static Widget buildWebBody({
@@ -208,6 +213,8 @@ class VerificationWidgetBuilder {
     void Function(String)? onChanged,
     hasError = false,
     String? errorMessage,
+    TextEditingController? controller,
+    List<TextInputFormatter>? inputFormatters,
   }) => _buildBody(
     email: email,
     titleText: titleText,
@@ -237,5 +244,7 @@ class VerificationWidgetBuilder {
     onChanged: onChanged,
     hasError: hasError,
     errorMessage: errorMessage,
+    controller: controller,
+    inputFormatters: inputFormatters,
   );
 }

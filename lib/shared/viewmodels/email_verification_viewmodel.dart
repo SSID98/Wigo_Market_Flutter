@@ -1,80 +1,113 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_riverpod/legacy.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'package:wigo_flutter/core/constants/app_colors.dart';
+import 'package:wigo_flutter/core/local/session_manager.dart';
 import 'package:wigo_flutter/core/service/user_api_service.dart';
+import 'package:wigo_flutter/shared/widgets/custom_banner.dart';
 
-import '../../core/utils/helper_methods.dart';
-
-class EmailVerificationState {
-  final bool isLoading;
-  final String? errorMessage;
-  final String? otpError;
-  final bool isVerified;
-
-  const EmailVerificationState({
-    this.isLoading = false,
-    this.errorMessage,
-    this.otpError,
-    this.isVerified = false,
-  });
-
-  EmailVerificationState copyWith({
-    bool? isLoading,
-    String? errorMessage,
-    final String? otpError,
-    bool? isVerified,
-  }) {
-    return EmailVerificationState(
-      isLoading: isLoading ?? this.isLoading,
-      errorMessage: errorMessage,
-      otpError: otpError,
-      isVerified: isVerified ?? this.isVerified,
-    );
-  }
-}
+import '../../core/auth/auth_state_notifier.dart';
+import '../../core/network/network.dart';
+import '../models/email_verification/email_verification_state.dart';
+import '../models/login/login_response_model.dart';
+import '../widgets/custom_loading_overlay.dart';
 
 class EmailVerificationViewModel extends StateNotifier<EmailVerificationState> {
-  // final Ref ref;
   final Reader read;
   final UserApiService api;
+  final SessionManager session;
 
-  EmailVerificationViewModel(this.read, {UserApiService? apiService})
-    : api = apiService ?? UserApiService(),
-      super(const EmailVerificationState());
+  EmailVerificationViewModel(
+    this.read,
+    this.session, {
+    UserApiService? apiService,
+  }) : api = apiService ?? read(userApiServiceProvider),
+       super(const EmailVerificationState());
+
+  void updateOtpCode(String value) => state = state.copyWith(otpCode: value);
 
   Future<void> verifyCode({
-    required String email,
-    required String code,
     required BuildContext context,
+    required String email,
   }) async {
-    state = state.copyWith(isLoading: true, errorMessage: null, otpError: null);
-    showLoadingDialog(context);
-    final result = await api.verifyEmail(email: email, code: code);
-    if (context.mounted) {
-      Navigator.of(context, rootNavigator: true).pop();
-    }
-    if (result['success'] == true) {
-      state = state.copyWith(isLoading: false, isVerified: true);
-      return;
-    }
-    final message = result['message']?.toString() ?? 'Verification failed';
+    await runWithOverlay(context, () async {
+      final code = state.otpCode;
 
-    if (message.toLowerCase().contains('invalid code') || code.isEmpty) {
-      state = state.copyWith(
-        isLoading: false,
-        otpError: 'Invalid verification code',
-      );
-    } else {
-      state = state.copyWith(
-        isLoading: false,
-        errorMessage: 'Verification failed. Please try again.',
-      );
-    }
+      final isCodeValid = code.length == 6 && code.isNotEmpty;
+
+      if (!isCodeValid) {
+        state = state.copyWith(otpError: "Invalid verification code");
+        return;
+      }
+
+      {
+        state = state.copyWith(
+          isLoading: true,
+          errorMessage: null,
+          otpError: null,
+        );
+
+        final response = await api.verifyEmail(
+          email: email,
+          code: state.otpCode,
+        );
+
+        if (response.isSuccess && response.data != null) {
+          final model = response.data!;
+
+          final loginModel = LoginResponseModel(
+            id: model.id,
+            token: model.token,
+            refreshToken: model.refreshToken,
+            activeRole: model.activeRole,
+            expiresAt: model.expiresAt,
+            email: email,
+            role: [model.activeRole],
+            status: "verified",
+            fullName: "",
+            city: "",
+            mobile: "",
+            state: "",
+            address: "",
+            image: "",
+            hasWallet: false,
+          );
+
+          await read(authStateProvider.notifier).login(loginModel);
+
+          state = state.copyWith(isLoading: false, isVerified: true);
+          return;
+        }
+
+        final message =
+            response.errorDescription?.toString() ?? 'Verification failed';
+
+        if (message.toLowerCase().contains('invalid code') ||
+            state.otpCode.isEmpty) {
+          state = state.copyWith(
+            isLoading: false,
+            otpError: 'Invalid verification code',
+          );
+        } else {
+          state = state.copyWith(
+            isLoading: false,
+            errorMessage:
+                response.errorDescription?.toString() ??
+                'Verification failed. Please try again.',
+          );
+          if (!context.mounted) return;
+          if (state.errorMessage != null) return;
+          showErrorBanner(state.errorMessage!, context);
+        }
+      }
+    }, spinner: SpinKitDualRing(color: AppColors.primaryDarkGreen));
   }
 }
 
 final emailVerificationProvider =
     StateNotifierProvider<EmailVerificationViewModel, EmailVerificationState>(
-      (ref) => EmailVerificationViewModel(ref.read),
+      (ref) => EmailVerificationViewModel(
+        ref.read,
+        ref.watch(sessionManagerProvider),
+      ),
     );
-
-typedef Reader = T Function<T>(ProviderListenable<T> provider);

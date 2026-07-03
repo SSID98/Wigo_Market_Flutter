@@ -5,7 +5,7 @@
 	<key>CFBundleDevelopmentRegion</key>
 	<string>$(DEVELOPMENT_LANGUAGE)</string>
 	<key>CFBundleDisplayName</key>
-	<string>Wigo Flutter</string>
+	<string>Wigo</string>
 	<key>CFBundleExecutable</key>
 	<string>$(EXECUTABLE_NAME)</string>
 	<key>CFBundleIdentifier</key>
@@ -13,7 +13,7 @@
 	<key>CFBundleInfoDictionaryVersion</key>
 	<string>6.0</string>
 	<key>CFBundleName</key>
-	<string>wigo_flutter</string>
+	<string>Wigo</string>
 	<key>CFBundlePackageType</key>
 	<string>APPL</string>
 	<key>CFBundleShortVersionString</key>
@@ -29,7 +29,7 @@
 	<key>UIMainStoryboardFile</key>
 	<string>Main</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
-    <string>This app needs access to your location to show where the driver is on the map.</string>
+    <string>Wigo Market needs your location for deliveries and customer navigation.</string>
     <key>NSLocationAlwaysUsageDescription</key>
     <string>This app needs access to your location to track you in the background (if needed).</string>
 	<key>UISupportedInterfaceOrientations</key>

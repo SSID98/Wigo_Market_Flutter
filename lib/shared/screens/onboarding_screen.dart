@@ -21,26 +21,25 @@ class OnboardingScreen extends ConsumerWidget {
     final isWeb = MediaQuery.of(context).size.width < 600;
     final localUser = ref.watch(localUserControllerProvider);
     final role = localUser.role;
-    // final role = ref.watch(userRoleProvider);
     final isBuyer = role == UserRole.buyer.name;
     final isSeller = role == UserRole.seller.name;
     return isWeb
         ? _buildMobileLayout(
-          context,
-          ref,
-          viewModel,
-          screenSize,
-          isBuyer,
-          isSeller,
-        )
+            context,
+            ref,
+            viewModel,
+            screenSize,
+            isBuyer,
+            isSeller,
+          )
         : _buildWebLayout(
-          context,
-          ref,
-          viewModel,
-          screenSize,
-          isBuyer,
-          isSeller,
-        );
+            context,
+            ref,
+            viewModel,
+            screenSize,
+            isBuyer,
+            isSeller,
+          );
   }
 
   //Mobile Layout
@@ -62,19 +61,20 @@ class OnboardingScreen extends ConsumerWidget {
               fit: BoxFit.cover,
               color: AppColors.backGroundOverlay,
               colorBlendMode: BlendMode.overlay,
-              errorBuilder: (
-                BuildContext context,
-                Object exception,
-                StackTrace? stackTrace,
-              ) {
-                return const Center(
-                  child: Icon(
-                    Icons.broken_image,
-                    color: AppColors.textIconGrey,
-                    size: 50.0,
-                  ),
-                );
-              },
+              errorBuilder:
+                  (
+                    BuildContext context,
+                    Object exception,
+                    StackTrace? stackTrace,
+                  ) {
+                    return const Center(
+                      child: Icon(
+                        Icons.broken_image,
+                        color: AppColors.textIconGrey,
+                        size: 50.0,
+                      ),
+                    );
+                  },
             ),
             Padding(
               padding: const EdgeInsets.only(top: 105.0),
@@ -122,12 +122,11 @@ class OnboardingScreen extends ConsumerWidget {
                         ),
                         CustomButton(
                           text: 'Next',
-                          onPressed:
-                              isBuyer
-                                  ? () => viewModel.buyerNextPage(context, ref)
-                                  : isSeller
-                                  ? () => viewModel.sellerNextPage(context, ref)
-                                  : () => viewModel.riderNextPage(context, ref),
+                          onPressed: isBuyer
+                              ? () => viewModel.buyerNextPage(context, ref)
+                              : isSeller
+                              ? () => viewModel.sellerNextPage(context, ref)
+                              : () => viewModel.riderNextPage(context, ref),
                           fontSize: 16,
                           fontWeight: FontWeight.w500,
                           borderRadius: 6.0,
@@ -165,19 +164,20 @@ class OnboardingScreen extends ConsumerWidget {
               fit: BoxFit.cover,
               color: AppColors.backGroundOverlay,
               colorBlendMode: BlendMode.overlay,
-              errorBuilder: (
-                BuildContext context,
-                Object exception,
-                StackTrace? stackTrace,
-              ) {
-                return const Center(
-                  child: Icon(
-                    Icons.broken_image,
-                    color: AppColors.textIconGrey,
-                    size: 50.0,
-                  ),
-                );
-              },
+              errorBuilder:
+                  (
+                    BuildContext context,
+                    Object exception,
+                    StackTrace? stackTrace,
+                  ) {
+                    return const Center(
+                      child: Icon(
+                        Icons.broken_image,
+                        color: AppColors.textIconGrey,
+                        size: 50.0,
+                      ),
+                    );
+                  },
             ),
             Padding(
               padding: const EdgeInsets.only(top: 105.0),
@@ -215,13 +215,11 @@ class OnboardingScreen extends ConsumerWidget {
                       ),
                       CustomButton(
                         text: 'Next',
-                        onPressed:
-                            () =>
-                                !isBuyer
-                                    ? viewModel.riderNextPage(context, ref)
-                                    : isSeller
-                                    ? viewModel.sellerNextPage(context, ref)
-                                    : viewModel.buyerNextPage(context, ref),
+                        onPressed: () => !isBuyer
+                            ? viewModel.riderNextPage(context, ref)
+                            : isSeller
+                            ? viewModel.sellerNextPage(context, ref)
+                            : viewModel.buyerNextPage(context, ref),
                         fontSize: 18,
                         fontWeight: FontWeight.w500,
                         borderRadius: 6.0,

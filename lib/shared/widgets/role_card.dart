@@ -3,11 +3,12 @@ import 'package:flutter_svg/svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:wigo_flutter/core/constants/app_colors.dart';
 
-class RoleCard extends StatelessWidget {
+class RoleCard<T> extends StatelessWidget {
   final String title;
   final String description;
   final String icon;
-  final bool isSelected;
+  final T value;
+
   final VoidCallback onTap;
   final Color backgroundColor;
   final Color radioColor;
@@ -17,7 +18,7 @@ class RoleCard extends StatelessWidget {
     super.key,
     required this.title,
     required this.description,
-    required this.isSelected,
+    required this.value,
     required this.onTap,
     required this.backgroundColor,
     required this.icon,
@@ -30,7 +31,7 @@ class RoleCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final Color borderColor = radioColor;
+    final bool isSelected = RadioGroup.maybeOf<T>(context)?.groupValue == value;
     final Color unselectedCardBorderColor = Colors.transparent;
 
     return GestureDetector(
@@ -42,8 +43,8 @@ class RoleCard extends StatelessWidget {
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(8),
           side: BorderSide(
-            color: isSelected ? borderColor : unselectedCardBorderColor,
-            width: isSelected ? 1.0 : 1.0,
+            color: isSelected ? radioColor : unselectedCardBorderColor,
+            width: 1.5,
           ),
         ),
         child: Padding(
@@ -77,22 +78,9 @@ class RoleCard extends StatelessWidget {
                 ),
               ),
               const SizedBox(width: 3),
-              Radio<bool>(
-                value: true,
-                groupValue: isSelected,
-                onChanged: (bool? value) {
-                  if (value == true) {
-                    onTap();
-                  }
-                },
-                fillColor: WidgetStateProperty.resolveWith<Color>((
-                  Set<WidgetState> states,
-                ) {
-                  if (states.contains(WidgetState.selected)) {
-                    return borderColor;
-                  }
-                  return borderColor;
-                }),
+              Radio<T>(
+                value: value,
+                fillColor: WidgetStateProperty.all(radioColor),
               ),
             ],
           ),

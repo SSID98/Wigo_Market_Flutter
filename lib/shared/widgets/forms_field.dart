@@ -1,14 +1,19 @@
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:wigo_flutter/core/constants/app_colors.dart';
+import 'package:wigo_flutter/core/utils/context_extensions.dart';
 import 'package:wigo_flutter/shared/models/location_data.dart';
 import 'package:wigo_flutter/shared/widgets/custom_text_field.dart';
 
 import '../../core/local/local_user_controller.dart';
+import '../../core/utils/validation_utils.dart';
 import '../../gen/assets.gen.dart';
 import '../models/user_role.dart';
 import '../viewmodels/account_creation_viewmodel.dart';
 import 'contact_text_field.dart';
+import 'custom_checkbox_widget.dart';
 
 class FormFields extends ConsumerWidget {
   final bool web;
@@ -31,7 +36,6 @@ class FormFields extends ConsumerWidget {
     final regState = ref.watch(registerViewModelProvider);
     final notifier = ref.read(registerViewModelProvider.notifier);
     final spacing = const SizedBox(height: 16);
-    // final role = ref.watch(userRoleProvider);
     final localUser = ref.watch(localUserControllerProvider);
     final role = localUser.role;
     final isSeller = role == UserRole.seller.name;
@@ -47,6 +51,10 @@ class FormFields extends ConsumerWidget {
           iconWidth: iconWidth,
           hintTextColor: AppColors.textBodyText,
           onChanged: notifier.updateFullName,
+          hasError: regState.hasSubmitted && regState.fullName.isEmpty,
+          errorMessage: regState.hasSubmitted && regState.fullName.isEmpty
+              ? "This field is required"
+              : null,
         ),
         spacing,
         CustomTextField(
@@ -56,8 +64,12 @@ class FormFields extends ConsumerWidget {
           iconHeight: iconHeight,
           iconWidth: iconWidth,
           hintTextColor: AppColors.textBodyText,
-          hasError: regState.hasSubmitted && regState.emailError != null,
-          errorMessage: regState.hasSubmitted ? regState.emailError : null,
+          hasError:
+              regState.hasSubmitted &&
+              FormValidators.validateEmail(regState.email) != null,
+          errorMessage: regState.hasSubmitted
+              ? FormValidators.validateEmail(regState.email)
+              : null,
           onChanged: notifier.updateEmail,
         ),
         spacing,
@@ -73,14 +85,22 @@ class FormFields extends ConsumerWidget {
           iconWidth: iconWidth,
           suffixIcon: suffixIcon,
           hintTextColor: AppColors.textBlackGrey,
-          hasError: regState.hasSubmitted && regState.passwordError != null,
-          errorMessage: regState.hasSubmitted ? regState.passwordError : null,
+          hasError:
+              regState.hasSubmitted &&
+              FormValidators.validateSignupPassword(regState.password) != null,
+          errorMessage: regState.hasSubmitted
+              ? FormValidators.validateSignupPassword(regState.password)
+              : null,
           onChanged: notifier.updatePassword,
         ),
         spacing,
         CustomPhoneNumberField(
           label: 'Phone Number',
           onChanged: notifier.updateMobile,
+          hasError: regState.hasSubmitted && regState.mobile.isEmpty,
+          errorMessage: regState.hasSubmitted && regState.mobile.isEmpty
+              ? "This field is required"
+              : null,
           // contentPadding: EdgeInsets.only(bottom: 1),
         ),
         if (isRider) ...[
@@ -93,11 +113,25 @@ class FormFields extends ConsumerWidget {
             iconWidth: iconWidth,
             hintTextColor: AppColors.textBodyText,
             onChanged: notifier.updateNextOfKinName,
+            hasError:
+                regState.hasSubmitted && (regState.nameOfNok?.isEmpty ?? true),
+            errorMessage:
+                regState.hasSubmitted && (regState.nameOfNok?.isEmpty ?? true)
+                ? "This field is required"
+                : null,
           ),
           spacing,
           CustomPhoneNumberField(
             label: 'Next of Kin Contact',
             onChanged: notifier.updateNextOfKinPhone,
+            hasError:
+                regState.hasSubmitted &&
+                (regState.nextOfKinPhone?.isEmpty ?? true),
+            errorMessage:
+                regState.hasSubmitted &&
+                    (regState.nextOfKinPhone?.isEmpty ?? true)
+                ? "This field is required"
+                : null,
             // contentPadding: EdgeInsets.only(bottom: 1),
           ),
           spacing,
@@ -108,11 +142,17 @@ class FormFields extends ConsumerWidget {
             iconWidth: 22,
             iconHeight: 22,
             onChanged: notifier.updateGender,
-            value: regState.gender,
+            value: notifier.selectedGender,
             prefixIcon: AppAssets.icons.user.svg(
               width: iconWidth,
               height: iconHeight,
             ),
+            hasError:
+                regState.hasSubmitted && (regState.gender?.isEmpty ?? true),
+            errorMessage:
+                regState.hasSubmitted && (regState.gender?.isEmpty ?? true)
+                ? "This field is required"
+                : null,
           ),
         ],
         if (isSeller) ...[
@@ -124,11 +164,17 @@ class FormFields extends ConsumerWidget {
             iconWidth: 22,
             iconHeight: 22,
             onChanged: notifier.updateGender,
-            value: regState.gender,
+            value: notifier.selectedGender,
             prefixIcon: AppAssets.icons.user.svg(
               width: iconWidth,
               height: iconHeight,
             ),
+            hasError:
+                regState.hasSubmitted && (regState.gender?.isEmpty ?? true),
+            errorMessage:
+                regState.hasSubmitted && (regState.gender?.isEmpty ?? true)
+                ? "This field is required"
+                : null,
           ),
         ],
         spacing,
@@ -140,6 +186,12 @@ class FormFields extends ConsumerWidget {
           iconWidth: iconWidth,
           hintTextColor: AppColors.textIconGrey,
           onChanged: notifier.updateResidentialAddress,
+          hasError:
+              regState.hasSubmitted && regState.residentialAddress.isEmpty,
+          errorMessage:
+              regState.hasSubmitted && regState.residentialAddress.isEmpty
+              ? "This field is required"
+              : null,
         ),
         spacing,
         if (web)
@@ -150,13 +202,19 @@ class FormFields extends ConsumerWidget {
                   label: 'State',
                   items: nigeriaStatesAndCities.keys.toList(),
                   hintText: 'Select State',
-                  value:
-                      regState.residentialState.isEmpty
-                          ? null
-                          : regState.residentialState,
+                  value: regState.residentialState.isEmpty
+                      ? null
+                      : notifier.selectedState,
                   onChanged: (val) {
                     notifier.updateResidentialState(val);
                   },
+                  hasError:
+                      regState.hasSubmitted &&
+                      regState.residentialState.isEmpty,
+                  errorMessage:
+                      regState.hasSubmitted && regState.residentialState.isEmpty
+                      ? "This field is required"
+                      : null,
                 ),
               ),
               const SizedBox(width: 16.0),
@@ -165,8 +223,12 @@ class FormFields extends ConsumerWidget {
                   label: 'City/ Town',
                   items: regState.filteredCities,
                   hintText: 'Select City',
-                  value: regState.city.isEmpty ? null : regState.city,
+                  value: regState.city.isEmpty ? null : notifier.selectedCity,
                   onChanged: notifier.updateCity,
+                  hasError: regState.hasSubmitted && regState.city.isEmpty,
+                  errorMessage: regState.hasSubmitted && regState.city.isEmpty
+                      ? "This field is required"
+                      : null,
                 ),
               ),
             ],
@@ -176,27 +238,34 @@ class FormFields extends ConsumerWidget {
             label: 'State',
             items: nigeriaStatesAndCities.keys.toList(),
             hintText: 'Select State',
-            value:
-                regState.residentialState.isEmpty
-                    ? null
-                    : regState.residentialState,
+            value: regState.residentialState.isEmpty
+                ? null
+                : notifier.selectedState,
             onChanged: (val) {
               notifier.updateResidentialState(val);
             },
+            hasError:
+                regState.hasSubmitted && regState.residentialState.isEmpty,
+            errorMessage:
+                regState.hasSubmitted && regState.residentialState.isEmpty
+                ? "This field is required"
+                : null,
           ),
           spacing,
           CustomDropdownField(
             label: 'City/ Town',
-            items:
-                regState.residentialState.isEmpty
-                    ? []
-                    : regState.filteredCities,
+            items: regState.residentialState.isEmpty
+                ? []
+                : regState.filteredCities,
             hintText: 'Select City',
-            value: regState.city.isEmpty ? null : regState.city,
-            onChanged:
-                regState.residentialState.isEmpty
-                    ? null
-                    : (val) => notifier.updateCity(val),
+            value: regState.city.isEmpty ? null : notifier.selectedCity,
+            onChanged: regState.residentialState.isEmpty
+                ? null
+                : (val) => notifier.updateCity(val),
+            hasError: regState.hasSubmitted && regState.city.isEmpty,
+            errorMessage: regState.hasSubmitted && regState.city.isEmpty
+                ? "This field is required"
+                : null,
           ),
         ],
         spacing,
@@ -205,13 +274,83 @@ class FormFields extends ConsumerWidget {
             label: 'Means of Transportation',
             items: const ['Feet', 'Bicycle', 'Car', 'Bike', 'Bus'],
             hintText: 'Bike',
-            value: regState.modeOfTransport,
+            value: notifier.selectedTransport,
             onChanged: notifier.updateModeOfTransport,
             prefixIcon: AppAssets.icons.motorbike.svg(
               height: iconHeight,
               width: iconWidth,
             ),
+            hasError:
+                regState.hasSubmitted &&
+                (regState.modeOfTransport?.isEmpty ?? true),
+            errorMessage:
+                regState.hasSubmitted &&
+                    (regState.modeOfTransport?.isEmpty ?? true)
+                ? "This field is required"
+                : null,
           ),
+        spacing,
+        Padding(
+          padding: EdgeInsets.only(left: 5),
+          child: Row(
+            children: [
+              CustomCheckBox(
+                sizedBoxHeight: context.isWeb ? 34 : 11,
+                value: regState.agreeToTerms,
+                onChanged: notifier.toggleAgreeToTerms,
+              ),
+              const SizedBox(width: 14),
+              Expanded(
+                child: RichText(
+                  text: TextSpan(
+                    children: [
+                      TextSpan(
+                        text: "I agree to wiGO MARKET ",
+                        style: GoogleFonts.hind(
+                          fontSize: context.isWeb ? 16 : 12,
+                          fontWeight: FontWeight.w400,
+                          color: AppColors.textBlackGrey,
+                        ),
+                      ),
+                      TextSpan(
+                        text: "Terms of services",
+                        style: GoogleFonts.hind(
+                          fontSize: context.isWeb ? 16 : 12,
+                          fontWeight: FontWeight.w600,
+                          color: AppColors.textOrange,
+                        ),
+                        recognizer: TapGestureRecognizer()
+                          ..onTap = () {
+                            /// Handle terms tap
+                          },
+                      ),
+                      TextSpan(
+                        text: " and ",
+                        style: GoogleFonts.hind(
+                          fontSize: context.isWeb ? 16 : 12,
+                          fontWeight: FontWeight.w400,
+                          color: AppColors.textBlackGrey,
+                        ),
+                      ),
+                      TextSpan(
+                        text: "Privacy Policy",
+                        style: GoogleFonts.hind(
+                          fontSize: context.isWeb ? 16 : 12,
+                          fontWeight: FontWeight.w600,
+                          color: AppColors.textOrange,
+                        ),
+                        recognizer: TapGestureRecognizer()
+                          ..onTap = () {
+                            /// Handle privacy tap
+                          },
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
       ],
     );
   }

@@ -240,7 +240,7 @@ class MobileSpecsScreen extends ConsumerWidget {
             "64 GB",
           ],
           onChanged: vm.updateRam,
-          value: state.ramSize,
+          value: vm.selectedRam,
         ),
         const SizedBox(height: 15),
         CustomDropdownField(
@@ -248,7 +248,7 @@ class MobileSpecsScreen extends ConsumerWidget {
           hintText: 'e.g., 128GB',
           items: const ["32 GB", "64 GB", "128 GB", "256 GB", "512 GB"],
           onChanged: vm.updateRom,
-          value: state.rom,
+          value: vm.selectedRom,
         ),
         const SizedBox(height: 15),
         CustomTextField(
@@ -278,7 +278,7 @@ class MobileSpecsScreen extends ConsumerWidget {
             "Quad Camera (64 MP + 12 MP + 8 MP + 5 MP)",
           ],
           onChanged: vm.updateCameraSpecs,
-          value: state.cameraSpecs,
+          value: vm.selectedCameraSpec,
         ),
       ],
     );
@@ -302,7 +302,7 @@ class MobileSpecsScreen extends ConsumerWidget {
             "7000 mAh",
           ],
           onChanged: vm.updateBattery,
-          value: state.battery,
+          value: vm.selectedBattery,
         ),
         const SizedBox(height: 15),
         CustomDropdownField(
@@ -310,7 +310,7 @@ class MobileSpecsScreen extends ConsumerWidget {
           hintText: 'e.g., 4G LTE, 5G',
           items: const ["3G", "4G LTE", "5G", "Wi-Fi only"],
           onChanged: vm.updateNetworkType,
-          value: state.networkType,
+          value: vm.selectedNetworkType,
         ),
         const SizedBox(height: 15),
         CustomDropdownField(
@@ -323,7 +323,7 @@ class MobileSpecsScreen extends ConsumerWidget {
             "eSIM + Nano SIM",
           ],
           onChanged: vm.updateSimConfig,
-          value: state.simConfig,
+          value: vm.selectedSimConfig,
         ),
         const SizedBox(height: 15),
         CustomTextField(
@@ -361,7 +361,7 @@ class MobileSpecsScreen extends ConsumerWidget {
           hintText: 'e.g., 1 Year',
           items: const ["6 Months", "1 Year", "2 Years", "3 Years", "5 Years"],
           onChanged: vm.updateWarranty,
-          value: state.warranty,
+          value: vm.selectedWarranty,
         ),
       ],
     );

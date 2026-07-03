@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_riverpod/legacy.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:wigo_flutter/features/buyer/models/product_model.dart';
 import 'package:wigo_flutter/features/buyer/viewmodels/buyer_home_viewmodel.dart';
 
 // --- MOCKS ---
-class MockRef extends Mock implements Ref {}
+// class MockRef extends Mock implements WidgetRef {}
 
 class MockBuildContext extends Mock implements BuildContext {}
 

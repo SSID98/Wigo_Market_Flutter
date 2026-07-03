@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_riverpod/legacy.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:wigo_flutter/features/seller/models/multiple_products_state.dart';
 import 'package:wigo_flutter/features/seller/viewmodels/seller_product_text_field_providers.dart';
 
 import '../../../core/constants/app_colors.dart';
-import '../../../core/utils/helper_methods.dart';
+import '../../../core/utils/helper_methods_classes.dart';
 
 class MultipleProductsViewModel extends StateNotifier<MultipleProductsState> {
   MultipleProductsViewModel() : super(const MultipleProductsState());

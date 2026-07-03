@@ -3,7 +3,7 @@ import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:wigo_flutter/core/constants/app_colors.dart';
 
-import '../../../../core/utils/helper_methods.dart';
+import '../../../../core/utils/helper_methods_classes.dart';
 import 'categories_dropdown_menu.dart';
 
 class CustomDropdownMenu extends StatelessWidget {
@@ -51,10 +51,9 @@ class CustomDropdownMenu extends StatelessWidget {
                 padding: EdgeInsets.only(left: 16.0, bottom: 8),
                 child: CategoriesDropdownMenu(),
               ),
-              crossFadeState:
-                  showCategories
-                      ? CrossFadeState.showSecond
-                      : CrossFadeState.showFirst,
+              crossFadeState: showCategories
+                  ? CrossFadeState.showSecond
+                  : CrossFadeState.showFirst,
               duration: const Duration(milliseconds: 250),
             ),
 

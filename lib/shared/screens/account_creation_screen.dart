@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:wigo_flutter/core/constants/app_colors.dart';
 import 'package:wigo_flutter/shared/models/register_state.dart';
+import 'package:wigo_flutter/shared/widgets/custom_banner.dart';
 import 'package:wigo_flutter/shared/widgets/custom_button.dart';
 import 'package:wigo_flutter/shared/widgets/forms_field.dart';
 
@@ -20,7 +22,6 @@ class AccountCreationScreen extends ConsumerWidget {
     final isWeb = MediaQuery.of(context).size.width > 600;
     final notifier = ref.read(registerViewModelProvider.notifier);
     final state = ref.watch(registerViewModelProvider);
-    // final role = ref.watch(userRoleProvider);
     final localUser = ref.watch(localUserControllerProvider);
     final role = localUser.role;
     final isBuyer = role == UserRole.buyer.name;
@@ -28,14 +29,14 @@ class AccountCreationScreen extends ConsumerWidget {
     return isWeb
         ? _buildWebLayout(screenSize, context, isBuyer, isSeller)
         : _buildMobileLayout(
-          screenSize,
-          context,
-          ref,
-          notifier,
-          state,
-          isBuyer,
-          isSeller,
-        );
+            screenSize,
+            context,
+            ref,
+            notifier,
+            state,
+            isBuyer,
+            isSeller,
+          );
   }
 
   Widget _buildMobileLayout(
@@ -56,19 +57,20 @@ class AccountCreationScreen extends ConsumerWidget {
             fit: BoxFit.cover,
             color: AppColors.backGroundOverlay,
             colorBlendMode: BlendMode.overlay,
-            errorBuilder: (
-              BuildContext context,
-              Object exception,
-              StackTrace? stackTrace,
-            ) {
-              return const Center(
-                child: Icon(
-                  Icons.broken_image,
-                  color: AppColors.textIconGrey,
-                  size: 50.0,
-                ),
-              );
-            },
+            errorBuilder:
+                (
+                  BuildContext context,
+                  Object exception,
+                  StackTrace? stackTrace,
+                ) {
+                  return const Center(
+                    child: Icon(
+                      Icons.broken_image,
+                      color: AppColors.textIconGrey,
+                      size: 50.0,
+                    ),
+                  );
+                },
           ),
           Padding(
             padding: const EdgeInsets.only(top: 90.0),
@@ -119,71 +121,37 @@ class AccountCreationScreen extends ConsumerWidget {
                       Center(
                         child: CustomButton(
                           text: 'Continue',
-                          onPressed:
-                              state.isLoading
-                                  ? null
-                                  : () async {
-                                    notifier.validateOnSubmit();
+                          onPressed: state.isLoading
+                              ? null
+                              : () async {
+                                  final ok = await notifier.submit(context);
 
-                                    final currentState = ref.read(
+                                  if (ok) {
+                                    await ref
+                                        .read(
+                                          localUserControllerProvider.notifier,
+                                        )
+                                        .saveEmail(state.email);
+
+                                    await ref
+                                        .read(
+                                          localUserControllerProvider.notifier,
+                                        )
+                                        .saveStage(OnboardingStage.otp);
+                                    if (!context.mounted) return;
+                                    context.push('/verification');
+                                  } else {
+                                    if (!context.mounted) return;
+                                    final freshState = ref.read(
                                       registerViewModelProvider,
                                     );
-
-                                    if (currentState.emailError != null ||
-                                        currentState.passwordError != null) {
-                                      ScaffoldMessenger.of(
-                                        context,
-                                      ).showSnackBar(
-                                        const SnackBar(
-                                          content: Text(
-                                            'Please fix the highlighted fields',
-                                          ),
-                                        ),
-                                      );
-                                      return;
-                                    }
-
-                                    // // set role before submit if you have separate path
-                                    // notifier.setRole(
-                                    //   isBuyer
-                                    //       ? UserRole.buyer
-                                    //       : isSeller
-                                    //       ? UserRole.seller
-                                    //       : UserRole.dispatch,
-                                    // );
-
-                                    final ok = await notifier.submit(context);
-
-                                    if (ok) {
-                                      // navigate to verification or next screen
-                                      await ref
-                                          .read(
-                                            localUserControllerProvider
-                                                .notifier,
-                                          )
-                                          .saveEmail(state.email);
-
-                                      await ref
-                                          .read(
-                                            localUserControllerProvider
-                                                .notifier,
-                                          )
-                                          .saveStage(OnboardingStage.otp);
-                                    } else {
-                                      // show error via snackBar or inline UI from state.errorMessage
-                                      if (!context.mounted) return;
-                                      ScaffoldMessenger.of(
-                                        context,
-                                      ).showSnackBar(
-                                        SnackBar(
-                                          content: Text(
-                                            state.errorMessage ??
-                                                'An error occurred',
-                                          ),
-                                        ),
-                                      );
-                                    }
-                                  },
+                                    showErrorBanner(
+                                      freshState.errorMessage ??
+                                          'An error occurred',
+                                      context,
+                                    );
+                                  }
+                                },
                           fontSize: 18,
                           fontWeight: FontWeight.w500,
                           width: double.infinity,
@@ -211,19 +179,20 @@ class AccountCreationScreen extends ConsumerWidget {
             fit: BoxFit.cover,
             color: AppColors.backGroundOverlay,
             colorBlendMode: BlendMode.overlay,
-            errorBuilder: (
-              BuildContext context,
-              Object exception,
-              StackTrace? stackTrace,
-            ) {
-              return const Center(
-                child: Icon(
-                  Icons.broken_image,
-                  color: AppColors.textIconGrey,
-                  size: 50.0,
-                ),
-              );
-            },
+            errorBuilder:
+                (
+                  BuildContext context,
+                  Object exception,
+                  StackTrace? stackTrace,
+                ) {
+                  return const Center(
+                    child: Icon(
+                      Icons.broken_image,
+                      color: AppColors.textIconGrey,
+                      size: 50.0,
+                    ),
+                  );
+                },
           ),
           Padding(
             padding: const EdgeInsets.only(top: 105.0),

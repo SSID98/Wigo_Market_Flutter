@@ -1,15 +1,12 @@
-// cart_page.dart
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import '../../../../../core/constants/app_colors.dart';
-import '../../../../../core/utils/helper_methods.dart';
+import '../../../../../core/utils/helper_methods_classes.dart';
 import '../../../../../gen/assets.gen.dart';
 import '../../../../../shared/models/location_data.dart';
-import '../../../../../shared/viewmodels/location_notifier.dart';
-import '../../../../../shared/viewmodels/login_view_model.dart';
 import '../../../../../shared/widgets/contact_text_field.dart';
 import '../../../../../shared/widgets/custom_button.dart';
 import '../../../../../shared/widgets/custom_checkbox_2.dart';
@@ -36,32 +33,31 @@ class CustomerInfoScreen extends ConsumerWidget {
       },
       child: SingleChildScrollView(
         padding: const EdgeInsets.all(20.0),
-        child:
-            isWeb
-                ? Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Expanded(flex: 3, child: CustomerInfoSection()),
-                    const SizedBox(width: 30),
-                    Expanded(
-                      flex: 2,
-                      child: OrderSummaryCard(
-                        isCheckoutScreens: true,
-                        isCustomerInfo: true,
-                      ),
-                    ),
-                  ],
-                )
-                : Column(
-                  children: [
-                    CustomerInfoSection(),
-                    const SizedBox(height: 30),
-                    OrderSummaryCard(
+        child: isWeb
+            ? Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Expanded(flex: 3, child: CustomerInfoSection()),
+                  const SizedBox(width: 30),
+                  Expanded(
+                    flex: 2,
+                    child: OrderSummaryCard(
                       isCheckoutScreens: true,
                       isCustomerInfo: true,
                     ),
-                  ],
-                ),
+                  ),
+                ],
+              )
+            : Column(
+                children: [
+                  CustomerInfoSection(),
+                  const SizedBox(height: 30),
+                  OrderSummaryCard(
+                    isCheckoutScreens: true,
+                    isCustomerInfo: true,
+                  ),
+                ],
+              ),
       ),
     );
   }
@@ -73,10 +69,8 @@ class CustomerInfoSection extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final isWeb = MediaQuery.of(context).size.width > 800;
-    final location = ref.watch(locationProvider);
-    final notifier = ref.read(locationProvider.notifier);
-    final state = ref.watch(loginViewModelProvider);
-    final testVm = ref.watch(loginViewModelProvider.notifier);
+    // final location = ref.watch(locationProvider);
+    // final notifier = ref.read(locationProvider.notifier);
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -85,13 +79,16 @@ class CustomerInfoSection extends ConsumerWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              _iconTextRow(isWeb, onTap: () async {
-                showLoadingDialog(context);
-                await Future.delayed(const Duration(seconds: 1));
-                if (!context.mounted) return;
-                Navigator.of(context, rootNavigator: true).pop();
-                Navigator.of(context).pop();
-              }),
+              _iconTextRow(
+                isWeb,
+                onTap: () async {
+                  showLoadingDialog(context);
+                  await Future.delayed(const Duration(seconds: 1));
+                  if (!context.mounted) return;
+                  Navigator.of(context, rootNavigator: true).pop();
+                  Navigator.of(context).pop();
+                },
+              ),
               SizedBox(height: 20),
               _iconTextRow(isWeb, isCustomer: true),
             ],
@@ -195,13 +192,12 @@ class CustomerInfoSection extends ConsumerWidget {
                   items: nigeriaStatesAndCities.keys.toList(),
                   hintText: 'Select State',
                   radius: 4,
-                  value:
-                      location.selectedState.isEmpty
-                          ? null
-                          : location.selectedState,
-                  onChanged: (val) {
-                    notifier.setStateValue(val);
-                  },
+                  // value: location.selectedState.isEmpty
+                  //     ? null
+                  //     : location.selectedState,
+                  // onChanged: (val) {
+                  //   notifier.setStateValue(val);
+                  // },
                 );
               case 1:
                 return CustomDropdownField(
@@ -209,14 +205,13 @@ class CustomerInfoSection extends ConsumerWidget {
                   focusedBorderColor: AppColors.borderColor,
                   enabledBorderColor: AppColors.borderColor,
                   label: 'City',
-                  items: location.availableCities,
+                  items: [],
                   hintText: 'Select City',
                   radius: 4,
-                  value:
-                      location.selectedCity.isEmpty
-                          ? null
-                          : location.selectedCity,
-                  onChanged: notifier.updateCity,
+                  // value: location.selectedCity.isEmpty
+                  //     ? null
+                  //     : location.selectedCity,
+                  // onChanged: notifier.updateCity,
                 );
               default:
                 return const SizedBox.shrink();
@@ -229,8 +224,8 @@ class CustomerInfoSection extends ConsumerWidget {
             Row(
               children: [
                 CustomCheckbox2(
-                  value: state.agreeToTerms,
-                  onChanged: testVm.toggleAgreeToTerms,
+                  value: true,
+                  onChanged: (value) {},
                   size: 19,
                   checkSize: 12,
                 ),
@@ -298,20 +293,19 @@ class CustomerInfoSection extends ConsumerWidget {
           isCustomer
               ? AppAssets.icons.checkmarkCircle.svg()
               : Icon(
-                Icons.keyboard_arrow_left_rounded,
-                size: isWeb ? 24 : 18,
-                color: AppColors.primaryDarkGreen,
-              ),
+                  Icons.keyboard_arrow_left_rounded,
+                  size: isWeb ? 24 : 18,
+                  color: AppColors.primaryDarkGreen,
+                ),
           const SizedBox(width: 4),
           Text(
             isCustomer ? "Customer Information" : "Back",
             style: GoogleFonts.hind(
               fontSize: isWeb ? 24 : 18,
               fontWeight: isCustomer ? FontWeight.w600 : FontWeight.w400,
-              color:
-                  isCustomer
-                      ? AppColors.textBlack
-                      : AppColors.textVidaLocaGreen,
+              color: isCustomer
+                  ? AppColors.textBlack
+                  : AppColors.textVidaLocaGreen,
             ),
           ),
         ],

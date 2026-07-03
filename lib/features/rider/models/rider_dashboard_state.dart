@@ -6,6 +6,7 @@ import 'current_location.dart';
 class RiderDashboardState {
   // Individual AsyncValues for each specific earning metric
   final bool isAvailable;
+  final String errorMessage;
   final AsyncValue<String> totalEarnings;
   final AsyncValue<String> thisWeekEarnings;
   final AsyncValue<String> pendingPayout;
@@ -14,7 +15,8 @@ class RiderDashboardState {
   final AsyncValue<List<Transaction>> earningHistory;
 
   const RiderDashboardState({
-    this.isAvailable = true,
+    this.errorMessage = '',
+    this.isAvailable = false,
     this.totalEarnings = const AsyncValue.loading(),
     this.thisWeekEarnings = const AsyncValue.loading(),
     this.pendingPayout = const AsyncValue.loading(),
@@ -25,6 +27,7 @@ class RiderDashboardState {
 
   RiderDashboardState copyWith({
     bool? isAvailable,
+    String? errorMessage,
     AsyncValue<String>? totalEarnings,
     AsyncValue<String>? thisWeekEarnings,
     AsyncValue<String>? pendingPayout,
@@ -40,6 +43,7 @@ class RiderDashboardState {
       isAvailable: isAvailable ?? this.isAvailable,
       currentLocation: currentLocation ?? this.currentLocation,
       earningHistory: earningHistory ?? this.earningHistory,
+      errorMessage: errorMessage ?? this.errorMessage,
     );
   }
 }

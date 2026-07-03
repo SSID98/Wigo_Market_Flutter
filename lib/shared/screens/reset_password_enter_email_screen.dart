@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:go_router/go_router.dart';
+import 'package:wigo_flutter/shared/viewmodels/reset_password_viewmodel.dart';
 import 'package:wigo_flutter/shared/widgets/bottom_text.dart';
 
 import '../../core/constants/app_colors.dart';
@@ -8,20 +9,26 @@ import '../../core/constants/url.dart';
 import '../../gen/assets.gen.dart';
 import '../widgets/verification_widget.dart';
 
-class ResetPasswordEnterEmailScreen extends StatelessWidget {
+class ResetPasswordEnterEmailScreen extends ConsumerWidget {
   const ResetPasswordEnterEmailScreen({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final screenSize = MediaQuery.of(context).size;
     final isWeb = MediaQuery.of(context).size.width > 600;
     return isWeb
         ? _buildWebLayout(screenSize)
-        : _buildMobileLayout(screenSize, context);
+        : _buildMobileLayout(screenSize, context, ref);
   }
 
   //Mobile Layout
-  Widget _buildMobileLayout(Size screenSize, BuildContext context) {
+  Widget _buildMobileLayout(
+    Size screenSize,
+    BuildContext context,
+    WidgetRef ref,
+  ) {
+    final state = ref.watch(resetPasswordVerificationProvider);
+    final vm = ref.read(resetPasswordVerificationProvider.notifier);
     return Scaffold(
       body: Stack(
         fit: StackFit.expand,
@@ -29,19 +36,20 @@ class ResetPasswordEnterEmailScreen extends StatelessWidget {
           Image.network(
             '$networkImageUrl/login.png',
             fit: BoxFit.cover,
-            errorBuilder: (
-              BuildContext context,
-              Object exception,
-              StackTrace? stackTrace,
-            ) {
-              return const Center(
-                child: Icon(
-                  Icons.broken_image,
-                  color: AppColors.textIconGrey,
-                  size: 50.0,
-                ),
-              );
-            },
+            errorBuilder:
+                (
+                  BuildContext context,
+                  Object exception,
+                  StackTrace? stackTrace,
+                ) {
+                  return const Center(
+                    child: Icon(
+                      Icons.broken_image,
+                      color: AppColors.textIconGrey,
+                      size: 50.0,
+                    ),
+                  );
+                },
           ),
           BottomTextBuilder.buildMobileBottomText(),
           Center(
@@ -72,10 +80,14 @@ class ResetPasswordEnterEmailScreen extends StatelessWidget {
                         bodyText:
                             "Enter the email address linked to your wiGO MARKET account. We'll send you a reset link.",
                         textFieldLabel: 'Email',
+                        controller: vm.emailController,
                         textFieldHint: 'Please enter your email address',
                         textFieldIcon: AppAssets.icons.mail.path,
                         buttonText: 'Send Code',
+                        hasError: state.emailError != null,
+                        errorMessage: state.emailError,
                         buttonColor: AppColors.primaryDarkGreen,
+                        onChanged: vm.updateEmail,
                         buttonTextColor: AppColors.textWhite,
                         hintTextSize: 14,
                         labelTextColor: AppColors.textBlack,
@@ -83,7 +95,7 @@ class ResetPasswordEnterEmailScreen extends StatelessWidget {
                         showFooter: false,
                         buttonTextFontSize: 18.0,
                         onPressed: () {
-                          context.go('/resetPassword/verification');
+                          vm.requestPasswordToken(context);
                         },
                       ),
                       const SizedBox(height: 33),

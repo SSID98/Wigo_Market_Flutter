@@ -1,35 +1,78 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
+import '../feedback_models/response_status_model.dart';
+
 class SecureStorage {
   static const _storage = FlutterSecureStorage();
 
-  Future<void> saveToken(String token) async {
-    await _storage.write(key: 'token', value: token);
+  /// Gets the data associated with the given [key]
+  /// If the [key] does not exist, return a failed status
+  Future<ResponseStatusModel> getData({required String key}) async {
+    if (await _storage.containsKey(key: key)) {
+      final data = await _storage.read(key: key);
+      return ResponseStatusModel(
+        accessStatus: ResponseStatusEnum.success,
+        data: data,
+      );
+    } else {
+      return ResponseStatusModel(
+        accessStatus: ResponseStatusEnum.failed,
+        errorDescription: 'No key found in DB',
+        data: null,
+      );
+    }
   }
 
-  Future<String?> getToken() async {
-    return await _storage.read(key: 'token');
+  Future<ResponseStatusModel> storeData({
+    required String key,
+    required String data,
+  }) async {
+    try {
+      await _storage.write(key: key, value: data);
+      return ResponseStatusModel(
+        accessStatus: ResponseStatusEnum.success,
+        data: null,
+      );
+    } catch (_) {
+      return ResponseStatusModel(
+        accessStatus: ResponseStatusEnum.failed,
+        errorDescription: 'Error storing data',
+        data: null,
+      );
+    }
   }
 
-  Future<void> saveUserId(String id) async {
-    await _storage.write(key: 'userId', value: id);
+  Future<ResponseStatusModel> deleteData({required String key}) async {
+    try {
+      await _storage.delete(key: key);
+      return ResponseStatusModel(
+        accessStatus: ResponseStatusEnum.success,
+        data: null,
+      );
+    } catch (_) {
+      return ResponseStatusModel(
+        accessStatus: ResponseStatusEnum.failed,
+        errorDescription: 'Error deleting data',
+        data: null,
+      );
+    }
   }
 
-  Future<String?> getUserId() async {
-    return await _storage.read(key: 'userId');
-  }
-
-  Future<void> saveRole(String role) async {
-    await _storage.write(key: 'role', value: role);
-  }
-
-  Future<String?> getRole() async {
-    return await _storage.read(key: 'role');
-  }
-
-  Future<void> clear() async {
-    await _storage.deleteAll();
+  Future<ResponseStatusModel> clearData() async {
+    try {
+      await _storage.deleteAll();
+      return ResponseStatusModel(
+        accessStatus: ResponseStatusEnum.success,
+        data: null,
+      );
+    } catch (_) {
+      return ResponseStatusModel(
+        accessStatus: ResponseStatusEnum.failed,
+        errorDescription: 'Error deleting data',
+        data: null,
+      );
+    }
   }
 }
 

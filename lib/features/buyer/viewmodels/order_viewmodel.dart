@@ -1,4 +1,4 @@
-import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_riverpod/legacy.dart';
 
 import '../database/cart_database.dart';
 
@@ -82,13 +82,12 @@ class OrdersNotifier extends StateNotifier<List<OrderItemModel>> {
   }
 
   Future<void> updateRating(String productName, int newRating) async {
-    state =
-        state.map((order) {
-          if (order.productName == productName) {
-            return order.copyWith(rating: newRating);
-          }
-          return order;
-        }).toList();
+    state = state.map((order) {
+      if (order.productName == productName) {
+        return order.copyWith(rating: newRating);
+      }
+      return order;
+    }).toList();
 
     // await CartDatabase.instance.updateOrderRating(productName, newRating);
   }

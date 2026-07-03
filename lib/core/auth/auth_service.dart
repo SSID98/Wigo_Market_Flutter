@@ -1,5 +1,5 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:wigo_flutter/shared/models/login/login_request_dto_class.dart';
+import 'package:wigo_flutter/shared/models/login/login_request_model.dart';
 
 import '../../shared/models/login/login_response_model.dart';
 import 'auth_repository.dart';
@@ -9,8 +9,13 @@ class AuthService {
 
   AuthService(this.repo);
 
-  Future<LoginResponseModel> loginUser(LoginRequestDTO dto) async {
-    return await repo.login(dto);
+  Future<LoginResponseModel> loginUser(LoginRequestModel request) async {
+    final response = await repo.login(request);
+    if (response.isSuccess && response.data != null) {
+      return response.data!;
+    } else {
+      throw Exception(response.errorDescription);
+    }
   }
 }
 

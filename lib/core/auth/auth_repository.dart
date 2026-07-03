@@ -1,88 +1,32 @@
-import 'package:dio/dio.dart';
-import 'package:flutter/cupertino.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:wigo_flutter/core/local/secure_storage.dart';
+import 'package:wigo_flutter/core/feedback_models/response_status_model.dart';
 
-import '../../shared/models/login/login_request_dto_class.dart';
+import '../../shared/models/login/login_request_model.dart';
 import '../../shared/models/login/login_response_model.dart';
+import '../network/network.dart';
 
 class AuthRepository {
-  final Dio dio;
-  final SecureStorage secureStorage;
+  final NetworkService _networkService;
 
-  AuthRepository(this.secureStorage)
-    : dio = Dio(
-        BaseOptions(
-          baseUrl: dotenv.env['BASE_URL'] ?? '',
-          connectTimeout: const Duration(seconds: 20),
-          receiveTimeout: const Duration(seconds: 20),
-          headers: {"Content-Type": "application/json"},
-        ),
-      ) {
-    _addAuthInterceptor();
-  }
+  AuthRepository(this._networkService);
 
-  void _addAuthInterceptor() {
-    dio.interceptors.add(
-      InterceptorsWrapper(
-        onRequest: (options, handler) async {
-          final token = await secureStorage.getToken();
-          if (token != null && token.isNotEmpty) {
-            options.headers['Authorization'] = 'Bearer $token';
-          }
-          handler.next(options);
-        },
-      ),
+  Future<ResponseStatusModel<LoginResponseModel>> login(
+    LoginRequestModel request,
+  ) {
+    return _networkService.request<LoginResponseModel>(
+      () => _networkService.post("/user/login", data: request.toJson()),
+      parser: (json) => LoginResponseModel.fromJson(json),
     );
   }
 
-  Future<LoginResponseModel> login(LoginRequestDTO dto) async {
-    try {
-      final resp = await dio.post("/user/login", data: dto.toJson());
-      debugPrint('LOGIN REQUEST DATA: ${dto.toJson()}');
-      debugPrint('STATUS CODE: ${resp.statusCode}');
-      debugPrint('RESPONSE DATA: ${resp.data}');
-
-      return LoginResponseModel.fromJson(resp.data);
-    } on DioException catch (e) {
-      final data = e.response?.data;
-
-      String errorMessage = 'Login failed';
-
-      if (data is Map<String, dynamic>) {
-        errorMessage =
-            data['message'] ?? data['msg'] ?? data['error'] ?? errorMessage;
-      } else if (data is String) {
-        errorMessage = data;
-      }
-      debugPrint('LOGIN ERROR RAW => ${e.response?.data}');
-
-      throw Exception(errorMessage);
-    }
-  }
-
-  Future<LoginResponseModel> getMe() async {
-    try {
-      final resp = await dio.get("/user/me");
-
-      final data = resp.data["data"];
-
-      return LoginResponseModel.fromJson({
-        "_id": data["user"]["_id"],
-        "status": data["user"]["status"],
-        "role": List<String>.from(data["roles"] ?? []),
-        "activeRole": data["activeRole"],
-        "token": "",
-      });
-    } on DioException catch (e) {
-      debugPrint("Dio error: ${e.message}");
-      throw Exception("Session expired: ${e.message}");
-    }
+  Future<ResponseStatusModel<LoginResponseModel>> getMe() async {
+    return _networkService.request<LoginResponseModel>(
+      () => _networkService.get("/user/me"),
+      parser: (json) => LoginResponseModel.fromJson(json["data"]),
+    );
   }
 }
 
 final authRepositoryProvider = Provider<AuthRepository>((ref) {
-  final storage = ref.read(secureStorageProvider);
-  return AuthRepository(storage);
+  return AuthRepository(ref.read(networkServiceProvider));
 });

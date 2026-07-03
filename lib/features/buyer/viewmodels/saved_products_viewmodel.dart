@@ -1,4 +1,4 @@
-import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_riverpod/legacy.dart';
 
 import '../database/cart_database.dart';
 import '../models/product_model.dart';
@@ -12,21 +12,20 @@ class SavedProductsNotifier extends StateNotifier<List<Product>> {
 
   Future<void> _loadWishlist() async {
     final data = await CartDatabase.instance.getWishlist();
-    state =
-        data
-            .map(
-              (map) => Product(
-                productName: map['productName'],
-                price: map['price'],
-                imageUrl: map['imageUrl'],
-                slashedAmount: map['slashedAmount'],
-                rating: map['rating'],
-                reviews: map['reviews'],
-                stock: map['stock'],
-                categoryName: map['categoryName'] ?? '',
-              ),
-            )
-            .toList();
+    state = data
+        .map(
+          (map) => Product(
+            productName: map['productName'],
+            price: map['price'],
+            imageUrl: map['imageUrl'],
+            slashedAmount: map['slashedAmount'],
+            rating: map['rating'],
+            reviews: map['reviews'],
+            stock: map['stock'],
+            categoryName: map['categoryName'] ?? '',
+          ),
+        )
+        .toList();
     isInitialized = true;
   }
 
@@ -36,10 +35,9 @@ class SavedProductsNotifier extends StateNotifier<List<Product>> {
     );
 
     if (isSaved) {
-      state =
-          state
-              .where((item) => item.productName != product.productName)
-              .toList();
+      state = state
+          .where((item) => item.productName != product.productName)
+          .toList();
       await CartDatabase.instance.deleteSavedProduct(product.productName);
       return false;
     } else {

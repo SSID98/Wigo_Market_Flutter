@@ -1,5 +1,4 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:wigo_flutter/features/rider/models/wallet_state.dart';
 
 import 'delivery.dart';
 
@@ -12,7 +11,8 @@ class DeliveryTaskState {
   final int totalDeliveriesCount;
   final Map<DeliveryFilter, int> deliveryCounts;
   final int rowsPerPage;
-  final WalletScreenState walletScreenState;
+
+  // final WalletScreenState walletScreenState;
 
   const DeliveryTaskState({
     this.deliveries = const AsyncValue.data([]),
@@ -21,7 +21,7 @@ class DeliveryTaskState {
     this.totalDeliveriesCount = 0,
     this.deliveryCounts = const {},
     this.rowsPerPage = 10,
-    this.walletScreenState = WalletScreenState.overview,
+    // this.walletScreenState = WalletScreenState.overview,
   });
 
   DeliveryTaskState copyWith({
@@ -31,7 +31,7 @@ class DeliveryTaskState {
     int? totalDeliveriesCount,
     Map<DeliveryFilter, int>? deliveryCounts,
     int? rowsPerPage,
-    WalletScreenState? walletScreenState,
+    // WalletScreenState? walletScreenState,
   }) {
     return DeliveryTaskState(
       deliveries: deliveries ?? this.deliveries,
@@ -40,7 +40,7 @@ class DeliveryTaskState {
       totalDeliveriesCount: totalDeliveriesCount ?? this.totalDeliveriesCount,
       deliveryCounts: deliveryCounts ?? this.deliveryCounts,
       rowsPerPage: rowsPerPage ?? this.rowsPerPage,
-      walletScreenState: walletScreenState ?? this.walletScreenState,
+      // walletScreenState: walletScreenState ?? this.walletScreenState,
     );
   }
 }

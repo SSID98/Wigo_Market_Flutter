@@ -1,11 +1,15 @@
 import 'package:flutter/cupertino.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_riverpod/legacy.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'package:wigo_flutter/core/constants/app_colors.dart';
+import 'package:wigo_flutter/core/feedback_models/response_status_model.dart';
+import 'package:wigo_flutter/core/local/secure_storage.dart';
+import 'package:wigo_flutter/shared/widgets/custom_loading_overlay.dart';
 
 import '../../core/local/local_user_controller.dart';
+import '../../core/network/network.dart';
 import '../../core/service/user_api_service.dart';
-import '../../core/utils/helper_methods.dart';
 import '../../core/utils/validation_utils.dart';
-import '../../features/rider/models/rider_register_model_dto.dart';
 import '../models/location_data.dart';
 import '../models/register_state.dart';
 import '../models/user_role.dart';
@@ -22,12 +26,6 @@ final registerViewModelProvider =
 
       return RegisterViewModel(ref.read, initialRole: roleEnum);
     });
-// final registerViewModelProvider =
-//     StateNotifierProvider<RegisterViewModel, RegisterState>(
-//       (ref) => RegisterViewModel(ref.read),
-//     );
-
-typedef Reader = T Function<T>(ProviderListenable<T> provider);
 
 class RegisterViewModel extends StateNotifier<RegisterState> {
   final Reader read;
@@ -37,19 +35,24 @@ class RegisterViewModel extends StateNotifier<RegisterState> {
     this.read, {
     UserApiService? apiService,
     required UserRole initialRole,
-  }) : api = apiService ?? UserApiService(),
+  }) : api = apiService ?? read(userApiServiceProvider),
        super(RegisterState(role: initialRole));
+
+  final ValueNotifier<String?> selectedState = ValueNotifier(null);
+  final ValueNotifier<String?> selectedCity = ValueNotifier(null);
+  final ValueNotifier<String?> selectedGender = ValueNotifier(null);
+  final ValueNotifier<String?> selectedTransport = ValueNotifier(null);
 
   void setRole(UserRole role) => state = state.copyWith(role: role);
 
   void updateFullName(String value) => state = state.copyWith(fullName: value);
 
   void updateEmail(String value) {
-    state = state.copyWith(email: value, emailError: null);
+    state = state.copyWith(email: value);
   }
 
   void updatePassword(String value) {
-    state = state.copyWith(password: value, passwordError: null);
+    state = state.copyWith(password: value);
   }
 
   void updateMobile(String value) => state = state.copyWith(mobile: value);
@@ -57,30 +60,28 @@ class RegisterViewModel extends StateNotifier<RegisterState> {
   void updateResidentialAddress(String value) =>
       state = state.copyWith(residentialAddress: value);
 
-  // void updateResidentialState(String value) =>
-  //     state = state.copyWith(residentialState: value, city: '');
-
   void updateResidentialState(String? value) {
     if (value != null) {
       final newFilteredCities = nigeriaStatesAndCities[value] ?? [];
       state = state.copyWith(
         residentialState: value,
         filteredCities: newFilteredCities,
-        clearCity: true,
       );
+      selectedState.value = value;
     } else {
-      state = state.copyWith(
-        residentialState: '',
-        filteredCities: [],
-        clearCity: true,
-      );
+      state = state.copyWith(residentialState: '', filteredCities: []);
     }
   }
 
-  void updateCity(String? value) => state = state.copyWith(city: value ?? '');
+  void updateCity(String? value) {
+    state = state.copyWith(city: value ?? '');
+    selectedCity.value = value;
+  }
 
-  // Rider-only
-  void updateGender(String? value) => state = state.copyWith(gender: value);
+  void updateGender(String? value) {
+    state = state.copyWith(gender: value);
+    selectedGender.value = value;
+  }
 
   void updateNextOfKinName(String value) =>
       state = state.copyWith(nameOfNok: value);
@@ -88,12 +89,16 @@ class RegisterViewModel extends StateNotifier<RegisterState> {
   void updateNextOfKinPhone(String? value) =>
       state = state.copyWith(nextOfKinPhone: value);
 
-  void updateModeOfTransport(String? value) =>
-      state = state.copyWith(modeOfTransport: value);
+  void updateModeOfTransport(String? value) {
+    state = state.copyWith(modeOfTransport: value);
+    selectedTransport.value = value;
+  }
 
-  void clearError() => state = state.copyWith(errorMessage: null);
+  void toggleAgreeToTerms(bool? value) {
+    state = state.copyWith(agreeToTerms: value ?? false);
+  }
 
-  Future<Map<String, dynamic>> _registerByRole(
+  Future<ResponseStatusModel> _registerByRole(
     UserRole role,
     Map<String, dynamic> payload,
   ) {
@@ -111,71 +116,105 @@ class RegisterViewModel extends StateNotifier<RegisterState> {
     final emailError = FormValidators.validateEmail(state.email);
     final passwordError = FormValidators.validateSignupPassword(state.password);
 
-    state = state.copyWith(
-      hasSubmitted: true,
-      emailError: emailError,
-      passwordError: passwordError,
-    );
+    final requiredFields = {
+      "fullName": state.fullName,
+      "email": state.email,
+      "mobile": state.mobile,
+      "address": state.residentialAddress,
+      "city": state.city,
+      "state": state.residentialState,
+    };
+
+    if (state.role == UserRole.dispatch) {
+      requiredFields.addAll({
+        "nok": state.nameOfNok ?? '',
+        "nok phone": state.nextOfKinPhone ?? '',
+        "gender": state.gender ?? '',
+        "transport": state.modeOfTransport ?? '',
+      });
+    } else if (state.role == UserRole.seller) {
+      requiredFields["gender"] = state.gender ?? '';
+    }
+
+    final hasEmpty = requiredFields.values.any(FormValidators.isFieldEmpty);
+
+    String? errorMessage;
+    if (emailError != null || passwordError != null) {
+      errorMessage = 'Please fix the highlighted fields';
+    } else if (hasEmpty) {
+      errorMessage =
+          'Please complete all required fields for ${state.role.name}';
+    }
+
+    state = state.copyWith(hasSubmitted: true, errorMessage: errorMessage);
   }
 
-  // Submit
   Future<bool> submit(BuildContext context) async {
-    // Validate client-side
-    if (!state.canSubmit) {
-      state = state.copyWith(
-        errorMessage: 'Please fill all required fields for ${state.role.name}.',
-      );
+    validateOnSubmit();
+
+    final emailError = FormValidators.validateEmail(state.email);
+    final passwordError = FormValidators.validateSignupPassword(state.password);
+
+    if (emailError != null ||
+        passwordError != null ||
+        state.errorMessage != null) {
+      return false;
+    }
+
+    if (!state.agreeToTerms) {
+      state = state.copyWith(errorMessage: "You must agree to the terms");
       return false;
     }
 
     state = state.copyWith(isLoading: true, errorMessage: null, success: false);
 
-    showLoadingDialog(context);
-
-    try {
-      final model = RiderRegisterModel(
-        email: state.email,
-        mobile: state.mobile,
-        password: state.password,
-        fullName: state.fullName,
-        residentialAddress: state.residentialAddress,
-        city: state.city,
-        state: state.residentialState,
-        gender: state.gender?.toLowerCase().trim(),
-        nameOfNok: state.nameOfNok,
-        nextOfKinPhone: state.nextOfKinPhone,
-        modeOfTransport: state.modeOfTransport?.toLowerCase().trim(),
-      );
-
-      final payload = model.toJson();
-      debugPrint('REGISTER PAYLOAD => $payload');
-      debugPrint('Gender => ${state.gender}');
-      debugPrint('MOT => ${state.modeOfTransport}');
-      final res = await _registerByRole(state.role, payload);
-
-      if (context.mounted) {
-        Navigator.of(context, rootNavigator: true).pop();
-      }
-
-      if (res['success'] == true) {
-        final data = res['data'];
-
-        debugPrint('REGISTER RESPONSE => $data');
-        state = state.copyWith(isLoading: false, success: true);
-        return true;
-      } else {
-        state = state.copyWith(
-          isLoading: false,
-          errorMessage: res['message']?.toString(),
+    final result = await runWithOverlay<bool>(context, () async {
+      try {
+        final model = RegisterState(
+          email: state.email,
+          mobile: state.mobile,
+          password: state.password,
+          fullName: state.fullName,
+          residentialAddress: state.residentialAddress,
+          city: state.city,
+          residentialState: state.residentialState,
+          gender: state.gender?.toLowerCase().trim(),
+          nameOfNok: state.nameOfNok,
+          nextOfKinPhone: state.nextOfKinPhone,
+          modeOfTransport: state.modeOfTransport?.toLowerCase().trim(),
         );
+
+        final payload = model.toJson();
+        debugPrint('REGISTER PAYLOAD => $payload');
+        final result = await _registerByRole(state.role, payload);
+
+        if (result.isSuccess && result.data != null) {
+          final storage = SecureStorage();
+          await storage.storeData(key: 'mobile', data: state.mobile);
+          state = state.copyWith(isLoading: false, success: true);
+          return true;
+        }
+        final errorMessage =
+            result.errorDescription?.toString() ?? 'Registration failed';
+
+        if (errorMessage.toLowerCase().contains('Unexpected error')) {
+          state = state.copyWith(
+            isLoading: false,
+            errorMessage: 'Unexpected error. Please try again.',
+          );
+          return false;
+        } else {
+          state = state.copyWith(
+            isLoading: false,
+            errorMessage: result.errorDescription?.toString(),
+          );
+          return false;
+        }
+      } catch (e) {
+        state = state.copyWith(isLoading: false, errorMessage: e.toString());
         return false;
       }
-    } catch (e) {
-      if (context.mounted) {
-        Navigator.of(context, rootNavigator: true).pop();
-      }
-      state = state.copyWith(isLoading: false, errorMessage: e.toString());
-      return false;
-    }
+    }, spinner: SpinKitDualRing(color: AppColors.primaryDarkGreen));
+    return result;
   }
 }

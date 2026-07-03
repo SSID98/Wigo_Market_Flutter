@@ -8,7 +8,7 @@ import 'package:wigo_flutter/shared/widgets/custom_button.dart';
 import 'package:wigo_flutter/shared/widgets/custom_search_field.dart';
 
 import '../../../../../core/constants/app_colors.dart';
-import '../../../../../core/utils/helper_methods.dart';
+import '../../../../../core/utils/helper_methods_classes.dart';
 import '../../../../../gen/assets.gen.dart';
 import '../../../../../shared/widgets/custom_text_field.dart';
 import '../../../models/multiple_products_state.dart';

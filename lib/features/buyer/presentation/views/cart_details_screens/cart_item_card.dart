@@ -6,7 +6,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:wigo_flutter/gen/assets.gen.dart';
 
 import '../../../../../core/constants/app_colors.dart';
-import '../../../../../core/utils/price_formatter.dart';
+import '../../../../../core/utils/helper_methods_classes.dart';
 import '../../../../../shared/widgets/custom_button.dart';
 import '../../../viewmodels/buyer_cart_viewmodel.dart';
 
@@ -56,19 +56,20 @@ class CartItemCard extends ConsumerWidget {
                   height: 120,
                   width: 120,
                   fit: BoxFit.cover,
-                  errorBuilder: (
-                    BuildContext context,
-                    Object exception,
-                    StackTrace? stackTrace,
-                  ) {
-                    return const Center(
-                      child: Icon(
-                        Icons.broken_image,
-                        color: AppColors.textIconGrey,
-                        size: 50.0,
-                      ),
-                    );
-                  },
+                  errorBuilder:
+                      (
+                        BuildContext context,
+                        Object exception,
+                        StackTrace? stackTrace,
+                      ) {
+                        return const Center(
+                          child: Icon(
+                            Icons.broken_image,
+                            color: AppColors.textIconGrey,
+                            size: 50.0,
+                          ),
+                        );
+                      },
                 ),
               ),
 
@@ -142,20 +143,18 @@ class CartItemCard extends ConsumerWidget {
                       ),
                       margin: EdgeInsets.zero,
                       decoration: BoxDecoration(
-                        color:
-                            isOutOfStock
-                                ? AppColors.accentRed.withValues(alpha: 0.1)
-                                : AppColors.backgroundLightPink,
+                        color: isOutOfStock
+                            ? AppColors.accentRed.withValues(alpha: 0.1)
+                            : AppColors.backgroundLightPink,
                         borderRadius: BorderRadius.circular(48),
                       ),
                       child: Text(
                         isOutOfStock ? "Out of Stock" : "$stock left in stock",
                         style: GoogleFonts.hind(
                           fontSize: isWeb ? 14 : 12,
-                          color:
-                              isOutOfStock
-                                  ? AppColors.textRed
-                                  : AppColors.textBlack,
+                          color: isOutOfStock
+                              ? AppColors.textRed
+                              : AppColors.textBlack,
                           fontWeight: FontWeight.w400,
                         ),
                       ),

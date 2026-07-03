@@ -8,8 +8,7 @@ import 'package:wigo_flutter/features/buyer/presentation/widgets/interactive_rat
 import 'package:wigo_flutter/gen/assets.gen.dart';
 
 import '../../../../core/constants/app_colors.dart';
-import '../../../../core/utils/helper_methods.dart';
-import '../../../../core/utils/price_formatter.dart';
+import '../../../../core/utils/helper_methods_classes.dart';
 import '../../../../shared/widgets/custom_button.dart';
 import '../../viewmodels/order_viewmodel.dart';
 
@@ -82,19 +81,16 @@ class OrderCard extends ConsumerWidget {
         order.imageUrl,
         height: size,
         width: size,
-        errorBuilder: (
-          BuildContext context,
-          Object exception,
-          StackTrace? stackTrace,
-        ) {
-          return const Center(
-            child: Icon(
-              Icons.broken_image,
-              color: AppColors.textIconGrey,
-              size: 50.0,
-            ),
-          );
-        },
+        errorBuilder:
+            (BuildContext context, Object exception, StackTrace? stackTrace) {
+              return const Center(
+                child: Icon(
+                  Icons.broken_image,
+                  color: AppColors.textIconGrey,
+                  size: 50.0,
+                ),
+              );
+            },
       ),
     );
   }
@@ -106,14 +102,13 @@ class OrderCard extends ConsumerWidget {
         Text(
           isStatus ? 'Status' : order.productName,
           style: GoogleFonts.hind(
-            fontSize:
-                isStatus
-                    ? isWeb
-                        ? 18
-                        : 14
-                    : isWeb
-                    ? 20
-                    : 16,
+            fontSize: isStatus
+                ? isWeb
+                      ? 18
+                      : 14
+                : isWeb
+                ? 20
+                : 16,
             fontWeight: isStatus ? FontWeight.w500 : FontWeight.w400,
             color: AppColors.textBlack,
           ),
@@ -154,8 +149,9 @@ class OrderCard extends ConsumerWidget {
 
   Widget _itemPrice(bool isWeb, {bool isDelivery = false}) {
     return Column(
-      crossAxisAlignment:
-          isDelivery ? CrossAxisAlignment.start : CrossAxisAlignment.end,
+      crossAxisAlignment: isDelivery
+          ? CrossAxisAlignment.start
+          : CrossAxisAlignment.end,
       children: [
         Text(
           isDelivery ? 'Expected Delivery' : formatPrice(order.price),

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:wigo_flutter/core/utils/helper_methods.dart';
+import 'package:wigo_flutter/core/utils/helper_methods_classes.dart';
 import 'package:wigo_flutter/features/seller/presentation/views/product_upload_screen.dart';
 import 'package:wigo_flutter/features/seller/viewmodels/mulitple_products_viewmodel.dart';
 import 'package:wigo_flutter/features/seller/viewmodels/seller_product_text_field_providers.dart';

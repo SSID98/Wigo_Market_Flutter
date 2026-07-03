@@ -1,8 +1,8 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_riverpod/legacy.dart';
 
 import '../models/delivery.dart';
 import '../models/delivery_task_state.dart';
-import '../models/wallet_state.dart';
 
 class DeliveryTaskViewModel extends StateNotifier<DeliveryTaskState> {
   DeliveryTaskViewModel() : super(const DeliveryTaskState()) {
@@ -27,34 +27,37 @@ class DeliveryTaskViewModel extends StateNotifier<DeliveryTaskState> {
   void _updateCounts() {
     final Map<DeliveryFilter, int> newCounts = {
       DeliveryFilter.all: _allDeliveries.length,
-      DeliveryFilter.newRequest:
-          _allDeliveries.where((d) => d.status == "New Request").length,
-      DeliveryFilter.ongoing:
-          _allDeliveries.where((d) => d.status == "On-going").length,
-      DeliveryFilter.completed:
-          _allDeliveries.where((d) => d.status == "Delivered").length,
-      DeliveryFilter.cancelled:
-          _allDeliveries.where((d) => d.status == "Cancelled").length,
+      DeliveryFilter.newRequest: _allDeliveries
+          .where((d) => d.status == "New Request")
+          .length,
+      DeliveryFilter.ongoing: _allDeliveries
+          .where((d) => d.status == "On-going")
+          .length,
+      DeliveryFilter.completed: _allDeliveries
+          .where((d) => d.status == "Delivered")
+          .length,
+      DeliveryFilter.cancelled: _allDeliveries
+          .where((d) => d.status == "Cancelled")
+          .length,
     };
     state = state.copyWith(deliveryCounts: newCounts);
   }
 
   void _applyFilterAndPagination() {
-    List<Delivery> filtered =
-        _allDeliveries.where((d) {
-          switch (state.selectedFilter) {
-            case DeliveryFilter.all:
-              return true;
-            case DeliveryFilter.newRequest:
-              return d.status == "New Request";
-            case DeliveryFilter.ongoing:
-              return d.status == "On-going";
-            case DeliveryFilter.completed:
-              return d.status == "Delivered";
-            case DeliveryFilter.cancelled:
-              return d.status == "Cancelled";
-          }
-        }).toList();
+    List<Delivery> filtered = _allDeliveries.where((d) {
+      switch (state.selectedFilter) {
+        case DeliveryFilter.all:
+          return true;
+        case DeliveryFilter.newRequest:
+          return d.status == "New Request";
+        case DeliveryFilter.ongoing:
+          return d.status == "On-going";
+        case DeliveryFilter.completed:
+          return d.status == "Delivered";
+        case DeliveryFilter.cancelled:
+          return d.status == "Cancelled";
+      }
+    }).toList();
 
     final startIndex = state.currentPage * _pageSize;
     final endIndex = (state.currentPage + 1) * _pageSize;
@@ -82,9 +85,9 @@ class DeliveryTaskViewModel extends StateNotifier<DeliveryTaskState> {
     }
   }
 
-  void setWalletScreenState(WalletScreenState screenState) {
-    state = state.copyWith(walletScreenState: screenState);
-  }
+  // void setWalletScreenState(WalletScreenState screenState) {
+  //   state = state.copyWith(walletScreenState: screenState);
+  // }
 
   final _mockDeliveries = <Delivery>[
     Delivery(

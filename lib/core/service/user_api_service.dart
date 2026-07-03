@@ -1,120 +1,140 @@
-import 'package:dio/dio.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:wigo_flutter/shared/models/email_verification/email_verification_response_model.dart';
+
+import '../../shared/models/bank_model.dart';
+import '../feedback_models/response_status_model.dart';
+import '../network/network.dart';
 
 class UserApiService {
-  final Dio _dio;
+  final NetworkService _networkService;
 
-  UserApiService({Dio? dio})
-    : _dio =
-          dio ??
-          Dio(
-            BaseOptions(
-              baseUrl: dotenv.env['BASE_URL'] ?? '',
-              connectTimeout: const Duration(seconds: 20),
-              receiveTimeout: const Duration(seconds: 20),
-              headers: {'Content-Type': 'application/json'},
-            ),
-          );
+  UserApiService(this._networkService);
 
-  Future<Map<String, dynamic>> registerRider(
+  Future<ResponseStatusModel<JsonMap>> registerRider(
     Map<String, dynamic> payload,
   ) async {
-    try {
-      final resp = await _dio.post('/user/register/delivery', data: payload);
-      if (resp.statusCode != null &&
-          resp.statusCode! >= 200 &&
-          resp.statusCode! < 300) {
-        return {"success": true, "data": resp.data};
-      } else {
-        return {
-          "success": false,
-          "message": resp.data?['message'] ?? 'Unknown error',
-        };
-      }
-    } on DioException catch (e) {
-      final msg = e.response?.data?['message'] ?? e.message;
-      return {"success": false, "message": "Network/API error: $msg"};
-    } catch (e) {
-      return {"success": false, "message": "Unexpected error: $e"};
-    }
+    return _networkService.request<JsonMap>(
+      () => _networkService.post("/user/register/delivery", data: payload),
+    );
   }
 
-  Future<Map<String, dynamic>> registerBuyer(
+  Future<ResponseStatusModel<JsonMap>> registerBuyer(
     Map<String, dynamic> payload,
   ) async {
-    try {
-      final resp = await _dio.post('/user/register/buyer', data: payload);
-      if (resp.statusCode != null &&
-          resp.statusCode! >= 200 &&
-          resp.statusCode! < 300) {
-        return {"success": true, "data": resp.data};
-      } else {
-        return {
-          "success": false,
-          "message": resp.data?['message'] ?? 'Unknown error',
-        };
-      }
-    } on DioException catch (e) {
-      final msg = e.response?.data?['message'] ?? e.message;
-      return {"success": false, "message": "Network/API error: $msg"};
-    } catch (e) {
-      return {"success": false, "message": "Unexpected error: $e"};
-    }
+    return _networkService.request<JsonMap>(
+      () => _networkService.post('/user/register/buyer', data: payload),
+    );
   }
 
-  Future<Map<String, dynamic>> registerSeller(
+  Future<ResponseStatusModel<JsonMap>> registerSeller(
     Map<String, dynamic> payload,
   ) async {
-    try {
-      final resp = await _dio.post('/user/register/seller', data: payload);
-      if (resp.statusCode != null &&
-          resp.statusCode! >= 200 &&
-          resp.statusCode! < 300) {
-        return {"success": true, "data": resp.data};
-      } else {
-        return {
-          "success": false,
-          "message": resp.data?['message'] ?? 'Unknown error',
-        };
-      }
-    } on DioException catch (e) {
-      final msg = e.response?.data?['message'] ?? e.message;
-      return {"success": false, "message": "Network/API error: $msg"};
-    } catch (e) {
-      return {"success": false, "message": "Unexpected error: $e"};
-    }
+    return _networkService.request<JsonMap>(
+      () => _networkService.post('/user/register/seller', data: payload),
+    );
   }
 
-  Future<Map<String, dynamic>> verifyEmail({
+  Future<ResponseStatusModel<JsonMap>> registerSellerBusiness(
+    Map<String, dynamic> payload,
+  ) async {
+    return _networkService.request<JsonMap>(
+      () => _networkService.post('/store/create', data: payload),
+    );
+  }
+
+  Future<ResponseStatusModel<JsonMap>> getUploadSignature(String folder) async {
+    return _networkService.request<JsonMap>(
+      () => _networkService.post('/upload/signature', data: {"folder": folder}),
+    );
+  }
+
+  Future<ResponseStatusModel<EmailVerificationResponseModel>> verifyEmail({
+    required String email,
+    required String code,
+  }) {
+    return _networkService.request<EmailVerificationResponseModel>(
+      () => _networkService.post(
+        '/user/verify',
+        data: {"email": email, "code": code},
+      ),
+      parser: (json) => EmailVerificationResponseModel.fromJson(json),
+    );
+  }
+
+  Future<ResponseStatusModel<JsonMap>> forgotPassword(String email) async {
+    return _networkService.request<JsonMap>(
+      () => _networkService.post(
+        '/user/forgot-password-token',
+        data: {"email": email},
+      ),
+    );
+  }
+
+  Future<ResponseStatusModel<JsonMap>> verifyToken({
     required String email,
     required String code,
   }) async {
-    try {
-      final resp = await _dio.post(
-        '/user/verify',
-        data: {"email": email, "code": code},
-      );
+    return _networkService.request<JsonMap>(
+      () => _networkService.post(
+        '/user/verify-reset-token',
+        data: {"code": code, "email": email},
+      ),
+    );
+  }
 
-      final data = resp.data;
+  Future<ResponseStatusModel<JsonMap>> resetPassword({
+    required String email,
+    required String password,
+    required String resetSession,
+  }) async {
+    return _networkService.request<JsonMap>(
+      () => _networkService.put(
+        '/user/reset-password',
+        data: {
+          "email": email,
+          "password": password,
+          "resetSession": resetSession,
+        },
+      ),
+    );
+  }
 
-      if (data is Map<String, dynamic> && data['success'] == true) {
-        return {"success": true, "data": data};
-      } else {
-        return {
-          "success": false,
-          "message": data?['msg'] ?? 'Invalid or expired code',
-        };
-      }
-    } on DioException catch (e) {
-      final msg = e.response?.data?['msg'] ?? e.message;
-      return {"success": false, "message": "Network/API error: $msg"};
-    } catch (e) {
-      return {"success": false, "message": "Unexpected error: $e"};
-    }
+  Future<ResponseStatusModel<JsonMap>> resolveAccount({
+    required String accountNumber,
+    required String bankCode,
+  }) async {
+    return _networkService.request<JsonMap>(
+      () => _networkService.post(
+        '/flutterwave/accounts/resolve',
+        data: {"account_number": accountNumber, "account_bank": bankCode},
+      ),
+    );
+  }
+
+  Future<ResponseStatusModel<JsonMap>> createWallet({
+    required Map<String, dynamic> payload,
+  }) async {
+    return _networkService.request<JsonMap>(
+      () => _networkService.post('/wallet/create', data: payload),
+    );
+  }
+
+  Future<ResponseStatusModel<List<Bank>>> getBanks({
+    String country = "NG",
+  }) async {
+    return _networkService.request<List<Bank>>(
+      () => _networkService.get(
+        '/flutterwave/banks',
+        query: {"country": country},
+      ),
+      parser: (data) {
+        final list = data['data'] as List;
+        return list.map((e) => Bank.fromJson(e)).toList();
+      },
+    );
   }
 }
 
 final userApiServiceProvider = Provider<UserApiService>((ref) {
-  return UserApiService();
+  return UserApiService(ref.read(networkServiceProvider));
 });

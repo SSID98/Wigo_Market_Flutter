@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:wigo_flutter/features/rider/presentation/views/rider_wallet_screens/wallet_add_bank_account_screen.dart';
 import 'package:wigo_flutter/features/rider/presentation/views/rider_wallet_screens/wallet_edit_bank_account_screen.dart';
 import 'package:wigo_flutter/features/rider/presentation/views/rider_wallet_screens/wallet_overview_transactions_screen.dart';
@@ -11,7 +10,7 @@ import 'package:wigo_flutter/features/rider/viewmodels/edit_bank_account_viewmod
 import 'package:wigo_flutter/shared/widgets/custom_button.dart';
 
 import '../../../../../core/constants/app_colors.dart';
-import '../../../../../core/local/local_storage_service.dart';
+import '../../../../../core/local/secure_storage.dart';
 import '../../../../../gen/assets.gen.dart';
 import '../../../models/wallet_state.dart';
 
@@ -154,11 +153,13 @@ class WalletMainScreen extends ConsumerWidget {
         final isSelected = _getEarningFilter(state) == filter;
         return GestureDetector(
           onTap: () async {
-            final prefs = await SharedPreferences.getInstance();
-            final storage = LocalStorageService(prefs);
+            final storage = SecureStorage();
+            final isPinSetupCompleted = await storage.getData(
+              key: "pinSetUpCompleted",
+            );
 
             if (filter == EarningFilter.paymentMethods) {
-              final nextState = storage.isPinSetupCompleted
+              final nextState = isPinSetupCompleted.data == 'true'
                   ? WalletScreenState.addBankAccount
                   : WalletScreenState.setupPin;
               notifier.setWalletScreenState(nextState);
@@ -206,10 +207,12 @@ class WalletMainScreen extends ConsumerWidget {
       case EarningFilter.transactions:
         return WalletScreenState.transactions;
       case EarningFilter.paymentMethods:
-        final prefs = await SharedPreferences.getInstance();
-        final storage = LocalStorageService(prefs);
+        final storage = SecureStorage();
+        final isPinSetupCompleted = await storage.getData(
+          key: "pinSetUpCompleted",
+        );
 
-        return storage.isPinSetupCompleted
+        return isPinSetupCompleted.data == 'true'
             ? WalletScreenState.addBankAccount
             : WalletScreenState.setupPin;
     }

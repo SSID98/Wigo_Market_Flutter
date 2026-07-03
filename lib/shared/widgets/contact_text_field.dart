@@ -5,13 +5,14 @@ import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import '../../core/constants/app_colors.dart';
+import '../../core/utils/context_extensions.dart';
 import '../../gen/assets.gen.dart';
 
 class CustomPhoneNumberField extends StatefulWidget {
   final TextEditingController? controller;
   final String hintText;
   final String label;
-  final double? height;
+  final double? height, radius;
   final double? labelFontSize,
       inputFontSize,
       hintTextFontSize,
@@ -24,6 +25,8 @@ class CustomPhoneNumberField extends StatefulWidget {
   final bool isOtherDesign;
   final Color? hintTextColor;
   final bool? enabled;
+  final bool hasError;
+  final String? errorMessage;
 
   const CustomPhoneNumberField({
     super.key,
@@ -46,6 +49,9 @@ class CustomPhoneNumberField extends StatefulWidget {
     this.isOtherDesign = false,
     this.hintTextColor,
     this.enabled,
+    this.hasError = false,
+    this.errorMessage,
+    this.radius,
   });
 
   @override
@@ -77,10 +83,16 @@ class _CustomPhoneNumberFieldState extends State<CustomPhoneNumberField> {
             ? Container(
                 height: widget.height,
                 decoration: BoxDecoration(
-                  color: widget.fillColor ?? AppColors.textFieldColor,
+                  color: widget.hasError
+                      ? AppColors.accentLightRed
+                      : widget.fillColor ?? AppColors.textFieldColor,
                   borderRadius: BorderRadius.circular(10),
                   border: BoxBorder.fromBorderSide(
-                    BorderSide(color: widget.borderColor),
+                    BorderSide(
+                      color: widget.hasError
+                          ? AppColors.accentRed
+                          : widget.borderColor,
+                    ),
                   ),
                 ),
                 padding:
@@ -99,10 +111,16 @@ class _CustomPhoneNumberFieldState extends State<CustomPhoneNumberField> {
                   Container(
                     height: widget.height,
                     decoration: BoxDecoration(
-                      color: widget.fillColor ?? AppColors.textFieldColor,
+                      color: widget.hasError
+                          ? AppColors.accentLightRed
+                          : widget.fillColor ?? AppColors.textFieldColor,
                       borderRadius: BorderRadius.circular(4),
                       border: BoxBorder.fromBorderSide(
-                        BorderSide(color: widget.borderColor),
+                        BorderSide(
+                          color: widget.hasError
+                              ? AppColors.accentRed
+                              : widget.borderColor,
+                        ),
                       ),
                     ),
                     padding:
@@ -114,10 +132,16 @@ class _CustomPhoneNumberFieldState extends State<CustomPhoneNumberField> {
                     child: Container(
                       height: widget.height,
                       decoration: BoxDecoration(
-                        color: widget.fillColor ?? AppColors.textFieldColor,
+                        color: widget.hasError
+                            ? AppColors.accentLightRed
+                            : widget.fillColor ?? AppColors.textFieldColor,
                         borderRadius: BorderRadius.circular(4),
                         border: BoxBorder.fromBorderSide(
-                          BorderSide(color: widget.borderColor),
+                          BorderSide(
+                            color: widget.hasError
+                                ? AppColors.accentRed
+                                : widget.borderColor,
+                          ),
                         ),
                       ),
                       padding:
@@ -128,6 +152,33 @@ class _CustomPhoneNumberFieldState extends State<CustomPhoneNumberField> {
                   ),
                 ],
               ),
+        if (widget.hasError && widget.errorMessage != null)
+          Padding(
+            padding: const EdgeInsets.only(top: 4.0),
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // Your custom error icon
+                Icon(
+                  Icons.error,
+                  color: AppColors.accentRed,
+                  size: context.isWeb ? 18 : 14,
+                ),
+                const SizedBox(width: 6),
+                Expanded(
+                  child: Text(
+                    widget.errorMessage!,
+                    style: GoogleFonts.hind(
+                      fontWeight: FontWeight.w400,
+                      fontSize: context.isWeb ? 14 : 10,
+                      color: AppColors.accentRed,
+                    ),
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ),
+              ],
+            ),
+          ),
       ],
     );
   }
@@ -222,32 +273,43 @@ class _CustomPhoneNumberFieldState extends State<CustomPhoneNumberField> {
   }
 
   Widget _buildInputField() {
-    return TextFormField(
-      enabled: widget.enabled,
-      style: GoogleFonts.hind(
-        fontSize: widget.inputFontSize ?? 15.11,
-        fontWeight: widget.inputFontWeight ?? FontWeight.w400,
-        color: widget.inputColor ?? AppColors.textBlackGrey,
-      ),
-      controller: widget.controller,
-      onChanged: widget.onChanged,
-      keyboardType: TextInputType.phone,
-      inputFormatters: <TextInputFormatter>[
-        FilteringTextInputFormatter.digitsOnly,
-      ],
-      textAlignVertical: TextAlignVertical.center,
-      decoration: InputDecoration(
-        isDense: true,
-        constraints: BoxConstraints(),
-        contentPadding: widget.contentPadding ?? EdgeInsets.zero,
-        hintText: widget.hintText,
-        hintStyle: GoogleFonts.hind(
-          fontSize: widget.hintTextFontSize ?? 15.11,
-          fontWeight: FontWeight.w400,
-          color: widget.hintTextColor ?? AppColors.textBodyText,
+    return Column(
+      children: [
+        TextFormField(
+          enabled: widget.enabled,
+          style: GoogleFonts.hind(
+            fontSize: widget.inputFontSize ?? 15.11,
+            fontWeight: widget.inputFontWeight ?? FontWeight.w400,
+            color: widget.inputColor ?? AppColors.textBlackGrey,
+          ),
+          controller: widget.controller,
+          onChanged: widget.onChanged,
+          keyboardType: TextInputType.phone,
+          inputFormatters: <TextInputFormatter>[
+            FilteringTextInputFormatter.digitsOnly,
+          ],
+          textAlignVertical: TextAlignVertical.center,
+          decoration: InputDecoration(
+            isDense: true,
+            constraints: BoxConstraints(),
+            contentPadding: widget.contentPadding ?? EdgeInsets.zero,
+            hintText: widget.hintText,
+            hintStyle: GoogleFonts.hind(
+              fontSize: widget.hintTextFontSize ?? 15.11,
+              fontWeight: FontWeight.w400,
+              color: widget.hintTextColor ?? AppColors.textBodyText,
+            ),
+            border: InputBorder.none,
+            errorBorder: OutlineInputBorder(
+              borderSide: const BorderSide(
+                color: AppColors.accentRed,
+                width: 1.0,
+              ),
+              borderRadius: BorderRadius.circular(widget.radius ?? 8.0),
+            ),
+          ),
         ),
-        border: InputBorder.none,
-      ),
+      ],
     );
   }
 }

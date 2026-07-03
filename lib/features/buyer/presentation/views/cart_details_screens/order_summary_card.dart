@@ -7,8 +7,7 @@ import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:wigo_flutter/core/constants/app_colors.dart';
 
-import '../../../../../core/utils/helper_methods.dart';
-import '../../../../../core/utils/price_formatter.dart';
+import '../../../../../core/utils/helper_methods_classes.dart';
 import '../../../../../gen/assets.gen.dart';
 import '../../../../../shared/widgets/custom_button.dart';
 import '../../../viewmodels/buyer_cart_viewmodel.dart';
@@ -78,16 +77,15 @@ class OrderSummaryCard extends ConsumerWidget {
             fontWeight: FontWeight.w600,
             height: 50,
             width: isWeb ? 411 : double.infinity,
-            onPressed:
-                canCheckout
-                    ? () async {
-                      showLoadingDialog(context);
-                      await Future.delayed(const Duration(seconds: 1));
-                      if (!context.mounted) return;
-                      Navigator.of(context, rootNavigator: true).pop();
-                      context.push('/buyer/customerInfo');
-                    }
-                    : null,
+            onPressed: canCheckout
+                ? () async {
+                    showLoadingDialog(context);
+                    await Future.delayed(const Duration(seconds: 1));
+                    if (!context.mounted) return;
+                    Navigator.of(context, rootNavigator: true).pop();
+                    context.push('/buyer/customerInfo');
+                  }
+                : null,
             borderRadius: 16,
           ),
         if (isCheckoutScreens)
@@ -97,29 +95,28 @@ class OrderSummaryCard extends ConsumerWidget {
             fontWeight: FontWeight.w600,
             height: 50,
             width: isWeb ? 411 : double.infinity,
-            onPressed:
-                isFinalCheckout
-                    ? () async {
-                      showLoadingDialog(context);
-                      await Future.delayed(const Duration(seconds: 1));
-                      if (!context.mounted) return;
-                      Navigator.of(context, rootNavigator: true).pop();
-                      try {
-                        await ref
-                            .read(cartProvider.notifier)
-                            .processCheckout(ref);
-                        if (context.mounted) {
-                          _showDeliveryConfirmationDialog(context, isWeb);
-                          Navigator.pop(context);
-                          context.go('/buyerHomeScreen');
-                        }
-                      } catch (e) {
-                        if (context.mounted) {
-                          Navigator.pop(context);
-                        }
+            onPressed: isFinalCheckout
+                ? () async {
+                    showLoadingDialog(context);
+                    await Future.delayed(const Duration(seconds: 1));
+                    if (!context.mounted) return;
+                    Navigator.of(context, rootNavigator: true).pop();
+                    try {
+                      await ref
+                          .read(cartProvider.notifier)
+                          .processCheckout(ref);
+                      if (context.mounted) {
+                        _showDeliveryConfirmationDialog(context, isWeb);
+                        Navigator.pop(context);
+                        context.go('/buyerHomeScreen');
+                      }
+                    } catch (e) {
+                      if (context.mounted) {
+                        Navigator.pop(context);
                       }
                     }
-                    : null,
+                  }
+                : null,
             borderRadius: 16,
           ),
         const SizedBox(height: 40),
@@ -181,34 +178,31 @@ class OrderSummaryCard extends ConsumerWidget {
         Text(
           label,
           style: GoogleFonts.hind(
-            fontSize:
-                isTotal
-                    ? isWeb
-                        ? 20
-                        : 16
-                    : isWeb
-                    ? 18
-                    : 14,
-            color:
-                isTotal
-                    ? AppColors.textBlack
-                    : isBlack
-                    ? AppColors.textNeutral950
-                    : AppColors.textBodyText,
+            fontSize: isTotal
+                ? isWeb
+                      ? 20
+                      : 16
+                : isWeb
+                ? 18
+                : 14,
+            color: isTotal
+                ? AppColors.textBlack
+                : isBlack
+                ? AppColors.textNeutral950
+                : AppColors.textBodyText,
             fontWeight: isTotal ? FontWeight.w500 : FontWeight.w400,
           ),
         ),
         Text(
           value,
           style: GoogleFonts.hind(
-            fontSize:
-                isTotal
-                    ? isWeb
-                        ? 20
-                        : 16
-                    : isWeb
-                    ? 18
-                    : 14,
+            fontSize: isTotal
+                ? isWeb
+                      ? 20
+                      : 16
+                : isWeb
+                ? 18
+                : 14,
             fontWeight: FontWeight.w600,
             color: isDiscount ? AppColors.textRed : AppColors.textBlack,
           ),

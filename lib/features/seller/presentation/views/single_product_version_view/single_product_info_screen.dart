@@ -8,7 +8,7 @@ import 'package:wigo_flutter/shared/widgets/custom_button.dart';
 import 'package:wigo_flutter/shared/widgets/custom_search_field.dart';
 
 import '../../../../../core/constants/app_colors.dart';
-import '../../../../../core/utils/helper_methods.dart';
+import '../../../../../core/utils/helper_methods_classes.dart';
 import '../../../../../gen/assets.gen.dart';
 import '../../../../../shared/widgets/custom_text_field.dart';
 import '../../../models/product_category.dart';
@@ -187,23 +187,7 @@ class SingleProductInfoScreen extends ConsumerWidget {
                                   ),
                                 );
                               },
-                              style: MenuStyle(
-                                backgroundColor: WidgetStateProperty.all(
-                                  AppColors.backgroundWhite,
-                                ),
-                                elevation: WidgetStateProperty.all(6),
-                                shape: WidgetStateProperty.all(
-                                  RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(8),
-                                  ),
-                                ),
-                                padding: WidgetStateProperty.all(
-                                  const EdgeInsets.symmetric(
-                                    vertical: 8,
-                                    horizontal: 16,
-                                  ),
-                                ),
-                              ),
+                              style: anchorMenuStyle(),
                               menuChildren: [
                                 Builder(
                                   builder: (menuContext) {

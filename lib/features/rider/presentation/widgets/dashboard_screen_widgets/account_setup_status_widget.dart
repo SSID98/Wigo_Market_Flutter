@@ -90,40 +90,40 @@ class AccountSetup extends StatelessWidget {
 
             return wide
                 ? Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Expanded(
-                      child: _HeaderAndSteps(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Expanded(
+                        child: _HeaderAndSteps(
+                          title: title,
+                          subtitle: subtitle,
+                          isWeb: wide,
+                          isSeller: isSeller,
+                          child: stepsWrap,
+                        ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.only(top: 10.0),
+                        child: progressCard,
+                      ),
+                    ],
+                  )
+                : Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      _HeaderAndSteps(
                         title: title,
                         subtitle: subtitle,
-                        isWeb: wide,
+                        isWeb: false,
                         isSeller: isSeller,
                         child: stepsWrap,
                       ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.only(top: 10.0),
-                      child: progressCard,
-                    ),
-                  ],
-                )
-                : Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    _HeaderAndSteps(
-                      title: title,
-                      subtitle: subtitle,
-                      isWeb: false,
-                      isSeller: isSeller,
-                      child: stepsWrap,
-                    ),
-                    if (!isSeller) ...[
-                      const SizedBox(height: 20),
-                      progressCard,
+                      if (!isSeller) ...[
+                        const SizedBox(height: 20),
+                        progressCard,
+                      ],
+                      if (isSeller) const SizedBox(height: 15),
                     ],
-                    if (isSeller) const SizedBox(height: 15),
-                  ],
-                );
+                  );
           },
         ),
       ),
@@ -156,12 +156,11 @@ class _HeaderAndSteps extends StatelessWidget {
           title,
           style: GoogleFonts.hind(
             fontWeight: FontWeight.w600,
-            fontSize:
-                isWeb
-                    ? 20
-                    : isSeller
-                    ? 18
-                    : 16,
+            fontSize: isWeb
+                ? 20
+                : isSeller
+                ? 18
+                : 16,
             color: AppColors.textBlackGrey,
           ),
         ),
@@ -207,10 +206,9 @@ class _StepsWrap extends StatelessWidget {
                 child: StepCard(
                   step: steps[0],
                   height: isWeb ? 115 : 86,
-                  cardColor:
-                      isSeller
-                          ? AppColors.buttonLighterGreen
-                          : AppColors.backgroundWhite,
+                  cardColor: isSeller
+                      ? AppColors.buttonLighterGreen
+                      : AppColors.backgroundWhite,
                 ),
               ),
               const SizedBox(width: 9),
@@ -218,10 +216,9 @@ class _StepsWrap extends StatelessWidget {
                 child: StepCard(
                   step: steps[1],
                   height: isWeb ? 115 : 86,
-                  cardColor:
-                      isSeller
-                          ? AppColors.sellerCardColor
-                          : AppColors.backgroundWhite,
+                  cardColor: isSeller
+                      ? AppColors.sellerCardColor
+                      : AppColors.backgroundWhite,
                 ),
               ),
               if (isSeller && isWeb) ...[

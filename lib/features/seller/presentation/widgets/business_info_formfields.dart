@@ -4,9 +4,11 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:wigo_flutter/core/constants/app_colors.dart';
 import 'package:wigo_flutter/features/seller/viewmodels/business_info_viewmodel.dart';
 import 'package:wigo_flutter/shared/models/location_data.dart';
+import 'package:wigo_flutter/shared/widgets/contact_text_field.dart';
 import 'package:wigo_flutter/shared/widgets/custom_text_field.dart';
 
 import '../../../../core/utils/context_extensions.dart';
+import '../../../../core/utils/validation_utils.dart';
 import '../../../../gen/assets.gen.dart';
 import '../../../../shared/widgets/custom_checkbox_2.dart';
 import '../../../../shared/widgets/upload_box.dart';
@@ -37,8 +39,35 @@ class BusinessInfoFormFields extends ConsumerWidget {
           prefixIcon: AppAssets.icons.user.path,
           iconHeight: iconHeight,
           iconWidth: iconWidth,
-          hintTextColor: AppColors.textBodyText,
           onChanged: notifier.updateBusinessName,
+          hasError: state.hasSubmitted && state.name.isEmpty,
+          errorMessage: state.hasSubmitted && state.name.isEmpty
+              ? "This field is required"
+              : null,
+        ),
+        spacing,
+        CustomTextField(
+          hintText: 'eg., dmobile@gmail.com',
+          label: 'Shop/Business Email',
+          prefixIcon: AppAssets.icons.user.path,
+          iconHeight: iconHeight,
+          iconWidth: iconWidth,
+          onChanged: notifier.updateBusinessEmail,
+          hasError:
+              state.hasSubmitted &&
+              FormValidators.validateEmail(state.storeEmail) != null,
+          errorMessage: state.hasSubmitted
+              ? FormValidators.validateEmail(state.storeEmail)
+              : null,
+        ),
+        spacing,
+        CustomPhoneNumberField(
+          label: 'Shop/Business Phone',
+          onChanged: notifier.updateBusinessPhone,
+          hasError: state.hasSubmitted && state.storeMobile.isEmpty,
+          errorMessage: state.hasSubmitted && state.storeMobile.isEmpty
+              ? "This field is required"
+              : null,
         ),
         spacing,
         CustomDropdownField(
@@ -47,8 +76,14 @@ class BusinessInfoFormFields extends ConsumerWidget {
           items: const ['Retail', 'Wholesale'],
           iconWidth: 22,
           iconHeight: 22,
-          onChanged: notifier.updateBusinessType,
-          value: state.businessType,
+          onChanged: (val) {
+            notifier.updateBusinessType(val);
+          },
+          hasError: state.hasSubmitted && state.businessType.isEmpty,
+          errorMessage: state.hasSubmitted && state.businessType.isEmpty
+              ? "This field is required"
+              : null,
+          value: notifier.selectedBusiness,
           prefixIcon: AppAssets.icons.store.svg(
             width: iconWidth,
             height: iconHeight,
@@ -63,6 +98,10 @@ class BusinessInfoFormFields extends ConsumerWidget {
           iconWidth: iconWidth,
           hintTextColor: AppColors.textIconGrey,
           onChanged: notifier.updateBusinessAddress,
+          hasError: state.hasSubmitted && state.address.isEmpty,
+          errorMessage: state.hasSubmitted && state.address.isEmpty
+              ? "This field is required"
+              : null,
         ),
         spacing,
         if (context.isWeb)
@@ -73,12 +112,14 @@ class BusinessInfoFormFields extends ConsumerWidget {
                   label: 'State',
                   items: nigeriaStatesAndCities.keys.toList(),
                   hintText: 'Select State',
-                  value: state.businessState.isEmpty
-                      ? null
-                      : state.businessState,
+                  value: state.state.isEmpty ? null : notifier.selectedState,
                   onChanged: (val) {
                     notifier.updateBusinessState(val);
                   },
+                  hasError: state.hasSubmitted && state.state.isEmpty,
+                  errorMessage: state.hasSubmitted && state.state.isEmpty
+                      ? "This field is required"
+                      : null,
                 ),
               ),
               const SizedBox(width: 16.0),
@@ -87,8 +128,12 @@ class BusinessInfoFormFields extends ConsumerWidget {
                   label: 'City/ Town',
                   items: state.filteredCities,
                   hintText: 'Select City',
-                  value: state.businessCity.isEmpty ? null : state.businessCity,
+                  value: state.city.isEmpty ? null : notifier.selectedCity,
                   onChanged: notifier.updateBusinessCity,
+                  hasError: state.hasSubmitted && state.city.isEmpty,
+                  errorMessage: state.hasSubmitted && state.city.isEmpty
+                      ? "This field is required"
+                      : null,
                 ),
               ),
             ],
@@ -98,22 +143,29 @@ class BusinessInfoFormFields extends ConsumerWidget {
             label: 'State',
             items: nigeriaStatesAndCities.keys.toList(),
             hintText: 'Select State',
-            value: state.businessState.isEmpty ? null : state.businessState,
+            value: state.state.isEmpty ? null : notifier.selectedState,
             onChanged: (val) {
               notifier.updateBusinessState(val);
             },
+            hasError: state.hasSubmitted && state.state.isEmpty,
+            errorMessage: state.hasSubmitted && state.state.isEmpty
+                ? "This field is required"
+                : null,
           ),
           spacing,
           CustomDropdownField(
             label: 'City/ Town',
             items: state.filteredCities,
             hintText: 'Select City',
-            value: state.businessCity.isEmpty ? null : state.businessCity,
+            value: state.city.isEmpty ? null : notifier.selectedCity,
             onChanged: notifier.updateBusinessCity,
+            hasError: state.hasSubmitted && state.city.isEmpty,
+            errorMessage: state.hasSubmitted && state.city.isEmpty
+                ? "This field is required"
+                : null,
           ),
           spacing,
           CustomTextField(
-            label: '',
             labelRichText: RichText(
               text: TextSpan(
                 children: [
@@ -145,33 +197,53 @@ class BusinessInfoFormFields extends ConsumerWidget {
             minLines: 5,
             maxLines: 8,
           ),
-          spacing,
-          CustomDropdownField(
-            label: 'Order Preference',
-            hintText: 'Select Order Preferences',
-            items: const ['Male', 'Female'],
-            iconWidth: 22,
-            iconHeight: 22,
-            onChanged: notifier.updateOrderPreference,
-            value: state.orderPreference,
-          ),
-          const SizedBox(height: 4),
-          Text(
-            'Choose how you prefer to fulfill your customer orders. This will be shown to buyers during checkout.',
-            style: GoogleFonts.hind(
-              fontWeight: FontWeight.w400,
-              color: AppColors.textBodyText,
-              fontSize: 14,
-            ),
-          ),
+          // spacing,
+          // CustomDropdownField(
+          //   label: 'Order Preference',
+          //   hintText: 'Select Order Preferences',
+          //   items: const ['Male', 'Female'],
+          //   iconWidth: 22,
+          //   iconHeight: 22,
+          //   onChanged: notifier.updateOrderPreference,
+          //   value: state.orderPreference,
+          // ),
+          // const SizedBox(height: 4),
+          // Text(
+          //   'Choose how you prefer to fulfill your customer orders. This will be shown to buyers during checkout.',
+          //   style: GoogleFonts.hind(
+          //     fontWeight: FontWeight.w400,
+          //     color: AppColors.textBodyText,
+          //     fontSize: 14,
+          //   ),
+          // ),
           spacing,
           UploadBox(
             hintText: "JPEG, PNG, PDG, and MP4 formats, up to 50MB",
             label: 'Upload your NIN document for Verification',
             prefixIcon1: AppAssets.icons.cloud.svg(),
-            prefixIcon2: AppAssets.icons.cloud.svg(),
+            prefixIcon2: AppAssets.icons.cloud.svg(
+              colorFilter: ColorFilter.mode(
+                AppColors.primaryDarkGreen,
+                BlendMode.srcIn,
+              ),
+            ),
+            prefixIconError: AppAssets.icons.cloud.svg(
+              colorFilter: ColorFilter.mode(AppColors.textRed, BlendMode.srcIn),
+            ),
             hintTextColor: AppColors.textBodyText,
             labelFontSize: 16,
+            onFileSelected: (file) {
+              ref.read(businessInfoViewmodelProvider.notifier).uploadNin(file);
+            },
+            isUploading: state.isUploadingNin,
+            progress: state.ninProgress,
+            onCancel: notifier.cancelNinUpload,
+            onRetry: notifier.retryUploadNin,
+            uploadFailed: state.ninUploadFailed,
+            hasError: state.hasSubmitted && state.ownerNIN.isEmpty,
+            errorMessage: state.hasSubmitted && state.ownerNIN.isEmpty
+                ? "This field is required"
+                : null,
           ),
           spacing,
           UploadBox(
@@ -202,8 +274,23 @@ class BusinessInfoFormFields extends ConsumerWidget {
               ),
             ),
             prefixIcon1: AppAssets.icons.cloud.svg(),
-            prefixIcon2: AppAssets.icons.cloud.svg(),
+            prefixIcon2: AppAssets.icons.cloud.svg(
+              colorFilter: ColorFilter.mode(
+                AppColors.primaryDarkGreen,
+                BlendMode.srcIn,
+              ),
+            ),
             hintTextColor: AppColors.textBodyText,
+            onFileSelected: (file) {
+              ref
+                  .read(businessInfoViewmodelProvider.notifier)
+                  .uploadStoreImage(file);
+            },
+            isUploading: state.isUploadingStoreImage,
+            progress: state.storeImageProgress,
+            onCancel: notifier.cancelStoreUpload,
+            onRetry: notifier.retryUploadStoreImage,
+            uploadFailed: state.storeImageUploadFailed,
           ),
           spacing,
           Row(

@@ -8,8 +8,7 @@ import '../../../../../core/constants/app_colors.dart';
 import '../../../../../gen/assets.gen.dart';
 import '../../../../../shared/models/location_data.dart';
 import '../../../../../shared/widgets/custom_text_field.dart';
-import '../../../../core/utils/helper_methods.dart';
-import '../../../../shared/viewmodels/location_notifier.dart';
+import '../../../../core/utils/helper_methods_classes.dart';
 
 class BuyerAccountScreen extends StatelessWidget {
   const BuyerAccountScreen({super.key});
@@ -22,69 +21,69 @@ class BuyerAccountScreen extends StatelessWidget {
 
     return isWeb
         ? Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Expanded(
-              child: SingleChildScrollView(
-                padding: const EdgeInsets.all(16),
-                child: buyerInfoSection,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Expanded(
+                child: SingleChildScrollView(
+                  padding: const EdgeInsets.all(16),
+                  child: buyerInfoSection,
+                ),
               ),
-            ),
-            const SizedBox(height: 20),
-            CustomButton(
-              text: 'Save',
-              onPressed: () {},
-              fontSize: 18,
-              fontWeight: FontWeight.w500,
-              borderRadius: 16,
-              height: 50,
-              width: 616,
-            ),
-            const SizedBox(height: 20),
-          ],
-        )
+              const SizedBox(height: 20),
+              CustomButton(
+                text: 'Save',
+                onPressed: () {},
+                fontSize: 18,
+                fontWeight: FontWeight.w500,
+                borderRadius: 16,
+                height: 50,
+                width: 616,
+              ),
+              const SizedBox(height: 20),
+            ],
+          )
         : PopScope(
-          canPop: false,
-          onPopInvokedWithResult: (didPop, result) async {
-            if (isHandlingBack || didPop) return;
-            isHandlingBack = true;
-            showLoadingDialog(context);
-            await Future.delayed(const Duration(seconds: 1));
-            if (!context.mounted) return;
-            Navigator.of(context, rootNavigator: true).pop();
-            Navigator.of(context).pop(result);
-          },
-          child: Card(
-            elevation: 0,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(16.0),
-              side: BorderSide(
-                color: AppColors.shadowColor.withValues(alpha: 0.09),
-                width: 3,
+            canPop: false,
+            onPopInvokedWithResult: (didPop, result) async {
+              if (isHandlingBack || didPop) return;
+              isHandlingBack = true;
+              showLoadingDialog(context);
+              await Future.delayed(const Duration(seconds: 1));
+              if (!context.mounted) return;
+              Navigator.of(context, rootNavigator: true).pop();
+              Navigator.of(context).pop(result);
+            },
+            child: Card(
+              elevation: 0,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(16.0),
+                side: BorderSide(
+                  color: AppColors.shadowColor.withValues(alpha: 0.09),
+                  width: 3,
+                ),
+              ),
+              margin: EdgeInsets.only(bottom: 20, top: 10),
+              color: AppColors.backgroundWhite,
+              child: Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Column(
+                  children: [
+                    SingleChildScrollView(child: buyerInfoSection),
+                    const SizedBox(height: 20),
+                    CustomButton(
+                      text: 'Save',
+                      onPressed: () {},
+                      fontSize: 14,
+                      fontWeight: FontWeight.w500,
+                      height: 45,
+                      width: double.infinity,
+                    ),
+                    const SizedBox(height: 20),
+                  ],
+                ),
               ),
             ),
-            margin: EdgeInsets.only(bottom: 20, top: 10),
-            color: AppColors.backgroundWhite,
-            child: Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: Column(
-                children: [
-                  SingleChildScrollView(child: buyerInfoSection),
-                  const SizedBox(height: 20),
-                  CustomButton(
-                    text: 'Save',
-                    onPressed: () {},
-                    fontSize: 14,
-                    fontWeight: FontWeight.w500,
-                    height: 45,
-                    width: double.infinity,
-                  ),
-                  const SizedBox(height: 20),
-                ],
-              ),
-            ),
-          ),
-        );
+          );
   }
 }
 
@@ -93,8 +92,8 @@ class _BuyerInfoSection extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final location = ref.watch(locationProvider);
-    final notifier = ref.read(locationProvider.notifier);
+    // final location = ref.watch(locationProvider);
+    // final notifier = ref.read(locationProvider.notifier);
     final isWeb = MediaQuery.of(context).size.width > 800;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -179,25 +178,23 @@ class _BuyerInfoSection extends ConsumerWidget {
                   label: 'State',
                   items: nigeriaStatesAndCities.keys.toList(),
                   hintText: 'Select State',
-                  value:
-                      location.selectedState.isEmpty
-                          ? null
-                          : location.selectedState,
-                  onChanged: (val) {
-                    notifier.setStateValue(val);
-                  },
+                  // value: location.selectedState.isEmpty
+                  //     ? null
+                  //     : location.selectedState,
+                  // onChanged: (val) {
+                  //   notifier.setStateValue(val);
+                  // },
                   labelTextColor: AppColors.textBlack,
                 );
               case 1:
                 return CustomDropdownField(
                   label: 'City/ Town',
-                  items: location.availableCities,
+                  items: [],
                   hintText: 'Select City',
-                  value:
-                      location.selectedCity.isEmpty
-                          ? null
-                          : location.selectedCity,
-                  onChanged: notifier.updateCity,
+                  // value: location.selectedCity.isEmpty
+                  //     ? null
+                  //     : location.selectedCity,
+                  // onChanged: notifier.updateCity,
                   labelTextColor: AppColors.textBlack,
                 );
               default:

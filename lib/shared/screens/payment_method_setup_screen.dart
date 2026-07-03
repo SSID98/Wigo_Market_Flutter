@@ -1,120 +1,120 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter_hooks/flutter_hooks.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:wigo_flutter/gen/assets.gen.dart';
+import 'package:wigo_flutter/shared/widgets/custom_dropdown_field2.dart';
+import 'package:wigo_flutter/shared/widgets/custom_loading_overlay.dart';
 
 import '../../core/constants/app_colors.dart';
 import '../../core/constants/url.dart';
 import '../../core/local/local_user_controller.dart';
-import '../../features/rider/viewmodels/account_setup_viewmodels/rider_payment_method_setup_viewmodel.dart';
+import '../models/bank_model.dart';
+import '../viewmodels/bank_viewmodel.dart';
+import '../widgets/bank_widgets/bank_search_modal.dart';
 import '../widgets/custom_button.dart';
 import '../widgets/custom_text_field.dart';
 
-class PaymentMethodSetupScreen extends ConsumerWidget {
+class PaymentMethodSetupScreen extends HookConsumerWidget {
   const PaymentMethodSetupScreen({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final viewModel = ref.watch(riderAccountSetupViewmodelProvider);
     final screenSize = MediaQuery.of(context).size;
     final isWeb = MediaQuery.of(context).size.width > 600;
     return isWeb
-        ? _buildWebLayout(screenSize, viewModel, context, ref)
-        : _buildMobileLayout(screenSize, viewModel, context, ref);
+        ? _buildWebLayout(screenSize, context, ref)
+        : _buildMobileLayout(screenSize, context, ref);
   }
 
   Widget _buildMobileLayout(
     Size screenSize,
-    RiderAccountSetupViewmodel viewModel,
     BuildContext context,
     WidgetRef ref,
   ) {
     return Scaffold(
       backgroundColor: AppColors.backgroundWhite,
       body: SafeArea(
-        child: Stack(
-          children: [
-            Image.network(
-              '$networkImageUrl/onboardingRiderMobile.png',
-              fit: BoxFit.cover,
-              color: AppColors.backGroundOverlay,
-              colorBlendMode: BlendMode.overlay,
-              errorBuilder: (
-                BuildContext context,
-                Object exception,
-                StackTrace? stackTrace,
-              ) {
-                return const Center(
-                  child: Icon(
-                    Icons.broken_image,
-                    color: AppColors.textIconGrey,
-                    size: 50.0,
-                  ),
-                );
-              },
-            ),
-            Padding(
-              padding: const EdgeInsets.only(top: 70.0),
-              child: Align(
-                alignment: Alignment.topCenter,
-                child: Container(
-                  width: screenSize.width * 0.95,
-                  constraints: BoxConstraints(maxWidth: 400),
-                  decoration: BoxDecoration(
-                    color: AppColors.backgroundWhite,
-                    borderRadius: BorderRadius.circular(16.0),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black.withValues(alpha: 0.2),
-                        spreadRadius: 2,
-                        blurRadius: 10,
-                        offset: const Offset(0, 3),
-                      ),
-                    ],
-                  ),
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 20.0,
-                      vertical: 24.0,
-                    ),
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        _buildHeader(
-                          titleFontSize: 20.0,
-                          descriptionFontSize: 14.0,
-                          descriptionPadding: 50.0,
+        child: SingleChildScrollView(
+          child: Stack(
+            children: [
+              Image.network(
+                '$networkImageUrl/onboardingRiderMobile.png',
+                fit: BoxFit.cover,
+                color: AppColors.backGroundOverlay,
+                colorBlendMode: BlendMode.overlay,
+                errorBuilder:
+                    (
+                      BuildContext context,
+                      Object exception,
+                      StackTrace? stackTrace,
+                    ) {
+                      return const Center(
+                        child: Icon(
+                          Icons.broken_image,
+                          color: AppColors.textIconGrey,
+                          size: 50.0,
                         ),
-                        _buildBody(
-                          screenSize: screenSize.height * 0.56,
-                          fontSize1: 12.0,
-                          fontSize2: 12.0,
-                          viewModel: viewModel,
+                      );
+                    },
+              ),
+              Padding(
+                padding: const EdgeInsets.only(top: 70.0),
+                child: Align(
+                  alignment: Alignment.topCenter,
+                  child: Container(
+                    width: screenSize.width * 0.95,
+                    constraints: BoxConstraints(maxWidth: 400),
+                    decoration: BoxDecoration(
+                      color: AppColors.backgroundWhite,
+                      borderRadius: BorderRadius.circular(16.0),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withValues(alpha: 0.2),
+                          spreadRadius: 2,
+                          blurRadius: 10,
+                          offset: const Offset(0, 3),
                         ),
-                        _buildFooter(
-                          viewModel: viewModel,
-                          context: context,
-                          ref: ref,
-                        ),
-                        const SizedBox(height: 15.0),
                       ],
+                    ),
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 20.0,
+                        vertical: 24.0,
+                      ),
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          _buildHeader(
+                            titleFontSize: 20.0,
+                            descriptionFontSize: 14.0,
+                            descriptionPadding: 50.0,
+                          ),
+                          _buildBody(
+                            screenSize: screenSize.height * 0.56,
+                            fontSize1: 12.0,
+                            fontSize2: 12.0,
+                            ref: ref,
+                            context: context,
+                          ),
+                          _buildFooter(context: context, ref: ref),
+                          const SizedBox(height: 15.0),
+                        ],
+                      ),
                     ),
                   ),
                 ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );
   }
 
-  Widget _buildWebLayout(
-    Size screenSize,
-    RiderAccountSetupViewmodel viewModel,
-    BuildContext context,
-    WidgetRef ref,
-  ) {
+  Widget _buildWebLayout(Size screenSize, BuildContext context, WidgetRef ref) {
     return Scaffold(
       backgroundColor: AppColors.backgroundWhite,
       body: SafeArea(
@@ -125,19 +125,20 @@ class PaymentMethodSetupScreen extends ConsumerWidget {
               fit: BoxFit.cover,
               color: AppColors.backGroundOverlay,
               colorBlendMode: BlendMode.overlay,
-              errorBuilder: (
-                BuildContext context,
-                Object exception,
-                StackTrace? stackTrace,
-              ) {
-                return const Center(
-                  child: Icon(
-                    Icons.broken_image,
-                    color: AppColors.textIconGrey,
-                    size: 50.0,
-                  ),
-                );
-              },
+              errorBuilder:
+                  (
+                    BuildContext context,
+                    Object exception,
+                    StackTrace? stackTrace,
+                  ) {
+                    return const Center(
+                      child: Icon(
+                        Icons.broken_image,
+                        color: AppColors.textIconGrey,
+                        size: 50.0,
+                      ),
+                    );
+                  },
             ),
             Padding(
               padding: const EdgeInsets.only(top: 70.0),
@@ -178,7 +179,9 @@ class PaymentMethodSetupScreen extends ConsumerWidget {
                             screenSize: screenSize.height * 0.50,
                             fontSize1: 16.72,
                             fontSize2: 16.0,
-                            viewModel: viewModel,
+                            ref: ref,
+                            context: context,
+
                             web: true,
                           ),
                         ),
@@ -187,7 +190,6 @@ class PaymentMethodSetupScreen extends ConsumerWidget {
                           padding: const EdgeInsets.symmetric(horizontal: 30.0),
                           child: _buildFooter(
                             web: true,
-                            viewModel: viewModel,
                             context: context,
                             ref: ref,
                           ),
@@ -242,9 +244,23 @@ class PaymentMethodSetupScreen extends ConsumerWidget {
     required double screenSize,
     required double fontSize1,
     required double fontSize2,
-    required RiderAccountSetupViewmodel viewModel,
     bool web = false,
+    required WidgetRef ref,
+    required BuildContext context,
   }) {
+    final bankState = ref.watch(bankProvider);
+    final vm = ref.read(bankProvider.notifier);
+    final items = bankState.isLoading ? <Bank>[] : [...bankState.banks]
+      ..sort((a, b) => a.name.toLowerCase().compareTo(b.name.toLowerCase()));
+
+    useEffect(() {
+      Future.microtask(() {
+        if (!context.mounted) return;
+        ref.read(bankProvider.notifier).fetchBanks(context);
+      });
+      return null;
+    }, const []);
+
     return SizedBox(
       height: screenSize,
       child: Column(
@@ -270,13 +286,42 @@ class PaymentMethodSetupScreen extends ConsumerWidget {
           ),
           const Divider(thickness: 1),
           const SizedBox(height: 8),
-          CustomDropdownField(
+
+          CustomDropdownField2<Bank>(
             label: 'Bank Name',
             labelTextColor: AppColors.textBlackGrey,
-            items: [],
+            items: items,
+            itemLabelBuilder: (bank) => bank.name,
             prefixIcon: AppAssets.icons.bank.svg(),
-            hintText: 'Select your bank',
+            hintText: bankState.isLoading ? 'Please wait' : 'Select your bank',
             hintTextColor: AppColors.textBodyText,
+            value: vm.selectedBankName,
+            onChanged: (bank) {
+              if (bank != null) {
+                vm.updateSelectedBank(bank, context);
+              }
+            },
+            onTap: () async {
+              if (bankState.banks.isEmpty) {
+                vm.fetchBanks(context);
+              }
+              final selected = await showBankSearchModal(
+                context,
+                bankState.banks,
+              );
+
+              if (selected != null && context.mounted) {
+                vm.updateSelectedBank(selected, context);
+              }
+            },
+            hasError:
+                bankState.hasSubmitted &&
+                (bankState.selectedBank?.name.isEmpty ?? true),
+            errorMessage:
+                bankState.hasSubmitted &&
+                    (bankState.selectedBank?.name.isEmpty ?? true)
+                ? "This field is required"
+                : null,
           ),
           const SizedBox(height: 25.0),
           CustomTextField(
@@ -285,14 +330,30 @@ class PaymentMethodSetupScreen extends ConsumerWidget {
             prefixIcon: AppAssets.icons.group.path,
             hintText: 'Enter 10 digit account Number',
             hintTextColor: AppColors.textBodyText,
+            onChanged: (val) => vm.updateAccountNumber(val, context),
+            keyboardType: TextInputType.number,
+            inputFormatters: [LengthLimitingTextInputFormatter(10)],
+            hasError: bankState.hasSubmitted && bankState.accountNumber.isEmpty,
+            errorMessage:
+                bankState.hasSubmitted && bankState.accountNumber.isEmpty
+                ? "This field is required"
+                : null,
           ),
           const SizedBox(height: 25),
           CustomTextField(
             label: 'Account Name',
             labelTextColor: AppColors.textBlackGrey,
             prefixIcon: AppAssets.icons.user.path,
-            hintText: 'Enter account name',
+            hintText: 'Account name',
             hintTextColor: AppColors.textBodyText,
+            onChanged: vm.updateAccountName,
+            readOnly: true,
+            controller: vm.accountNameController,
+            hasError: bankState.hasSubmitted && bankState.accountName.isEmpty,
+            errorMessage:
+                bankState.hasSubmitted && bankState.accountName.isEmpty
+                ? "This field is required"
+                : null,
           ),
           const SizedBox(height: 20),
           Text(
@@ -309,19 +370,22 @@ class PaymentMethodSetupScreen extends ConsumerWidget {
   }
 
   Widget _buildFooter({
-    required RiderAccountSetupViewmodel viewModel,
     bool web = false,
     required BuildContext context,
     required WidgetRef ref,
   }) {
+    final vm = ref.read(bankProvider.notifier);
     return Column(
       children: [
         CustomButton(
           text: 'Continue',
-          onPressed: () {
-            ref
-                .read(localUserControllerProvider.notifier)
-                .saveStage(OnboardingStage.success);
+          onPressed: () async {
+            final success = await vm.submit(context);
+            if (success) {
+              ref
+                  .read(localUserControllerProvider.notifier)
+                  .saveStage(OnboardingStage.success);
+            }
           },
           fontSize: 18,
           fontWeight: FontWeight.w500,
@@ -333,10 +397,14 @@ class PaymentMethodSetupScreen extends ConsumerWidget {
         ),
         CustomButton(
           text: 'Skip',
-          onPressed: () {
-            ref
-                .read(localUserControllerProvider.notifier)
-                .saveStage(OnboardingStage.success);
+          onPressed: () async {
+            await runWithOverlay(context, () async {
+              await Future.delayed(const Duration(seconds: 1), () {
+                ref
+                    .read(localUserControllerProvider.notifier)
+                    .saveStage(OnboardingStage.success);
+              });
+            }, spinner: SpinKitDualRing(color: AppColors.primaryDarkGreen));
           },
           suffixIcon: AppAssets.icons.arrowRight2.svg(),
           fontSize: 18,

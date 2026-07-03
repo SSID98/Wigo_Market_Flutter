@@ -6,7 +6,7 @@ import 'package:wigo_flutter/features/seller/models/multiple_products_state.dart
 import 'package:wigo_flutter/shared/widgets/custom_button.dart';
 
 import '../../../../../core/constants/app_colors.dart';
-import '../../../../../core/utils/helper_methods.dart';
+import '../../../../../core/utils/helper_methods_classes.dart';
 import '../../../viewmodels/mulitple_products_viewmodel.dart';
 
 Future<void> showColorPalette({

@@ -5,7 +5,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:wigo_flutter/features/buyer/presentation/widgets/self_delivery_card.dart';
 
 import '../../../../../core/constants/app_colors.dart';
-import '../../../../../core/utils/helper_methods.dart';
+import '../../../../../core/utils/helper_methods_classes.dart';
 import '../../../../../gen/assets.gen.dart';
 import '../../widgets/order_status_step.dart';
 
@@ -138,20 +138,19 @@ class OrdersTrackingScreen extends ConsumerWidget {
           isCustomer
               ? AppAssets.icons.checkmarkCircle.svg()
               : Icon(
-                Icons.keyboard_arrow_left_rounded,
-                size: isWeb ? 24 : 18,
-                color: AppColors.primaryDarkGreen,
-              ),
+                  Icons.keyboard_arrow_left_rounded,
+                  size: isWeb ? 24 : 18,
+                  color: AppColors.primaryDarkGreen,
+                ),
           const SizedBox(width: 4),
           Text(
             isCustomer ? "Product Details" : "Back",
             style: GoogleFonts.hind(
               fontSize: isWeb ? 24 : 18,
               fontWeight: isCustomer ? FontWeight.w600 : FontWeight.w400,
-              color:
-                  isCustomer
-                      ? AppColors.textBlack
-                      : AppColors.textVidaLocaGreen,
+              color: isCustomer
+                  ? AppColors.textBlack
+                  : AppColors.textVidaLocaGreen,
             ),
           ),
         ],

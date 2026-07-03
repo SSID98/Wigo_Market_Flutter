@@ -4,7 +4,7 @@ import 'package:google_fonts/google_fonts.dart';
 
 import '../../../../core/constants/app_colors.dart';
 import '../../../../core/constants/url.dart';
-import '../../../../core/utils/helper_methods.dart';
+import '../../../../core/utils/helper_methods_classes.dart';
 import '../../../../gen/assets.gen.dart';
 
 class FooterSection extends StatelessWidget {
@@ -18,19 +18,16 @@ class FooterSection extends StatelessWidget {
       children: [
         Image.network(
           '$networkImageUrl/logo3.png',
-          errorBuilder: (
-            BuildContext context,
-            Object exception,
-            StackTrace? stackTrace,
-          ) {
-            return const Center(
-              child: Icon(
-                Icons.broken_image,
-                color: AppColors.textIconGrey,
-                size: 50.0,
-              ),
-            );
-          },
+          errorBuilder:
+              (BuildContext context, Object exception, StackTrace? stackTrace) {
+                return const Center(
+                  child: Icon(
+                    Icons.broken_image,
+                    color: AppColors.textIconGrey,
+                    size: 50.0,
+                  ),
+                );
+              },
         ),
         const SizedBox(height: 20),
         _buildTextProperties(
@@ -133,18 +130,16 @@ class FooterSection extends StatelessWidget {
       text,
       style: GoogleFonts.hind(
         fontWeight: FontWeight.w400,
-        fontSize:
-            isWeb
-                ? isBottomText
-                    ? 16
-                    : 18
-                : 14,
-        color:
-            isBottomText
-                ? isBodyText
-                    ? AppColors.textBodyText
-                    : AppColors.textBlackGrey
-                : AppColors.textBlack,
+        fontSize: isWeb
+            ? isBottomText
+                  ? 16
+                  : 18
+            : 14,
+        color: isBottomText
+            ? isBodyText
+                  ? AppColors.textBodyText
+                  : AppColors.textBlackGrey
+            : AppColors.textBlack,
       ),
     );
   }

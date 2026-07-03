@@ -79,7 +79,15 @@ String formatDateWithTime(DateTime date) {
   return '${dateFormatter.format(date)} | $timeFormatter';
 }
 
+// String formatAmount(double amount) {
+//   final formatter = NumberFormat('#,###', 'en_US');
+//   return '₦${formatter.format(amount)}';
+// }
+
 String formatAmount(double amount) {
-  final formatter = NumberFormat('#,###', 'en_US');
-  return '₦${formatter.format(amount)}';
+  // Keeps 2 decimal places; e.g. 5000.0 → "₦5,000.00"
+  final formatted = amount
+      .toStringAsFixed(2)
+      .replaceAllMapped(RegExp(r'\B(?=(\d{3})+(?!\d))'), (m) => ',');
+  return '₦$formatted';
 }

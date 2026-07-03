@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_riverpod/legacy.dart';
 import 'package:wigo_flutter/shared/widgets/contact_text_field.dart';
 import 'package:wigo_flutter/shared/widgets/custom_button.dart';
 

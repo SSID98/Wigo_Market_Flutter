@@ -1,14 +1,11 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:wigo_flutter/shared/viewmodels/change_password_viewmodel.dart';
-import 'package:wigo_flutter/shared/widgets/custom_checkbox_widget.dart';
 
 import '../../core/constants/app_colors.dart';
 import '../../gen/assets.gen.dart';
-import '../models/login/login_state.dart';
-import '../viewmodels/login_view_model.dart';
 import 'custom_button.dart';
+import 'custom_checkbox_widget.dart';
 import 'custom_text_field.dart';
 
 class LoginResetPasswordWidgetBuilder {
@@ -18,28 +15,26 @@ class LoginResetPasswordWidgetBuilder {
     required double termsFont,
     termsFont2,
     required double buttonHeight,
-    LoginViewModel? vm,
-    ChangePasswordViewmodel? cvm,
+
     required suffixIconPadding,
     required EdgeInsetsGeometry termsPadding,
     required double sizedBoxHeight,
     required double generalErrorFont,
-    required LoginState state,
+    bool? value,
+
     required EdgeInsetsGeometry? contentPadding1,
     contentPadding2,
     double? sizedBoxHeight1,
-    void Function(bool)? onFocusChange1,
-    void Function(bool)? onFocusChange2,
+    void Function(String)? onChanged1,
+    void Function(String)? onChanged2,
     required void Function()? onPressed,
-    required double errorPadding,
+
     GlobalKey<FormState>? formKey,
-    required GlobalKey<FormFieldState<String>> fieldKey1,
-    required GlobalKey<FormFieldState<String>> fieldKey2,
+
     void Function(bool?)? termsOnChanged,
     TextEditingController? controller1,
     TextEditingController? controller2,
-    String? Function(String?)? validator1,
-    String? Function(String?)? validator2,
+
     bool firstFieldHasError = false,
     bool secondFieldHasError = false,
     Widget? suffixIcon,
@@ -55,125 +50,85 @@ class LoginResetPasswordWidgetBuilder {
     bool showRichText = true,
     buttonText,
     textFieldIcon,
+    double? footerTextFontSize,
+    void Function()? resetPassword,
+    void Function()? signup,
+    double? signUpFontSize,
   }) {
-    return Form(
-      key: formKey,
-      child: Column(
-        children: [
-          Text(
-            titleText ?? 'Login',
-            textAlign: TextAlign.center,
-            style: GoogleFonts.hind(
-              fontSize: loginFontSize,
-              fontWeight: FontWeight.w700,
-              color: AppColors.textVidaLocaGreen,
-            ),
+    return Column(
+      children: [
+        Text(
+          titleText ?? 'Login',
+          textAlign: TextAlign.center,
+          style: GoogleFonts.hind(
+            fontSize: loginFontSize,
+            fontWeight: FontWeight.w700,
+            color: AppColors.textVidaLocaGreen,
           ),
-          const SizedBox(height: 20.0),
-          CustomTextField(
-            fieldKey: fieldKey1,
-            label: labelText1 ?? 'Email',
-            iconHeight: 18,
-            iconWidth: 18,
-            prefixIcon: textFieldIcon ?? AppAssets.icons.mail.path,
-            hintText: hintText1 ?? 'Enter your email',
-            hintTextColor: AppColors.textIconGrey,
-            controller: controller1,
-            onFocusChange: onFocusChange1,
-            validator: validator1,
-            hasError: firstFieldHasError,
-            suffixIcon: suffixIcon,
-            isPassword: isPassword,
-            labelFontWeight: FontWeight.w600,
-            suffixIconPadding: suffixIconPadding,
-            contentPadding: contentPadding1,
-            errorMessage: errorMessage1,
-            autoValidateMode: autoValidateMode,
-          ),
-          const SizedBox(height: 25.0),
-          CustomTextField(
-            fieldKey: fieldKey2,
-            label: labelText2 ?? 'Password',
-            isPassword: true,
-            iconHeight: 18,
-            iconWidth: 18,
-            prefixIcon: AppAssets.icons.lock.path,
-            hintText: hintText2 ?? 'Enter your password',
-            hintTextColor: AppColors.textIconGrey,
-            suffixIcon: Icon(Icons.visibility_outlined),
-            controller: controller2,
-            suffixIconPadding: suffixIconPadding,
-            hasError: secondFieldHasError,
-            onFocusChange: onFocusChange2,
-            labelFontWeight: FontWeight.w600,
-            validator: validator2,
-            contentPadding: contentPadding2,
-            errorMessage: errorMessage2,
-            autoValidateMode: autoValidateMode,
-          ),
-          SizedBox(height: 12.0),
-          Padding(
-            padding: termsPadding,
-            child: Row(
-              children: [
-                CustomCheckBox(
-                  sizedBoxHeight: sizedBoxHeight,
-                  value: state.agreeToTerms,
-                  onChanged: termsOnChanged,
+        ),
+        const SizedBox(height: 20.0),
+        CustomTextField(
+          label: labelText1 ?? 'Email',
+          iconHeight: 18,
+          iconWidth: 18,
+          prefixIcon: textFieldIcon ?? AppAssets.icons.mail.path,
+          hintText: hintText1 ?? 'Enter your email',
+          hintTextColor: AppColors.textIconGrey,
+          controller: controller1,
+          hasError: firstFieldHasError,
+          suffixIcon: suffixIcon,
+          isPassword: isPassword,
+          labelFontWeight: FontWeight.w600,
+          suffixIconPadding: suffixIconPadding,
+          contentPadding: contentPadding1,
+          errorMessage: errorMessage1,
+          onChanged: onChanged1,
+        ),
+        const SizedBox(height: 25.0),
+        CustomTextField(
+          label: labelText2 ?? 'Password',
+          isPassword: true,
+          iconHeight: 18,
+          iconWidth: 18,
+          prefixIcon: AppAssets.icons.lock.path,
+          hintText: hintText2 ?? 'Enter your password',
+          hintTextColor: AppColors.textIconGrey,
+          suffixIcon: Icon(Icons.visibility_outlined),
+          controller: controller2,
+          suffixIconPadding: suffixIconPadding,
+          hasError: secondFieldHasError,
+          labelFontWeight: FontWeight.w600,
+          contentPadding: contentPadding2,
+          errorMessage: errorMessage2,
+          onChanged: onChanged2,
+        ),
+        SizedBox(height: 12.0),
+        showRichText
+            ? InkWell(
+                onTap: resetPassword,
+                child: Align(
+                  alignment: Alignment.centerLeft,
+                  child: Text(
+                    "Forgot Password?",
+                    style: GoogleFonts.hind(
+                      fontSize: footerTextFontSize,
+                      fontWeight: FontWeight.w400,
+                      color: AppColors.textOrange,
+                    ),
+                  ),
                 ),
-                const SizedBox(width: 14),
-                showRichText
-                    ? Expanded(
-                      child: RichText(
-                        text: TextSpan(
-                          children: [
-                            TextSpan(
-                              text: "I agree to wiGO MARKET ",
-                              style: GoogleFonts.hind(
-                                fontSize: termsFont,
-                                fontWeight: FontWeight.w400,
-                                color: AppColors.textBlackGrey,
-                              ),
-                            ),
-                            TextSpan(
-                              text: "Terms of services",
-                              style: GoogleFonts.hind(
-                                fontSize: termsFont,
-                                fontWeight: FontWeight.w600,
-                                color: AppColors.textOrange,
-                              ),
-                              recognizer:
-                                  TapGestureRecognizer()
-                                    ..onTap = () {
-                                      // Handle terms tap
-                                    },
-                            ),
-                            TextSpan(
-                              text: " and ",
-                              style: GoogleFonts.hind(
-                                fontSize: termsFont,
-                                fontWeight: FontWeight.w400,
-                                color: AppColors.textBlackGrey,
-                              ),
-                            ),
-                            TextSpan(
-                              text: "Privacy Policy",
-                              style: GoogleFonts.hind(
-                                fontSize: termsFont,
-                                fontWeight: FontWeight.w600,
-                                color: AppColors.textOrange,
-                              ),
-                              recognizer:
-                                  TapGestureRecognizer()
-                                    ..onTap = () {
-                                      // Handle privacy tap
-                                    },
-                            ),
-                          ],
-                        ),
-                      ),
-                    )
-                    : Expanded(
+              )
+            : Padding(
+                padding: termsPadding,
+                child: Row(
+                  children: [
+                    CustomCheckBox(
+                      sizedBoxHeight: sizedBoxHeight,
+                      value: value ?? false,
+                      onChanged: termsOnChanged,
+                    ),
+                    const SizedBox(width: 14),
+                    Expanded(
                       child: Text(
                         "Remember me",
                         style: GoogleFonts.hind(
@@ -183,38 +138,59 @@ class LoginResetPasswordWidgetBuilder {
                         ),
                       ),
                     ),
+                  ],
+                ),
+              ),
+        const SizedBox(height: 44.0),
+        CustomButton(
+          text: buttonText ?? 'Login',
+          onPressed: onPressed,
+          fontSize: 18,
+          fontWeight: FontWeight.w500,
+          height: buttonHeight,
+          width: double.infinity,
+          padding: EdgeInsets.zero,
+        ),
+        if (showRichText) ...[
+          const SizedBox(height: 10),
+          RichText(
+            text: TextSpan(
+              children: [
+                TextSpan(
+                  text: "Want to create an account? ",
+                  style: GoogleFonts.hind(
+                    fontSize: signUpFontSize,
+                    fontWeight: FontWeight.w400,
+                    color: AppColors.textBlackGrey,
+                  ),
+                ),
+                TextSpan(
+                  text: "Sign up",
+                  style: GoogleFonts.hind(
+                    fontSize: signUpFontSize,
+                    fontWeight: FontWeight.w600,
+                    color: AppColors.textOrange,
+                  ),
+                  recognizer: TapGestureRecognizer()..onTap = signup,
+                ),
               ],
             ),
           ),
-          const SizedBox(height: 44.0),
-          CustomButton(
-            text: buttonText ?? 'Login',
-            onPressed: onPressed,
-            fontSize: 18,
-            fontWeight: FontWeight.w500,
-            height: buttonHeight,
-            width: double.infinity,
-            padding: EdgeInsets.zero,
-          ),
-          SizedBox(height: sizedBoxHeight1 ?? 24),
         ],
-      ),
+        SizedBox(height: sizedBoxHeight1 ?? 24),
+      ],
     );
   }
 
   static Widget buildMobileBody({
-    required LoginState state,
     required void Function()? onPressed,
     required EdgeInsetsGeometry contentPadding1,
-    void Function(bool)? onFocusChange1,
-    void Function(bool)? onFocusChange2,
+    void Function(String)? onChanged1,
+    void Function(String)? onChanged2,
     bool firstFieldHasError = false,
     bool secondFieldHasError = false,
     GlobalKey<FormState>? formKey,
-    required GlobalKey<FormFieldState<String>> fieldKey1,
-    required GlobalKey<FormFieldState<String>> fieldKey2,
-    ChangePasswordViewmodel? cvm,
-    LoginViewModel? vm,
+    bool? value,
     void Function(bool?)? termsOnChanged,
     String? Function(String?)? validator1,
     String? Function(String?)? validator2,
@@ -233,7 +209,13 @@ class LoginResetPasswordWidgetBuilder {
     bool showRichText = true,
     buttonText,
     textFieldIcon,
+    void Function()? resetPassword,
+    void Function()? signUp,
   }) => _buildBody(
+    value: value,
+    signup: signUp,
+    signUpFontSize: 12,
+    footerTextFontSize: 14,
     loginFontSize: 20.0,
     topPadding: 0.0,
     termsFont: 10.0,
@@ -242,21 +224,12 @@ class LoginResetPasswordWidgetBuilder {
     termsPadding: EdgeInsets.zero,
     sizedBoxHeight: 11.0,
     generalErrorFont: 15.0,
-    errorPadding: 10.0,
     termsFont2: 12.0,
     contentPadding1: contentPadding1,
     contentPadding2: EdgeInsets.only(top: 13.8),
-    vm: vm,
-    state: state,
-    validator1: validator1,
-    validator2: validator2,
     onPressed: onPressed,
-    onFocusChange1: onFocusChange1,
-    onFocusChange2: onFocusChange2,
     firstFieldHasError: firstFieldHasError,
     secondFieldHasError: secondFieldHasError,
-    fieldKey1: fieldKey1,
-    fieldKey2: fieldKey2,
     controller1: controller1,
     controller2: controller2,
     formKey: formKey,
@@ -274,25 +247,21 @@ class LoginResetPasswordWidgetBuilder {
     errorMessage1: errorMessage1,
     errorMessage2: errorMessage2,
     autoValidateMode: autoValidateMode,
-    cvm: cvm,
+    onChanged1: onChanged1,
+    onChanged2: onChanged2,
+    resetPassword: resetPassword,
   );
 
   static Widget buildWebBody({
-    required LoginState state,
+    bool? value,
     required void Function()? onPressed,
-    void Function(bool)? onFocusChange1,
-    void Function(bool)? onFocusChange2,
+    void Function(String)? onChanged1,
+    void Function(String)? onChanged2,
     bool firstFieldHasError = false,
     bool secondFieldHasError = false,
     GlobalKey<FormState>? formKey,
-    required GlobalKey<FormFieldState<String>> fieldKey1,
-    required GlobalKey<FormFieldState<String>> fieldKey2,
     required EdgeInsetsGeometry? contentPadding1,
-    ChangePasswordViewmodel? cvm,
-    LoginViewModel? vm,
     void Function(bool?)? termsOnChanged,
-    String? Function(String?)? validator1,
-    String? Function(String?)? validator2,
     TextEditingController? controller1,
     TextEditingController? controller2,
     Widget? suffixIcon,
@@ -308,34 +277,33 @@ class LoginResetPasswordWidgetBuilder {
     bool showRichText = true,
     buttonText,
     textFieldIcon,
+    void Function()? resetPassword,
+    void Function()? signUp,
   }) => _buildBody(
+    value: value,
+    signup: signUp,
+    resetPassword: resetPassword,
     loginFontSize: 36.0,
+    footerTextFontSize: 16.0,
+    signUpFontSize: 16,
     topPadding: 0.0,
     termsFont: 16.0,
     buttonHeight: 50.0,
-    vm: vm,
-    cvm: cvm,
-    state: state,
     termsPadding: EdgeInsets.only(left: 5.0),
     sizedBoxHeight: 11.0,
     sizedBoxHeight1: 34.0,
     termsFont2: 16.0,
     suffixIconPadding: 25.0,
     generalErrorFont: 16.0,
-    errorPadding: 0.0,
     contentPadding1: contentPadding1,
     contentPadding2: EdgeInsets.only(top: 14.0),
     onPressed: onPressed,
-    onFocusChange1: onFocusChange1,
-    onFocusChange2: onFocusChange2,
+    onChanged1: onChanged1,
+    onChanged2: onChanged2,
     firstFieldHasError: firstFieldHasError,
     secondFieldHasError: secondFieldHasError,
-    fieldKey1: fieldKey1,
-    fieldKey2: fieldKey2,
     controller1: controller1,
     controller2: controller2,
-    validator1: validator1,
-    validator2: validator2,
     formKey: formKey,
     suffixIcon: suffixIcon,
     hintText1: hintText1,

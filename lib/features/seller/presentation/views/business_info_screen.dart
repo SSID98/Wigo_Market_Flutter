@@ -2,6 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:wigo_flutter/core/constants/app_colors.dart';
+import 'package:wigo_flutter/features/seller/models/seller_business_register_state.dart';
+import 'package:wigo_flutter/features/seller/viewmodels/business_info_viewmodel.dart';
+import 'package:wigo_flutter/shared/widgets/custom_banner.dart';
 import 'package:wigo_flutter/shared/widgets/custom_button.dart';
 
 import '../../../../core/constants/url.dart';
@@ -15,9 +18,11 @@ class BusinessInfoScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final screenSize = MediaQuery.of(context).size;
     final isWeb = MediaQuery.of(context).size.width > 600;
+    final notifier = ref.read(businessInfoViewmodelProvider.notifier);
+    final state = ref.watch(businessInfoViewmodelProvider);
     return isWeb
         ? _buildWebLayout(screenSize, context, isWeb)
-        : _buildMobileLayout(screenSize, context, ref, isWeb);
+        : _buildMobileLayout(screenSize, context, ref, isWeb, notifier, state);
   }
 
   Widget _buildMobileLayout(
@@ -25,6 +30,8 @@ class BusinessInfoScreen extends ConsumerWidget {
     BuildContext context,
     WidgetRef ref,
     bool isWeb,
+    BusinessInfoViewModel notifier,
+    SellerBusinessRegisterState state,
   ) {
     return Scaffold(
       backgroundColor: AppColors.backgroundWhite,
@@ -92,78 +99,28 @@ class BusinessInfoScreen extends ConsumerWidget {
                       Center(
                         child: CustomButton(
                           text: 'Continue',
-                          onPressed: () {
-                            ref
-                                .read(localUserControllerProvider.notifier)
-                                .saveStage(OnboardingStage.bankSetup);
-                          },
-                          // state.isLoading
-                          //     ? null
-                          //     : () async {
-                          //       notifier.validateOnSubmit();
-                          //
-                          //       final currentState = ref.read(
-                          //         registerViewModelProvider,
-                          //       );
-                          //
-                          //       if (currentState.emailError != null ||
-                          //           currentState.passwordError != null) {
-                          //         ScaffoldMessenger.of(
-                          //           context,
-                          //         ).showSnackBar(
-                          //           const SnackBar(
-                          //             content: Text(
-                          //               'Please fix the highlighted fields',
-                          //             ),
-                          //           ),
-                          //         );
-                          //         return;
-                          //       }
-                          //
-                          //       // set role before submit if you have separate path
-                          //       notifier.setRole(
-                          //         isBuyer
-                          //             ? UserRole.buyer
-                          //             : isSeller
-                          //             ? UserRole.seller
-                          //             : UserRole.dispatch,
-                          //       );
-                          //
-                          //       final ok = await notifier.submit(context);
-                          //
-                          //       if (ok) {
-                          //         // navigate to verification or next screen
-                          //         await ref
-                          //             .read(
-                          //               localUserControllerProvider
-                          //                   .notifier,
-                          //             )
-                          //             .saveEmail(state.email);
-                          //
-                          //         await ref
-                          //             .read(
-                          //               localUserControllerProvider
-                          //                   .notifier,
-                          //             )
-                          //             .saveStage(OnboardingStage.otp);
-                          //
-                          //         if (!context.mounted) return;
-                          //         context.go('/verification');
-                          //       } else {
-                          //         // show error via snackBar or inline UI from state.errorMessage
-                          //         if (!context.mounted) return;
-                          //         ScaffoldMessenger.of(
-                          //           context,
-                          //         ).showSnackBar(
-                          //           SnackBar(
-                          //             content: Text(
-                          //               state.errorMessage ??
-                          //                   'An error occurred',
-                          //             ),
-                          //           ),
-                          //         );
-                          //       }
-                          //     },
+                          onPressed: state.isLoading
+                              ? null
+                              : () async {
+                                  final ok = await notifier.submit(context);
+                                  if (ok) {
+                                    ref
+                                        .read(
+                                          localUserControllerProvider.notifier,
+                                        )
+                                        .saveStage(OnboardingStage.bankSetup);
+                                  } else {
+                                    final freshState = ref.read(
+                                      businessInfoViewmodelProvider,
+                                    );
+                                    if (!context.mounted) return;
+                                    showErrorBanner(
+                                      freshState.errorMessage ??
+                                          'An error occurred',
+                                      context,
+                                    );
+                                  }
+                                },
                           fontSize: 18,
                           fontWeight: FontWeight.w500,
                           width: double.infinity,

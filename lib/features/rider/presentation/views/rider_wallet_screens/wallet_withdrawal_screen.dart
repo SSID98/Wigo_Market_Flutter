@@ -2,43 +2,37 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:wigo_flutter/features/rider/presentation/views/rider_wallet_screens/wallet_edit_bank_account_screen.dart';
 import 'package:wigo_flutter/features/rider/viewmodels/edit_bank_account_viewmodel.dart';
 import 'package:wigo_flutter/features/rider/viewmodels/wallet_withdrawal_viewmodel.dart';
+import 'package:wigo_flutter/shared/models/bank_model.dart';
 
 import '../../../../../core/constants/app_colors.dart';
+import '../../../../../core/utils/context_extensions.dart';
 import '../../../../../core/utils/validation_utils.dart';
 import '../../../../../gen/assets.gen.dart';
+import '../../../../../shared/widgets/custom_banner.dart';
 import '../../../../../shared/widgets/custom_button.dart';
-import '../../../../../shared/widgets/custom_dialog.dart';
 import '../../../../../shared/widgets/custom_text_field.dart';
 import '../../../models/bank_details.dart';
 import '../../widgets/bank_details_tile.dart';
+import '../../widgets/custom_dialog.dart';
 import '../../widgets/withdraw_confirmation_card.dart';
 
 enum WithdrawalStatus { success, failure }
 
-class WalletWithdrawalScreen extends ConsumerStatefulWidget {
+class WalletWithdrawalScreen extends ConsumerWidget {
   const WalletWithdrawalScreen({super.key});
 
   @override
-  ConsumerState<WalletWithdrawalScreen> createState() =>
-      _WalletWithdrawalScreenState();
-}
-
-class _WalletWithdrawalScreenState
-    extends ConsumerState<WalletWithdrawalScreen> {
-  String? _currentAmountError;
-  AutovalidateMode _autoValidateMode = AutovalidateMode.disabled;
-  bool _showConfirmationCard = false;
-
-  @override
-  Widget build(BuildContext context) {
-    final vm = ref.watch(withdrawalViewModelProvider.notifier);
-    final isWeb = MediaQuery.of(context).size.width > 600;
-    String amount = vm.amountController.text;
-    final defaultBank =
-        ref.watch(editBankAccountProvider.notifier).getDefaultBankAccount();
+  Widget build(BuildContext context, WidgetRef ref) {
+    final vm = ref.read(withdrawalViewModelProvider.notifier);
+    final state = ref.watch(withdrawalViewModelProvider);
+    final amount = state.amount ?? '';
+    final defaultBank = ref
+        .watch(editBankAccountProvider.notifier)
+        .getDefaultBankAccount();
     final continueButtonColor = AppColors.primaryDarkGreen;
 
     return GestureDetector(
@@ -47,76 +41,86 @@ class _WalletWithdrawalScreenState
       },
       child: Scaffold(
         backgroundColor: AppColors.backgroundLight,
-        body:
-            isWeb
-                ? Padding(
-                  padding: const EdgeInsets.fromLTRB(15, 0, 300, 0),
-                  child: Row(
-                    children: [
-                      Expanded(
-                        child: _buildBody(
-                          defaultBank,
-                          continueButtonColor,
-                          amount,
-                          vm,
-                        ),
+        body: context.isWeb
+            ? Padding(
+                padding: const EdgeInsets.fromLTRB(15, 0, 300, 0),
+                child: Row(
+                  children: [
+                    Expanded(
+                      child: _buildBody(
+                        defaultBank,
+                        continueButtonColor,
+                        amount,
+                        context,
+                        ref,
                       ),
-                      const SizedBox(width: 20),
-                      Expanded(
-                        child:
-                            _showConfirmationCard
-                                ? WithdrawalConfirmationCard(
-                                  onConfirm: () {
-                                    _showPinDialog(
-                                      context,
-                                      defaultBank ??
-                                          BankDetails.empty('1').copyWith(
-                                            bankName: 'No Default Account Set',
-                                            accountNumber: '**** ****',
-                                          ),
-                                      amount,
-                                      vm,
-                                    );
-                                  },
-                                  amount: amount,
-                                  details:
-                                      defaultBank ??
+                    ),
+                    const SizedBox(width: 20),
+                    Expanded(
+                      child: state.showConfirmationCard
+                          ? WithdrawalConfirmationCard(
+                              onConfirm: () {
+                                _showPinDialog(
+                                  context,
+                                  defaultBank ??
                                       BankDetails.empty('1').copyWith(
-                                        bankName: 'No Default Account Set',
+                                        selectedBank: Bank(
+                                          name: 'No Default Account Set',
+                                          id: 0,
+                                          code: '',
+                                        ),
                                         accountNumber: '**** ****',
                                       ),
-                                  onCancel: () {
-                                    setState(() {
-                                      _showConfirmationCard = false;
-                                    });
-                                  },
-                                  isWeb: true,
-                                  body: _buildBodyCard(
-                                    context,
-                                    defaultBank ??
-                                        BankDetails.empty('1').copyWith(
-                                          bankName: 'No Default Account Set',
-                                          accountNumber: '**** ****',
-                                        ),
-                                    amount,
+                                  amount,
+                                  ref,
+                                );
+                              },
+                              amount: amount,
+                              details:
+                                  defaultBank ??
+                                  BankDetails.empty('1').copyWith(
+                                    selectedBank: Bank(
+                                      name: 'No Default Account Set',
+                                      id: 0,
+                                      code: '',
+                                    ),
+                                    accountNumber: '**** ****',
                                   ),
-                                )
-                                : const SizedBox(),
-                      ),
-                    ],
-                  ),
-                )
-                : SingleChildScrollView(
-                  child: Padding(
-                    padding: EdgeInsets.fromLTRB(15.0, 20, 15.0, 0),
-                    child: _buildBody(
-                      defaultBank,
-                      continueButtonColor,
-                      amount,
-                      vm,
+                              onCancel: () {
+                                vm.toggleConfirmationCard(false);
+                              },
+                              isWeb: true,
+                              body: _buildBodyCard(
+                                context,
+                                defaultBank ??
+                                    BankDetails.empty('1').copyWith(
+                                      selectedBank: Bank(
+                                        name: 'No Default Account Set',
+                                        id: 0,
+                                        code: '',
+                                      ),
+                                      accountNumber: '**** ****',
+                                    ),
+                                amount,
+                              ),
+                            )
+                          : const SizedBox(),
                     ),
+                  ],
+                ),
+              )
+            : SingleChildScrollView(
+                child: Padding(
+                  padding: EdgeInsets.fromLTRB(15.0, 20, 15.0, 0),
+                  child: _buildBody(
+                    defaultBank,
+                    continueButtonColor,
+                    amount,
+                    context,
+                    ref,
                   ),
                 ),
+              ),
       ),
     );
   }
@@ -125,9 +129,19 @@ class _WalletWithdrawalScreenState
     BankDetails? defaultBank,
     Color buttonColor,
     String amount,
-    WithdrawalViewmodel vm,
+    BuildContext context,
+    WidgetRef ref,
   ) {
-    final isWeb = MediaQuery.of(context).size.width > 600;
+    final vm = ref.read(withdrawalViewModelProvider.notifier);
+    final state = ref.watch(withdrawalViewModelProvider);
+    final bankState = ref.watch(editBankAccountProvider);
+    final defaultBank = bankState.bankDetailsList
+        .cast<BankDetails?>()
+        .firstWhere(
+          (bank) => bank != null && bank.isDefault,
+          orElse: () => null,
+        );
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -143,7 +157,7 @@ class _WalletWithdrawalScreenState
             Text(
               'Back',
               style: GoogleFonts.hind(
-                fontWeight: isWeb ? FontWeight.w500 : FontWeight.w400,
+                fontWeight: context.isWeb ? FontWeight.w500 : FontWeight.w400,
                 fontSize: 18,
                 color: AppColors.textBlack,
               ),
@@ -151,14 +165,14 @@ class _WalletWithdrawalScreenState
           ],
         ),
         const SizedBox(width: 8),
-        if (!isWeb)
+        if (!context.isWeb)
           Divider(color: AppColors.dividerColor.withValues(alpha: 0.2)),
-        if (!isWeb) const SizedBox(height: 8),
+        if (!context.isWeb) const SizedBox(height: 8),
         Text(
           "Withdrawal",
           style: GoogleFonts.hind(
             fontWeight: FontWeight.w600,
-            fontSize: isWeb ? 24 : 16,
+            fontSize: context.isWeb ? 24 : 16,
             color: AppColors.textBlackGrey,
           ),
         ),
@@ -166,7 +180,7 @@ class _WalletWithdrawalScreenState
         Text(
           "Manage your earnings, request withdrawals, and track payout history seamlessly.",
           style: GoogleFonts.hind(
-            fontSize: isWeb ? 18 : 12,
+            fontSize: context.isWeb ? 18 : 12,
             color: AppColors.textBlackGrey,
             fontWeight: FontWeight.w500,
           ),
@@ -186,25 +200,27 @@ class _WalletWithdrawalScreenState
                   label: 'Amount Withdraw',
                   prefixIcon: AppAssets.icons.naira.path,
                   labelTextColor: AppColors.textNeutral950,
-                  iconWidth: isWeb ? 19 : 11,
-                  fontSize: isWeb ? 18 : 15,
-                  labelFontSize: isWeb ? 20 : 15,
-                  hintFontSize: isWeb ? 18 : 15,
-                  autoValidateMode: _autoValidateMode,
+                  iconWidth: context.isWeb ? 19 : 11,
+                  fontSize: context.isWeb ? 18 : 15,
+                  labelFontSize: context.isWeb ? 20 : 15,
+                  hintFontSize: context.isWeb ? 18 : 15,
                   labelFontWeight: FontWeight.w600,
                   hintText: 'Enter Amount',
                   controller: vm.amountController,
                   keyboardType: TextInputType.number,
-                  hasError: _currentAmountError != null,
-                  errorIcon: false,
-                  validator: (value) => null,
+                  hasError:
+                      state.hasSubmitted &&
+                      FormValidators.validateAmount(state.amount) != null,
+                  // errorIcon: false,
                   inputFormatters: <TextInputFormatter>[
                     FilteringTextInputFormatter.digitsOnly,
                   ],
-                  onChanged: (v) {},
+                  onChanged: vm.updateAmount,
                   spacing: 15,
-                  errorMessage: _currentAmountError,
-                  height: isWeb ? 52 : 40,
+                  errorMessage: state.hasSubmitted
+                      ? FormValidators.validateAmount(state.amount)
+                      : null,
+                  height: context.isWeb ? 52 : 40,
                   prefixPadding: EdgeInsets.only(
                     left: 17.0,
                     right: 3.0,
@@ -216,13 +232,13 @@ class _WalletWithdrawalScreenState
                 Text(
                   "Min. #500.00",
                   style: GoogleFonts.notoSans(
-                    fontSize: isWeb ? 14 : 12,
+                    fontSize: context.isWeb ? 14 : 12,
                     color: AppColors.textBodyText,
                     fontWeight: FontWeight.w400,
                   ),
                 ),
                 const SizedBox(height: 25),
-                // Payout Info
+
                 Row(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -239,7 +255,7 @@ class _WalletWithdrawalScreenState
                               text:
                                   "Payouts are made automatically to your bank account every",
                               style: GoogleFonts.hind(
-                                fontSize: isWeb ? 16 : 12,
+                                fontSize: context.isWeb ? 16 : 12,
                                 fontWeight: FontWeight.w400,
                                 color: AppColors.textBodyText,
                               ),
@@ -247,7 +263,7 @@ class _WalletWithdrawalScreenState
                             TextSpan(
                               text: ' 24-48 hours ',
                               style: GoogleFonts.hind(
-                                fontSize: isWeb ? 16 : 12,
+                                fontSize: context.isWeb ? 16 : 12,
                                 fontWeight: FontWeight.w700,
                                 color: AppColors.textBodyText,
                               ),
@@ -255,7 +271,7 @@ class _WalletWithdrawalScreenState
                             TextSpan(
                               text: 'after order completion.',
                               style: GoogleFonts.hind(
-                                fontSize: isWeb ? 16 : 12,
+                                fontSize: context.isWeb ? 16 : 12,
                                 fontWeight: FontWeight.w400,
                                 color: AppColors.textBodyText,
                               ),
@@ -271,168 +287,149 @@ class _WalletWithdrawalScreenState
                   "Bank Details",
                   style: GoogleFonts.hind(
                     fontWeight: FontWeight.w600,
-                    fontSize: isWeb ? 18 : 14,
+                    fontSize: context.isWeb ? 18 : 14,
                     color: AppColors.textBlackGrey,
                   ),
                 ),
                 defaultBank != null
                     ? BankDetailsTile(
-                      bank: defaultBank,
-                      isWeb: isWeb,
-                      showDelete: false,
-                      onEdit: () async {
-                        final didUpdate = await Navigator.push<bool>(
-                          context,
-                          MaterialPageRoute(
-                            builder:
-                                (context) => EditBankAccountScreen(
-                                  bankDetails: defaultBank,
-                                  openedViaNavigator: true,
-                                ),
-                          ),
-                        );
-                        if (didUpdate == true) {
-                          setState(() {});
-                        }
-                      },
-                    )
+                        bank: defaultBank,
+                        isWeb: context.isWeb,
+                        showDelete: false,
+                        onEdit: () async {
+                          final didUpdate = await Navigator.push<bool>(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => EditBankAccountScreen(
+                                bankDetails: defaultBank,
+                                openedViaNavigator: true,
+                              ),
+                            ),
+                          );
+                          if (didUpdate == true) {
+                            ref.invalidate(editBankAccountProvider);
+                          }
+                        },
+                      )
                     : BankDetailsTile(
-                      bank: BankDetails.empty('1').copyWith(
-                        bankName: 'No Default Account Set',
-                        accountNumber: '**** ****',
-                      ),
-                      isWeb: isWeb,
-                      showDelete: false,
-                      onEdit: () async {
-                        final newBank = BankDetails.empty('1');
-
-                        final didUpdate = await Navigator.push<bool>(
-                          context,
-                          MaterialPageRoute(
-                            builder:
-                                (context) => EditBankAccountScreen(
-                                  bankDetails: newBank,
-                                  openedViaNavigator: true,
-                                ),
+                        bank: BankDetails.empty('1').copyWith(
+                          selectedBank: Bank(
+                            name: 'No Default Account Set',
+                            id: 0,
+                            code: '',
                           ),
-                        );
-                        if (didUpdate == true) {
-                          setState(() {});
-                        }
-                      },
-                    ),
+                          accountNumber: '**** ****',
+                        ),
+                        isWeb: context.isWeb,
+                        showDelete: false,
+                        onEdit: () async {
+                          final newBank = BankDetails.empty('1');
+
+                          final didUpdate = await Navigator.push<bool>(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => EditBankAccountScreen(
+                                bankDetails: newBank,
+                                openedViaNavigator: true,
+                              ),
+                            ),
+                          );
+                          if (didUpdate == true) {
+                            ref.invalidate(editBankAccountProvider);
+                          }
+                        },
+                      ),
                 const SizedBox(height: 20),
                 CustomButton(
-                  fontSize: isWeb ? 18 : 12,
+                  fontSize: context.isWeb ? 18 : 12,
                   fontWeight: FontWeight.w500,
                   text: 'Continue',
                   onPressed: () async {
                     FocusManager.instance.primaryFocus?.unfocus();
-                    final validationResult = FormValidators.validateAmount(
-                      vm.amountController.text,
-                    );
-                    setState(() {
-                      _currentAmountError = validationResult;
-
-                      _autoValidateMode = AutovalidateMode.always;
-                    });
                     if (defaultBank == null) {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(
-                          content: Text(
-                            "Please set a default bank account before withdrawing.",
-                          ),
-                        ),
+                      showErrorBanner(
+                        "Please set a default bank account before withdrawing.",
+                        context,
                       );
                       return;
                     }
-
-                    if (validationResult == null) {
-                      vm.setLoading(true);
-                      await Future.delayed(const Duration(milliseconds: 500));
-                      if (!isWeb) {
-                        vm.amountController.clear();
-                        if (!mounted) return;
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder:
-                                (c) => Scaffold(
-                                  body: SingleChildScrollView(
-                                    padding: const EdgeInsets.symmetric(
-                                      horizontal: 16.0,
-                                      vertical: 20,
+                    vm.setLoading(true);
+                    await Future.delayed(const Duration(milliseconds: 500));
+                    if (context.mounted && !context.isWeb) {
+                      vm.amountController.clear();
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (c) => Scaffold(
+                            body: SingleChildScrollView(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 16.0,
+                                vertical: 20,
+                              ),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Row(
+                                    children: [
+                                      InkWell(
+                                        onTap: () {
+                                          Navigator.of(context).pop();
+                                        },
+                                        child: AppAssets.icons.arrowLeft.svg(),
+                                      ),
+                                      const SizedBox(width: 5),
+                                      Text(
+                                        'Back',
+                                        style: GoogleFonts.hind(
+                                          fontWeight: context.isWeb
+                                              ? FontWeight.w500
+                                              : FontWeight.w400,
+                                          fontSize: 18,
+                                          color: AppColors.textBlack,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                  const SizedBox(width: 8),
+                                  if (!context.isWeb)
+                                    Divider(
+                                      color: AppColors.dividerColor.withValues(
+                                        alpha: 0.2,
+                                      ),
                                     ),
-                                    child: Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        Row(
-                                          children: [
-                                            InkWell(
-                                              onTap: () {
-                                                Navigator.of(context).pop();
-                                              },
-                                              child:
-                                                  AppAssets.icons.arrowLeft
-                                                      .svg(),
-                                            ),
-                                            const SizedBox(width: 5),
-                                            Text(
-                                              'Back',
-                                              style: GoogleFonts.hind(
-                                                fontWeight:
-                                                    isWeb
-                                                        ? FontWeight.w500
-                                                        : FontWeight.w400,
-                                                fontSize: 18,
-                                                color: AppColors.textBlack,
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                        const SizedBox(width: 8),
-                                        if (!isWeb)
-                                          Divider(
-                                            color: AppColors.dividerColor
-                                                .withValues(alpha: 0.2),
-                                          ),
-                                        if (!isWeb) const SizedBox(height: 8),
-                                        WithdrawalConfirmationCard(
-                                          onConfirm: () async {
-                                            _showPinDialog(
-                                              context,
-                                              defaultBank,
-                                              amount,
-                                              vm,
-                                            );
-                                          },
-                                          amount: amount,
-                                          details: defaultBank,
-                                          isWeb: false,
-                                          body: _buildBodyCard(
-                                            context,
-                                            defaultBank,
-                                            amount,
-                                            isAmount: true,
-                                          ),
-                                        ),
-                                      ],
+                                  if (!context.isWeb) const SizedBox(height: 8),
+                                  WithdrawalConfirmationCard(
+                                    onConfirm: () async {
+                                      _showPinDialog(
+                                        context,
+                                        defaultBank,
+                                        amount,
+                                        ref,
+                                      );
+                                    },
+                                    amount: amount,
+                                    details: defaultBank,
+                                    isWeb: false,
+                                    body: _buildBodyCard(
+                                      context,
+                                      defaultBank,
+                                      amount,
+                                      isAmount: true,
                                     ),
                                   ),
-                                ),
+                                ],
+                              ),
+                            ),
                           ),
-                        );
-                      } else if (isWeb) {
-                        setState(() {
-                          _showConfirmationCard = true;
-                        });
-                      }
-                      vm.setLoading(false);
+                        ),
+                      );
+                    } else if (context.mounted && context.isWeb) {
+                      vm.toggleConfirmationCard(true);
                     }
+                    vm.setLoading(false);
                   },
                   width: double.infinity,
-                  height: isWeb ? 60 : 45,
+                  height: context.isWeb ? 60 : 45,
                   buttonColor: buttonColor,
                 ),
               ],
@@ -472,7 +469,11 @@ Widget _buildBodyCard(
             isDialogAmount: isDialogAmount,
           ),
           const SizedBox(height: 10),
-          _buildDetailRow(context, 'Bank Name', details.bankName),
+          _buildDetailRow(
+            context,
+            'Bank Name',
+            details.selectedBank?.name ?? '',
+          ),
           const SizedBox(height: 10),
           _buildDetailRow(context, 'Account Number', details.accountNumber),
           if (isNotDialog) const SizedBox(height: 10),
@@ -491,7 +492,6 @@ Widget _buildDetailRow(
   bool isAmount = false,
   bool isDialogAmount = false,
 }) {
-  final isWeb = MediaQuery.of(context).size.width > 600;
   return Row(
     mainAxisAlignment: MainAxisAlignment.spaceBetween,
     children: [
@@ -499,26 +499,24 @@ Widget _buildDetailRow(
         label,
         style: GoogleFonts.hind(
           fontWeight: FontWeight.w400,
-          color:
-              isAmount
-                  ? AppColors.textOrange
-                  : isDialogAmount
-                  ? AppColors.primaryDarkGreen
-                  : AppColors.textBlackGrey,
-          fontSize: isWeb ? 16 : 12,
+          color: isAmount
+              ? AppColors.textOrange
+              : isDialogAmount
+              ? AppColors.primaryDarkGreen
+              : AppColors.textBlackGrey,
+          fontSize: context.isWeb ? 16 : 12,
         ),
       ),
       Text(
         value,
         style: GoogleFonts.hind(
           fontWeight: FontWeight.w600,
-          color:
-              isAmount
-                  ? AppColors.textOrange
-                  : isDialogAmount
-                  ? AppColors.primaryDarkGreen
-                  : AppColors.textBlackGrey,
-          fontSize: isWeb ? 16 : 12,
+          color: isAmount
+              ? AppColors.textOrange
+              : isDialogAmount
+              ? AppColors.primaryDarkGreen
+              : AppColors.textBlackGrey,
+          fontSize: context.isWeb ? 16 : 12,
         ),
       ),
     ],
@@ -529,12 +527,13 @@ void _showPinDialog(
   BuildContext context,
   BankDetails details,
   String amount,
-  WithdrawalViewmodel vm,
+  WidgetRef ref,
 ) {
   showDialog(
     context: context,
     barrierDismissible: false,
     builder: (dialogContext) {
+      final vm = ref.read(withdrawalViewModelProvider.notifier);
       return CustomAlertDialog(
         content: InputPinDialog(
           body: _buildBodyCard(
@@ -546,18 +545,18 @@ void _showPinDialog(
           ),
           labelOnTap: () {
             Navigator.pop(dialogContext);
-            _resetPinDialog(context, vm);
+            _resetPinDialog(context, vm, ref);
           },
           details: details,
-          onPinSubmitted: (pin) {
+          onPinSubmitted: () async {
             Navigator.pop(dialogContext);
-            _mockWithdrawal(
-              context,
-              details,
-              vm,
-              pin,
-              amount,
-            ); // Proceed to mock withdrawal
+            final result = await vm.makeWithdrawal(context: context);
+            if (result && context.mounted) {
+              showWithdrawalResult(context, details, true, amount, ref);
+            } else {
+              if (!context.mounted) return;
+              showWithdrawalResult(context, details, false, amount, ref);
+            }
           },
         ),
         closeIconPress: () {
@@ -571,7 +570,11 @@ void _showPinDialog(
   );
 }
 
-void _resetPinDialog(BuildContext context, WithdrawalViewmodel vm) {
+void _resetPinDialog(
+  BuildContext context,
+  WithdrawalViewmodel vm,
+  WidgetRef ref,
+) {
   showDialog(
     context: context,
     barrierDismissible: false,
@@ -581,13 +584,13 @@ void _resetPinDialog(BuildContext context, WithdrawalViewmodel vm) {
           onPressed: () {
             vm.otpController.clear();
             Navigator.pop(dialogContext);
-            _createPinDialog(context, vm);
+            _createPinDialog(context, vm, ref);
           },
         ),
         closeIconPress: () {
           Navigator.pop(dialogContext);
           if (Navigator.canPop(context)) {
-            Navigator.pop(context); //
+            Navigator.pop(context);
           }
         },
       );
@@ -595,7 +598,11 @@ void _resetPinDialog(BuildContext context, WithdrawalViewmodel vm) {
   );
 }
 
-void _createPinDialog(BuildContext context, WithdrawalViewmodel vm) {
+void _createPinDialog(
+  BuildContext context,
+  WithdrawalViewmodel vm,
+  WidgetRef ref,
+) {
   showDialog(
     context: context,
     barrierDismissible: false,
@@ -609,6 +616,24 @@ void _createPinDialog(BuildContext context, WithdrawalViewmodel vm) {
           isResetPin: false,
           dialogContext: dialogContext,
           context: context,
+          onPressed: () async {
+            FocusManager.instance.primaryFocus?.unfocus();
+            final result = await vm.setUserPin(context: context);
+            if (result) {
+              if (!context.mounted) return;
+              showSuccessBanner(
+                "Pin Successfully Created, You can now withdraw",
+                context,
+              );
+              Navigator.pop(dialogContext);
+              Navigator.pop(context);
+            }
+            // } else {
+            //   final freshState = ref.read(withdrawalViewModelProvider);
+            //   if (!context.mounted) return;
+            //   showErrorBanner(freshState.errorMessage!, context);
+            // }
+          },
         ),
         closeIconPress: () {
           Navigator.pop(dialogContext);
@@ -621,18 +646,13 @@ void _createPinDialog(BuildContext context, WithdrawalViewmodel vm) {
   );
 }
 
-// Mock the withdrawal process and show the result dialog
-void _mockWithdrawal(
+void showWithdrawalResult(
   BuildContext context,
   BankDetails details,
-  WithdrawalViewmodel vm,
-  String pin,
+  bool isSuccess,
   String amount,
+  WidgetRef ref,
 ) {
-  // Simulate network delay and backend validation
-  // Mock logic: PIN "1234" succeeds, any other PIN fails
-  final bool isSuccess = pin == "1234";
-
   showDialog(
     context: context,
     barrierDismissible: false,
@@ -647,7 +667,7 @@ void _mockWithdrawal(
         },
         onTryAgain: () {
           Navigator.pop(dialogContext);
-          _showPinDialog(context, details, amount, vm);
+          _showPinDialog(context, details, amount, ref);
         },
         onCancel: () {
           Navigator.pop(dialogContext);
@@ -679,15 +699,16 @@ class WithdrawalResultDialog extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final bool isSuccess = status == WithdrawalStatus.success;
-    final String title =
-        isSuccess ? "Withdrawal Successful" : "Withdrawal Failed";
+    final String title = isSuccess
+        ? "Withdrawal Successful"
+        : "Withdrawal Failed";
     final String buttonText1 = isSuccess ? "Back" : "Try-again";
-    final String buttonText2 =
-        isSuccess ? "View Transaction History" : "Cancel";
-    final String message =
-        isSuccess
-            ? "Your withdrawal request has been submitted successfully. You'll receive a notification once it's processed."
-            : "Your withdrawal request failed. Kindly check if your details again or if you have sufficient funds in your wallet";
+    final String buttonText2 = isSuccess
+        ? "View Transaction History"
+        : "Cancel";
+    final String message = isSuccess
+        ? "Your withdrawal request has been submitted successfully. You'll receive a notification once it's processed."
+        : "Your withdrawal request failed. Kindly check if your details again or if you have sufficient funds in your wallet";
 
     return CustomAlertDialog(
       content: SuccessFailureDialog(
@@ -695,10 +716,9 @@ class WithdrawalResultDialog extends StatelessWidget {
         buttonText1: buttonText1,
         description: message,
         title: title,
-        icon:
-            isSuccess
-                ? AppAssets.icons.doubleTickSuccessful.svg()
-                : AppAssets.icons.actionFailed.svg(),
+        icon: isSuccess
+            ? AppAssets.icons.doubleTickSuccessful.svg()
+            : AppAssets.icons.actionFailed.svg(),
         body: _buildBodyCard(
           context,
           details,

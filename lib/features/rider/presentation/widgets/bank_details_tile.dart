@@ -31,21 +31,18 @@ class BankDetailsTile extends StatelessWidget {
     String maskedAccountNumber(String number) {
       if (number.isEmpty) return number;
 
-      // Show first 3 digits, mask middle, show last 4
-      if (number.length <= 7) return number; // not enough digits to mask safely
+      if (number.length <= 7) return number;
 
-      final start = number.substring(0, 3); // first 3
-      final end = number.substring(number.length - 4); // last 4
+      final start = number.substring(0, 3);
+      final end = number.substring(number.length - 4);
       final mask = '*' * (number.length - (start.length + end.length));
 
       return '$start$mask$end';
     }
 
-    final titleText =
-        bank.isEmpty
-            ? bank
-                .bankName // "Click to Add Bank Account"
-            : bank.bankName;
+    final titleText = bank.isEmpty
+        ? bank.selectedBank?.name
+        : bank.selectedBank?.name;
 
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 8.0),
@@ -60,14 +57,13 @@ class BankDetailsTile extends StatelessWidget {
                 title: Row(
                   children: [
                     Text(
-                      titleText,
+                      titleText ?? '',
                       style: GoogleFonts.hind(
                         fontWeight: FontWeight.w600,
                         fontSize: isWeb ? 22 : 16,
-                        color:
-                            bank.isEmpty
-                                ? AppColors.textBodyText
-                                : AppColors.textBlackGrey,
+                        color: bank.isEmpty
+                            ? AppColors.textBodyText
+                            : AppColors.textBlackGrey,
                       ),
                     ),
                     const SizedBox(width: 8),
@@ -83,10 +79,9 @@ class BankDetailsTile extends StatelessWidget {
                   child: Text(
                     'Account Number: ${maskedAccountNumber(bank.accountNumber)}',
                     style: GoogleFonts.hind(
-                      color:
-                          bank.isEmpty
-                              ? AppColors.textBodyText
-                              : AppColors.textBlackGrey,
+                      color: bank.isEmpty
+                          ? AppColors.textBodyText
+                          : AppColors.textBlackGrey,
                       fontSize: isWeb ? 14 : 10,
                       fontWeight: FontWeight.w400,
                     ),

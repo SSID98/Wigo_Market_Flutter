@@ -1,45 +1,35 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:wigo_flutter/core/utils/validation_utils.dart';
+import 'package:wigo_flutter/core/utils/context_extensions.dart';
 import 'package:wigo_flutter/shared/widgets/login_reset_password_body.dart';
 
 import '../../core/constants/app_colors.dart';
 import '../../core/constants/url.dart';
 import '../../core/providers/role_selection_provider.dart';
+import '../../core/utils/validation_utils.dart';
 import '../../gen/assets.gen.dart';
 import '../models/login/login_state.dart';
 import '../models/user_role.dart';
-import '../viewmodels/login_view_model.dart';
+import '../viewmodels/login_viewmodel.dart';
 import '../widgets/bottom_text.dart';
 import '../widgets/custom_button.dart';
+import '../widgets/custom_loading_overlay.dart';
 
-class LoginScreen extends ConsumerStatefulWidget {
+class LoginScreen extends ConsumerWidget {
   const LoginScreen({super.key});
 
   @override
-  ConsumerState<LoginScreen> createState() => _LoginScreenState();
-}
-
-class _LoginScreenState extends ConsumerState<LoginScreen> {
-  final formKey = GlobalKey<FormState>();
-  String? _passwordError;
-  String? _emailError;
-  AutovalidateMode _autovalidateMode = AutovalidateMode.disabled;
-  final emailFieldKey = GlobalKey<FormFieldState<String>>();
-  final passwordFieldKey = GlobalKey<FormFieldState<String>>();
-
-  @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final state = ref.watch(loginViewModelProvider);
     final vm = ref.watch(loginViewModelProvider.notifier);
     final screenSize = MediaQuery.of(context).size;
-    final isWeb = MediaQuery.of(context).size.width > 600;
     final role = ref.watch(userRoleProvider);
     final isBuyer = role == UserRole.buyer;
-    return isWeb
+    return context.isWeb
         ? _buildWebLayout(screenSize, vm, state, context, isBuyer)
         : _buildMobileLayout(screenSize, vm, state, context, isBuyer);
   }
@@ -59,19 +49,20 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
           Image.network(
             '$networkImageUrl/login.png',
             fit: BoxFit.cover,
-            errorBuilder: (
-              BuildContext context,
-              Object exception,
-              StackTrace? stackTrace,
-            ) {
-              return const Center(
-                child: Icon(
-                  Icons.broken_image,
-                  color: AppColors.textIconGrey,
-                  size: 50.0,
-                ),
-              );
-            },
+            errorBuilder:
+                (
+                  BuildContext context,
+                  Object exception,
+                  StackTrace? stackTrace,
+                ) {
+                  return const Center(
+                    child: Icon(
+                      Icons.broken_image,
+                      color: AppColors.textIconGrey,
+                      size: 50.0,
+                    ),
+                  );
+                },
           ),
           BottomTextBuilder.buildMobileBottomText(),
           Center(
@@ -100,76 +91,55 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                       LoginResetPasswordWidgetBuilder.buildMobileBody(
                         controller1: vm.emailController,
                         controller2: vm.passwordController,
-                        termsOnChanged: vm.toggleAgreeToTerms,
-                        vm: vm,
-                        state: state,
-                        firstFieldHasError: _emailError != null,
-                        secondFieldHasError: _passwordError != null,
-                        validator1: (value) => null,
-                        validator2: (value) => null,
-                        errorMessage1: _emailError,
-                        errorMessage2: _passwordError,
-                        autoValidateMode: _autovalidateMode,
-                        onFocusChange1: (hasFocus) {
-                          if (!hasFocus) {
-                            final error = FormValidators.validateEmail(
-                              vm.emailController.text,
-                            );
-                            setState(() {
-                              _emailError = error;
-                              _autovalidateMode = AutovalidateMode.always;
-                            });
-                            final emailError = _emailError != null;
-                            if (!emailError) {}
-                          }
+                        firstFieldHasError:
+                            state.hasSubmitted &&
+                            FormValidators.validateEmail(state.email) != null,
+                        secondFieldHasError:
+                            state.hasSubmitted &&
+                            FormValidators.validateSignupPassword(
+                                  state.password,
+                                ) !=
+                                null,
+                        errorMessage1: state.hasSubmitted
+                            ? FormValidators.validateEmail(state.email)
+                            : null,
+                        errorMessage2: state.hasSubmitted
+                            ? FormValidators.validateSignupPassword(
+                                state.password,
+                              )
+                            : null,
+                        onPressed: () {
+                          vm.login(context);
                         },
-                        onFocusChange2: (hasFocus) {
-                          if (!hasFocus) {
-                            final error = FormValidators.validatePassword(
-                              vm.passwordController.text,
-                            );
-                            setState(() {
-                              _passwordError = error;
-                              _autovalidateMode = AutovalidateMode.always;
-                            });
-                            final passwordError = _passwordError != null;
-                            if (!passwordError) {}
-                          }
-                        },
-                        onPressed:
-                            state.isLoading
-                                ? null
-                                : () {
-                                  final emailHasError =
-                                      FormValidators.validateEmail(
-                                        vm.emailController.text,
-                                      );
-                                  final passwordHasError =
-                                      FormValidators.validatePassword(
-                                        vm.passwordController.text,
-                                      );
-                                  setState(() {
-                                    state.generalError = null;
-                                    _emailError = emailHasError;
-                                    _passwordError = passwordHasError;
-                                    _autovalidateMode = AutovalidateMode.always;
-                                  });
-                                  final hasAnyError =
-                                      _emailError != null ||
-                                      _passwordError != null;
-                                  if (!hasAnyError) {
-                                    vm.login(formKey, context);
-                                  }
-                                },
-                        formKey: formKey,
-                        fieldKey1: emailFieldKey,
-                        fieldKey2: passwordFieldKey,
+                        onChanged1: vm.updateEmail,
+                        onChanged2: vm.updatePassword,
                         contentPadding1: EdgeInsets.only(top: 0.0),
+                        signUp: () {
+                          context.go('/roleSelection');
+                        },
+                        resetPassword: () async {
+                          await runWithOverlay(
+                            context,
+                            () async {
+                              await Future.delayed(
+                                const Duration(seconds: 1),
+                                () {
+                                  if (!context.mounted) return;
+                                  context.push('/resetPassword/enterEmail');
+                                },
+                              );
+                            },
+                            spinner: SpinKitDualRing(
+                              color: AppColors.primaryDarkGreen,
+                            ),
+                          );
+                        },
                       ),
                       _buildFooter(
                         orSignupFont: 14.0,
                         buttonWidth: 170.0,
                         footerTextFontSize: 14.0,
+                        context: context,
                       ),
                     ],
                   ),
@@ -258,78 +228,55 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                             mainAxisSize: MainAxisSize.min,
                             children: [
                               LoginResetPasswordWidgetBuilder.buildWebBody(
-                                termsOnChanged: vm.toggleAgreeToTerms,
                                 controller1: vm.emailController,
                                 controller2: vm.passwordController,
-                                vm: vm,
-                                state: state,
-                                firstFieldHasError: _emailError != null,
-                                secondFieldHasError: _passwordError != null,
-                                onFocusChange1: (hasFocus) {
-                                  if (!hasFocus) {
-                                    final error = FormValidators.validateEmail(
-                                      vm.emailController.text,
-                                    );
-                                    setState(() {
-                                      _emailError = error;
-                                      _autovalidateMode =
-                                          AutovalidateMode.always;
-                                    });
-                                    final emailError = _emailError != null;
-                                    if (!emailError) {}
-                                  }
-                                },
-                                onFocusChange2: (hasFocus) {
-                                  if (!hasFocus) {
-                                    final error =
-                                        FormValidators.validatePassword(
-                                          vm.passwordController.text,
-                                        );
-                                    setState(() {
-                                      _passwordError = error;
-                                      _autovalidateMode =
-                                          AutovalidateMode.always;
-                                    });
-                                    final passwordError =
-                                        _passwordError != null;
-                                    if (!passwordError) {}
-                                  }
-                                },
-                                onPressed: () {
-                                  final emailHasError =
-                                      FormValidators.validateEmail(
-                                        vm.emailController.text,
-                                      );
-                                  final passwordHasError =
-                                      FormValidators.validatePassword(
-                                        vm.passwordController.text,
-                                      );
-                                  setState(() {
-                                    state.generalError = null;
-                                    _emailError = emailHasError;
-                                    _passwordError = passwordHasError;
-                                    _autovalidateMode = AutovalidateMode.always;
-                                  });
-                                  final hasAnyError =
-                                      _emailError != null ||
-                                      _passwordError != null;
-                                  if (!hasAnyError) {
-                                    debugPrint(
-                                      'Email: "${vm.emailController.text}"',
-                                    );
-                                    debugPrint(
-                                      'Password: "${vm.passwordController.text}"',
-                                    );
+                                firstFieldHasError:
+                                    state.hasSubmitted &&
+                                    FormValidators.validateEmail(state.email) !=
+                                        null,
+                                secondFieldHasError:
+                                    state.hasSubmitted &&
+                                    FormValidators.validateSignupPassword(
+                                          state.password,
+                                        ) !=
+                                        null,
+                                errorMessage1: state.hasSubmitted
+                                    ? FormValidators.validateEmail(state.email)
+                                    : null,
+                                errorMessage2: state.hasSubmitted
+                                    ? FormValidators.validateSignupPassword(
+                                        state.password,
+                                      )
+                                    : null,
 
-                                    vm.login(formKey, context);
-                                  }
+                                onPressed: () {
+                                  vm.login(context);
                                 },
-                                validator1: (value) => null,
-                                validator2: (value) => null,
-                                formKey: formKey,
-                                fieldKey1: emailFieldKey,
-                                fieldKey2: passwordFieldKey,
+                                onChanged1: vm.updateEmail,
+                                onChanged2: vm.updatePassword,
                                 contentPadding1: EdgeInsets.only(top: 4.0),
+                                signUp: () {
+                                  context.go('/roleSelection');
+                                },
+                                resetPassword: () async {
+                                  await runWithOverlay(
+                                    context,
+                                    () async {
+                                      await Future.delayed(
+                                        const Duration(seconds: 1),
+                                        () {
+                                          if (!context.mounted) return;
+                                          context.push(
+                                            '/resetPassword/enterEmail',
+                                          );
+                                        },
+                                      );
+                                    },
+                                    spinner: SpinKitDualRing(
+                                      color: AppColors.primaryDarkGreen,
+                                    ),
+                                  );
+                                },
                               ),
                               _buildFooter(
                                 orSignupFont: 16.0,
@@ -337,6 +284,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                                 footerTextFontSize: 16.0,
                                 sizedBoxHeight1: 35,
                                 sizedBoxHeight2: 25,
+                                context: context,
                               ),
                             ],
                           ),
@@ -359,6 +307,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
     required double footerTextFontSize,
     double? sizedBoxHeight1,
     double? sizedBoxHeight2,
+    required BuildContext context,
   }) {
     return Column(
       children: [
@@ -418,23 +367,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
             ),
           ],
         ),
-        SizedBox(height: sizedBoxHeight2 ?? 15.0),
-        Padding(
-          padding: const EdgeInsets.only(bottom: 60.0),
-          child: InkWell(
-            onTap: () {
-              context.push('/resetPassword/enterEmail');
-            },
-            child: Text(
-              "Forgot Password?",
-              style: GoogleFonts.hind(
-                fontSize: footerTextFontSize,
-                fontWeight: FontWeight.w400,
-                color: AppColors.textOrange,
-              ),
-            ),
-          ),
-        ),
+        SizedBox(height: 40),
       ],
     );
   }

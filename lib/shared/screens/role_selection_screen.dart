@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:wigo_flutter/shared/widgets/custom_banner.dart';
 import 'package:wigo_flutter/shared/widgets/custom_button.dart';
 import 'package:wigo_flutter/shared/widgets/role_selection_body.dart';
 
@@ -12,11 +14,18 @@ import '../../core/local/local_user_controller.dart';
 import '../../core/local/secure_storage.dart';
 import '../../gen/assets.gen.dart';
 
-class RoleSelectionScreen extends ConsumerWidget {
+class RoleSelectionScreen extends HookConsumerWidget {
   const RoleSelectionScreen({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    useEffect(() {
+      Future.microtask(() {
+        ref.read(localUserControllerProvider.notifier).resetAll();
+      });
+      return null;
+    }, [ModalRoute.of(context)]);
+
     final Size screenSize = MediaQuery.of(context).size;
     final isWeb = MediaQuery.of(context).size.width > 600;
     return isWeb
@@ -36,19 +45,20 @@ class RoleSelectionScreen extends ConsumerWidget {
           Image.network(
             '$networkImageUrl/login.png',
             fit: BoxFit.cover,
-            errorBuilder: (
-              BuildContext context,
-              Object exception,
-              StackTrace? stackTrace,
-            ) {
-              return const Center(
-                child: Icon(
-                  Icons.broken_image,
-                  color: AppColors.textIconGrey,
-                  size: 50.0,
-                ),
-              );
-            },
+            errorBuilder:
+                (
+                  BuildContext context,
+                  Object exception,
+                  StackTrace? stackTrace,
+                ) {
+                  return const Center(
+                    child: Icon(
+                      Icons.broken_image,
+                      color: AppColors.textIconGrey,
+                      size: 50.0,
+                    ),
+                  );
+                },
           ),
           Center(
             child: Container(
@@ -79,16 +89,16 @@ class RoleSelectionScreen extends ConsumerWidget {
                         final localUserController = ref.read(
                           localUserControllerProvider.notifier,
                         );
+
                         await localUserController.resetAll();
 
                         final secureStorage = ref.read(secureStorageProvider);
-                        await secureStorage.clear();
+                        await secureStorage.clearData();
                         await ref.read(authStateProvider.notifier).logout();
                         if (!context.mounted) return;
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(
-                            content: Text("User data reset successfully"),
-                          ),
+                        showSuccessBanner(
+                          "User data reset successfully",
+                          context,
                         );
                       },
                     ),

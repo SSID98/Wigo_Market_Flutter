@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:wigo_flutter/core/constants/app_colors.dart';
 
-import '../../../../core/utils/helper_methods.dart';
+import '../../../../core/utils/helper_methods_classes.dart';
 import '../widgets/bullet_list.dart';
 
 class RefundPolicyScreen extends StatelessWidget {
@@ -144,14 +144,13 @@ class RefundPolicyScreen extends StatelessWidget {
     return Text(
       text,
       style: GoogleFonts.inter(
-        fontSize:
-            isTitle
-                ? isWeb
-                    ? 26
-                    : 18
-                : isWeb
-                ? 16
-                : 14,
+        fontSize: isTitle
+            ? isWeb
+                  ? 26
+                  : 18
+            : isWeb
+            ? 16
+            : 14,
         fontWeight: isTitle ? FontWeight.w700 : FontWeight.w500,
         color: AppColors.textBlackGrey,
       ),
@@ -167,14 +166,13 @@ class RefundPolicyScreen extends StatelessWidget {
     return Text(
       text,
       style: GoogleFonts.hind(
-        fontSize:
-            isTitle
-                ? isWeb
-                    ? 20
-                    : 16
-                : isWeb
-                ? 18
-                : 14,
+        fontSize: isTitle
+            ? isWeb
+                  ? 20
+                  : 16
+            : isWeb
+            ? 18
+            : 14,
         fontWeight: isTitle ? FontWeight.w700 : FontWeight.w400,
         color: isEmail ? AppColors.primaryDarkGreen : AppColors.textBlackGrey,
       ),

@@ -18,31 +18,31 @@ class AddBankAccountScreen extends ConsumerWidget {
     final bankList = ref.watch(editBankAccountProvider).bankDetailsList;
     return isWeb
         ? Padding(
-          padding: EdgeInsets.only(left: 40),
-          child: Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              SizedBox(
-                width: 601,
-                child: _buildBankAccountsCard(ref, bankList, isWeb, context),
-              ),
-              const SizedBox(width: 20),
-              SizedBox(width: 400, child: _buildInfoCard()),
-            ],
-          ),
-        )
-        : Expanded(
-          child: SingleChildScrollView(
-            padding: EdgeInsets.symmetric(horizontal: 16),
-            child: Column(
+            padding: EdgeInsets.only(left: 40),
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                _buildBankAccountsCard(ref, bankList, isWeb, context),
-                const SizedBox(height: 20),
-                _buildInfoCard(),
+                SizedBox(
+                  width: 601,
+                  child: _buildBankAccountsCard(ref, bankList, isWeb, context),
+                ),
+                const SizedBox(width: 20),
+                SizedBox(width: 400, child: _buildInfoCard()),
               ],
             ),
-          ),
-        );
+          )
+        : Expanded(
+            child: SingleChildScrollView(
+              padding: EdgeInsets.symmetric(horizontal: 16),
+              child: Column(
+                children: [
+                  _buildBankAccountsCard(ref, bankList, isWeb, context),
+                  const SizedBox(height: 20),
+                  _buildInfoCard(),
+                ],
+              ),
+            ),
+          );
   }
 
   Widget _buildBankAccountsCard(
@@ -83,12 +83,8 @@ class AddBankAccountScreen extends ConsumerWidget {
                 isWeb: isWeb,
                 showDelete: true,
                 onEdit: () => notifier.startEditBankAccount(bank),
-                onClear:
-                    () => _showClearConfirmationDialog(
-                      context,
-                      notifier,
-                      bank.id,
-                    ),
+                onClear: () =>
+                    _showClearConfirmationDialog(context, notifier, bank.id),
               ),
             ),
           ],
@@ -282,10 +278,7 @@ class AddBankAccountScreen extends ConsumerWidget {
                     text: 'Continue',
                     onPressed: () {
                       Navigator.of(dialogContext).pop();
-                      notifier.clearBankDetails(bankId);
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(content: Text("Bank details cleared.")),
-                      );
+                      notifier.clearBankDetails(bankId, context);
                     },
                     fontSize: isWeb ? 18 : 12,
                     height: isWeb ? 48 : 45,

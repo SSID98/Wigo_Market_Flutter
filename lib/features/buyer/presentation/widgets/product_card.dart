@@ -5,8 +5,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:wigo_flutter/features/buyer/presentation/widgets/icon_text_row.dart';
 
 import '../../../../core/constants/app_colors.dart';
-import '../../../../core/utils/helper_methods.dart';
-import '../../../../core/utils/price_formatter.dart';
+import '../../../../core/utils/helper_methods_classes.dart';
 import '../../../../gen/assets.gen.dart';
 import '../../../../shared/widgets/custom_button.dart';
 import '../../models/product_model.dart';
@@ -36,19 +35,20 @@ class ProductCard extends ConsumerWidget {
                 product.imageUrl,
                 height: double.infinity,
                 width: double.infinity,
-                errorBuilder: (
-                  BuildContext context,
-                  Object exception,
-                  StackTrace? stackTrace,
-                ) {
-                  return const Center(
-                    child: Icon(
-                      Icons.broken_image,
-                      color: AppColors.textIconGrey,
-                      size: 50.0,
-                    ),
-                  );
-                },
+                errorBuilder:
+                    (
+                      BuildContext context,
+                      Object exception,
+                      StackTrace? stackTrace,
+                    ) {
+                      return const Center(
+                        child: Icon(
+                          Icons.broken_image,
+                          color: AppColors.textIconGrey,
+                          size: 50.0,
+                        ),
+                      );
+                    },
               ),
             ),
             const SizedBox(height: 5),
@@ -106,10 +106,9 @@ class ProductCard extends ConsumerWidget {
                                     : Icons.favorite_border,
                                 size: 18,
                                 weight: 1,
-                                color:
-                                    isSaved
-                                        ? AppColors.accentLightGold
-                                        : AppColors.primaryDarkGreen,
+                                color: isSaved
+                                    ? AppColors.accentLightGold
+                                    : AppColors.primaryDarkGreen,
                               ),
                             ),
                           ],

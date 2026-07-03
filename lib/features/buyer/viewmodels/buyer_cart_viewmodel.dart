@@ -1,4 +1,5 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_riverpod/legacy.dart';
 
 import '../database/cart_database.dart';
 import '../models/cart_model.dart';
@@ -44,13 +45,12 @@ class CartNotifier extends StateNotifier<List<CartState>> {
       removeItem(productName);
       return;
     }
-    state =
-        state.map((item) {
-          if (item.product.productName == productName) {
-            return item.copyWith(quantity: newQuantity);
-          }
-          return item;
-        }).toList();
+    state = state.map((item) {
+      if (item.product.productName == productName) {
+        return item.copyWith(quantity: newQuantity);
+      }
+      return item;
+    }).toList();
     final updatedItem = state.firstWhere(
       (e) => e.product.productName == productName,
     );
@@ -58,8 +58,9 @@ class CartNotifier extends StateNotifier<List<CartState>> {
   }
 
   Future<void> removeItem(String productName) async {
-    state =
-        state.where((item) => item.product.productName != productName).toList();
+    state = state
+        .where((item) => item.product.productName != productName)
+        .toList();
     await CartDatabase.instance.deleteItem(productName);
   }
 
@@ -78,19 +79,18 @@ class CartNotifier extends StateNotifier<List<CartState>> {
     if (selectedItems.isEmpty) return;
 
     // 2. Convert to OrderItemModels
-    final newOrders =
-        selectedItems
-            .map(
-              (item) => OrderItemModel(
-                productName: item.product.productName,
-                price: item.product.price,
-                imageUrl: item.product.imageUrl,
-                quantity: item.quantity,
-                size: item.size,
-                colorName: item.colorName,
-              ),
-            )
-            .toList();
+    final newOrders = selectedItems
+        .map(
+          (item) => OrderItemModel(
+            productName: item.product.productName,
+            price: item.product.price,
+            imageUrl: item.product.imageUrl,
+            quantity: item.quantity,
+            size: item.size,
+            colorName: item.colorName,
+          ),
+        )
+        .toList();
 
     // 3. Add to the Orders Screen provider
     ref.read(ordersProvider.notifier).addOrders(newOrders);

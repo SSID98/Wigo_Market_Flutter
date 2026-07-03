@@ -43,11 +43,28 @@ class FormValidators {
     return null;
   }
 
+  static String? validatePasswordMatch(
+    String password,
+    String confirmPassword,
+  ) {
+    if (password != confirmPassword) {
+      return 'Passwords do not match';
+    }
+    return null;
+  }
+
   static String? validatePin(String? value) {
     if (value == null || value.isEmpty) {
       return 'Pin is required';
     } else if (value.length < 4) {
       return 'Pin must be 4 digit';
+    }
+    return null;
+  }
+
+  static String? validatePinMatch(String pin, String confirmPin) {
+    if (pin != confirmPin) {
+      return 'Pins do not match';
     }
     return null;
   }
@@ -77,5 +94,9 @@ class FormValidators {
       return 'Please enter the right account number';
     }
     return null;
+  }
+
+  static bool isFieldEmpty(String? value) {
+    return value == null || value.trim().isEmpty;
   }
 }

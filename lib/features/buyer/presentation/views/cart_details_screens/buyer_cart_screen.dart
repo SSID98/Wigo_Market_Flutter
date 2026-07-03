@@ -5,7 +5,7 @@ import 'package:google_fonts/google_fonts.dart';
 
 import '../../../../../core/constants/app_colors.dart';
 import '../../../../../core/constants/url.dart';
-import '../../../../../core/utils/helper_methods.dart';
+import '../../../../../core/utils/helper_methods_classes.dart';
 import '../../../models/cart_model.dart';
 import '../../../viewmodels/buyer_cart_viewmodel.dart';
 import '../saved_product_view.dart';
@@ -32,35 +32,34 @@ class CartPage extends ConsumerWidget {
         Navigator.of(context).pop(result);
       },
       child: SingleChildScrollView(
-        child:
-            isWeb
-                ? Column(
-                  children: [
-                    Row(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Expanded(
-                          flex: 3,
-                          child: _buildCartItemList(cartItems, isWeb),
-                        ),
-                        const SizedBox(width: 30),
-                        if (cartItems.isNotEmpty)
-                          Expanded(flex: 2, child: OrderSummaryCard()),
-                      ],
-                    ),
-                    const SizedBox(height: 50),
-                    SavedProductsView(isPreview: true),
-                  ],
-                )
-                : Column(
-                  children: [
-                    _buildCartItemList(cartItems, isWeb),
-                    const SizedBox(height: 30),
-                    if (cartItems.isNotEmpty) OrderSummaryCard(),
-                    const SizedBox(height: 100),
-                    SavedProductsView(isPreview: true),
-                  ],
-                ),
+        child: isWeb
+            ? Column(
+                children: [
+                  Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Expanded(
+                        flex: 3,
+                        child: _buildCartItemList(cartItems, isWeb),
+                      ),
+                      const SizedBox(width: 30),
+                      if (cartItems.isNotEmpty)
+                        Expanded(flex: 2, child: OrderSummaryCard()),
+                    ],
+                  ),
+                  const SizedBox(height: 50),
+                  SavedProductsView(isPreview: true),
+                ],
+              )
+            : Column(
+                children: [
+                  _buildCartItemList(cartItems, isWeb),
+                  const SizedBox(height: 30),
+                  if (cartItems.isNotEmpty) OrderSummaryCard(),
+                  const SizedBox(height: 100),
+                  SavedProductsView(isPreview: true),
+                ],
+              ),
       ),
     );
   }
@@ -74,19 +73,20 @@ class CartPage extends ConsumerWidget {
               '$networkImageUrl/box.png',
               height: isWeb ? 200.18 : 121.02,
               width: isWeb ? 306 : 185,
-              errorBuilder: (
-                BuildContext context,
-                Object exception,
-                StackTrace? stackTrace,
-              ) {
-                return const Center(
-                  child: Icon(
-                    Icons.broken_image,
-                    color: AppColors.textIconGrey,
-                    size: 50.0,
-                  ),
-                );
-              },
+              errorBuilder:
+                  (
+                    BuildContext context,
+                    Object exception,
+                    StackTrace? stackTrace,
+                  ) {
+                    return const Center(
+                      child: Icon(
+                        Icons.broken_image,
+                        color: AppColors.textIconGrey,
+                        size: 50.0,
+                      ),
+                    );
+                  },
             ),
           ),
           const SizedBox(height: 10),

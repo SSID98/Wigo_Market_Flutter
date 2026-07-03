@@ -2,10 +2,10 @@ import 'package:dotted_decoration/dotted_decoration.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:wigo_flutter/core/utils/price_formatter.dart';
 import 'package:wigo_flutter/shared/widgets/custom_button.dart';
 
 import '../../../../../core/constants/app_colors.dart';
+import '../../../../../core/utils/helper_methods_classes.dart';
 import '../../../../../gen/assets.gen.dart';
 import '../../../models/cart_model.dart';
 import '../../../models/product_model.dart';
@@ -143,10 +143,9 @@ class _ProductInfoSectionState extends ConsumerState<ProductInfoSection> {
                     margin: EdgeInsets.zero,
                     padding: EdgeInsets.zero,
                     decoration: BoxDecoration(
-                      color:
-                          isWeb
-                              ? AppColors.backgroundLightPink
-                              : AppColors.backgroundLightYellow,
+                      color: isWeb
+                          ? AppColors.backgroundLightPink
+                          : AppColors.backgroundLightYellow,
                       borderRadius: BorderRadius.circular(48),
                     ),
                     child: Align(
@@ -196,10 +195,9 @@ class _ProductInfoSectionState extends ConsumerState<ProductInfoSection> {
                         color: colors[i],
                         borderRadius: BorderRadius.circular(4),
                         border: Border.all(
-                          color:
-                              selectedColor == i
-                                  ? AppColors.textIconGrey
-                                  : Colors.transparent,
+                          color: selectedColor == i
+                              ? AppColors.textIconGrey
+                              : Colors.transparent,
                           width: 1,
                         ),
                       ),
@@ -247,20 +245,18 @@ class _ProductInfoSectionState extends ConsumerState<ProductInfoSection> {
                         vertical: 6,
                       ),
                       decoration: BoxDecoration(
-                        color:
-                            selectedSize == i
-                                ? AppColors.clampBgColor
-                                : Colors.transparent,
+                        color: selectedSize == i
+                            ? AppColors.clampBgColor
+                            : Colors.transparent,
                         borderRadius: BorderRadius.circular(4),
                         // border: Border.all(color: Colors.grey.shade300),
                       ),
                       child: Text(
                         sizes[i],
                         style: GoogleFonts.inter(
-                          color:
-                              selectedSize == i
-                                  ? AppColors.textNeutral950
-                                  : AppColors.textIconGrey,
+                          color: selectedSize == i
+                              ? AppColors.textNeutral950
+                              : AppColors.textIconGrey,
                           fontSize: isWeb ? 16 : 12,
                           fontWeight: FontWeight.w500,
                         ),
@@ -283,8 +279,9 @@ class _ProductInfoSectionState extends ConsumerState<ProductInfoSection> {
         ),
         const SizedBox(height: 45),
         Row(
-          mainAxisAlignment:
-              isWeb ? MainAxisAlignment.start : MainAxisAlignment.spaceBetween,
+          mainAxisAlignment: isWeb
+              ? MainAxisAlignment.start
+              : MainAxisAlignment.spaceBetween,
           children: [
             CustomButton(
               key: const Key('cart_add_button'),
@@ -293,34 +290,32 @@ class _ProductInfoSectionState extends ConsumerState<ProductInfoSection> {
               fontWeight: FontWeight.w600,
               borderRadius: 16,
               height: 50,
-              textColor:
-                  isAlreadyInCart
-                      ? AppColors.textBodyText
-                      : AppColors.textWhite,
+              textColor: isAlreadyInCart
+                  ? AppColors.textBodyText
+                  : AppColors.textWhite,
               width: isWeb ? 269 : 180,
-              onPressed:
-                  isAlreadyInCart
-                      ? null
-                      : () {
-                        final selectedColorObject = colors[selectedColor];
-                        final selectedSizeString = sizes[selectedSize];
-                        final colorName =
-                            colorToNameMap[selectedColorObject] ??
-                            'Unknown Color';
-                        final newItem = CartState(
-                          product: widget.product,
-                          colorName: colorName,
-                          size: selectedSizeString,
-                          quantity: quantity,
-                        );
-                        cartNotifier.addItem(newItem);
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(
-                            content: Text('Item successfully added to cart'),
-                            backgroundColor: AppColors.primaryDarkGreen,
-                          ),
-                        );
-                      },
+              onPressed: isAlreadyInCart
+                  ? null
+                  : () {
+                      final selectedColorObject = colors[selectedColor];
+                      final selectedSizeString = sizes[selectedSize];
+                      final colorName =
+                          colorToNameMap[selectedColorObject] ??
+                          'Unknown Color';
+                      final newItem = CartState(
+                        product: widget.product,
+                        colorName: colorName,
+                        size: selectedSizeString,
+                        quantity: quantity,
+                      );
+                      cartNotifier.addItem(newItem);
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: Text('Item successfully added to cart'),
+                          backgroundColor: AppColors.primaryDarkGreen,
+                        ),
+                      );
+                    },
             ),
             if (isWeb) const SizedBox(width: 14),
             CustomButton(

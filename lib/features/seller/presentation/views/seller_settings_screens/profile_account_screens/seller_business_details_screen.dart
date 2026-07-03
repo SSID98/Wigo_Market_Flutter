@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_riverpod/legacy.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:wigo_flutter/shared/widgets/custom_button.dart';
 
@@ -84,7 +85,7 @@ class SellerBusinessDetailsScreen extends ConsumerWidget {
                     iconWidth: 22,
                     iconHeight: 22,
                     onChanged: notifier.updateBusinessType,
-                    value: state.businessType,
+                    value: notifier.selectedBusiness,
                     prefixIcon: AppAssets.icons.store.svg(),
                   );
                 default:
@@ -123,9 +124,7 @@ class SellerBusinessDetailsScreen extends ConsumerWidget {
                         ? nigeriaStatesAndCities.keys.toList()
                         : [],
                     hintText: 'Select State',
-                    value: state.businessState.isEmpty
-                        ? null
-                        : state.businessState,
+                    value: state.state.isEmpty ? null : notifier.selectedState,
                     onChanged: (val) {
                       notifier.updateBusinessState(val);
                     },
@@ -136,9 +135,7 @@ class SellerBusinessDetailsScreen extends ConsumerWidget {
                     label: 'City/ Town',
                     items: isEditMode ? state.filteredCities : [],
                     hintText: 'Select City',
-                    value: state.businessCity.isEmpty
-                        ? null
-                        : state.businessCity,
+                    value: state.city.isEmpty ? null : notifier.selectedCity,
                     onChanged: notifier.updateBusinessCity,
                   );
                 default:

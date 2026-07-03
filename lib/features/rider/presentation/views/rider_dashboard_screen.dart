@@ -2,14 +2,16 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:wigo_flutter/core/utils/context_extensions.dart';
 import 'package:wigo_flutter/features/rider/models/rider_dashboard_state.dart';
 import 'package:wigo_flutter/features/rider/presentation/widgets/dashboard_screen_widgets/earning_history_widget.dart';
 import 'package:wigo_flutter/features/rider/presentation/widgets/switch.dart';
 import 'package:wigo_flutter/features/rider/viewmodels/rider_dashboard_viewmodel.dart';
-import 'package:wigo_flutter/shared/widgets/custom_button.dart';
 
 import '../../../../../core/constants/app_colors.dart';
+import '../../../../core/auth/auth_state.dart';
 import '../../../../core/auth/auth_state_notifier.dart';
+import '../../../../core/utils/helper_methods_classes.dart';
 import '../../../../gen/assets.gen.dart';
 import '../widgets/dashboard_screen_widgets/account_setup_status_widget.dart';
 import '../widgets/dashboard_screen_widgets/current_location_widget.dart';
@@ -17,49 +19,99 @@ import '../widgets/dashboard_screen_widgets/earning_overview_widget.dart';
 import '../widgets/dashboard_screen_widgets/recent_deliveries_widget.dart';
 
 class RiderDashboardScreen extends ConsumerWidget {
-  RiderDashboardScreen({super.key});
+  const RiderDashboardScreen({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final viewModel = ref.watch(riderDashboardViewModelProvider.notifier);
     final state = ref.watch(riderDashboardViewModelProvider);
     final screenSize = MediaQuery.of(context).size;
-    final isWeb = MediaQuery.of(context).size.width > 600;
-    return isWeb
-        ? _buildWebLayout(screenSize, viewModel, state, ref)
-        : _buildMobileLayout(screenSize, viewModel, state, ref);
+    final authState = ref.watch(authStateProvider);
+    final user = authState.status == AuthStatus.loggedIn
+        ? authState.user
+        : null;
+    final hasWallet = user?.hasWallet ?? false;
+    final hasDispatchProfile = user?.dispatchProfile != null;
+    final paymentStatus = hasWallet
+        ? SetupStatus.completed
+        : SetupStatus.pending;
+    final vehicleStatus = hasDispatchProfile
+        ? SetupStatus.completed
+        : SetupStatus.pending;
+    final bothCompleted = hasWallet == true && hasDispatchProfile;
+    final double setupProgress = bothCompleted
+        ? 1.0
+        : hasWallet
+        ? 0.5
+        : 0.2;
+
+    final steps = _buildSteps(
+      paymentStatus: paymentStatus,
+      vehicleStatus: vehicleStatus,
+    );
+
+    return context.isWeb
+        ? _buildWebLayout(
+            screenSize,
+            viewModel,
+            state,
+            ref,
+            context,
+            steps,
+            bothCompleted,
+            setupProgress,
+          )
+        : _buildMobileLayout(
+            screenSize,
+            viewModel,
+            state,
+            ref,
+            context,
+            steps,
+            bothCompleted,
+            setupProgress,
+          );
   }
 
-  final steps = [
-    AccountSetupStep(
-      title: 'Payment \nInformation',
-      iconAsset: AppAssets.icons.payInfo.svg(
-        height: kIsWeb ? 42.76 : 30.12,
-        width: kIsWeb ? 49 : 34.51,
+  List<AccountSetupStep> _buildSteps({
+    required SetupStatus paymentStatus,
+    required SetupStatus vehicleStatus,
+  }) {
+    return [
+      AccountSetupStep(
+        title: 'Payment \nInformation',
+        iconAsset: AppAssets.icons.payInfo.svg(
+          height: kIsWeb ? 42.76 : 30.12,
+          width: kIsWeb ? 49 : 34.51,
+        ),
+        status: paymentStatus,
+        onTap: () {
+          // navigate to payment info
+        },
       ),
-      status: SetupStatus.pending,
-      onTap: () {
-        // navigate to payment info
-      },
-    ),
-    AccountSetupStep(
-      title: 'Vehicle \nDocuments',
-      iconAsset: AppAssets.icons.vehicleDoc.svg(
-        height: kIsWeb ? 42.76 : 30.12,
-        width: kIsWeb ? 49 : 34.51,
+      AccountSetupStep(
+        title: 'Vehicle \nDocuments',
+        iconAsset: AppAssets.icons.vehicleDoc.svg(
+          height: kIsWeb ? 42.76 : 30.12,
+          width: kIsWeb ? 49 : 34.51,
+        ),
+        status: vehicleStatus,
+        onTap: () {
+          // navigate to vehicle docs
+        },
       ),
-      status: SetupStatus.completed,
-      onTap: () {
-        // navigate to vehicle docs
-      },
-    ),
-  ];
+    ];
+  }
 
   Widget _buildMobileLayout(
     Size screenSize,
     RiderDashboardViewModel viewModel,
     RiderDashboardState state,
     WidgetRef ref,
+    BuildContext context,
+    List<AccountSetupStep> steps,
+    bool bothCompleted,
+    double setupProgress,
   ) {
     return Scaffold(
       backgroundColor: AppColors.backgroundLight,
@@ -80,17 +132,18 @@ class RiderDashboardScreen extends ConsumerWidget {
                 viewModel: viewModel,
                 state: state,
                 ref: ref,
+                context: context,
               ),
-              AccountSetup(
-                title: 'Complete Your Account Setup',
-                subtitle:
-                    'Just one more step! Complete your rider profile and start accepting delivery requests today',
-                steps: steps,
-                progress: 0.4,
-                // optional; omit to compute automatically
-                onCompletePressed: () {},
-                isWeb: false,
-              ),
+              if (!bothCompleted)
+                AccountSetup(
+                  title: 'Complete Your Account Setup',
+                  subtitle:
+                      'You\'re very close! Complete your rider profile and start accepting delivery requests today',
+                  steps: steps,
+                  progress: setupProgress,
+                  onCompletePressed: () {},
+                  isWeb: false,
+                ),
               EarningOverviewWidget(),
               RecentDeliveriesWidget(),
               CurrentLocationWidget(),
@@ -108,6 +161,10 @@ class RiderDashboardScreen extends ConsumerWidget {
     RiderDashboardViewModel viewModel,
     RiderDashboardState state,
     WidgetRef ref,
+    BuildContext context,
+    List<AccountSetupStep> steps,
+    bool bothCompleted,
+    double setupProgress,
   ) {
     return Scaffold(
       backgroundColor: AppColors.backgroundLight,
@@ -128,18 +185,19 @@ class RiderDashboardScreen extends ConsumerWidget {
                   thumbDiameter: 20.0,
                   state: state,
                   ref: ref,
+                  context: context,
                 ),
                 const SizedBox(height: 10.0),
-                AccountSetup(
-                  title: 'Complete Your Account Setup',
-                  subtitle:
-                      'Just one more step! Complete your rider profile and start accepting delivery requests today',
-                  steps: steps,
-                  progress: 0.4,
-                  // optional; omit to compute automatically
-                  onCompletePressed: () {},
-                  isWeb: true,
-                ),
+                if (!bothCompleted)
+                  AccountSetup(
+                    title: 'Complete Your Account Setup',
+                    subtitle:
+                        'Just one more step! Complete your rider profile and start accepting delivery requests today',
+                    steps: steps,
+                    progress: setupProgress,
+                    onCompletePressed: () {},
+                    isWeb: true,
+                  ),
                 Row(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -176,12 +234,20 @@ class RiderDashboardScreen extends ConsumerWidget {
     required RiderDashboardViewModel viewModel,
     required RiderDashboardState state,
     required WidgetRef ref,
+    required BuildContext context,
   }) {
+    final authState = ref.watch(authStateProvider);
+    String displayName = 'Guest';
+
+    if (authState.status == AuthStatus.loggedIn && authState.user != null) {
+      final user = authState.user!;
+      displayName = extractName(user.fullName);
+    }
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          'Hi, Emmanuel',
+          'Hi, $displayName',
           style: GoogleFonts.hind(
             fontSize: titleFontSize,
             fontWeight: FontWeight.w600,
@@ -189,14 +255,6 @@ class RiderDashboardScreen extends ConsumerWidget {
           ),
         ),
         const SizedBox(height: 5.0),
-        CustomButton(
-          text: 'Logout',
-          fontSize: 16,
-          fontWeight: FontWeight.w600,
-          onPressed: () {
-            ref.read(authStateProvider.notifier).logout();
-          },
-        ),
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
@@ -223,7 +281,9 @@ class RiderDashboardScreen extends ConsumerWidget {
                   const SizedBox(width: 10),
                   CustomSwitch(
                     value: state.isAvailable,
-                    onChanged: viewModel.toggleSwitch,
+                    onChanged: (value) {
+                      viewModel.toggleSwitch(value, context);
+                    },
                     thumbColour: AppColors.accentWhite,
                     activeColor: AppColors.switchGreen,
                     inactiveColor: AppColors.accentGrey,

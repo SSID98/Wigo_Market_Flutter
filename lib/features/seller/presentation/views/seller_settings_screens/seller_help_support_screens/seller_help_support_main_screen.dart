@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_riverpod/legacy.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:wigo_flutter/features/seller/presentation/views/seller_settings_screens/seller_help_support_screens/contact_support_page.dart';
 import 'package:wigo_flutter/features/seller/presentation/views/seller_settings_screens/seller_help_support_screens/tutorial_guide_page.dart';

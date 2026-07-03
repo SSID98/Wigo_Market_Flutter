@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_riverpod/legacy.dart';
 
 import '../models/dropdown_overlay_state.dart';
 import '../widgets/dropdown_ovelay_widget.dart';
@@ -23,27 +23,24 @@ class DropdownOverlayNotifier extends StateNotifier<DropdownOverlayState> {
 
     final overlay = Overlay.of(context);
 
-    _overlay =
-        isBuyer
-            ? OverlayEntry(
-              builder:
-                  (_) => DropdownOverlay(
-                    type: type,
-                    onClose: close,
-                    onToggleCategories: toggleCategories,
-                    // onDatePress: () {},
-                  ),
-            )
-            : OverlayEntry(
-              builder:
-                  (_) => DropdownOverlay(
-                    type: type,
-                    onClose: close,
-                    onToggleCategories: () {},
-                    // onDatePress: showDateItems,
-                    isBuyer: false,
-                  ),
-            );
+    _overlay = isBuyer
+        ? OverlayEntry(
+            builder: (_) => DropdownOverlay(
+              type: type,
+              onClose: close,
+              onToggleCategories: toggleCategories,
+              // onDatePress: () {},
+            ),
+          )
+        : OverlayEntry(
+            builder: (_) => DropdownOverlay(
+              type: type,
+              onClose: close,
+              onToggleCategories: () {},
+              // onDatePress: showDateItems,
+              isBuyer: false,
+            ),
+          );
 
     overlay.insert(_overlay!);
     state = state.copyWith(active: type);

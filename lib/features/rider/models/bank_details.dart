@@ -1,6 +1,8 @@
+import '../../../shared/models/bank_model.dart';
+
 class BankDetails {
   final String id;
-  final String bankName;
+  final Bank? selectedBank;
   final String accountNumber;
   final String accountHolderName;
   final bool isDefault;
@@ -9,19 +11,18 @@ class BankDetails {
 
   const BankDetails({
     required this.id,
-    required this.bankName,
-    required this.accountNumber,
-    required this.accountHolderName,
+    this.selectedBank,
+    this.phoneNumber = '',
+    this.accountNumber = '',
+    this.accountHolderName = '',
     required this.isDefault,
-    required this.phoneNumber,
     this.isEmpty = false,
   });
 
-  // Factory constructor for a default/empty state
   factory BankDetails.empty(String id) {
     return BankDetails(
       id: id,
-      bankName: 'Add a Bank',
+      selectedBank: Bank(id: 0, code: '', name: 'Add a Bank'),
       accountNumber: '**** ****',
       accountHolderName: '',
       isDefault: false,
@@ -31,7 +32,7 @@ class BankDetails {
   }
 
   BankDetails copyWith({
-    String? bankName,
+    Bank? selectedBank,
     String? accountNumber,
     String? accountHolderName,
     bool? isDefault,
@@ -41,7 +42,7 @@ class BankDetails {
     return BankDetails(
       id: id,
       phoneNumber: phoneNumber ?? this.phoneNumber,
-      bankName: bankName ?? this.bankName,
+      selectedBank: selectedBank ?? this.selectedBank,
       accountNumber: accountNumber ?? this.accountNumber,
       accountHolderName: accountHolderName ?? this.accountHolderName,
       isDefault: isDefault ?? this.isDefault,

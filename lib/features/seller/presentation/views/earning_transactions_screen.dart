@@ -8,7 +8,7 @@ import '../../../../../gen/assets.gen.dart';
 import '../../../../../shared/widgets/custom_search_field.dart';
 import '../../../../../shared/widgets/pagination_widget.dart';
 import '../../../../core/utils/context_extensions.dart';
-import '../../../../core/utils/helper_methods.dart';
+import '../../../../core/utils/helper_methods_classes.dart';
 import '../../../../shared/widgets/dashboard_widgets/earning_card.dart';
 import '../../models/order.dart';
 import '../../models/order_task_state.dart';

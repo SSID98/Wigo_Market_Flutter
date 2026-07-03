@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_riverpod/legacy.dart';
 import 'package:wigo_flutter/core/constants/url.dart';
 import 'package:wigo_flutter/features/seller/models/seller_product_model.dart';
 
@@ -28,24 +29,18 @@ class SellerProductTaskViewmodel extends StateNotifier<SellerProductTaskState> {
   void _updateCounts() {
     final Map<SellerProductStatus, int> newCounts = {
       SellerProductStatus.all: _allProducts.length,
-      SellerProductStatus.active:
-          _allProducts
-              .where((d) => d.sellerProductStatus == SellerProductStatus.active)
-              .length,
-      SellerProductStatus.hidden:
-          _allProducts
-              .where((d) => d.sellerProductStatus == SellerProductStatus.hidden)
-              .length,
-      SellerProductStatus.draft:
-          _allProducts
-              .where((d) => d.sellerProductStatus == SellerProductStatus.draft)
-              .length,
-      SellerProductStatus.outOfStock:
-          _allProducts
-              .where(
-                (d) => d.sellerProductStatus == SellerProductStatus.outOfStock,
-              )
-              .length,
+      SellerProductStatus.active: _allProducts
+          .where((d) => d.sellerProductStatus == SellerProductStatus.active)
+          .length,
+      SellerProductStatus.hidden: _allProducts
+          .where((d) => d.sellerProductStatus == SellerProductStatus.hidden)
+          .length,
+      SellerProductStatus.draft: _allProducts
+          .where((d) => d.sellerProductStatus == SellerProductStatus.draft)
+          .length,
+      SellerProductStatus.outOfStock: _allProducts
+          .where((d) => d.sellerProductStatus == SellerProductStatus.outOfStock)
+          .length,
     };
     state = state.copyWith(sellerProductCounts: newCounts);
   }
@@ -56,39 +51,36 @@ class SellerProductTaskViewmodel extends StateNotifier<SellerProductTaskState> {
 
     // 1. Status Filter
     if (state.productStatus != SellerProductStatus.all) {
-      filtered =
-          filtered
-              .where(
-                (product) => product.sellerProductStatus == state.productStatus,
-              )
-              .toList();
+      filtered = filtered
+          .where(
+            (product) => product.sellerProductStatus == state.productStatus,
+          )
+          .toList();
     }
 
     // SEARCH FILTER (The applied search query)
     if (state.searchQuery.isNotEmpty) {
-      filtered =
-          filtered
-              .where(
-                (p) =>
-                    p.productName.toLowerCase() ==
-                        state.searchQuery.toLowerCase() ||
-                    p.productId.toLowerCase() ==
-                        state.searchQuery.toLowerCase(),
-              )
-              .toList();
+      filtered = filtered
+          .where(
+            (p) =>
+                p.productName.toLowerCase() ==
+                    state.searchQuery.toLowerCase() ||
+                p.productId.toLowerCase() == state.searchQuery.toLowerCase(),
+          )
+          .toList();
     }
 
     // 2. Pagination (Always last)
     final startIndex = state.currentPage * _pageSize;
     final endIndex = (state.currentPage + 1) * _pageSize;
-    final finalEndIndex =
-        endIndex > filtered.length ? filtered.length : endIndex;
+    final finalEndIndex = endIndex > filtered.length
+        ? filtered.length
+        : endIndex;
 
     // Handle empty lists gracefully
-    final paginated =
-        filtered.isEmpty
-            ? <SellerProduct>[]
-            : filtered.sublist(startIndex, finalEndIndex);
+    final paginated = filtered.isEmpty
+        ? <SellerProduct>[]
+        : filtered.sublist(startIndex, finalEndIndex);
 
     state = state.copyWith(
       sellerProducts: AsyncValue.data(paginated),
@@ -109,13 +101,12 @@ class SellerProductTaskViewmodel extends StateNotifier<SellerProductTaskState> {
   }
 
   void updateProductStatus(String productId, SellerProductStatus newStatus) {
-    _allProducts =
-        _allProducts.map((product) {
-          if (product.productId == productId) {
-            return product.copyWith(sellerProductStatus: newStatus);
-          }
-          return product;
-        }).toList();
+    _allProducts = _allProducts.map((product) {
+      if (product.productId == productId) {
+        return product.copyWith(sellerProductStatus: newStatus);
+      }
+      return product;
+    }).toList();
 
     _updateCounts();
     _applyFilterAndPagination();
@@ -146,14 +137,13 @@ class SellerProductTaskViewmodel extends StateNotifier<SellerProductTaskState> {
       return;
     }
 
-    final suggestions =
-        _allProducts
-            .where(
-              (p) =>
-                  p.productName.toLowerCase().contains(query.toLowerCase()) ||
-                  p.productId.toLowerCase().contains(query.toLowerCase()),
-            )
-            .toList();
+    final suggestions = _allProducts
+        .where(
+          (p) =>
+              p.productName.toLowerCase().contains(query.toLowerCase()) ||
+              p.productId.toLowerCase().contains(query.toLowerCase()),
+        )
+        .toList();
 
     state = state.copyWith(
       typingQuery: query,
@@ -205,13 +195,12 @@ class SellerProductTaskViewmodel extends StateNotifier<SellerProductTaskState> {
     List<String> ids,
     SellerProductStatus newStatus,
   ) {
-    _allProducts =
-        _allProducts.map((p) {
-          if (ids.contains(p.productId)) {
-            return p.copyWith(sellerProductStatus: newStatus);
-          }
-          return p;
-        }).toList();
+    _allProducts = _allProducts.map((p) {
+      if (ids.contains(p.productId)) {
+        return p.copyWith(sellerProductStatus: newStatus);
+      }
+      return p;
+    }).toList();
 
     _updateCounts();
     _applyFilterAndPagination();
