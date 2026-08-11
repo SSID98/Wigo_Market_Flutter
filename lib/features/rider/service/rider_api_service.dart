@@ -3,6 +3,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../core/feedback_models/response_status_model.dart';
 import '../../../core/network/network.dart';
 import '../../../shared/models/bank_model.dart';
+import '../models/delivery_model.dart';
+import '../models/earning_history_model.dart';
 import '../models/earning_overview_model.dart';
 
 class RiderApiService {
@@ -10,17 +12,161 @@ class RiderApiService {
 
   RiderApiService(this._networkService);
 
-  Future<ResponseStatusModel<JsonMap>> updateAvailability(bool isOnline) async {
-    return _networkService.request<JsonMap>(() {
-      final String statusValue = isOnline ? "online" : "offline";
-
-      return _networkService.put(
-        '/delivery-agent/availability',
-        data: {"status": statusValue},
-      );
-    });
+  ///All Orders/Delivery Endpoints
+  Future<ResponseStatusModel<OrdersResponse>> getOrders({
+    int page = 1,
+    int limit = 10,
+    String tab = 'all',
+  }) async {
+    return _networkService.request<OrdersResponse>(
+      () => _networkService.get(
+        '/delivery-agent/orders',
+        query: {'page': page, 'limit': limit, 'tab': tab},
+      ),
+      parser: (json) => OrdersResponse.fromJson(
+        Map<String, dynamic>.from(json['data'] as Map),
+      ),
+    );
   }
 
+  Future<ResponseStatusModel<OrdersResponse>> getAvailableOrders({
+    int page = 1,
+    int limit = 10,
+  }) async {
+    return _networkService.request<OrdersResponse>(
+      () => _networkService.get(
+        '/delivery-agent/orders/available',
+        query: {'page': page, 'limit': limit},
+      ),
+      parser: (json) => OrdersResponse.fromJson(json["data"]),
+    );
+  }
+
+  Future<ResponseStatusModel<OrdersResponse>> getMyDeliveries({
+    int page = 1,
+    int limit = 10,
+    String? tab, // 'ongoing' | 'completed' | 'cancelled'
+    String?
+    status, // 'assigned' | 'picked_up' | 'in_transit' | 'delivered' | 'failed'
+  }) async {
+    return _networkService.request<OrdersResponse>(
+      () => _networkService.get(
+        '/delivery-agent/orders/my-deliveries',
+        query: {
+          'page': page,
+          'limit': limit,
+          if (tab != null) 'tab': tab,
+          if (status != null && tab == null) 'status': status,
+        },
+      ),
+      parser: (json) => OrdersResponse.fromJson(json["data"]),
+    );
+  }
+
+  Future<ResponseStatusModel<OrderCounts>> getOrderCounts() async {
+    return _networkService.request<OrderCounts>(
+      () => _networkService.get('/delivery-agent/orders/counts'),
+      parser: (data) =>
+          OrderCounts.fromJson(Map<String, dynamic>.from(data['data'] as Map)),
+    );
+  }
+
+  Future<ResponseStatusModel<JsonMap>> selectOrder(String orderId) async {
+    return _networkService.request<JsonMap>(
+      () => _networkService.post(
+        '/delivery-agent/orders/select',
+        data: {'orderId': orderId},
+      ),
+    );
+  }
+
+  Future<ResponseStatusModel<JsonMap>> updateOrderStatus({
+    required String orderId,
+    required String status,
+    String? notes,
+  }) async {
+    return _networkService.request<JsonMap>(
+      () => _networkService.put(
+        '/delivery-agent/orders/status',
+        data: {
+          'orderId': orderId,
+          'status': status,
+          if (notes != null && notes.isNotEmpty) 'notes': notes,
+        },
+      ),
+    );
+  }
+
+  Future<ResponseStatusModel<ConfirmDeliveryResult>> confirmDelivery(
+    String orderId,
+  ) async {
+    return _networkService.request<ConfirmDeliveryResult>(
+      () => _networkService.post(
+        '/delivery-agent/orders/confirm-delivery',
+        data: {'orderId': orderId},
+      ),
+      parser: (data) => ConfirmDeliveryResult.fromJson(
+        Map<String, dynamic>.from(data['data'] as Map),
+      ),
+    );
+  }
+
+  Future<ResponseStatusModel<EarningsHistoryResponse>> getEarningsHistory({
+    int page = 1,
+    int limit = 10,
+    String status = 'delivered', // delivered | cancelled | all
+    String? search,
+    int? month,
+    int? year,
+    DateTime? startDate,
+    DateTime? endDate,
+  }) async {
+    return _networkService.request<EarningsHistoryResponse>(
+      () => _networkService.get(
+        '/delivery-agent/earnings-history',
+        query: {
+          'page': page,
+          'limit': limit,
+          'status': status,
+          if (search != null && search.trim().isNotEmpty)
+            'search': search.trim(),
+          if (month != null) 'month': month,
+          if (year != null) 'year': year,
+          if (startDate != null) 'startDate': _formatDate(startDate),
+          if (endDate != null) 'endDate': _formatDate(endDate),
+        },
+      ),
+      parser: (json) => EarningsHistoryResponse.fromJson(
+        Map<String, dynamic>.from(json['data'] as Map),
+      ),
+    );
+  }
+
+  Future<ResponseStatusModel<List<Delivery>>> getRecentOrders({
+    int limit = 5,
+  }) async {
+    return _networkService.request<List<Delivery>>(
+      () => _networkService.get(
+        '/delivery-agent/orders/recent',
+        query: {'limit': limit},
+      ),
+      parser: (data) {
+        final payload = data['data'] as Map<String, dynamic>;
+        return (payload['orders'] as List<dynamic>? ?? [])
+            .map((o) => Delivery.fromJson(Map<String, dynamic>.from(o as Map)))
+            .toList();
+      },
+    );
+  }
+
+  static String _formatDate(DateTime date) {
+    final y = date.year.toString().padLeft(4, '0');
+    final m = date.month.toString().padLeft(2, '0');
+    final d = date.day.toString().padLeft(2, '0');
+    return '$y-$m-$d';
+  }
+
+  ///All profile endpoints
   Future<ResponseStatusModel<JsonMap>> createRiderProfile(
     Map<String, dynamic> payload,
   ) async {
@@ -43,15 +189,45 @@ class RiderApiService {
     );
   }
 
-  Future<ResponseStatusModel<JsonMap>> getUploadSignature(String folder) async {
+  Future<ResponseStatusModel<JsonMap>> updateRiderPersonalProfile(
+    Map<String, dynamic> payload,
+  ) async {
     return _networkService.request<JsonMap>(
-      () => _networkService.post('/upload/signature', data: {"folder": folder}),
+      () => _networkService.put('/delivery-agent/account', data: payload),
     );
   }
 
+  ///All wallet/pin creation endpoints
   Future<ResponseStatusModel<JsonMap>> createWalletPin(String pin) async {
     return _networkService.request<JsonMap>(
       () => _networkService.post('/wallet/pin', data: {"pin": pin}),
+    );
+  }
+
+  Future<ResponseStatusModel<JsonMap>> forgotPin() async {
+    return _networkService.request<JsonMap>(
+      () => _networkService.post('/wallet/pin/forgot'),
+    );
+  }
+
+  Future<ResponseStatusModel<JsonMap>> verifyOtp(String code) async {
+    return _networkService.request<JsonMap>(
+      () => _networkService.post(
+        '/wallet/pin/verify-reset',
+        data: {"code": code},
+      ),
+    );
+  }
+
+  Future<ResponseStatusModel<JsonMap>> resetPin({
+    required String newPin,
+    required String resetSession,
+  }) async {
+    return _networkService.request<JsonMap>(
+      () => _networkService.put(
+        '/wallet/pin/reset',
+        data: {"newPin": newPin, "resetSession": resetSession},
+      ),
     );
   }
 
@@ -66,6 +242,7 @@ class RiderApiService {
   Future<ResponseStatusModel<JsonMap>> getWallet() async {
     return _networkService.request<JsonMap>(
       () => _networkService.get('/wallet'),
+      parser: (json) => Map<String, dynamic>.from(json['data'] as Map),
     );
   }
 
@@ -82,6 +259,16 @@ class RiderApiService {
   ) async {
     return _networkService.request<JsonMap>(
       () => _networkService.put('/wallet/bank-account/$accountId/default'),
+    );
+  }
+
+  Future<ResponseStatusModel<JsonMap>> updateBankAccount(
+    String accountId,
+    Map<String, dynamic> payload,
+  ) async {
+    return _networkService.request<JsonMap>(
+      () =>
+          _networkService.put('/wallet/bank-account/$accountId', data: payload),
     );
   }
 
@@ -113,6 +300,7 @@ class RiderApiService {
     );
   }
 
+  ///Banking Endpoints
   Future<ResponseStatusModel<List<Bank>>> getBanks({
     String country = "NG",
   }) async {
@@ -128,11 +316,42 @@ class RiderApiService {
     );
   }
 
-  Future<ResponseStatusModel<JsonMap>> updateRiderPersonalProfile(
-    Map<String, dynamic> payload,
+  ///Notifications
+  Future<ResponseStatusModel<JsonMap>> getNotificationPreferences() async {
+    return _networkService.request<JsonMap>(
+      () => _networkService.get('/notifications/preferences'),
+    );
+  }
+
+  Future<ResponseStatusModel<JsonMap>> updateNotificationPreferences(
+    Map<String, dynamic> data,
   ) async {
     return _networkService.request<JsonMap>(
-      () => _networkService.put('/delivery-agent/account', data: payload),
+      () => _networkService.put('/notifications/preferences', data: data),
+    );
+  }
+
+  ///Others
+  Future<ResponseStatusModel<JsonMap>> updateAvailability(bool isOnline) async {
+    return _networkService.request<JsonMap>(() {
+      final String statusValue = isOnline ? "online" : "offline";
+
+      return _networkService.put(
+        '/delivery-agent/availability',
+        data: {"status": statusValue},
+      );
+    });
+  }
+
+  Future<ResponseStatusModel<JsonMap>> getUploadSignature(String folder) async {
+    return _networkService.request<JsonMap>(
+      () => _networkService.post('/upload/signature', data: {"folder": folder}),
+    );
+  }
+
+  Future<ResponseStatusModel<JsonMap>> deleteRiderAccount() async {
+    return _networkService.request<JsonMap>(
+      () => _networkService.delete('/delivery-agent/account'),
     );
   }
 

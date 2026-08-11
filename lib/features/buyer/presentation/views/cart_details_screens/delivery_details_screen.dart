@@ -5,7 +5,6 @@ import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import '../../../../../core/constants/app_colors.dart';
-import '../../../../../core/constants/url.dart';
 import '../../../../../core/utils/helper_methods_classes.dart';
 import '../../../../../gen/assets.gen.dart';
 import '../../../../../shared/widgets/custom_button.dart';
@@ -190,8 +189,8 @@ class DeliveryDetailsSection extends ConsumerWidget {
                           : MainAxisAlignment.spaceBetween,
                       children: [
                         const Text('Paystack'),
-                        Image.network(
-                          '$networkImageUrl/visa.png',
+                        Image.asset(
+                          AppAssets.images.visa.path,
                           height: isWeb ? 23.14 : 15,
                           width: isWeb ? 245 : 172,
                           errorBuilder:

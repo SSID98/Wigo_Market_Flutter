@@ -1,5 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:wigo_flutter/features/seller/presentation/views/seller_wallet_screens/seller_wallet_main_screen.dart';
 
 import '../../../core/constants/app_colors.dart';
 import '../../../gen/assets.gen.dart';
@@ -41,6 +42,7 @@ enum WalletScreenState {
 }
 
 class WalletState {
+  final SellerWalletScreenState sellerWalletScreenState;
   final WalletScreenState walletScreenState;
   final List<BankDetails> bankDetailsList;
   final BankDetails? selectedBankDetails;
@@ -51,9 +53,11 @@ class WalletState {
   final List<Bank> banks;
   final bool hasSubmitted;
   final bool isDefault;
+  final bool hasWithdrawalPin;
 
   const WalletState({
     this.walletScreenState = WalletScreenState.overview,
+    this.sellerWalletScreenState = SellerWalletScreenState.earnings,
     required this.bankDetailsList,
     this.selectedBankDetails,
     this.isLoading = false,
@@ -63,9 +67,11 @@ class WalletState {
     this.hasSubmitted = false,
     this.isDefault = false,
     this.fetchWalletLoading = false,
+    this.hasWithdrawalPin = false,
   });
 
   WalletState copyWith({
+    SellerWalletScreenState? sellerWalletScreenState,
     WalletScreenState? walletScreenState,
     List<BankDetails>? bankDetailsList,
     BankDetails? selectedBankDetails,
@@ -76,8 +82,11 @@ class WalletState {
     bool? hasSubmitted,
     bool? isDefault,
     bool? fetchWalletLoading,
+    bool? hasWithdrawalPin,
   }) {
     return WalletState(
+      sellerWalletScreenState:
+          sellerWalletScreenState ?? this.sellerWalletScreenState,
       walletScreenState: walletScreenState ?? this.walletScreenState,
       bankDetailsList: bankDetailsList ?? this.bankDetailsList,
       selectedBankDetails: selectedBankDetails ?? this.selectedBankDetails,
@@ -88,6 +97,7 @@ class WalletState {
       hasSubmitted: hasSubmitted ?? this.hasSubmitted,
       isDefault: isDefault ?? this.isDefault,
       fetchWalletLoading: fetchWalletLoading ?? this.fetchWalletLoading,
+      hasWithdrawalPin: hasWithdrawalPin ?? this.hasWithdrawalPin,
     );
   }
 }

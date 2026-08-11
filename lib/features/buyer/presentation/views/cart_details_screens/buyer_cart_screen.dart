@@ -4,8 +4,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import '../../../../../core/constants/app_colors.dart';
-import '../../../../../core/constants/url.dart';
 import '../../../../../core/utils/helper_methods_classes.dart';
+import '../../../../../gen/assets.gen.dart';
 import '../../../models/cart_model.dart';
 import '../../../viewmodels/buyer_cart_viewmodel.dart';
 import '../saved_product_view.dart';
@@ -69,8 +69,8 @@ class CartPage extends ConsumerWidget {
       return Column(
         children: [
           Center(
-            child: Image.network(
-              '$networkImageUrl/box.png',
+            child: Image.asset(
+              AppAssets.images.box.path,
               height: isWeb ? 200.18 : 121.02,
               width: isWeb ? 306 : 185,
               errorBuilder:

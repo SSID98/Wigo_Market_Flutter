@@ -24,8 +24,13 @@ class RiderPersonalProfileViewModel
     : api = apiService ?? read(riderApiServiceProvider),
       super(const RiderPersonalProfileState());
 
-  static const String _profileCacheKey = 'rider_personal_profile_cache';
-  static const String _profileSeededKey = 'rider_personal_profile_seeded';
+  String? get _currentUserId => read(authStateProvider).user?.id;
+
+  static String _cacheKey(String userId) =>
+      'rider_personal_profile_cache_$userId';
+
+  static String _seededKey(String userId) =>
+      'rider_personal_profile_seeded_$userId';
 
   final SecureStorage _storage = SecureStorage();
 
@@ -158,20 +163,29 @@ class RiderPersonalProfileViewModel
   Future<void> loadProfileOnce(WidgetRef ref) async {
     if (state.profileLoadStatus == PersonalProfileLoadStatus.loaded) return;
 
+    final userId = _currentUserId;
+    if (userId == null) {
+      state = state.copyWith(
+        profileLoadStatus: PersonalProfileLoadStatus.error,
+      );
+      return;
+    }
+
     state = state.copyWith(
       profileLoadStatus: PersonalProfileLoadStatus.loading,
     );
 
-    final seededResult = await _storage.getData(key: _profileSeededKey);
+    // Check the per-user seeded flag, not a global one.
+    final seededResult = await _storage.getData(key: _seededKey(userId));
 
     if (seededResult.isSuccess && seededResult.data == 'true') {
-      await _loadFromCache();
+      await _loadFromCache(userId);
     } else {
-      await _seedFromAuthState(ref);
+      await _seedFromAuthState(ref, userId);
     }
   }
 
-  Future<void> _seedFromAuthState(WidgetRef ref) async {
+  Future<void> _seedFromAuthState(WidgetRef ref, String userId) async {
     final authState = ref.read(authStateProvider);
 
     if (authState.status == AuthStatus.loggedIn && authState.user != null) {
@@ -193,8 +207,8 @@ class RiderPersonalProfileViewModel
       selectedState.value = user.state.isNotEmpty ? user.state : null;
       selectedCity.value = user.city.isNotEmpty ? user.city : null;
 
-      await _cacheProfile();
-      await _storage.storeData(key: _profileSeededKey, data: 'true');
+      await _cacheProfile(userId);
+      await _storage.storeData(key: _seededKey(userId), data: 'true');
     } else {
       state = state.copyWith(
         profileLoadStatus: PersonalProfileLoadStatus.error,
@@ -202,8 +216,8 @@ class RiderPersonalProfileViewModel
     }
   }
 
-  Future<void> _loadFromCache() async {
-    final result = await _storage.getData(key: _profileCacheKey);
+  Future<void> _loadFromCache(String userId) async {
+    final result = await _storage.getData(key: _cacheKey(userId));
 
     if (!result.isSuccess || result.data == null) {
       state = state.copyWith(
@@ -253,9 +267,11 @@ class RiderPersonalProfileViewModel
     residentialAddressController.text = s.residentialAddress;
   }
 
-  Future<void> _cacheProfile() async {
+  Future<void> _cacheProfile([String? userId]) async {
+    final id = userId ?? _currentUserId;
+    if (id == null) return; // Nothing to cache if somehow no user is active.
     await _storage.storeData(
-      key: _profileCacheKey,
+      key: _cacheKey(id),
       data: jsonEncode(state.toJson()),
     );
   }
@@ -296,6 +312,10 @@ class RiderPersonalProfileViewModel
           _applyApiResponse(result.data!);
         }
         await _cacheProfile();
+
+        try {
+          await read(authStateProvider.notifier).init();
+        } catch (_) {}
 
         currentPasswordController.clear();
         newPasswordController.clear();
@@ -503,4 +523,8 @@ final riderPersonalProfileViewModelProvider =
     StateNotifierProvider<
       RiderPersonalProfileViewModel,
       RiderPersonalProfileState
-    >((ref) => RiderPersonalProfileViewModel(ref.read));
+    >((ref) {
+      ref.watch(authStateProvider.select((s) => s.user?.id));
+
+      return RiderPersonalProfileViewModel(ref.read);
+    });

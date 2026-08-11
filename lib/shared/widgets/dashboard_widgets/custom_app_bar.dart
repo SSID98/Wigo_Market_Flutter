@@ -13,8 +13,9 @@ import 'package:wigo_flutter/shared/widgets/custom_search_field.dart';
 import '../../../core/auth/auth_state.dart';
 import '../../../core/auth/auth_state_notifier.dart';
 import '../../../core/constants/app_colors.dart';
-import '../../../core/constants/url.dart';
 import '../../../features/buyer/viewmodels/buyer_cart_viewmodel.dart';
+import '../../../features/rider/viewmodels/global_navigation_viewmodel.dart';
+import '../../viewmodels/settings_navg_viewmodel.dart';
 
 class CustomAppBar extends ConsumerWidget implements PreferredSizeWidget {
   final bool isWeb;
@@ -56,6 +57,7 @@ class CustomAppBar extends ConsumerWidget implements PreferredSizeWidget {
       debugPrint("DEBUG: Raw Role from Model: '${user.role}'");
       debugPrint("DEBUG: Raw ID from Model: '${user.id}'");
       debugPrint("DEBUG: Raw Image from Model: '${user.image}'");
+      debugPrint("DEBUG: Raw Image from Model: '${user.address}'");
       debugPrint(
         "DEBUG: Raw RiderProfile from Model: '${user.dispatchProfile}'",
       );
@@ -63,7 +65,9 @@ class CustomAppBar extends ConsumerWidget implements PreferredSizeWidget {
 
       displayName = extractName(user.fullName);
       displayRole = formatRole(user.activeRole);
-      profilePhoto = user.image;
+      profilePhoto = user.image == ''
+          ? 'https://github.com/user-attachments/assets/93e38020-8447-4f79-a623-cfea02d6bd4b'
+          : user.image;
     }
     return AppBar(
       automaticallyImplyLeading: false,
@@ -74,13 +78,13 @@ class CustomAppBar extends ConsumerWidget implements PreferredSizeWidget {
       title: isWeb
           ? Row(
               children: [
-                if (isBuyer) Image.network('$networkImageUrl/logo3.png'),
+                if (isBuyer) Image.asset(AppAssets.images.logo3.path),
                 const SizedBox(width: 400),
                 Expanded(child: CustomSearchField(hintText: 'search')),
               ],
             )
           : isBuyer
-          ? Image.network('$networkImageUrl/logo3.png')
+          ? Image.asset(AppAssets.images.logo3.path)
           : CustomAvatar(
               profileName: displayName,
               profileEmail: displayRole,
@@ -295,7 +299,18 @@ class CustomAppBar extends ConsumerWidget implements PreferredSizeWidget {
                           () async {
                             await Future.delayed(
                               const Duration(seconds: 1),
-                              () {},
+                              () {
+                                ref
+                                    .read(settingsNavigationProvider.notifier)
+                                    .updateIndex(0, mobilePush: true);
+
+                                ref
+                                    .read(
+                                      globalNavigationViewModelProvider
+                                          .notifier,
+                                    )
+                                    .setIndex(4);
+                              },
                             );
                           },
                           spinner: SpinKitDualRing(
@@ -304,7 +319,7 @@ class CustomAppBar extends ConsumerWidget implements PreferredSizeWidget {
                         );
                       },
                       child: Text(
-                        "My account",
+                        "My Profile",
                         style: GoogleFonts.hind(
                           fontSize: 16,
                           fontWeight: FontWeight.w500,

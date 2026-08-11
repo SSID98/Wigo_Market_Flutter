@@ -31,14 +31,16 @@ class RiderDashboardScreen extends ConsumerWidget {
         ? authState.user
         : null;
     final hasWallet = user?.hasWallet ?? false;
+    final hasWalletPin = user?.hasWithdrawalPin ?? false;
     final hasDispatchProfile = user?.dispatchProfile != null;
-    final paymentStatus = hasWallet
+    final paymentStatus = hasWallet && hasWalletPin
         ? SetupStatus.completed
         : SetupStatus.pending;
     final vehicleStatus = hasDispatchProfile
         ? SetupStatus.completed
         : SetupStatus.pending;
-    final bothCompleted = hasWallet == true && hasDispatchProfile;
+    final bothCompleted =
+        hasWallet == true && hasWalletPin == true && hasDispatchProfile;
     final double setupProgress = bothCompleted
         ? 1.0
         : hasWallet
@@ -48,6 +50,8 @@ class RiderDashboardScreen extends ConsumerWidget {
     final steps = _buildSteps(
       paymentStatus: paymentStatus,
       vehicleStatus: vehicleStatus,
+      vehicleOntap: () => viewModel.navigateToVehicleDocuments,
+      paymentOntap: () => viewModel.navigateToPaymentSetup,
     );
 
     return context.isWeb
@@ -60,6 +64,8 @@ class RiderDashboardScreen extends ConsumerWidget {
             steps,
             bothCompleted,
             setupProgress,
+            hasWallet,
+            hasDispatchProfile,
           )
         : _buildMobileLayout(
             screenSize,
@@ -70,12 +76,16 @@ class RiderDashboardScreen extends ConsumerWidget {
             steps,
             bothCompleted,
             setupProgress,
+            hasWallet,
+            hasDispatchProfile,
           );
   }
 
   List<AccountSetupStep> _buildSteps({
     required SetupStatus paymentStatus,
     required SetupStatus vehicleStatus,
+    required void Function()? vehicleOntap,
+    required void Function()? paymentOntap,
   }) {
     return [
       AccountSetupStep(
@@ -85,9 +95,7 @@ class RiderDashboardScreen extends ConsumerWidget {
           width: kIsWeb ? 49 : 34.51,
         ),
         status: paymentStatus,
-        onTap: () {
-          // navigate to payment info
-        },
+        onTap: paymentOntap,
       ),
       AccountSetupStep(
         title: 'Vehicle \nDocuments',
@@ -96,9 +104,7 @@ class RiderDashboardScreen extends ConsumerWidget {
           width: kIsWeb ? 49 : 34.51,
         ),
         status: vehicleStatus,
-        onTap: () {
-          // navigate to vehicle docs
-        },
+        onTap: vehicleOntap,
       ),
     ];
   }
@@ -112,6 +118,8 @@ class RiderDashboardScreen extends ConsumerWidget {
     List<AccountSetupStep> steps,
     bool bothCompleted,
     double setupProgress,
+    bool hasWallet,
+    bool hasDispatchProfile,
   ) {
     return Scaffold(
       backgroundColor: AppColors.backgroundLight,
@@ -141,7 +149,13 @@ class RiderDashboardScreen extends ConsumerWidget {
                       'You\'re very close! Complete your rider profile and start accepting delivery requests today',
                   steps: steps,
                   progress: setupProgress,
-                  onCompletePressed: () {},
+                  onCompletePressed: () {
+                    hasWallet == false
+                        ? viewModel.navigateToPaymentSetup(ref, context)
+                        : !hasDispatchProfile
+                        ? viewModel.navigateToVehicleDocuments(ref, context)
+                        : null;
+                  },
                   isWeb: false,
                 ),
               EarningOverviewWidget(),
@@ -165,6 +179,8 @@ class RiderDashboardScreen extends ConsumerWidget {
     List<AccountSetupStep> steps,
     bool bothCompleted,
     double setupProgress,
+    bool hasWallet,
+    bool hasDispatchProfile,
   ) {
     return Scaffold(
       backgroundColor: AppColors.backgroundLight,
@@ -195,7 +211,13 @@ class RiderDashboardScreen extends ConsumerWidget {
                         'Just one more step! Complete your rider profile and start accepting delivery requests today',
                     steps: steps,
                     progress: setupProgress,
-                    onCompletePressed: () {},
+                    onCompletePressed: () {
+                      hasWallet == false
+                          ? viewModel.navigateToPaymentSetup(ref, context)
+                          : !hasDispatchProfile
+                          ? viewModel.navigateToVehicleDocuments(ref, context)
+                          : null;
+                    },
                     isWeb: true,
                   ),
                 Row(

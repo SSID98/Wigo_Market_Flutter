@@ -6,7 +6,6 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:wigo_flutter/shared/widgets/custom_loading_overlay.dart';
 
 import '../../core/constants/app_colors.dart';
-import '../../core/constants/url.dart';
 import '../../core/local/local_user_controller.dart';
 import '../../gen/assets.gen.dart';
 import '../models/user_role.dart';
@@ -42,8 +41,8 @@ class CreationSuccessfulScreen extends ConsumerWidget {
       body: SafeArea(
         child: Stack(
           children: [
-            Image.network(
-              '$networkImageUrl/onboardingRiderMobile.png',
+            Image.asset(
+              AppAssets.images.onboardingRiderMobile.path,
               fit: BoxFit.cover,
               color: AppColors.backGroundOverlay,
               colorBlendMode: BlendMode.overlay,
@@ -131,8 +130,8 @@ class CreationSuccessfulScreen extends ConsumerWidget {
       body: SafeArea(
         child: Stack(
           children: [
-            Image.network(
-              '$networkImageUrl/onboardingRiderWeb.png',
+            Image.asset(
+              AppAssets.images.onboardingRiderWeb.path,
               fit: BoxFit.cover,
               color: AppColors.backGroundOverlay,
               colorBlendMode: BlendMode.overlay,
@@ -223,8 +222,8 @@ class CreationSuccessfulScreen extends ConsumerWidget {
       child: Column(
         children: [
           const SizedBox(height: 20),
-          Image.network(
-            '$networkImageUrl/successful.png',
+          Image.asset(
+            AppAssets.images.successful.path,
             height: imageSize,
             width: imageSize,
           ),

@@ -6,8 +6,8 @@ import 'package:go_router/go_router.dart';
 import 'package:wigo_flutter/core/constants/app_colors.dart';
 import 'package:wigo_flutter/shared/widgets/custom_loading_overlay.dart';
 
-import '../../core/constants/url.dart';
 import '../../core/local/local_user_controller.dart';
+import '../../gen/assets.gen.dart';
 
 class OnboardingViewModel extends ChangeNotifier {
   final PageController pageController = PageController();
@@ -15,13 +15,13 @@ class OnboardingViewModel extends ChangeNotifier {
 
   final List<Map<String, String>> riderOnboardingData = [
     {
-      'image': '$networkImageUrl/onboarding1.png',
+      'image': AppAssets.images.onboarding1.path,
       'title': 'Earn Easily with WIGOMARKET',
       'description':
           'Join a trusted network of campus riders helping students and vendors deliver fast, safe, and on time within your campus.',
     },
     {
-      'image': '$networkImageUrl/onboarding2.png',
+      'image': AppAssets.images.onboarding2.path,
       'title': 'Here’s What to Expect',
       'description':
           'Get delivery requests, pick up from vendors, and earn directly into your bank account, all while staying active on campus.',
@@ -30,13 +30,13 @@ class OnboardingViewModel extends ChangeNotifier {
 
   final List<Map<String, String>> buyerOnboardingData = [
     {
-      'image': '$networkImageUrl/buyerOnboarding1.png',
+      'image': AppAssets.images.buyerOnboarding1.path,
       'title': 'Shop Easily with WIGOMARKET',
       'description':
           'Join a trusted community of buyers shopping from verified vendors and enjoying fast, safe, and on-time deliveries anywhere on campus.',
     },
     {
-      'image': '$networkImageUrl/buyerOnboarding2.png',
+      'image': AppAssets.images.buyerOnboarding2.path,
       'title': 'Here’s What to Expect',
       'description':
           'Get your goods delivered by WiGo Riders or pick up from vendors by going to their location, you can with any means convenient for you.',
@@ -45,13 +45,13 @@ class OnboardingViewModel extends ChangeNotifier {
 
   final List<Map<String, String>> sellerOnboardingData = [
     {
-      'image': '$networkImageUrl/sellerOnboarding1.png',
+      'image': AppAssets.images.sellerOnboarding1.path,
       'title': 'Sell Smarter with WIGOMARKET',
       'description':
           'Reach thousands of students near you, manage sales easily, and grow your business—all in one place.',
     },
     {
-      'image': '$networkImageUrl/sellerOnboarding2.png',
+      'image': AppAssets.images.sellerOnboarding2.path,
       'title': 'Run Your Store Right From Your Phone.',
       'description':
           'No need for complicated tools. With WIGOMARKET, you can manage orders, update your listings, and track deliveries—all in one simple app.',

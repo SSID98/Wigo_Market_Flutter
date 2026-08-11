@@ -1,11 +1,22 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/legacy.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:wigo_flutter/features/seller/models/earnings.dart';
 
+import '../../../core/auth/auth_state_notifier.dart';
+import '../../../core/constants/app_colors.dart';
+import '../../../core/network/network.dart';
+import '../../../shared/widgets/custom_loading_overlay.dart';
+import '../../rider/viewmodels/edit_bank_account_viewmodel.dart';
+import '../../rider/viewmodels/global_navigation_viewmodel.dart';
 import '../models/seller_dashboard_state.dart';
+import '../presentation/views/seller_wallet_screens/seller_wallet_main_screen.dart';
 
 class SellerDashboardViewModel extends StateNotifier<SellerDashboardState> {
-  SellerDashboardViewModel() : super(const SellerDashboardState()) {
+  final Reader read;
+
+  SellerDashboardViewModel(this.read) : super(const SellerDashboardState()) {
     _initiateDashboardDataLoad();
   }
 
@@ -92,6 +103,30 @@ class SellerDashboardViewModel extends StateNotifier<SellerDashboardState> {
     }
   }
 
+  Future<void> navigateToSellerPaymentSetup(
+    BuildContext context,
+    WidgetRef ref,
+  ) async {
+    await runWithOverlay(context, () async {
+      await Future.delayed(const Duration(seconds: 1), () {
+        final authUser = read(authStateProvider).user;
+        if (authUser == null) return;
+        final authHasWallet = authUser.hasWallet;
+        final authHasPin = authUser.hasWithdrawalPin;
+
+        final targetState = (authHasWallet && !authHasPin)
+            ? SellerWalletScreenState.setupPin
+            : SellerWalletScreenState.addBankAccount;
+
+        ref
+            .read(editBankAccountProvider.notifier)
+            .setSellerWalletScreenState(targetState);
+
+        read(globalNavigationViewModelProvider.notifier).setIndex(3);
+      });
+    }, spinner: SpinKitDualRing(color: AppColors.primaryDarkGreen));
+  }
+
   // Future<List<SetupStep>> fetchSetupSteps() async {
   //   final response = await http.get(
   //     Uri.parse('https://api.example.com/account/setup'),
@@ -108,5 +143,5 @@ class SellerDashboardViewModel extends StateNotifier<SellerDashboardState> {
 
 final sellerDashboardViewModelProvider =
     StateNotifierProvider<SellerDashboardViewModel, SellerDashboardState>(
-      (ref) => SellerDashboardViewModel(),
+      (ref) => SellerDashboardViewModel(ref.read),
     );

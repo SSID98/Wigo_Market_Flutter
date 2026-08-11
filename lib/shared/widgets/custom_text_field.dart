@@ -173,7 +173,7 @@ class _CustomTextFieldState extends ConsumerState<CustomTextField> {
                 ),
                 maxLines: widget.maxLines ?? 1,
                 minLines: widget.minLines,
-                cursorColor: AppColors.textBlackGrey,
+                // cursorColor: AppColors.textBlackGrey,
                 inputFormatters: widget.inputFormatters,
                 key: widget.fieldKey,
                 controller: widget.controller,
@@ -421,7 +421,52 @@ class _CustomDropdownFieldState extends ConsumerState<CustomDropdownField> {
   @override
   void initState() {
     super.initState();
-    currentPrefixIcon = widget.prefixIcon;
+    currentPrefixIcon = _resolveIconForValue(widget.value?.value);
+    widget.value?.addListener(_onExternalValueChanged);
+  }
+
+  @override
+  void didUpdateWidget(CustomDropdownField oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.value != widget.value) {
+      oldWidget.value?.removeListener(_onExternalValueChanged);
+      widget.value?.addListener(_onExternalValueChanged);
+      setState(() {
+        currentPrefixIcon = _resolveIconForValue(widget.value?.value);
+      });
+    }
+  }
+
+  @override
+  void dispose() {
+    widget.value?.removeListener(_onExternalValueChanged);
+    super.dispose();
+  }
+
+  void _onExternalValueChanged() {
+    if (!mounted) return;
+    setState(() {
+      currentPrefixIcon = _resolveIconForValue(widget.value?.value);
+    });
+  }
+
+  Widget? _resolveIconForValue(String? val) {
+    if (val == null || val.isEmpty) return widget.prefixIcon;
+    switch (val) {
+      case 'Motor Bike':
+      case 'Bike':
+        return AppAssets.icons.motorbike.svg();
+      case 'Car':
+        return AppAssets.icons.car.svg();
+      case 'Feet':
+        return AppAssets.icons.foot.svg();
+      case 'Bus':
+        return AppAssets.icons.bus.svg();
+      case 'Bicycle':
+        return AppAssets.icons.bicycle.svg();
+      default:
+        return widget.prefixIcon;
+    }
   }
 
   @override
@@ -554,19 +599,7 @@ class _CustomDropdownFieldState extends ConsumerState<CustomDropdownField> {
                 onChanged: (val) {
                   setState(() {
                     selectedItem = val;
-                    if (val == 'Bike') {
-                      currentPrefixIcon = AppAssets.icons.motorbike.svg();
-                    } else if (val == 'Car') {
-                      currentPrefixIcon = AppAssets.icons.car.svg();
-                    } else if (val == 'Feet') {
-                      currentPrefixIcon = AppAssets.icons.foot.svg();
-                    } else if (val == 'Bus') {
-                      currentPrefixIcon = AppAssets.icons.bus.svg();
-                    } else if (val == 'Bicycle') {
-                      currentPrefixIcon = AppAssets.icons.bicycle.svg();
-                    } else {
-                      currentPrefixIcon = widget.prefixIcon;
-                    }
+                    currentPrefixIcon = _resolveIconForValue(val);
                   });
                   widget.onChanged?.call(val);
                 },

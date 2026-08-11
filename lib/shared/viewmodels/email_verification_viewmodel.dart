@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/legacy.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:wigo_flutter/core/constants/app_colors.dart';
@@ -29,6 +30,7 @@ class EmailVerificationViewModel extends StateNotifier<EmailVerificationState> {
   Future<void> verifyCode({
     required BuildContext context,
     required String email,
+    required WidgetRef ref,
   }) async {
     await runWithOverlay(context, () async {
       final code = state.otpCode;
@@ -73,7 +75,7 @@ class EmailVerificationViewModel extends StateNotifier<EmailVerificationState> {
             hasWallet: false,
           );
 
-          await read(authStateProvider.notifier).login(loginModel);
+          await read(authStateProvider.notifier).login(loginModel, ref);
 
           state = state.copyWith(isLoading: false, isVerified: true);
           return;
@@ -88,6 +90,7 @@ class EmailVerificationViewModel extends StateNotifier<EmailVerificationState> {
             isLoading: false,
             otpError: 'Invalid verification code',
           );
+          return;
         } else {
           state = state.copyWith(
             isLoading: false,
@@ -96,8 +99,11 @@ class EmailVerificationViewModel extends StateNotifier<EmailVerificationState> {
                 'Verification failed. Please try again.',
           );
           if (!context.mounted) return;
-          if (state.errorMessage != null) return;
-          showErrorBanner(state.errorMessage!, context);
+
+          if (state.errorMessage != null) {
+            showErrorBanner(state.errorMessage!, context);
+          }
+          return;
         }
       }
     }, spinner: SpinKitDualRing(color: AppColors.primaryDarkGreen));

@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:wigo_flutter/core/constants/app_colors.dart';
-import 'package:wigo_flutter/core/constants/url.dart';
 import 'package:wigo_flutter/features/seller/presentation/views/single_product_version_view/single_product_info_screen.dart';
 import 'package:wigo_flutter/shared/widgets/custom_button.dart';
 
@@ -97,7 +96,7 @@ class AddProductScreen extends ConsumerWidget {
         Container(
           decoration: BoxDecoration(
             image: DecorationImage(
-              image: NetworkImage('$networkImageUrl/addProductBgMobile.png'),
+              image: AssetImage(AppAssets.images.addProductBgMobile.path),
               fit: BoxFit.fill,
             ),
           ),

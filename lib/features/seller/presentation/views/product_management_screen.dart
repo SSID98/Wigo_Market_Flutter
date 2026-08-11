@@ -10,7 +10,6 @@ import 'package:wigo_flutter/features/seller/viewmodels/seller_product_task_view
 import '../../../../../core/constants/app_colors.dart';
 import '../../../../../gen/assets.gen.dart';
 import '../../../../../shared/widgets/pagination_widget.dart';
-import '../../../../core/constants/url.dart';
 import '../../../../shared/widgets/custom_button.dart';
 import '../../../../shared/widgets/custom_search_field.dart';
 import '../../models/order_task_state.dart';
@@ -225,24 +224,25 @@ class ProductManagementScreen extends ConsumerWidget {
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
                     const SizedBox(height: 20),
-                    Image.network(
-                      '$networkImageUrl/noProductAdded.png',
+                    Image.asset(
+                      AppAssets.images.noProductAdded.path,
                       height: isWeb ? 344 : 197,
                       width: isWeb ? 453 : 300,
                       fit: BoxFit.fill,
-                      errorBuilder: (
-                        BuildContext context,
-                        Object exception,
-                        StackTrace? stackTrace,
-                      ) {
-                        return const Center(
-                          child: Icon(
-                            Icons.broken_image,
-                            color: AppColors.textIconGrey,
-                            size: 50.0,
-                          ),
-                        );
-                      },
+                      errorBuilder:
+                          (
+                            BuildContext context,
+                            Object exception,
+                            StackTrace? stackTrace,
+                          ) {
+                            return const Center(
+                              child: Icon(
+                                Icons.broken_image,
+                                color: AppColors.textIconGrey,
+                                size: 50.0,
+                              ),
+                            );
+                          },
                     ),
                     const SizedBox(height: 25.0),
                     Text(
@@ -250,10 +250,9 @@ class ProductManagementScreen extends ConsumerWidget {
                       style: GoogleFonts.hind(
                         fontWeight: FontWeight.w600,
                         fontSize: isWeb ? 32 : 18,
-                        color:
-                            isWeb
-                                ? AppColors.textVidaGreen800
-                                : AppColors.textBlackGrey,
+                        color: isWeb
+                            ? AppColors.textVidaGreen800
+                            : AppColors.textBlackGrey,
                       ),
                     ),
                     const SizedBox(height: 10.0),
@@ -263,10 +262,9 @@ class ProductManagementScreen extends ConsumerWidget {
                       style: GoogleFonts.hind(
                         fontWeight: isWeb ? FontWeight.w500 : FontWeight.w400,
                         fontSize: isWeb ? 16 : 14,
-                        color:
-                            isWeb
-                                ? AppColors.textBlackGrey
-                                : AppColors.textBodyText,
+                        color: isWeb
+                            ? AppColors.textBlackGrey
+                            : AppColors.textBodyText,
                       ),
                     ),
                     const SizedBox(height: 30.0),
@@ -364,11 +362,10 @@ class OrderHeaderWeb extends ConsumerWidget {
         if (value == 'today') onToday();
         if (value == 'custom') onCustom();
       },
-      itemBuilder:
-          (_) => [
-            const PopupMenuItem(value: 'today', child: Text("Today")),
-            const PopupMenuItem(value: 'custom', child: Text("Custom date")),
-          ],
+      itemBuilder: (_) => [
+        const PopupMenuItem(value: 'today', child: Text("Today")),
+        const PopupMenuItem(value: 'custom', child: Text("Custom date")),
+      ],
     );
   }
 
@@ -378,11 +375,9 @@ class OrderHeaderWeb extends ConsumerWidget {
   }) {
     return PopupMenuButton<OrderFilter>(
       onSelected: onSelected,
-      itemBuilder:
-          (_) =>
-              OrderFilter.values
-                  .map((f) => PopupMenuItem(value: f, child: Text(f.name)))
-                  .toList(),
+      itemBuilder: (_) => OrderFilter.values
+          .map((f) => PopupMenuItem(value: f, child: Text(f.name)))
+          .toList(),
       child: FilterButton(label: "Order Status"),
     );
   }
@@ -470,10 +465,9 @@ class OrderHeaderMobile extends ConsumerWidget {
                                 children: [
                                   Padding(
                                     padding: EdgeInsets.only(
-                                      top:
-                                          expandedSection == 'category'
-                                              ? 10
-                                              : 0,
+                                      top: expandedSection == 'category'
+                                          ? 10
+                                          : 0,
                                     ),
                                     child: buildMenuButton(
                                       ref: ref,
@@ -492,8 +486,8 @@ class OrderHeaderMobile extends ConsumerWidget {
                                         padding: EdgeInsets.only(
                                           top:
                                               expandedSection == 'productStatus'
-                                                  ? 10
-                                                  : 0,
+                                              ? 10
+                                              : 0,
                                         ),
                                         child: buildMenuButton(
                                           ref: ref,
@@ -633,53 +627,52 @@ class OrderHeaderMobile extends ConsumerWidget {
                   ],
                 );
               },
-              menuChildren:
-                  state.searchSuggestions.isEmpty
-                      ? [
-                        const Padding(
-                          padding: EdgeInsets.all(16),
-                          child: Text("No such products found"),
+              menuChildren: state.searchSuggestions.isEmpty
+                  ? [
+                      const Padding(
+                        padding: EdgeInsets.all(16),
+                        child: Text("No such products found"),
+                      ),
+                    ]
+                  : state.searchSuggestions.map((product) {
+                      return MenuItemButton(
+                        onPressed: () {
+                          searchController.text = product.productName;
+                          vm.applySearch(product.productName);
+                          // The menu closes automatically on MenuItemButton press
+                        },
+                        leadingIcon: ClipRRect(
+                          borderRadius: BorderRadius.circular(4),
+                          child: Image.network(
+                            product.imageUrl,
+                            width: 30,
+                            height: 30,
+                            fit: BoxFit.cover,
+                          ),
                         ),
-                      ]
-                      : state.searchSuggestions.map((product) {
-                        return MenuItemButton(
-                          onPressed: () {
-                            searchController.text = product.productName;
-                            vm.applySearch(product.productName);
-                            // The menu closes automatically on MenuItemButton press
-                          },
-                          leadingIcon: ClipRRect(
-                            borderRadius: BorderRadius.circular(4),
-                            child: Image.network(
-                              product.imageUrl,
-                              width: 30,
-                              height: 30,
-                              fit: BoxFit.cover,
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              product.productName,
+                              style: GoogleFonts.hind(
+                                fontSize: 16,
+                                fontWeight: FontWeight.w600,
+                                color: AppColors.textBlackGrey,
+                              ),
                             ),
-                          ),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                product.productName,
-                                style: GoogleFonts.hind(
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.w600,
-                                  color: AppColors.textBlackGrey,
-                                ),
+                            Text(
+                              product.productId,
+                              style: GoogleFonts.hind(
+                                fontSize: 16,
+                                fontWeight: FontWeight.w400,
+                                color: AppColors.textBlackGrey,
                               ),
-                              Text(
-                                product.productId,
-                                style: GoogleFonts.hind(
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.w400,
-                                  color: AppColors.textBlackGrey,
-                                ),
-                              ),
-                            ],
-                          ),
-                        );
-                      }).toList(),
+                            ),
+                          ],
+                        ),
+                      );
+                    }).toList(),
             ),
           ],
         ),

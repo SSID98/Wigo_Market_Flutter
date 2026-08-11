@@ -191,7 +191,22 @@ class RegisterViewModel extends StateNotifier<RegisterState> {
         if (result.isSuccess && result.data != null) {
           final storage = SecureStorage();
           await storage.storeData(key: 'mobile', data: state.mobile);
-          state = state.copyWith(isLoading: false, success: true);
+
+          state = state.copyWith(
+            isLoading: false,
+            success: true,
+            email: "",
+            mobile: '',
+            password: '',
+            fullName: '',
+            residentialAddress: '',
+            city: '',
+            residentialState: '',
+            gender: '',
+            nameOfNok: '',
+            nextOfKinPhone: '',
+            modeOfTransport: '',
+          );
           return true;
         }
         final errorMessage =

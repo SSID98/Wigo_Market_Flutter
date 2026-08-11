@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:wigo_flutter/features/rider/presentation/views/rider_settings_screens/rider_notification_screen.dart';
 import 'package:wigo_flutter/features/rider/presentation/views/rider_settings_screens/rider_privacy_security_screen.dart';
 import 'package:wigo_flutter/features/rider/presentation/views/rider_settings_screens/rider_profile_account_screen.dart';
@@ -13,13 +14,32 @@ import '../../../../../core/utils/context_extensions.dart';
 import '../../../../../gen/assets.gen.dart';
 import '../../../../../shared/viewmodels/settings_navg_viewmodel.dart';
 
-class RiderSettingsMainScreen extends ConsumerWidget {
+class RiderSettingsMainScreen extends HookConsumerWidget {
   const RiderSettingsMainScreen({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final navState = ref.watch(settingsNavigationProvider);
     final navNotifier = ref.read(settingsNavigationProvider.notifier);
+    final isWeb = context.isWeb;
+
+    useEffect(() {
+      if (!isWeb &&
+          navState.executeMobilePush == true &&
+          navState.selectedIndex != null) {
+        Future.microtask(() {
+          navNotifier.clearMobilePush();
+          if (!context.mounted) return;
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (_) => _buildDetailScreen(navState.selectedIndex!),
+            ),
+          );
+        });
+      }
+      return null;
+    }, [navState.executeMobilePush]);
 
     final List<String> settings = [
       "Profile & Account",

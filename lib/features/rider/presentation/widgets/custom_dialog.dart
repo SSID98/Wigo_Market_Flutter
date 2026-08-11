@@ -6,8 +6,11 @@ import 'package:wigo_flutter/core/utils/validation_utils.dart';
 import 'package:wigo_flutter/features/rider/models/bank_details.dart';
 import 'package:wigo_flutter/shared/widgets/custom_text_field.dart';
 
+import '../../../../core/auth/auth_state.dart';
+import '../../../../core/auth/auth_state_notifier.dart';
 import '../../../../core/constants/app_colors.dart';
 import '../../../../core/utils/context_extensions.dart';
+import '../../../../core/utils/helper_methods_classes.dart';
 import '../../../../gen/assets.gen.dart';
 import '../../../../shared/widgets/custom_button.dart';
 import '../../viewmodels/wallet_withdrawal_viewmodel.dart';
@@ -154,14 +157,6 @@ class InputPinDialog extends ConsumerWidget {
   final BankDetails details;
   final void Function()? labelOnTap;
 
-  //   @override
-  //   ConsumerState<InputPinDialog> createState() => _InputPinDialogState();
-  // }
-  //
-  // class _InputPinDialogState extends ConsumerState<InputPinDialog> {
-  //   final vm = ref.read(withdrawalViewModelProvider.notifier);
-  //   final state = ref.watch(withdrawalViewModelProvider);
-
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final vm = ref.read(withdrawalViewModelProvider.notifier);
@@ -256,6 +251,12 @@ class ResetPinDialog extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final vm = ref.watch(withdrawalViewModelProvider.notifier);
     final state = ref.watch(withdrawalViewModelProvider);
+    final authState = ref.watch(authStateProvider);
+    final user = authState.status == AuthStatus.loggedIn
+        ? authState.user
+        : null;
+    final userEmail = user?.email ?? 'chu******osy@gmail.com';
+    final String maskedUserEmail = MaskedEmail.maskEmail(userEmail);
     return Padding(
       padding: EdgeInsets.symmetric(horizontal: context.isWeb ? 45.0 : 0),
       child: SizedBox(
@@ -277,7 +278,7 @@ class ResetPinDialog extends ConsumerWidget {
             const SizedBox(height: 16),
             Text(
               description ??
-                  'An OTP has been sent to your registered Email abcd**joh@gmail.com',
+                  'An OTP has been sent to your registered email $maskedUserEmail',
               style: GoogleFonts.hind(
                 fontSize: context.isWeb ? 16 : 12,
                 color: AppColors.textBlackGrey,
@@ -299,6 +300,7 @@ class ResetPinDialog extends ConsumerWidget {
                   FilteringTextInputFormatter.digitsOnly,
                 ],
                 controller: vm.otpController,
+                onChanged: vm.updateCode,
                 height: context.isWeb ? 52 : 40,
                 contentPadding: EdgeInsets.symmetric(
                   vertical: 10,
@@ -315,6 +317,7 @@ class ResetPinDialog extends ConsumerWidget {
                 hintFontSize: context.isWeb ? 16 : 14,
                 keyboardType: TextInputType.number,
                 isPassword: true,
+                onChanged: vm.updatePin,
                 inputFormatters: <TextInputFormatter>[
                   FilteringTextInputFormatter.digitsOnly,
                   LengthLimitingTextInputFormatter(4),
@@ -348,6 +351,7 @@ class ResetPinDialog extends ConsumerWidget {
                 hintFontSize: context.isWeb ? 16 : 14,
                 keyboardType: TextInputType.number,
                 isPassword: true,
+                onChanged: vm.updateConfirmPin,
                 hasError:
                     state.hasSubmitted &&
                     (FormValidators.validatePin(state.confirmPin) != null ||

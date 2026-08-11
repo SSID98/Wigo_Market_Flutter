@@ -1,7 +1,8 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:wigo_flutter/features/rider/models/transaction.dart';
 
 import 'current_location.dart';
+import 'delivery_model.dart';
+import 'earning_history_model.dart';
 
 class RiderDashboardState {
   // Individual AsyncValues for each specific earning metric
@@ -12,7 +13,8 @@ class RiderDashboardState {
   final AsyncValue<String> pendingPayout;
   final AsyncValue<String> todaysEarnings;
   final AsyncValue<CurrentLocation?> currentLocation;
-  final AsyncValue<List<Transaction>> earningHistory;
+  final AsyncValue<List<EarningHistoryOrder>> earningHistory;
+  final AsyncValue<List<Delivery>> recentDeliveries;
 
   const RiderDashboardState({
     this.errorMessage = '',
@@ -23,6 +25,7 @@ class RiderDashboardState {
     this.todaysEarnings = const AsyncValue.loading(),
     this.currentLocation = const AsyncValue.loading(),
     this.earningHistory = const AsyncValue.loading(),
+    this.recentDeliveries = const AsyncValue.loading(),
   });
 
   RiderDashboardState copyWith({
@@ -33,7 +36,8 @@ class RiderDashboardState {
     AsyncValue<String>? pendingPayout,
     AsyncValue<String>? todaysEarnings,
     AsyncValue<CurrentLocation?>? currentLocation,
-    AsyncValue<List<Transaction>>? earningHistory,
+    AsyncValue<List<EarningHistoryOrder>>? earningHistory,
+    AsyncValue<List<Delivery>>? recentDeliveries,
   }) {
     return RiderDashboardState(
       totalEarnings: totalEarnings ?? this.totalEarnings,
@@ -44,6 +48,7 @@ class RiderDashboardState {
       currentLocation: currentLocation ?? this.currentLocation,
       earningHistory: earningHistory ?? this.earningHistory,
       errorMessage: errorMessage ?? this.errorMessage,
+      recentDeliveries: recentDeliveries ?? this.recentDeliveries,
     );
   }
 }

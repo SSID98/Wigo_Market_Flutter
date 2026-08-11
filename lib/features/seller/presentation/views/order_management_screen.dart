@@ -8,7 +8,6 @@ import '../../../../../core/constants/app_colors.dart';
 import '../../../../../gen/assets.gen.dart';
 import '../../../../../shared/widgets/custom_search_field.dart';
 import '../../../../../shared/widgets/pagination_widget.dart';
-import '../../../../core/constants/url.dart';
 import '../../../../shared/widgets/custom_button.dart';
 import '../../../../shared/widgets/custom_checkbox_2.dart';
 import '../../../../shared/widgets/custom_text_field.dart';
@@ -167,24 +166,25 @@ class OrderManagementScreen extends ConsumerWidget {
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
                     const SizedBox(height: 20),
-                    Image.network(
-                      '$networkImageUrl/noOrders.png',
+                    Image.asset(
+                      AppAssets.images.noOrders.path,
                       height: isWeb ? 347 : 155,
                       width: isWeb ? 384 : 172,
                       fit: BoxFit.cover,
-                      errorBuilder: (
-                        BuildContext context,
-                        Object exception,
-                        StackTrace? stackTrace,
-                      ) {
-                        return const Center(
-                          child: Icon(
-                            Icons.broken_image,
-                            color: AppColors.textIconGrey,
-                            size: 50.0,
-                          ),
-                        );
-                      },
+                      errorBuilder:
+                          (
+                            BuildContext context,
+                            Object exception,
+                            StackTrace? stackTrace,
+                          ) {
+                            return const Center(
+                              child: Icon(
+                                Icons.broken_image,
+                                color: AppColors.textIconGrey,
+                                size: 50.0,
+                              ),
+                            );
+                          },
                     ),
                     const SizedBox(height: 25.0),
                     Text(
@@ -192,10 +192,9 @@ class OrderManagementScreen extends ConsumerWidget {
                       style: GoogleFonts.hind(
                         fontWeight: FontWeight.w600,
                         fontSize: isWeb ? 32 : 18,
-                        color:
-                            isWeb
-                                ? AppColors.textVidaGreen800
-                                : AppColors.textBlackGrey,
+                        color: isWeb
+                            ? AppColors.textVidaGreen800
+                            : AppColors.textBlackGrey,
                       ),
                     ),
                     const SizedBox(height: 10.0),
@@ -205,10 +204,9 @@ class OrderManagementScreen extends ConsumerWidget {
                       style: GoogleFonts.hind(
                         fontWeight: isWeb ? FontWeight.w500 : FontWeight.w400,
                         fontSize: isWeb ? 16 : 14,
-                        color:
-                            isWeb
-                                ? AppColors.textBlackGrey
-                                : AppColors.textBodyText,
+                        color: isWeb
+                            ? AppColors.textBlackGrey
+                            : AppColors.textBodyText,
                       ),
                     ),
                     const SizedBox(height: 30.0),
@@ -304,11 +302,10 @@ class OrderHeaderWeb extends ConsumerWidget {
         if (value == 'today') onToday();
         if (value == 'custom') onCustom();
       },
-      itemBuilder:
-          (_) => [
-            const PopupMenuItem(value: 'today', child: Text("Today")),
-            const PopupMenuItem(value: 'custom', child: Text("Custom date")),
-          ],
+      itemBuilder: (_) => [
+        const PopupMenuItem(value: 'today', child: Text("Today")),
+        const PopupMenuItem(value: 'custom', child: Text("Custom date")),
+      ],
     );
   }
 }
@@ -459,10 +456,10 @@ class OrderHeaderMobile extends ConsumerWidget {
                                   isSelected: false,
                                   newColor:
                                       state.tempSelectedStatuses.isNotEmpty
-                                          ? Colors.transparent
-                                          : expandedSection == 'status'
-                                          ? AppColors.tableHeader
-                                          : Colors.transparent,
+                                      ? Colors.transparent
+                                      : expandedSection == 'status'
+                                      ? AppColors.tableHeader
+                                      : Colors.transparent,
                                 ),
                               ),
                               if (expandedSection == 'status')
@@ -470,10 +467,8 @@ class OrderHeaderMobile extends ConsumerWidget {
                                     .where((e) => e != OrderFilter.all)
                                     .map(
                                       (status) => GestureDetector(
-                                        onTap:
-                                            () => vm.toggleStatusSelection(
-                                              status,
-                                            ),
+                                        onTap: () =>
+                                            vm.toggleStatusSelection(status),
                                         child: Container(
                                           decoration: BoxDecoration(
                                             borderRadius: BorderRadius.circular(
@@ -481,9 +476,9 @@ class OrderHeaderMobile extends ConsumerWidget {
                                             ),
                                             color:
                                                 state.tempSelectedStatuses
-                                                        .contains(status)
-                                                    ? AppColors.tableHeader
-                                                    : Colors.transparent,
+                                                    .contains(status)
+                                                ? AppColors.tableHeader
+                                                : Colors.transparent,
                                           ),
                                           padding: const EdgeInsets.all(16),
                                           margin: const EdgeInsets.symmetric(
@@ -511,24 +506,21 @@ class OrderHeaderMobile extends ConsumerWidget {
                                                   value: state
                                                       .tempSelectedStatuses
                                                       .contains(status),
-                                                  onChanged:
-                                                      (_) => vm
-                                                          .toggleStatusSelection(
-                                                            status,
-                                                          ),
+                                                  onChanged: (_) =>
+                                                      vm.toggleStatusSelection(
+                                                        status,
+                                                      ),
                                                   borderRadius: 2,
                                                   size: 16,
                                                   checkSize: 12,
                                                   borderColor:
                                                       state.tempSelectedStatuses
-                                                              .contains(status)
-                                                          ? AppColors
-                                                              .primaryDarkGreen
-                                                          : AppColors
-                                                              .borderColor,
-                                                  checkColor:
-                                                      AppColors
-                                                          .primaryDarkGreen,
+                                                          .contains(status)
+                                                      ? AppColors
+                                                            .primaryDarkGreen
+                                                      : AppColors.borderColor,
+                                                  checkColor: AppColors
+                                                      .primaryDarkGreen,
                                                 ),
                                               ],
                                             ),
@@ -688,10 +680,9 @@ class OrderHeaderMobile extends ConsumerWidget {
           style: GoogleFonts.hind(
             fontSize: 16,
             fontWeight: FontWeight.w500,
-            color:
-                isNotAccordion
-                    ? AppColors.textBlackGrey
-                    : AppColors.textBodyText,
+            color: isNotAccordion
+                ? AppColors.textBlackGrey
+                : AppColors.textBodyText,
           ),
         ),
       ),
@@ -714,12 +705,11 @@ class OrderHeaderMobile extends ConsumerWidget {
       child: Container(
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(4),
-          color:
-              isSelected
-                  ? isExpanded
-                      ? AppColors.tableHeader
-                      : Colors.transparent
-                  : newColor,
+          color: isSelected
+              ? isExpanded
+                    ? AppColors.tableHeader
+                    : Colors.transparent
+              : newColor,
         ),
         child: Padding(
           padding: const EdgeInsets.only(

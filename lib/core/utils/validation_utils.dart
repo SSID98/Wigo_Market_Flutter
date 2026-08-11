@@ -62,6 +62,26 @@ class FormValidators {
     return null;
   }
 
+  static String? validateConfirmPin(String pin, String confirmPin) {
+    final confirmPinError = validatePin(confirmPin);
+
+    if (confirmPinError != null) {
+      return confirmPinError;
+    }
+
+    final pinError = validatePin(pin);
+
+    if (pinError != null) {
+      return null;
+    }
+
+    if (pin != confirmPin) {
+      return 'Pins do not match';
+    }
+
+    return null;
+  }
+
   static String? validatePinMatch(String pin, String confirmPin) {
     if (pin != confirmPin) {
       return 'Pins do not match';

@@ -1,33 +1,44 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:wigo_flutter/core/utils/context_extensions.dart';
 
 import '../../../../core/constants/app_colors.dart';
+import '../../../../core/constants/dashboard_helpers.dart';
 import '../../../../gen/assets.gen.dart';
 import '../../../../shared/widgets/custom_button.dart';
-import '../../models/delivery.dart';
+import '../../models/delivery_model.dart';
 
 class DeliveryCard extends StatelessWidget {
   const DeliveryCard({
     super.key,
     required this.delivery,
     required this.onDetailsTap,
+    this.onDecline,
+    this.isSelected = false,
   });
 
   final Delivery delivery;
   final VoidCallback onDetailsTap;
+  final VoidCallback? onDecline;
+  final bool isSelected;
 
   @override
   Widget build(BuildContext context) {
-    bool isNewRequest = delivery.status == "New Request";
-    bool isCancelled = delivery.status == "Cancelled";
-    final isWeb = MediaQuery.of(context).size.width > 800;
+    final isNewRequest = delivery.isPendingAssignment;
+    final isCancelled = delivery.isFailed;
+    final isWeb = context.isWeb;
     return Card(
       color: AppColors.backgroundWhite,
       elevation: 0,
       margin: EdgeInsets.zero,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(10),
-        side: const BorderSide(color: AppColors.borderColor, width: 1),
+        side: BorderSide(
+          color: isSelected
+              ? AppColors.primaryDarkGreen
+              : AppColors.borderColor,
+          width: isSelected ? 2 : 1,
+        ),
       ),
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 20),
@@ -39,7 +50,7 @@ class DeliveryCard extends StatelessWidget {
                 Row(
                   children: [
                     Text(
-                      delivery.orderId,
+                      delivery.orderNumber,
                       style: GoogleFonts.hind(
                         fontWeight: FontWeight.w600,
                         fontSize: 16,
@@ -47,7 +58,7 @@ class DeliveryCard extends StatelessWidget {
                       ),
                     ),
                     const SizedBox(width: 8),
-                    _buildStatusTag(delivery.status),
+                    _buildStatusTag(delivery.displayStatus),
                   ],
                 ),
                 if (isNewRequest)
@@ -76,7 +87,11 @@ class DeliveryCard extends StatelessWidget {
             SizedBox(height: isWeb ? 12 : 20),
             _buildTextRow(
               label: 'Pickup Location',
-              value: delivery.pickupLocation,
+              value: delivery.pickups.length > 1
+                  ? '${delivery.pickupLocation} '
+                        '(+${delivery.pickups.length - 1} more stop'
+                        '${delivery.pickups.length - 1 == 1 ? '' : 's'})'
+                  : delivery.pickupLocation,
               isWeb: isWeb,
             ),
             SizedBox(height: isWeb ? 12 : 20),
@@ -86,7 +101,7 @@ class DeliveryCard extends StatelessWidget {
               isWeb: isWeb,
             ),
             SizedBox(height: isWeb ? 12 : 20),
-            if (!isWeb) ...[
+            if (!isWeb)
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -96,11 +111,10 @@ class DeliveryCard extends StatelessWidget {
                     isWeb: isWeb,
                   ),
                   SizedBox(height: isWeb ? 12 : 20),
-                  _buildContainer(),
+                  _buildFeeChip(delivery.deliveryFee),
                 ],
               ),
-            ],
-            if (isWeb) ...[
+            if (isWeb)
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
@@ -109,10 +123,9 @@ class DeliveryCard extends StatelessWidget {
                     value: delivery.items,
                     isWeb: isWeb,
                   ),
-                  _buildContainer(),
+                  _buildFeeChip(delivery.deliveryFee),
                 ],
               ),
-            ],
             const Divider(color: AppColors.clampBgColor),
             const SizedBox(height: 8),
             if (isNewRequest)
@@ -122,7 +135,8 @@ class DeliveryCard extends StatelessWidget {
                   Expanded(
                     child: CustomButton(
                       text: 'Decline',
-                      onPressed: () {},
+                      onPressed: onDecline,
+                      //No decline endpoint yet
                       buttonColor: AppColors.clampBgColor,
                       textColor: AppColors.textDarkDarkerGreen,
                       height: isWeb ? 48 : 45,
@@ -149,10 +163,9 @@ class DeliveryCard extends StatelessWidget {
                 text: 'View Details',
                 onPressed: isCancelled ? () {} : onDetailsTap,
                 buttonColor: AppColors.buttonLighterGreen,
-                textColor:
-                    isCancelled
-                        ? AppColors.primaryLightGreen
-                        : AppColors.textDarkDarkerGreen,
+                textColor: isCancelled
+                    ? AppColors.primaryLightGreen
+                    : AppColors.textDarkDarkerGreen,
                 height: isWeb ? 48 : 45,
                 fontSize: isWeb ? 18 : 16,
                 fontWeight: FontWeight.w500,
@@ -171,7 +184,9 @@ class DeliveryCard extends StatelessWidget {
           padding: const EdgeInsets.only(left: 20.0),
           child: AppAssets.icons.newRequest.svg(),
         );
-      case "On-going":
+      case 'Assigned':
+      case 'Picked Up':
+      case 'In Transit':
         return Padding(
           padding: const EdgeInsets.only(left: 20.0),
           child: AppAssets.icons.onTheWay.svg(),
@@ -238,6 +253,8 @@ class DeliveryCard extends StatelessWidget {
           padding: EdgeInsets.only(top: isWeb ? 0 : 4.0),
           child: Text(
             value,
+            overflow: TextOverflow.ellipsis,
+            maxLines: 2,
             style: GoogleFonts.hind(
               fontWeight: FontWeight.w500,
               fontSize: isWeb ? 16 : 14,
@@ -249,22 +266,20 @@ class DeliveryCard extends StatelessWidget {
     );
   }
 
-  Widget _buildContainer() {
+  Widget _buildFeeChip(double fee) {
     return Container(
       height: 23,
       decoration: BoxDecoration(
         color: AppColors.textDeliveryFee.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(30),
       ),
-      child: Padding(
-        padding: const EdgeInsets.symmetric(vertical: 2.0, horizontal: 20.0),
-        child: Text(
-          'Delivery Fee: #500',
-          style: GoogleFonts.notoSans(
-            fontWeight: FontWeight.w500,
-            fontSize: 12,
-            color: AppColors.textDeliveryFee,
-          ),
+      padding: const EdgeInsets.symmetric(vertical: 2.0, horizontal: 20.0),
+      child: Text(
+        'Delivery Fee: ${formatAmount(fee)}',
+        style: GoogleFonts.notoSans(
+          fontWeight: FontWeight.w500,
+          fontSize: 12,
+          color: AppColors.textDeliveryFee,
         ),
       ),
     );

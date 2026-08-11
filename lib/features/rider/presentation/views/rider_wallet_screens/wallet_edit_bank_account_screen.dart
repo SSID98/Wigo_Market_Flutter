@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:wigo_flutter/core/constants/app_colors.dart';
 import 'package:wigo_flutter/features/rider/viewmodels/edit_bank_account_viewmodel.dart';
 import 'package:wigo_flutter/shared/widgets/contact_text_field.dart';
+import 'package:wigo_flutter/shared/widgets/custom_banner.dart';
 import 'package:wigo_flutter/shared/widgets/custom_button.dart';
 import 'package:wigo_flutter/shared/widgets/custom_checkbox_widget.dart';
 import 'package:wigo_flutter/shared/widgets/custom_text_field.dart';
@@ -32,119 +34,17 @@ class EditBankAccountScreen extends HookConsumerWidget {
   final WalletScreenState? returnToState;
   final bool openedViaNavigator;
 
-  //
-  //   @override
-  //   ConsumerState<EditBankAccountScreen> createState() =>
-  //       _EditBankAccountScreenState();
-  // }
-  //
-  // class _EditBankAccountScreenState extends ConsumerState<EditBankAccountScreen> {
-  //   late TextEditingController _accountNumberController;
-  //   late TextEditingController _accountNameController;
-  //   late TextEditingController _phoneNumberController;
-  //   late bool _isDefault;
-  //   late bool _isAddingNew;
-  //   String? _selectedBankName;
-  //   String? _accountHasError;
-  //   AutovalidateMode _autoValidateMode = AutovalidateMode.disabled;
-  //   final accountKey = GlobalKey<FormFieldState<String>>();
-  //
-  //   bool get isBankEmpty =>
-  //       _selectedBankName == null || _selectedBankName!.isEmpty;
-  //
-  //   @override
-  //   void initState() {
-  //     super.initState();
-  //     final bank = bankDetails;
-  //     _isAddingNew = bank.isEmpty;
-  //
-  //     _accountNumberController = TextEditingController(
-  //       text: bank.isEmpty ? '' : bank.accountNumber,
-  //     );
-  //
-  //     _selectedBankName = bank.isEmpty ? '' : bank.bankName;
-  //
-  //     _accountNameController = TextEditingController(
-  //       text: bank.isEmpty ? '' : bank.accountHolderName,
-  //     );
-  //     _phoneNumberController = TextEditingController(
-  //       text: bank.isEmpty ? '' : bank.phoneNumber,
-  //     );
-  //
-  //     _isDefault = bank.isEmpty ? false : bank.isDefault || _isAddingNew;
-  //   }
-  //
-  //   @override
-  //   void dispose() {
-  //     _accountNumberController.dispose();
-  //     _accountNameController.dispose();
-  //     _phoneNumberController.dispose();
-  //     super.dispose();
-  //   }
-  //
-  //   void navigateBackToList() {
-  //     if (openedViaNavigator) {
-  //       Navigator.of(context).pop();
-  //     } else {
-  //       ref.read(editBankAccountProvider.notifier).cancelEditBankAccount();
-  //     }
-  //   }
-
-  // void _saveChanges() {
-  //   final notifier = ref.read(editBankAccountProvider.notifier);
-  //
-  //   FocusManager.instance.primaryFocus?.unfocus();
-  //   final validationResult = FormValidators.validateAccountNo(
-  //     _accountNumberController.text,
-  //   );
-  //   setState(() {
-  //     _accountHasError = validationResult;
-  //
-  //     _autoValidateMode = AutovalidateMode.always;
-  //   });
-  //
-  //   if (_accountNumberController.text.isEmpty ||
-  //       isBankEmpty ||
-  //       _accountNameController.text.isEmpty ||
-  //       _phoneNumberController.text.isEmpty) {
-  //     ScaffoldMessenger.of(context).showSnackBar(
-  //       const SnackBar(content: Text("All fields must be filled.")),
-  //     );
-  //     return;
-  //   }
-  //
-  //   if (validationResult != null) {
-  //     return;
-  //   }
-  //
-  //   notifier.updateBankDetails(
-  //     bankId: bankDetails.id,
-  //     newBankName: _selectedBankName ?? '',
-  //     newAccountNumber: _accountNumberController.text,
-  //     newAccountHolderName: _accountNameController.text,
-  //     newIsDefault: _isDefault,
-  //     newPhoneNumber: _phoneNumberController.text,
-  //   );
-  //
-  //   if (openedViaNavigator) {
-  //     Future.delayed(const Duration(milliseconds: 200), () {});
-  //     Navigator.of(context).pop(true);
-  //   } else {
-  //     returnToState;
-  //   }
-  // }
-  //
-  // final List<String> _banks = const [
-  //   'Zenith Bank',
-  //   'Gt Bank',
-  //   'Access Bank',
-  //   'UBA Bank',
-  // ];
-
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final state = ref.watch(editBankAccountProvider);
     final notifier = ref.read(editBankAccountProvider.notifier);
+
+    useEffect(() {
+      Future.microtask(() {
+        notifier.startEditBankAccount(bankDetails);
+      });
+      return null;
+    }, const []);
 
     useEffect(() {
       Future.microtask(() {
@@ -160,18 +60,26 @@ class EditBankAccountScreen extends HookConsumerWidget {
     void saveChanges() async {
       FocusManager.instance.primaryFocus?.unfocus();
 
-      final success = await notifier.saveBankDetails(context);
-      if (success && context.mounted) {
-        if (openedViaNavigator) {
-          Navigator.of(context).pop(true);
-        } else {
-          notifier.setWalletScreenState(WalletScreenState.addBankAccount);
-        }
-      } else if (!success && context.mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(state.errorMessage ?? "An error occurred")),
-        );
+      final accountHasError =
+          FormValidators.validateAccountNo(
+            state.selectedBankDetails?.accountNumber,
+          ) !=
+          null;
+
+      if (accountHasError) {
+        showErrorBanner('Please enter the right account number', context);
+        return;
       }
+
+      await runWithOverlay(context, () async {
+        final success = await notifier.saveBankDetails(context);
+        if (success && context.mounted) {
+          showSuccessBanner("Bank Account successfully updated", context);
+          if (openedViaNavigator) {
+            Navigator.of(context).pop(true);
+          }
+        }
+      }, spinner: SpinKitDualRing(color: AppColors.primaryDarkGreen));
     }
 
     return openedViaNavigator
@@ -198,8 +106,11 @@ class EditBankAccountScreen extends HookConsumerWidget {
             (state.selectedBankDetails?.accountNumber.isEmpty ?? true) ||
         (state.selectedBankDetails?.accountHolderName.isEmpty ?? true) ||
         (state.selectedBankDetails?.phoneNumber.isEmpty ?? true) ||
-        (state.selectedBankDetails?.selectedBank?.name.isEmpty ?? true);
-    ;
+        (state.selectedBankDetails?.selectedBank?.name.isEmpty ?? true) ||
+        FormValidators.validateAccountNo(
+              state.selectedBankDetails?.accountNumber,
+            ) !=
+            null;
 
     useEffect(() {
       Future.microtask(() {
@@ -302,7 +213,11 @@ class EditBankAccountScreen extends HookConsumerWidget {
                             case 0:
                               return CustomDropdownField2<Bank>(
                                 label: 'Bank Name',
-                                labelTextColor: AppColors.textBlackGrey,
+                                dropdownFieldHeight: 40,
+                                labelFontSize: context.isWeb ? 20 : 14,
+                                hintFontSize: context.isWeb ? 18 : 12,
+                                labelFontWeight: FontWeight.w600,
+                                enabledBorderColor: AppColors.borderColor,
                                 items: items,
                                 itemLabelBuilder: (bank) => bank.name,
                                 prefixIcon: AppAssets.icons.bank.svg(),
@@ -440,6 +355,7 @@ class EditBankAccountScreen extends HookConsumerWidget {
                                 inputColor: AppColors.textBlack,
                                 contentPadding: EdgeInsets.only(
                                   bottom: context.isWeb ? 4.5 : 0,
+                                  top: 10.2,
                                 ),
                                 hasError:
                                     state.hasSubmitted &&

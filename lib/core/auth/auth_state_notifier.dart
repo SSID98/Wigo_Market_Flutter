@@ -1,10 +1,12 @@
 import 'package:flutter/cupertino.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/legacy.dart';
 import 'package:wigo_flutter/core/auth/auth_repository.dart';
 
 import '../../shared/models/login/login_response_model.dart';
 import '../feedback_models/response_status_model.dart';
 import '../local/session_manager.dart';
+import '../providers/reset_userscope_providers.dart';
 import 'auth_state.dart';
 
 class AuthStateNotifier extends StateNotifier<AuthState> {
@@ -63,7 +65,7 @@ class AuthStateNotifier extends StateNotifier<AuthState> {
     }
   }
 
-  Future<void> login(LoginResponseModel model) async {
+  Future<void> login(LoginResponseModel model, WidgetRef ref) async {
     await session.saveSession(
       userId: model.id,
       accessToken: model.token,
@@ -71,6 +73,8 @@ class AuthStateNotifier extends StateNotifier<AuthState> {
       activeRole: model.activeRole,
       expiresAt: DateTime.tryParse(model.expiresAt) ?? DateTime.now(),
     );
+
+    resetUserScopedProviders(ref.invalidate);
 
     try {
       // 2. Immediately fetch the full profile data

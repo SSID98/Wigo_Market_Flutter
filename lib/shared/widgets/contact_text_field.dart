@@ -158,7 +158,6 @@ class _CustomPhoneNumberFieldState extends State<CustomPhoneNumberField> {
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // Your custom error icon
                 Icon(
                   Icons.error,
                   color: AppColors.accentRed,

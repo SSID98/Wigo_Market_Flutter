@@ -23,16 +23,23 @@ import '../../widgets/withdraw_confirmation_card.dart';
 enum WithdrawalStatus { success, failure }
 
 class WalletWithdrawalScreen extends ConsumerWidget {
-  const WalletWithdrawalScreen({super.key});
+  const WalletWithdrawalScreen({super.key, required this.isSeller});
+
+  final bool isSeller;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final vm = ref.read(withdrawalViewModelProvider.notifier);
+    ref.read(editBankAccountProvider.notifier).ensureWalletFetched();
     final state = ref.watch(withdrawalViewModelProvider);
     final amount = state.amount ?? '';
-    final defaultBank = ref
-        .watch(editBankAccountProvider.notifier)
-        .getDefaultBankAccount();
+    final bankState = ref.watch(editBankAccountProvider);
+    final defaultBank = bankState.bankDetailsList
+        .cast<BankDetails?>()
+        .firstWhere(
+          (bank) => bank != null && bank.isDefault,
+          orElse: () => null,
+        );
     final continueButtonColor = AppColors.primaryDarkGreen;
 
     return GestureDetector(
@@ -135,12 +142,12 @@ class WalletWithdrawalScreen extends ConsumerWidget {
     final vm = ref.read(withdrawalViewModelProvider.notifier);
     final state = ref.watch(withdrawalViewModelProvider);
     final bankState = ref.watch(editBankAccountProvider);
-    final defaultBank = bankState.bankDetailsList
-        .cast<BankDetails?>()
-        .firstWhere(
-          (bank) => bank != null && bank.isDefault,
-          orElse: () => null,
-        );
+    final defaultBankIndex = bankState.bankDetailsList.indexWhere(
+      (b) => b.isDefault,
+    );
+    final defaultBank = defaultBankIndex != -1
+        ? bankState.bankDetailsList[defaultBankIndex]
+        : null;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -211,7 +218,6 @@ class WalletWithdrawalScreen extends ConsumerWidget {
                   hasError:
                       state.hasSubmitted &&
                       FormValidators.validateAmount(state.amount) != null,
-                  // errorIcon: false,
                   inputFormatters: <TextInputFormatter>[
                     FilteringTextInputFormatter.digitsOnly,
                   ],
@@ -296,8 +302,28 @@ class WalletWithdrawalScreen extends ConsumerWidget {
                         bank: defaultBank,
                         isWeb: context.isWeb,
                         showDelete: false,
-                        onEdit: () async {
-                          final didUpdate = await Navigator.push<bool>(
+                        position: defaultBankIndex + 1,
+                        onEdit: () {
+                          final s = ref.read(editBankAccountProvider);
+                          final canEditDirectly =
+                              s.hasWallet && s.hasWithdrawalPin;
+
+                          if (!canEditDirectly) {
+                            isSeller
+                                ? ref
+                                      .read(editBankAccountProvider.notifier)
+                                      .navigateToSellerPaymentSetup(context)
+                                : ref
+                                      .read(editBankAccountProvider.notifier)
+                                      .navigateToPaymentSetup(context);
+                            ;
+                            Navigator.of(
+                              context,
+                            ).popUntil((route) => route.isFirst);
+                            return;
+                          }
+
+                          Navigator.push<bool>(
                             context,
                             MaterialPageRoute(
                               builder: (context) => EditBankAccountScreen(
@@ -306,9 +332,6 @@ class WalletWithdrawalScreen extends ConsumerWidget {
                               ),
                             ),
                           );
-                          if (didUpdate == true) {
-                            ref.invalidate(editBankAccountProvider);
-                          }
                         },
                       )
                     : BankDetailsTile(
@@ -322,21 +345,45 @@ class WalletWithdrawalScreen extends ConsumerWidget {
                         ),
                         isWeb: context.isWeb,
                         showDelete: false,
-                        onEdit: () async {
-                          final newBank = BankDetails.empty('1');
+                        position: defaultBankIndex + 1,
+                        onEdit: () {
+                          final s = ref.read(editBankAccountProvider);
+                          final canEditDirectly =
+                              s.hasWallet &&
+                              s.hasWithdrawalPin &&
+                              defaultBank != null;
 
-                          final didUpdate = await Navigator.push<bool>(
+                          if (s.hasWithdrawalPin == false) {
+                            showErrorBanner(
+                              "Please set a withdrawal pin first",
+                              context,
+                            );
+                            return;
+                          }
+
+                          if (!canEditDirectly) {
+                            isSeller
+                                ? ref
+                                      .read(editBankAccountProvider.notifier)
+                                      .navigateToSellerPaymentSetup(context)
+                                : ref
+                                      .read(editBankAccountProvider.notifier)
+                                      .navigateToPaymentSetup(context);
+                            Navigator.of(
+                              context,
+                            ).popUntil((route) => route.isFirst);
+                            return;
+                          }
+
+                          Navigator.push<bool>(
                             context,
                             MaterialPageRoute(
                               builder: (context) => EditBankAccountScreen(
-                                bankDetails: newBank,
+                                bankDetails: defaultBank,
                                 openedViaNavigator: true,
                               ),
                             ),
                           );
-                          if (didUpdate == true) {
-                            ref.invalidate(editBankAccountProvider);
-                          }
                         },
                       ),
                 const SizedBox(height: 20),
@@ -351,6 +398,28 @@ class WalletWithdrawalScreen extends ConsumerWidget {
                         "Please set a default bank account before withdrawing.",
                         context,
                       );
+                      isSeller
+                          ? ref
+                                .read(editBankAccountProvider.notifier)
+                                .navigateToSellerPaymentSetup(context)
+                          : ref
+                                .read(editBankAccountProvider.notifier)
+                                .navigateToPaymentSetup(context);
+                      Navigator.of(context).popUntil((route) => route.isFirst);
+                      return;
+                    } else if (bankState.hasWithdrawalPin != true) {
+                      showErrorBanner(
+                        "Please set a withdrawal pin first",
+                        context,
+                      );
+                      isSeller
+                          ? ref
+                                .read(editBankAccountProvider.notifier)
+                                .navigateToSellerPaymentSetup(context)
+                          : ref
+                                .read(editBankAccountProvider.notifier)
+                                .navigateToPaymentSetup(context);
+                      Navigator.of(context).popUntil((route) => route.isFirst);
                       return;
                     }
                     vm.setLoading(true);
@@ -543,14 +612,18 @@ void _showPinDialog(
             isDialogAmount: true,
             isNotDialog: false,
           ),
-          labelOnTap: () {
-            Navigator.pop(dialogContext);
-            _resetPinDialog(context, vm, ref);
+          labelOnTap: () async {
+            final success = await vm.requestPinOtp(dialogContext);
+            if (success) {
+              if (!context.mounted) return;
+              Navigator.pop(dialogContext);
+              _resetPinDialog(context, vm, ref);
+            }
           },
           details: details,
           onPinSubmitted: () async {
             Navigator.pop(dialogContext);
-            final result = await vm.makeWithdrawal(context: context);
+            final result = await vm.makeWithdrawal(context: dialogContext);
             if (result && context.mounted) {
               showWithdrawalResult(context, details, true, amount, ref);
             } else {
@@ -581,10 +654,14 @@ void _resetPinDialog(
     builder: (dialogContext) {
       return CustomAlertDialog(
         content: ResetPinDialog(
-          onPressed: () {
-            vm.otpController.clear();
-            Navigator.pop(dialogContext);
-            _createPinDialog(context, vm, ref);
+          onPressed: () async {
+            await vm.verifyOtp(context: dialogContext);
+            if (ref.read(withdrawalViewModelProvider).isVerified) {
+              vm.otpController.clear();
+              if (!context.mounted) return;
+              Navigator.pop(dialogContext);
+              _createNewPinDialog(context, vm, ref);
+            }
           },
         ),
         closeIconPress: () {
@@ -598,7 +675,7 @@ void _resetPinDialog(
   );
 }
 
-void _createPinDialog(
+void _createNewPinDialog(
   BuildContext context,
   WithdrawalViewmodel vm,
   WidgetRef ref,
@@ -618,21 +695,18 @@ void _createPinDialog(
           context: context,
           onPressed: () async {
             FocusManager.instance.primaryFocus?.unfocus();
-            final result = await vm.setUserPin(context: context);
+            final result = await vm.resetUserPin(context: dialogContext);
             if (result) {
               if (!context.mounted) return;
               showSuccessBanner(
-                "Pin Successfully Created, You can now withdraw",
+                "Pin successfully reset, You can now withdraw",
                 context,
               );
               Navigator.pop(dialogContext);
-              Navigator.pop(context);
+              if (Navigator.canPop(context)) {
+                Navigator.pop(context);
+              }
             }
-            // } else {
-            //   final freshState = ref.read(withdrawalViewModelProvider);
-            //   if (!context.mounted) return;
-            //   showErrorBanner(freshState.errorMessage!, context);
-            // }
           },
         ),
         closeIconPress: () {

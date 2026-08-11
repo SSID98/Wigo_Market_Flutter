@@ -14,18 +14,23 @@ class BankDetailsTile extends StatelessWidget {
     required this.showDelete,
     required this.onEdit,
     this.onClear,
+    required this.position,
   });
 
   final BankDetails bank;
   final bool isWeb;
   final bool showDelete;
   final VoidCallback onEdit;
+  final int position;
   final VoidCallback? onClear;
 
   @override
   Widget build(BuildContext context) {
+    debugPrint(
+      'TILE BUILD: ${bank.accountHolderName}, isDefault=${bank.isDefault}, position=$position',
+    );
     final config =
-        bankTileConfig[bank.id] ??
+        bankTileConfig[position.toString()] ??
         (color: AppColors.backgroundLight, icon: Icon(Icons.help_outline));
 
     String maskedAccountNumber(String number) {
@@ -89,13 +94,21 @@ class BankDetailsTile extends StatelessWidget {
                 ),
                 trailing: InkWell(
                   onTap: onEdit,
-                  child: AppAssets.icons.edit.svg(
-                    colorFilter: ColorFilter.mode(
-                      AppColors.darkPurple,
-                      BlendMode.srcIn,
+                  child: Padding(
+                    padding: EdgeInsets.only(
+                      left: 16,
+                      right: 0,
+                      top: 16,
+                      bottom: 16,
                     ),
-                    height: isWeb ? 24 : 18,
-                    width: isWeb ? 24 : 18,
+                    child: AppAssets.icons.edit.svg(
+                      colorFilter: ColorFilter.mode(
+                        AppColors.darkPurple,
+                        BlendMode.srcIn,
+                      ),
+                      height: isWeb ? 24 : 18,
+                      width: isWeb ? 24 : 18,
+                    ),
                   ),
                 ),
               ),

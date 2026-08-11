@@ -4,8 +4,8 @@ import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import '../../../../core/constants/app_colors.dart';
-import '../../../../core/constants/url.dart';
 import '../../../../core/utils/helper_methods_classes.dart';
+import '../../../../gen/assets.gen.dart';
 import '../../viewmodels/saved_products_viewmodel.dart';
 import '../widgets/product_card.dart';
 
@@ -98,24 +98,10 @@ class SavedProductsView extends ConsumerWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Center(
-          child: Image.network(
-            '$networkImageUrl/searchFailed.png',
+          child: Image.asset(
+            AppAssets.images.searchFailed.path,
             height: isWeb ? 237 : 137,
             width: isWeb ? 321 : 185,
-            errorBuilder:
-                (
-                  BuildContext context,
-                  Object exception,
-                  StackTrace? stackTrace,
-                ) {
-                  return const Center(
-                    child: Icon(
-                      Icons.broken_image,
-                      color: AppColors.textIconGrey,
-                      size: 50.0,
-                    ),
-                  );
-                },
           ),
         ),
         if (!isWeb) const SizedBox(height: 10),

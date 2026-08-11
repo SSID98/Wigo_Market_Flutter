@@ -234,7 +234,11 @@ class _StepsWrap extends StatelessWidget {
             Row(
               children: [
                 Expanded(
-                  child: StepCard(step: steps[2], height: isWeb ? 115 : 86),
+                  child: StepCard(
+                    step: steps[2],
+                    height: isWeb ? 115 : 86,
+                    cardColor: AppColors.sellerCardColor,
+                  ),
                 ),
                 const SizedBox(width: 9),
                 progressCard,

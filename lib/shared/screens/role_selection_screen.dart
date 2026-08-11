@@ -3,15 +3,10 @@ import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
-import 'package:wigo_flutter/shared/widgets/custom_banner.dart';
-import 'package:wigo_flutter/shared/widgets/custom_button.dart';
 import 'package:wigo_flutter/shared/widgets/role_selection_body.dart';
 
-import '../../core/auth/auth_state_notifier.dart';
 import '../../core/constants/app_colors.dart';
-import '../../core/constants/url.dart';
 import '../../core/local/local_user_controller.dart';
-import '../../core/local/secure_storage.dart';
 import '../../gen/assets.gen.dart';
 
 class RoleSelectionScreen extends HookConsumerWidget {
@@ -42,24 +37,7 @@ class RoleSelectionScreen extends HookConsumerWidget {
       body: Stack(
         fit: StackFit.expand,
         children: [
-          Image.network(
-            '$networkImageUrl/login.png',
-            fit: BoxFit.cover,
-            errorBuilder:
-                (
-                  BuildContext context,
-                  Object exception,
-                  StackTrace? stackTrace,
-                ) {
-                  return const Center(
-                    child: Icon(
-                      Icons.broken_image,
-                      color: AppColors.textIconGrey,
-                      size: 50.0,
-                    ),
-                  );
-                },
-          ),
+          Image.asset(AppAssets.images.login.path, fit: BoxFit.cover),
           Center(
             child: Container(
               width: screenSize.width * 0.95,
@@ -81,27 +59,27 @@ class RoleSelectionScreen extends HookConsumerWidget {
                       height: 49,
                       width: 143.86,
                     ),
-                    CustomButton(
-                      text: 'RESET ALL',
-                      fontSize: 16,
-                      fontWeight: FontWeight.w700,
-                      onPressed: () async {
-                        final localUserController = ref.read(
-                          localUserControllerProvider.notifier,
-                        );
-
-                        await localUserController.resetAll();
-
-                        final secureStorage = ref.read(secureStorageProvider);
-                        await secureStorage.clearData();
-                        await ref.read(authStateProvider.notifier).logout();
-                        if (!context.mounted) return;
-                        showSuccessBanner(
-                          "User data reset successfully",
-                          context,
-                        );
-                      },
-                    ),
+                    // CustomButton(
+                    //   text: 'RESET ALL',
+                    //   fontSize: 16,
+                    //   fontWeight: FontWeight.w700,
+                    //   onPressed: () async {
+                    //     final localUserController = ref.read(
+                    //       localUserControllerProvider.notifier,
+                    //     );
+                    //
+                    //     await localUserController.resetAll();
+                    //
+                    //     final secureStorage = ref.read(secureStorageProvider);
+                    //     await secureStorage.clearData();
+                    //     await ref.read(authStateProvider.notifier).logout();
+                    //     if (!context.mounted) return;
+                    //     showSuccessBanner(
+                    //       "User data reset successfully",
+                    //       context,
+                    //     );
+                    //   },
+                    // ),
                     const SizedBox(height: 30),
                     RoleSelectionBody(
                       titleTextSize: 14,
@@ -147,7 +125,7 @@ class RoleSelectionScreen extends HookConsumerWidget {
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(imageBorderRadius),
                         image: DecorationImage(
-                          image: NetworkImage('$networkImageUrl/login.png'),
+                          image: AssetImage(AppAssets.images.login.path),
                           fit: BoxFit.cover,
                         ),
                       ),

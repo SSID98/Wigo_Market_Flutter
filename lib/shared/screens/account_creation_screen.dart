@@ -8,8 +8,8 @@ import 'package:wigo_flutter/shared/widgets/custom_banner.dart';
 import 'package:wigo_flutter/shared/widgets/custom_button.dart';
 import 'package:wigo_flutter/shared/widgets/forms_field.dart';
 
-import '../../core/constants/url.dart';
 import '../../core/local/local_user_controller.dart';
+import '../../gen/assets.gen.dart';
 import '../models/user_role.dart';
 import '../viewmodels/account_creation_viewmodel.dart';
 
@@ -52,8 +52,8 @@ class AccountCreationScreen extends ConsumerWidget {
       backgroundColor: AppColors.backgroundWhite,
       body: Stack(
         children: [
-          Image.network(
-            '$networkImageUrl/onboardingRiderMobile.png',
+          Image.asset(
+            AppAssets.images.onboardingRiderMobile.path,
             fit: BoxFit.cover,
             color: AppColors.backGroundOverlay,
             colorBlendMode: BlendMode.overlay,
@@ -114,6 +114,7 @@ class AccountCreationScreen extends ConsumerWidget {
                             iconHeight: 20,
                             iconWidth: 20,
                             hintFontSize: 11,
+                            suffixIcon: Icon(Icons.visibility_outlined),
                           ),
                         ),
                       ),
@@ -124,6 +125,7 @@ class AccountCreationScreen extends ConsumerWidget {
                           onPressed: state.isLoading
                               ? null
                               : () async {
+                                  FocusManager.instance.primaryFocus?.unfocus();
                                   final ok = await notifier.submit(context);
 
                                   if (ok) {
@@ -174,8 +176,8 @@ class AccountCreationScreen extends ConsumerWidget {
     return Scaffold(
       body: Stack(
         children: [
-          Image.network(
-            '$networkImageUrl/onboardingRiderWeb.png',
+          Image.asset(
+            AppAssets.images.onboardingRiderWeb.path,
             fit: BoxFit.cover,
             color: AppColors.backGroundOverlay,
             colorBlendMode: BlendMode.overlay,

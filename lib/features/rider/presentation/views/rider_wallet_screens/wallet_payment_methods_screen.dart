@@ -2,17 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:wigo_flutter/core/local/secure_storage.dart';
 import 'package:wigo_flutter/features/rider/viewmodels/edit_bank_account_viewmodel.dart';
 import 'package:wigo_flutter/shared/widgets/custom_banner.dart';
 import 'package:wigo_flutter/shared/widgets/custom_button.dart';
 import 'package:wigo_flutter/shared/widgets/custom_text_field.dart';
 
-import '../../../../../core/auth/auth_state.dart';
-import '../../../../../core/auth/auth_state_notifier.dart';
 import '../../../../../core/constants/app_colors.dart';
 import '../../../../../core/utils/context_extensions.dart';
-import '../../../../../core/utils/helper_methods_classes.dart';
 import '../../../../../core/utils/validation_utils.dart';
 import '../../../../../gen/assets.gen.dart';
 import '../../../models/wallet_state.dart';
@@ -81,17 +77,13 @@ class PaymentMethodScreen extends ConsumerWidget {
                   suffixIcon: Icon(Icons.visibility_off_outlined),
                   hintFontSize: context.isWeb ? 16 : 14,
                   controller: vm.pinController,
+                  onChanged: vm.updatePin,
                   hasError:
                       state.hasSubmitted &&
-                      (FormValidators.validatePin(state.pin) != null ||
-                          state.pin != state.confirmPin),
+                      FormValidators.validatePin(state.pin) != null,
                   keyboardType: TextInputType.number,
                   errorMessage: state.hasSubmitted
-                      ? (FormValidators.validatePin(state.pin) ??
-                            FormValidators.validatePinMatch(
-                              state.pin,
-                              state.confirmPin,
-                            ))
+                      ? FormValidators.validatePin(state.pin)
                       : null,
                   inputFormatters: <TextInputFormatter>[
                     FilteringTextInputFormatter.digitsOnly,
@@ -111,16 +103,20 @@ class PaymentMethodScreen extends ConsumerWidget {
                   suffixIcon: Icon(Icons.visibility_off_outlined),
                   hintFontSize: context.isWeb ? 16 : 14,
                   controller: vm.confirmPinController,
+                  onChanged: vm.updateConfirmPin,
                   hasError:
                       state.hasSubmitted &&
-                      (FormValidators.validatePin(state.confirmPin) != null ||
-                          state.pin != state.confirmPin),
+                      FormValidators.validateConfirmPin(
+                            state.pin,
+                            state.confirmPin,
+                          ) !=
+                          null,
+
                   errorMessage: state.hasSubmitted
-                      ? (FormValidators.validatePin(state.confirmPin) ??
-                            FormValidators.validatePinMatch(
-                              state.pin,
-                              state.confirmPin,
-                            ))
+                      ? FormValidators.validateConfirmPin(
+                          state.pin,
+                          state.confirmPin,
+                        )
                       : null,
                   keyboardType: TextInputType.number,
                   inputFormatters: <TextInputFormatter>[
@@ -239,21 +235,8 @@ class PaymentMethodScreen extends ConsumerWidget {
                 CustomButton(
                   text: 'Continue',
                   onPressed: () async {
-                    final storage = SecureStorage();
-                    // final prefs = await SharedPreferences.getInstance();
-                    // final storage = LocalStorageService(prefs);
-
-                    final authState = ref.watch(authStateProvider);
-                    if (authState.status == AuthStatus.loggedIn &&
-                        authState.user != null) {
-                      final user = authState.user!;
-                      final userId = user.id;
-                      await storage.storeData(
-                        key: userKey('pinSetUpCompleted', userId),
-                        data: 'true',
-                      );
-                    }
                     if (!dialogContext.mounted) return;
+                    notifier.markPinAsCreated();
                     Navigator.of(dialogContext).pop();
                     notifier.setWalletScreenState(
                       WalletScreenState.addBankAccount,

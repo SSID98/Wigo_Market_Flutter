@@ -28,10 +28,19 @@ class RiderVehicleProfileViewmodel
     : api = apiService ?? read(riderApiServiceProvider),
       super(const RiderVehicleProfileState());
 
-  static const String _profileFetchedKey = 'rider_profile_fetched_once';
-  static const String _profileCacheKey = 'rider_profile_cache';
+  String? get _currentUserId => read(authStateProvider).user?.id;
+
+  static String _fetchedKey(String userId) =>
+      'rider_profile_fetched_once_$userId';
+
+  static String _cacheKey(String userId) => 'rider_profile_cache_$userId';
 
   final SecureStorage _storage = SecureStorage();
+
+  bool get _isBasicMode {
+    final t = state.type.toLowerCase();
+    return t == 'feet' || t == 'bicycle';
+  }
 
   final ValueNotifier<String?> selectedTransportMode = ValueNotifier(null);
   final TextEditingController plateNumberController = TextEditingController();
@@ -66,8 +75,55 @@ class RiderVehicleProfileViewmodel
   }
 
   void updateTransportMode(String? value) {
-    state = state.copyWith(type: value!);
-    selectedTransportMode.value = value;
+    if (value == null) return;
+    final normalized = _mapTypeToDropdown(value);
+    state.cancelToken?.cancel('Vehicle type changed');
+    _clearVehicleFieldsAndErrors(newType: value);
+    selectedTransportMode.value = normalized;
+  }
+
+  void _clearVehicleFieldsAndErrors({String newType = ''}) {
+    plateNumberController.clear();
+    makeController.clear();
+    modelController.clear();
+    colorController.clear();
+    yearController.clear();
+    driverLicenseNumberController.clear();
+    driverLicenseExpiryController.clear();
+    vehicleRegNumberController.clear();
+    vehicleRegExpiryController.clear();
+    ninNumberController.clear();
+
+    state = state.copyWith(
+      type: newType,
+      plateNumber: '',
+      make: '',
+      model: '',
+      color: '',
+      year: '',
+      driverLicenseNumber: '',
+      driverLicenseExpiry: '',
+      vehicleRegNumber: '',
+      vehicleRegExpiry: '',
+      ninNumber: '',
+      ownerNIN: '',
+      license: '',
+      vehicleReg: '',
+      isUploadingNin: false,
+      ninProgress: 0.0,
+      ninUploadFailed: false,
+      ninFile: null,
+      isUploadingDriverLicense: false,
+      licenseProgress: 0.0,
+      driverLicenseUploadFailed: false,
+      driverLicenseFile: null,
+      isUploadingDriverRegistration: false,
+      driverRegProgress: 0.0,
+      driverRegUploadFailed: false,
+      driverRegistrationFile: null,
+      hasSubmitted: false,
+      errorMessage: null,
+    );
   }
 
   void updatePlateNumber(String value) =>
@@ -118,31 +174,35 @@ class RiderVehicleProfileViewmodel
   void enterEditMode() => state = state.copyWith(isEditMode: true);
 
   void exitEditMode() {
-    _loadFromCache();
+    final userId = _currentUserId;
+    if (userId != null) {
+      _loadFromCache(userId);
+    }
     state = state.copyWith(isEditMode: false, hasSubmitted: false);
   }
 
-  /// Called once when the screen mounts. Uses secure storage to ensure the
-  /// API is only hit once per install (or until the cache is cleared). On
-  /// subsequent visits the cached data is loaded instantly.
   Future<void> fetchProfileIfNeeded(BuildContext context) async {
-    // final fetchedOnce = await _storage.read(key: _profileFetchedKey) == 'true';
-
-    final fetchedOnce = await _storage.getData(key: _profileFetchedKey);
-
-    if (fetchedOnce.data == "true") {
-      await _loadFromCache();
+    final userId = _currentUserId;
+    if (userId == null) {
+      state = state.copyWith(profileLoadStatus: ProfileLoadStatus.error);
       return;
     }
 
-    // First visit — hit the API with up to 3 attempts.
+    final fetchedOnce = await _storage.getData(key: _fetchedKey(userId));
+
+    if (fetchedOnce.data == 'true') {
+      await _loadFromCache(userId);
+      return;
+    }
+
     if (!context.mounted) return;
-    await _fetchProfileWithRetry(context, maxAttempts: 3);
+    await _fetchProfileWithRetry(context, maxAttempts: 3, userId: userId);
   }
 
   Future<void> _fetchProfileWithRetry(
     BuildContext context, {
     required int maxAttempts,
+    required String userId,
   }) async {
     state = state.copyWith(profileLoadStatus: ProfileLoadStatus.loading);
 
@@ -151,9 +211,8 @@ class RiderVehicleProfileViewmodel
         final result = await api.getRiderProfile();
 
         if (result.isSuccess && result.data != null) {
-          // Case 3: Profile exists — populate, cache, go read-only.
-          await _markFetchedOnce();
-          await _cacheProfile(result.data!);
+          await _markFetchedOnce(userId);
+          await _cacheProfile(result.data!, userId);
           _populateFromProfile(result.data!);
           state = state.copyWith(
             profileLoadStatus: ProfileLoadStatus.loaded,
@@ -163,18 +222,15 @@ class RiderVehicleProfileViewmodel
           return;
         }
 
-        // Detect "profile not found" vs a transient network error.
-        // Adjust the string below if your backend uses a different message.
         final errorDesc =
             result.errorDescription?.toString().toLowerCase() ?? '';
         final isNotFound =
-            errorDesc.contains('Dispatch profile not found') ||
+            errorDesc.contains('dispatch profile not found') ||
             errorDesc.contains('profile') ||
             errorDesc.contains('404');
 
         if (isNotFound) {
-          // Case 2: No profile yet — show the create form.
-          await _markFetchedOnce();
+          await _markFetchedOnce(userId);
           state = state.copyWith(
             profileLoadStatus: ProfileLoadStatus.notFound,
             hasProfile: false,
@@ -182,22 +238,18 @@ class RiderVehicleProfileViewmodel
           return;
         }
 
-        // Transient error — wait before retrying (exponential back-off).
         if (attempt < maxAttempts) {
           await Future.delayed(Duration(seconds: attempt));
         }
       }
 
-      // Max retries exceeded. Mark as fetched so we don't loop forever.
-      // The screen will show an error state with a retry button.
-      await _markFetchedOnce();
+      await _markFetchedOnce(userId);
       state = state.copyWith(profileLoadStatus: ProfileLoadStatus.error);
     }, spinner: SpinKitDualRing(color: AppColors.primaryDarkGreen));
   }
 
-  Future<void> _loadFromCache() async {
-    // final cachedJson = await _storage.read(key: _profileCacheKey);
-    final cachedJson = await _storage.getData(key: _profileCacheKey);
+  Future<void> _loadFromCache(String userId) async {
+    final cachedJson = await _storage.getData(key: _cacheKey(userId));
 
     if (!cachedJson.isSuccess) {
       state = state.copyWith(
@@ -222,15 +274,20 @@ class RiderVehicleProfileViewmodel
     }
   }
 
-  Future<void> _markFetchedOnce() =>
-      _storage.storeData(key: _profileFetchedKey, data: 'true');
+  Future<void> _markFetchedOnce(String userId) =>
+      _storage.storeData(key: _fetchedKey(userId), data: 'true');
 
-  Future<void> _cacheProfile(Map<String, dynamic> data) =>
-      _storage.storeData(key: _profileCacheKey, data: jsonEncode(data));
+  Future<void> _cacheProfile(
+    Map<String, dynamic> data, [
+    String? userId,
+  ]) async {
+    final id = userId ?? _currentUserId;
+    if (id == null) return;
+    await _storage.storeData(key: _cacheKey(id), data: jsonEncode(data));
+  }
 
-  /// Maps backend type strings ("car", "bike") to dropdown display values
-  /// ("Car", "Motor Bike"). Extend the switch if new types are added.
-  String _mapTypeToDropdown(String backendType) {
+  String _mapTypeToDropdown(String? backendType) {
+    if (backendType == null) return '';
     switch (backendType.toLowerCase()) {
       case 'feet':
         return 'Feet';
@@ -241,22 +298,21 @@ class RiderVehicleProfileViewmodel
       case 'motor bike':
       case 'motorbike':
       case 'bike':
+      case 'motorcycle':
         return 'Motor Bike';
       case 'bus':
         return 'Bus';
       default:
-        return backendType;
+        return 'Car';
     }
   }
 
   void _populateFromProfile(Map<String, dynamic> rawData) {
     final Map<String, dynamic> data;
     if (rawData.containsKey('vehicleInfo')) {
-      // Already the flat inner object — use directly.
       data = rawData;
     } else if (rawData.containsKey('data') &&
         rawData['data'] is Map<String, dynamic>) {
-      // Full envelope — unwrap.
       data = rawData['data'] as Map<String, dynamic>;
     } else {
       data = rawData;
@@ -489,6 +545,25 @@ class RiderVehicleProfileViewmodel
   }
 
   Map<String, dynamic> _buildPayload(String coverageArea) {
+    final coverageAreas = [
+      {
+        'name': coverageArea,
+        'coordinates': {'latitude': 0, 'longitude': 0},
+        'radius': 0,
+      },
+    ];
+
+    if (_isBasicMode) {
+      return {
+        'vehicleInfo': {'type': state.type.toLowerCase()},
+        'coverageAreas': coverageAreas,
+        'documents': {
+          'nin': {'number': state.ninNumber, 'image': state.ownerNIN},
+        },
+        'workingDays': state.workingDays,
+      };
+    }
+
     return {
       'vehicleInfo': {
         'type': state.type.toLowerCase(),
@@ -498,17 +573,7 @@ class RiderVehicleProfileViewmodel
         'plateNumber': state.plateNumber,
         'color': state.color,
       },
-
-      // The backend's coverageAreas schema is an embedded document type.
-      // If the PATCH (edit) endpoint later rejects this and needs plain
-      // strings, change the update payload to: "coverageAreas": [coverageArea]
-      'coverageAreas': [
-        {
-          'name': coverageArea,
-          'coordinates': {'latitude': 0, 'longitude': 0},
-          'radius': 0,
-        },
-      ],
+      'coverageAreas': coverageAreas,
       'documents': {
         'driverLicense': {
           'number': state.driverLicenseNumber,
@@ -535,26 +600,32 @@ class RiderVehicleProfileViewmodel
   }
 
   void validateOnSubmit() {
-    final isVehicle = state.type.toLowerCase() != 'feet';
+    final Map<String, String> requiredFields;
 
-    final requiredFields = isVehicle
-        ? {
-            'type': state.type,
-            'plateNumber': state.plateNumber,
-            'make': state.make,
-            'year': state.year,
-            'color': state.color,
-            'model': state.model,
-            'ownerNIN': state.ownerNIN,
-            'license': state.license,
-            'vehicleReg': state.vehicleReg,
-            'driverLicenseNumber': state.driverLicenseNumber,
-            'driverLicenseExpiry': state.driverLicenseExpiry,
-            'vehicleRegNumber': state.vehicleRegNumber,
-            'vehicleRegExpiry': state.vehicleRegExpiry,
-            'ninNumber': state.ninNumber,
-          }
-        : {'type': state.type};
+    if (_isBasicMode) {
+      requiredFields = {
+        'type': state.type,
+        'ninNumber': state.ninNumber,
+        'ownerNIN': state.ownerNIN,
+      };
+    } else {
+      requiredFields = {
+        'type': state.type,
+        'plateNumber': state.plateNumber,
+        'make': state.make,
+        'year': state.year,
+        'color': state.color,
+        'model': state.model,
+        'ownerNIN': state.ownerNIN,
+        'license': state.license,
+        'vehicleReg': state.vehicleReg,
+        'driverLicenseNumber': state.driverLicenseNumber,
+        'driverLicenseExpiry': state.driverLicenseExpiry,
+        'vehicleRegNumber': state.vehicleRegNumber,
+        'vehicleRegExpiry': state.vehicleRegExpiry,
+        'ninNumber': state.ninNumber,
+      };
+    }
 
     final hasEmptyField = requiredFields.values.any(
       FormValidators.isFieldEmpty,
@@ -690,4 +761,8 @@ final riderVehicleProfileViewmodelProvider =
     StateNotifierProvider<
       RiderVehicleProfileViewmodel,
       RiderVehicleProfileState
-    >((ref) => RiderVehicleProfileViewmodel(ref.read));
+    >((ref) {
+      ref.watch(authStateProvider.select((s) => s.user?.id));
+
+      return RiderVehicleProfileViewmodel(ref.read);
+    });

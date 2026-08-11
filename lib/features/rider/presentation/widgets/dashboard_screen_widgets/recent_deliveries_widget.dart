@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:wigo_flutter/core/constants/app_colors.dart';
-import 'package:wigo_flutter/features/rider/viewmodels/delivery_task_viewmodel.dart';
 import 'package:wigo_flutter/shared/widgets/custom_button.dart';
 
 import '../../../../../gen/assets.gen.dart';
+import '../../../viewmodels/global_navigation_viewmodel.dart';
+import '../../../viewmodels/rider_dashboard_viewmodel.dart';
 import '../delivery_table.dart';
 
 class RecentDeliveriesWidget extends ConsumerWidget {
@@ -14,18 +16,37 @@ class RecentDeliveriesWidget extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final isWeb = MediaQuery.of(context).size.width > 600;
-    final deliveryTaskState = ref.watch(deliveryTaskProvider);
+    final recentDeliveries = ref
+        .watch(riderDashboardViewModelProvider)
+        .recentDeliveries;
 
-    return deliveryTaskState.deliveries.when(
+    return recentDeliveries.when(
+      loading: () => Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: const Center(
+          child: SpinKitDualRing(color: AppColors.primaryDarkGreen),
+        ),
+      ),
+      error: (e, _) => Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: Center(
+          child: Text(
+            'Could not load recent deliveries.',
+            style: GoogleFonts.hind(
+              fontWeight: FontWeight.w600,
+              fontSize: 16,
+              color: AppColors.textBlackGrey,
+            ),
+          ),
+        ),
+      ),
       data: (deliveries) {
-        final double cardHeight =
-            deliveries.isEmpty
-                ? isWeb
-                    ? 291
-                    : 277.0
-                : isWeb
-                ? 290
-                : 336.0;
+        final double cardHeight = deliveries.isEmpty
+            ? isWeb
+                  ? 291
+                  : 277.0
+            : 82.0 + 50.0 + (deliveries.length * 60.0) + 16.0;
+
         return ClipRRect(
           borderRadius: BorderRadiusGeometry.circular(10),
           child: SizedBox(
@@ -74,7 +95,12 @@ class RecentDeliveriesWidget extends ConsumerWidget {
                                 ),
                               ),
                               InkWell(
-                                onTap: () {},
+                                onTap: () => ref
+                                    .read(
+                                      globalNavigationViewModelProvider
+                                          .notifier,
+                                    )
+                                    .setIndex(1),
                                 child: Text(
                                   "View all",
                                   style: GoogleFonts.hind(
@@ -138,7 +164,16 @@ class RecentDeliveriesWidget extends ConsumerWidget {
                           const SizedBox(height: 25.0),
                           CustomButton(
                             text: 'View Active Deliveries',
-                            onPressed: () {},
+                            onPressed: () {
+                              ref
+                                  .read(
+                                    globalNavigationViewModelProvider.notifier,
+                                  )
+                                  .setIndex(1);
+
+                              //Optional: Reset the Delivery stack to its first page if it had history
+                              // ref.read(riderNavigatorKeysProvider)[1].currentState?.popUntil((r) => r.isFirst);
+                            },
                             fontSize: 16.0,
                             fontWeight: FontWeight.w500,
                             height: 36.0,
@@ -151,6 +186,7 @@ class RecentDeliveriesWidget extends ConsumerWidget {
                   else
                     Expanded(
                       child: ListView(
+                        physics: const NeverScrollableScrollPhysics(),
                         children: [
                           Center(child: DeliveryTable(deliveries: deliveries)),
                         ],
@@ -162,8 +198,6 @@ class RecentDeliveriesWidget extends ConsumerWidget {
           ),
         );
       },
-      loading: () => const Center(child: CircularProgressIndicator()),
-      error: (e, _) => Center(child: Text("Error: $e")),
     );
   }
 }

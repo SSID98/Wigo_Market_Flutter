@@ -12,6 +12,7 @@ import '../../../shared/widgets/custom_loading_overlay.dart';
 class WithdrawalState {
   late String? generalError;
   final bool isLoading;
+  final bool isVerified;
   final String pin;
   final String confirmPin;
   final bool hasSubmitted;
@@ -19,6 +20,7 @@ class WithdrawalState {
   final String code;
   final String? codeError;
   final String? amount;
+  final String token;
   final bool showConfirmationCard;
 
   WithdrawalState({
@@ -31,7 +33,9 @@ class WithdrawalState {
     this.code = '',
     this.codeError,
     this.amount,
+    this.token = '',
     this.showConfirmationCard = false,
+    this.isVerified = false,
   });
 
   WithdrawalState copyWith({
@@ -45,6 +49,8 @@ class WithdrawalState {
     String? codeError,
     String? amount,
     bool? showConfirmationCard,
+    String? token,
+    bool? isVerified,
   }) {
     return WithdrawalState(
       generalError: generalError ?? this.generalError,
@@ -56,7 +62,9 @@ class WithdrawalState {
       code: code ?? this.code,
       codeError: codeError,
       amount: amount ?? this.amount,
+      token: token ?? this.token,
       showConfirmationCard: showConfirmationCard ?? this.showConfirmationCard,
+      isVerified: isVerified ?? this.isVerified,
     );
   }
 }
@@ -107,33 +115,32 @@ class WithdrawalViewmodel extends StateNotifier<WithdrawalState> {
   }
 
   void validateOnSubmit() {
-    final pin = FormValidators.validatePin(state.pin);
+    final pinError = FormValidators.validatePin(state.pin);
 
-    final confirmPinError = FormValidators.validatePin(state.confirmPin);
+    final confirmPinError = FormValidators.validateConfirmPin(
+      state.pin,
+      state.confirmPin,
+    );
 
-    final pinMismatch = state.pin != state.confirmPin;
+    final hasError = pinError != null || confirmPinError != null;
 
-    String? errorMessage;
-
-    if (pin != null || confirmPinError != null || pinMismatch) {
-      errorMessage = 'Please fix the Pin error';
-    }
-
-    state = state.copyWith(hasSubmitted: true, errorMessage: errorMessage);
+    state = state.copyWith(
+      hasSubmitted: true,
+      errorMessage: hasError ? 'Please fix the Pin error' : null,
+    );
   }
 
   Future<bool> setUserPin({required BuildContext context}) async {
     validateOnSubmit();
 
-    final pin = FormValidators.validatePin(state.pin);
-    final confirmPinError = FormValidators.validatePin(state.confirmPin);
+    final pinError = FormValidators.validatePin(state.pin);
 
-    final pinMismatch = state.pin != state.confirmPin;
+    final confirmPinError = FormValidators.validateConfirmPin(
+      state.pin,
+      state.confirmPin,
+    );
 
-    if (confirmPinError != null ||
-        pin != null ||
-        pinMismatch ||
-        state.errorMessage != null) {
+    if (pinError != null || confirmPinError != null) {
       return false;
     }
 
@@ -212,6 +219,126 @@ class WithdrawalViewmodel extends StateNotifier<WithdrawalState> {
         }
       } catch (e) {
         state = state.copyWith(isLoading: false, errorMessage: e.toString());
+        if (context.mounted) {
+          showErrorBanner(state.errorMessage!, context);
+        }
+        return false;
+      }
+    }, spinner: SpinKitDualRing(color: AppColors.primaryDarkGreen));
+    return result;
+  }
+
+  Future<bool> requestPinOtp(BuildContext context) async {
+    state = state.copyWith(isLoading: true, errorMessage: null);
+
+    final result = await runWithOverlay(context, () async {
+      final response = await api.forgotPin();
+
+      if (response.isSuccess) {
+        if (!context.mounted) return false;
+        state = state.copyWith(isLoading: false);
+        return true;
+      } else {
+        if (context.mounted) {
+          showErrorBanner(response.errorDescription.toString(), context);
+        }
+        return false;
+      }
+    }, spinner: SpinKitDualRing(color: AppColors.primaryDarkGreen));
+
+    return result;
+  }
+
+  Future<void> verifyOtp({required BuildContext context}) async {
+    final code = state.code;
+
+    final isCodeValid = code.length == 6 && code.isNotEmpty;
+
+    if (!isCodeValid) {
+      state = state.copyWith(codeError: "Invalid verification code");
+      return;
+    }
+
+    state = state.copyWith(
+      isLoading: true,
+      errorMessage: null,
+      codeError: null,
+    );
+
+    await runWithOverlay(context, () async {
+      final response = await api.verifyOtp(state.code);
+      if (response.isSuccess && response.data != null) {
+        final resetToken = response.data!["resetSession"];
+
+        state = state.copyWith(token: resetToken);
+
+        state = state.copyWith(isLoading: false, isVerified: true);
+
+        return;
+      } else {
+        final message =
+            response.errorDescription?.toString() ??
+            'Verification failed. Please try again.';
+
+        state = state.copyWith(
+          isLoading: false,
+          errorMessage: message,
+          isVerified: false,
+        );
+
+        if (!context.mounted) return;
+        showErrorBanner(state.errorMessage!, context);
+      }
+    }, spinner: SpinKitDualRing(color: AppColors.primaryDarkGreen));
+  }
+
+  Future<bool> resetUserPin({required BuildContext context}) async {
+    validateOnSubmit();
+
+    final pinError = FormValidators.validatePin(state.pin);
+    final confirmPinError = FormValidators.validatePin(state.confirmPin);
+    final pinMismatch = FormValidators.validateConfirmPin(
+      state.pin,
+      state.confirmPin,
+    );
+
+    if (pinError != null ||
+        confirmPinError != null ||
+        pinMismatch != null ||
+        state.errorMessage != null) {
+      return false;
+    }
+
+    state = state.copyWith(isLoading: true, errorMessage: null);
+
+    final result = await runWithOverlay<bool>(context, () async {
+      try {
+        final response = await api.resetPin(
+          newPin: state.pin,
+          resetSession: state.token,
+        );
+
+        state = state.copyWith(isLoading: false);
+
+        if (response.isSuccess && context.mounted) {
+          pinController.clear();
+          confirmPinController.clear();
+          // showSuccessBanner("Password Successfully Reset", context);
+          state = state.copyWith(isLoading: false);
+          return true;
+        } else {
+          state = state.copyWith(
+            isLoading: false,
+            errorMessage: response.errorDescription,
+          );
+
+          if (context.mounted) {
+            showErrorBanner(state.errorMessage!, context);
+          }
+          return false;
+        }
+      } catch (e) {
+        state.copyWith(isLoading: false, errorMessage: e.toString());
         if (context.mounted) {
           showErrorBanner(state.errorMessage!, context);
         }

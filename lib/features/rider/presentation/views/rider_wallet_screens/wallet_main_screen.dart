@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:wigo_flutter/features/rider/presentation/views/rider_wallet_screens/wallet_add_bank_account_screen.dart';
 import 'package:wigo_flutter/features/rider/presentation/views/rider_wallet_screens/wallet_edit_bank_account_screen.dart';
@@ -10,7 +11,7 @@ import 'package:wigo_flutter/features/rider/viewmodels/edit_bank_account_viewmod
 import 'package:wigo_flutter/shared/widgets/custom_button.dart';
 
 import '../../../../../core/constants/app_colors.dart';
-import '../../../../../core/local/secure_storage.dart';
+import '../../../../../core/utils/context_extensions.dart';
 import '../../../../../gen/assets.gen.dart';
 import '../../../models/wallet_state.dart';
 
@@ -23,7 +24,8 @@ class WalletMainScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final state = ref.watch(editBankAccountProvider);
     final notifier = ref.read(editBankAccountProvider.notifier);
-    final isWeb = MediaQuery.of(context).size.width > 800;
+    notifier.ensureWalletFetched();
+    final isWeb = context.isWeb;
 
     return Scaffold(
       backgroundColor: AppColors.backgroundLight,
@@ -98,7 +100,8 @@ class WalletMainScreen extends ConsumerWidget {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (_) => WalletWithdrawalScreen(),
+                          builder: (_) =>
+                              WalletWithdrawalScreen(isSeller: false),
                         ),
                       );
                     },
@@ -153,19 +156,11 @@ class WalletMainScreen extends ConsumerWidget {
         final isSelected = _getEarningFilter(state) == filter;
         return GestureDetector(
           onTap: () async {
-            final storage = SecureStorage();
-            final isPinSetupCompleted = await storage.getData(
-              key: "pinSetUpCompleted",
-            );
-
             if (filter == EarningFilter.paymentMethods) {
-              final nextState = isPinSetupCompleted.data == 'true'
-                  ? WalletScreenState.addBankAccount
-                  : WalletScreenState.setupPin;
-              notifier.setWalletScreenState(nextState);
+              notifier.navigateToPaymentSetup(context);
             } else {
               notifier.setWalletScreenState(
-                await _getWalletScreenStateForFilter(filter),
+                _getWalletScreenStateForFilter(filter, state),
               );
             }
           },
@@ -198,23 +193,22 @@ class WalletMainScreen extends ConsumerWidget {
     }
   }
 
-  Future<WalletScreenState> _getWalletScreenStateForFilter(
+  WalletScreenState _getWalletScreenStateForFilter(
     EarningFilter filter,
-  ) async {
+    WalletState state,
+  ) {
     switch (filter) {
       case EarningFilter.overview:
         return WalletScreenState.overview;
       case EarningFilter.transactions:
         return WalletScreenState.transactions;
       case EarningFilter.paymentMethods:
-        final storage = SecureStorage();
-        final isPinSetupCompleted = await storage.getData(
-          key: "pinSetUpCompleted",
+        throw UnimplementedError(
+          'paymentMethods is handled by navigateToPaymentSetup(), not this switch.',
         );
-
-        return isPinSetupCompleted.data == 'true'
-            ? WalletScreenState.addBankAccount
-            : WalletScreenState.setupPin;
+      // return state.hasWithdrawalPin
+      //     ? WalletScreenState.addBankAccount
+      //     : WalletScreenState.setupPin;
     }
   }
 
@@ -243,7 +237,9 @@ class WalletMainScreen extends ConsumerWidget {
           WidgetsBinding.instance.addPostFrameCallback((_) {
             notifier.setWalletScreenState(WalletScreenState.addBankAccount);
           });
-          return const Center(child: CircularProgressIndicator());
+          return const Center(
+            child: SpinKitDualRing(color: AppColors.primaryDarkGreen),
+          );
         }
         return EditBankAccountScreen(bankDetails: bankToEdit);
     }

@@ -6,31 +6,24 @@ import 'package:wigo_flutter/features/rider/presentation/views/rider_dashboard_s
 import 'package:wigo_flutter/features/rider/presentation/views/rider_settings_screens/rider_settings_main_screen.dart';
 import 'package:wigo_flutter/features/rider/presentation/views/rider_wallet_screens/wallet_main_screen.dart';
 
-import '../../core/constants/app_colors.dart';
-import '../../features/rider/viewmodels/global_navigation_viewmodel.dart';
-import '../../gen/assets.gen.dart';
-import '../widgets/dashboard_widgets/custom_app_bar.dart';
-import '../widgets/dashboard_widgets/web_side_bar.dart';
+import '../../../core/constants/app_colors.dart';
+import '../../../gen/assets.gen.dart';
+import '../../../shared/widgets/dashboard_widgets/custom_app_bar.dart';
+import '../../../shared/widgets/dashboard_widgets/web_side_bar.dart';
+import '../viewmodels/global_navigation_viewmodel.dart';
 
-class RiderMainScreen extends ConsumerStatefulWidget {
+final riderNavigatorKeysProvider = Provider<List<GlobalKey<NavigatorState>>>((
+  ref,
+) {
+  return List.generate(5, (_) => GlobalKey<NavigatorState>());
+});
+
+class RiderMainScreen extends ConsumerWidget {
   const RiderMainScreen({super.key});
 
   @override
-  ConsumerState<RiderMainScreen> createState() => _RiderMainScreenState();
-}
-
-class _RiderMainScreenState extends ConsumerState<RiderMainScreen> {
-  final List<GlobalKey<NavigatorState>> _navigatorKeys = [
-    GlobalKey<NavigatorState>(),
-    GlobalKey<NavigatorState>(),
-    GlobalKey<NavigatorState>(),
-    GlobalKey<NavigatorState>(),
-    GlobalKey<NavigatorState>(),
-    GlobalKey<NavigatorState>(),
-  ];
-
-  @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final navigatorKeys = ref.watch(riderNavigatorKeysProvider);
     final navState = ref.watch(globalNavigationViewModelProvider);
     final navNotifier = ref.read(globalNavigationViewModelProvider.notifier);
     final isWeb = MediaQuery.of(context).size.width > 600;
@@ -40,7 +33,7 @@ class _RiderMainScreenState extends ConsumerState<RiderMainScreen> {
       canPop: false,
       onPopInvokedWithResult: (didPop, result) async {
         final currentNavigator =
-            _navigatorKeys[navState.currentIndex].currentState!;
+            navigatorKeys[navState.currentIndex].currentState!;
         if (currentNavigator.canPop()) {
           currentNavigator.pop();
           return;
@@ -66,11 +59,27 @@ class _RiderMainScreenState extends ConsumerState<RiderMainScreen> {
                           child: IndexedStack(
                             index: navState.currentIndex,
                             children: [
-                              _buildNavigator(0, RiderDashboardScreen()),
-                              _buildNavigator(1, DeliveryTaskScreen()),
-                              _buildNavigator(2, Placeholder()),
-                              _buildNavigator(3, WalletMainScreen()),
-                              _buildNavigator(4, RiderSettingsMainScreen()),
+                              _buildNavigator(
+                                0,
+                                RiderDashboardScreen(),
+                                navigatorKeys,
+                              ),
+                              _buildNavigator(
+                                1,
+                                DeliveryTaskScreen(),
+                                navigatorKeys,
+                              ),
+                              _buildNavigator(2, Placeholder(), navigatorKeys),
+                              _buildNavigator(
+                                3,
+                                WalletMainScreen(),
+                                navigatorKeys,
+                              ),
+                              _buildNavigator(
+                                4,
+                                RiderSettingsMainScreen(),
+                                navigatorKeys,
+                              ),
                             ],
                           ),
                         ),
@@ -82,24 +91,34 @@ class _RiderMainScreenState extends ConsumerState<RiderMainScreen> {
             : IndexedStack(
                 index: navState.currentIndex,
                 children: [
-                  _buildNavigator(0, RiderDashboardScreen()),
-                  _buildNavigator(1, DeliveryTaskScreen()),
-                  _buildNavigator(2, Placeholder()),
-                  _buildNavigator(3, WalletMainScreen()),
-                  _buildNavigator(4, RiderSettingsMainScreen()),
+                  _buildNavigator(0, RiderDashboardScreen(), navigatorKeys),
+                  _buildNavigator(1, DeliveryTaskScreen(), navigatorKeys),
+                  _buildNavigator(2, Placeholder(), navigatorKeys),
+                  _buildNavigator(3, WalletMainScreen(), navigatorKeys),
+                  _buildNavigator(4, RiderSettingsMainScreen(), navigatorKeys),
                 ],
               ),
 
         bottomNavigationBar: !isWeb
-            ? _buildBottomNavBar(context, navState, navNotifier)
+            ? _buildBottomNavBar(
+                context,
+                ref,
+                navState,
+                navNotifier,
+                navigatorKeys,
+              )
             : null,
       ),
     );
   }
 
-  Widget _buildNavigator(int index, Widget child) {
+  Widget _buildNavigator(
+    int index,
+    Widget child,
+    List<GlobalKey<NavigatorState>> navigatorKeys,
+  ) {
     return Navigator(
-      key: _navigatorKeys[index],
+      key: navigatorKeys[index],
       onGenerateRoute: (settings) {
         return MaterialPageRoute(builder: (_) => child);
       },
@@ -108,8 +127,10 @@ class _RiderMainScreenState extends ConsumerState<RiderMainScreen> {
 
   Widget _buildBottomNavBar(
     BuildContext context,
+    WidgetRef ref,
     GlobalNavigationState navState,
     GlobalNavigationViewModel navNotifier,
+    List<GlobalKey<NavigatorState>> navigatorKeys,
   ) {
     List<String> icons = [
       AppAssets.icons.home2.path,
@@ -126,9 +147,9 @@ class _RiderMainScreenState extends ConsumerState<RiderMainScreen> {
           backgroundColor: AppColors.backgroundWhite,
           currentIndex: navState.currentIndex,
           onTap: (value) {
-            if (value < _navigatorKeys.length) {
+            if (value < navigatorKeys.length) {
               if (navState.currentIndex == value) {
-                _navigatorKeys[value].currentState?.popUntil((r) => r.isFirst);
+                navigatorKeys[value].currentState?.popUntil((r) => r.isFirst);
               } else {
                 ref
                     .read(globalNavigationViewModelProvider.notifier)

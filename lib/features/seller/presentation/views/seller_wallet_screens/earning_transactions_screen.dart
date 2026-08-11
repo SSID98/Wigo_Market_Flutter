@@ -3,18 +3,20 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:wigo_flutter/features/seller/viewmodels/order_task_viewmodel.dart';
 
-import '../../../../../core/constants/app_colors.dart';
-import '../../../../../gen/assets.gen.dart';
-import '../../../../../shared/widgets/custom_search_field.dart';
-import '../../../../../shared/widgets/pagination_widget.dart';
-import '../../../../core/utils/context_extensions.dart';
-import '../../../../core/utils/helper_methods_classes.dart';
-import '../../../../shared/widgets/dashboard_widgets/earning_card.dart';
-import '../../models/order.dart';
-import '../../models/order_task_state.dart';
-import '../../viewmodels/dropdown_providers.dart';
-import '../widgets/custom_multi_date_picker.dart';
-import '../widgets/recent_earning_table.dart';
+import '../../../../../../core/constants/app_colors.dart';
+import '../../../../../../gen/assets.gen.dart';
+import '../../../../../../shared/widgets/custom_search_field.dart';
+import '../../../../../../shared/widgets/pagination_widget.dart';
+import '../../../../../core/utils/context_extensions.dart';
+import '../../../../../core/utils/helper_methods_classes.dart';
+import '../../../../../shared/widgets/custom_button.dart';
+import '../../../../../shared/widgets/dashboard_widgets/earning_card.dart';
+import '../../../../rider/presentation/views/rider_wallet_screens/wallet_withdrawal_screen.dart';
+import '../../../models/order.dart';
+import '../../../models/order_task_state.dart';
+import '../../../viewmodels/dropdown_providers.dart';
+import '../../widgets/custom_multi_date_picker.dart';
+import '../../widgets/recent_earning_table.dart';
 
 class EarningsAndTransactionsScreen extends ConsumerWidget {
   const EarningsAndTransactionsScreen({super.key});
@@ -26,55 +28,38 @@ class EarningsAndTransactionsScreen extends ConsumerWidget {
     final totalPages = (state.totalOrdersCount / state.rowsPerPage).ceil();
     final currentPage = state.currentPage + 1;
 
-    return SingleChildScrollView(
-      padding: const EdgeInsets.all(16.0),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+    return Expanded(
+      child: ListView(
+        padding: EdgeInsets.symmetric(horizontal: context.isWeb ? 40 : 15),
         children: [
-          Text(
-            context.isWeb ? "Earnings & Transactions" : "Earnings",
-            style: GoogleFonts.hind(
-              fontWeight: FontWeight.w600,
-              fontSize: 20,
-              color: AppColors.textBlackGrey,
-            ),
-          ),
-
-          if (context.isWeb) ...[
-            const SizedBox(height: 10),
-            Text(
-              'See what you’ve earned and track every payment—all in one place.',
-              style: GoogleFonts.hind(
-                fontWeight: FontWeight.w400,
-                fontSize: 16,
-                color: AppColors.textBlackGrey,
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              _buildEarningsSummaryCard(context.isWeb, context),
+              const SizedBox(height: 20),
+              _buildOrderList(
+                state.orders.value ?? [],
+                totalPages,
+                currentPage,
+                state.totalOrdersCount,
+                state.currentPage > 0
+                    ? () => notifier.goToPage(state.currentPage - 1)
+                    : null,
+                state.currentPage < totalPages - 1
+                    ? () => notifier.goToPage(totalPages - 1)
+                    : null,
+                state.currentPage < totalPages - 1
+                    ? () => notifier.goToPage(state.currentPage + 1)
+                    : null,
+                state.currentPage > 0 ? () => notifier.goToPage(0) : null,
+                state,
+                notifier,
+                ref,
+                context,
               ),
-            ),
-          ],
-          const SizedBox(height: 20),
-          _buildEarningsSummaryCard(context.isWeb),
-          const SizedBox(height: 20),
-          _buildOrderList(
-            state.orders.value ?? [],
-            totalPages,
-            currentPage,
-            state.totalOrdersCount,
-            state.currentPage > 0
-                ? () => notifier.goToPage(state.currentPage - 1)
-                : null,
-            state.currentPage < totalPages - 1
-                ? () => notifier.goToPage(totalPages - 1)
-                : null,
-            state.currentPage < totalPages - 1
-                ? () => notifier.goToPage(state.currentPage + 1)
-                : null,
-            state.currentPage > 0 ? () => notifier.goToPage(0) : null,
-            state,
-            notifier,
-            ref,
-            context,
+              const SizedBox(height: 20),
+            ],
           ),
-          const SizedBox(height: 20),
         ],
       ),
     );
@@ -365,7 +350,7 @@ class EarningsAndTransactionsScreen extends ConsumerWidget {
     );
   }
 
-  Widget _buildEarningsSummaryCard(bool isWeb) {
+  Widget _buildEarningsSummaryCard(bool isWeb, BuildContext context) {
     return Container(
       margin: EdgeInsets.only(top: isWeb ? 18 : 12),
       decoration: BoxDecoration(
@@ -482,6 +467,24 @@ class EarningsAndTransactionsScreen extends ConsumerWidget {
                 }
               },
             ),
+            if (!isWeb) SizedBox(height: 15),
+            if (!isWeb)
+              CustomButton(
+                text: 'Withdraw',
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (_) => WalletWithdrawalScreen(isSeller: false),
+                    ),
+                  );
+                },
+                fontSize: 12,
+                fontWeight: FontWeight.w500,
+                prefixIcon: AppAssets.icons.download.svg(width: 17, height: 17),
+                width: double.infinity,
+                height: 41,
+              ),
             SizedBox(height: 24),
           ],
         ),

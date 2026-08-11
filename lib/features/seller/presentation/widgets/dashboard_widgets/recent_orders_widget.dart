@@ -7,7 +7,7 @@ import 'package:wigo_flutter/features/seller/presentation/widgets/order_table.da
 import 'package:wigo_flutter/features/seller/viewmodels/order_task_viewmodel.dart';
 import 'package:wigo_flutter/shared/widgets/custom_button.dart';
 
-import '../../../../../core/constants/url.dart';
+import '../../../../../gen/assets.gen.dart';
 
 class RecentOrdersWidget extends ConsumerWidget {
   const RecentOrdersWidget({super.key});
@@ -19,14 +19,13 @@ class RecentOrdersWidget extends ConsumerWidget {
 
     return orderTaskState.orders.when(
       data: (orders) {
-        final double cardHeight =
-            orders.isEmpty
-                ? isWeb
-                    ? 420
-                    : 400.0
-                : isWeb
-                ? 290
-                : 336.0;
+        final double cardHeight = orders.isEmpty
+            ? isWeb
+                  ? 420
+                  : 400.0
+            : isWeb
+            ? 290
+            : 336.0;
         return ClipRRect(
           borderRadius: BorderRadiusGeometry.circular(10),
           child: SizedBox(
@@ -116,22 +115,7 @@ class RecentOrdersWidget extends ConsumerWidget {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
-                          Image.network(
-                            '$networkImageUrl/taskEmpty.png',
-                            errorBuilder: (
-                              BuildContext context,
-                              Object exception,
-                              StackTrace? stackTrace,
-                            ) {
-                              return const Center(
-                                child: Icon(
-                                  Icons.broken_image,
-                                  color: AppColors.textIconGrey,
-                                  size: 50.0,
-                                ),
-                              );
-                            },
-                          ),
+                          Image.network(AppAssets.images.taskEmpty.path),
                           const SizedBox(height: 20.0),
                           Text(
                             "No Orders Yet",

@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import '../../../../core/constants/app_colors.dart';
-import '../../../../core/constants/url.dart';
+import '../../../../gen/assets.gen.dart';
 import '../../../../shared/widgets/custom_button.dart';
 
 class SelfDeliveryPromoCard extends StatelessWidget {
@@ -66,19 +66,11 @@ class SelfDeliveryPromoCard extends StatelessWidget {
 
             Expanded(
               flex: 5,
-              child: Image.network(
-                '$networkImageUrl/selfDeliver.png',
+              child: Image.asset(
+                AppAssets.images.selfDeliver.path,
                 fit: BoxFit.cover,
                 height: double.infinity,
                 width: double.infinity,
-                errorBuilder:
-                    (context, error, stackTrace) => Center(
-                      child: Icon(
-                        Icons.delivery_dining,
-                        size: isWeb ? 80 : 50,
-                        color: AppColors.backgroundWhite,
-                      ),
-                    ),
               ),
             ),
           ],

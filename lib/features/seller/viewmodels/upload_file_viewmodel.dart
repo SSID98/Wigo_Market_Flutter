@@ -10,7 +10,6 @@ import '../models/upload_file_model.dart';
 
 typedef UploadState = List<UploadFile?>;
 
-// Use .family to keep different upload sections separate
 final uploadProvider =
     StateNotifierProvider.family<UploadNotifier, UploadState, String>((
       ref,
@@ -20,12 +19,6 @@ final uploadProvider =
     });
 
 class UploadNotifier extends StateNotifier<UploadState> {
-  // UploadNotifier() : super(UploadState(files: []));
-  //
-  // /// Initialize dynamically
-  // void init(int count) {
-  //   state = UploadState(files: List.filled(count, null));
-  // }
   UploadNotifier() : super([]);
 
   void init(int count) {
@@ -198,7 +191,3 @@ class UploadNotifier extends StateNotifier<UploadState> {
   //   state = state.copyWith(files: files);
   // }
 }
-
-// final uploadProvider = StateNotifierProvider<UploadNotifier, UploadState>(
-//   (ref) => UploadNotifier(),
-// );

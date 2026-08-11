@@ -4,19 +4,29 @@ import 'package:wigo_flutter/shared/widgets/dashboard_widgets/status_chip.dart';
 
 import '../../../../core/constants/app_colors.dart';
 import '../../../../core/constants/dashboard_helpers.dart';
-import '../../models/delivery.dart';
+import '../../models/delivery_model.dart';
 
 class DeliveryTable extends StatelessWidget {
   final List<Delivery> deliveries;
 
   const DeliveryTable({super.key, required this.deliveries});
 
-  Widget _buildStatusContainer(String status) {
+  Widget _buildStatusContainer(String displayStatus) {
     Color containerColor;
     Color textColor;
 
-    switch (status.toLowerCase()) {
-      case 'on-going':
+    switch (displayStatus.toLowerCase()) {
+      case 'new request':
+        // pending_assignment — available but not yet this rider's order.
+        // Should not normally appear here (endpoint excludes the unassigned
+        // pool), but handled defensively.
+        containerColor = AppColors.textOrange.withValues(alpha: 0.1);
+        textColor = AppColors.textOrange;
+        break;
+      case 'assigned':
+      case 'picked up':
+      case 'in transit':
+        // Ongoing sub-statuses — rider has accepted and is working the order.
         containerColor = AppColors.textYellow.withValues(alpha: 0.1);
         textColor = AppColors.textYellow;
         break;
@@ -24,20 +34,32 @@ class DeliveryTable extends StatelessWidget {
         containerColor = AppColors.textStatusGreen.withValues(alpha: 0.1);
         textColor = AppColors.textStatusGreen;
         break;
-      case 'canceled':
+      case 'cancelled':
         containerColor = AppColors.textRed.withValues(alpha: 0.1);
         textColor = AppColors.textRed;
         break;
       default:
-        // Default to a neutral style for unknown statuses
         containerColor = AppColors.textIconGrey.withValues(alpha: 0.1);
         textColor = AppColors.textBlackGrey;
     }
     return StatusChip(
       statusColor: textColor,
       containerColor: containerColor,
-      status: status,
+      status: displayStatus,
     );
+  }
+
+  String _formatDate(DateTime? date) {
+    if (date == null) return '—';
+    final now = DateTime.now();
+    final diff = now.difference(date);
+    if (diff.inMinutes < 1) return 'Just now';
+    if (diff.inHours < 1) return '${diff.inMinutes}m ago';
+    if (diff.inDays < 1) return '${diff.inHours}h ago';
+    if (diff.inDays < 30) return '${diff.inDays}d ago';
+    return '${date.day.toString().padLeft(2, '0')}/'
+        '${date.month.toString().padLeft(2, '0')}/'
+        '${date.year}';
   }
 
   TextStyle _getStyle({required bool isHeader, required Color color}) {
@@ -161,7 +183,7 @@ class DeliveryTable extends StatelessWidget {
                     child: Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 16.0),
                       child: Text(
-                        d.orderId,
+                        d.orderNumber,
                         style: _getStyle(
                           isHeader: false,
                           color: AppColors.textBlackGrey,
@@ -173,7 +195,7 @@ class DeliveryTable extends StatelessWidget {
                   SizedBox(
                     width: isWeb ? 180.0 : 130.0,
                     child: Text(
-                      formatDate(d.date),
+                      _formatDate(d.createdAt),
                       style: _getStyle(
                         isHeader: false,
                         color: AppColors.textBodyText,
@@ -222,8 +244,8 @@ class DeliveryTable extends StatelessWidget {
                       child: Align(
                         alignment: Alignment.centerLeft,
                         child: SizedBox(
-                          width: 80,
-                          child: _buildStatusContainer(d.status),
+                          width: isWeb ? 100 : 80,
+                          child: _buildStatusContainer(d.displayStatus),
                         ),
                       ),
                     ),

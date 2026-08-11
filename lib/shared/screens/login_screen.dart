@@ -8,7 +8,6 @@ import 'package:wigo_flutter/core/utils/context_extensions.dart';
 import 'package:wigo_flutter/shared/widgets/login_reset_password_body.dart';
 
 import '../../core/constants/app_colors.dart';
-import '../../core/constants/url.dart';
 import '../../core/providers/role_selection_provider.dart';
 import '../../core/utils/validation_utils.dart';
 import '../../gen/assets.gen.dart';
@@ -30,8 +29,8 @@ class LoginScreen extends ConsumerWidget {
     final role = ref.watch(userRoleProvider);
     final isBuyer = role == UserRole.buyer;
     return context.isWeb
-        ? _buildWebLayout(screenSize, vm, state, context, isBuyer)
-        : _buildMobileLayout(screenSize, vm, state, context, isBuyer);
+        ? _buildWebLayout(screenSize, vm, state, context, ref, isBuyer)
+        : _buildMobileLayout(screenSize, vm, state, context, ref, isBuyer);
   }
 
   //Mobile Layout
@@ -40,30 +39,14 @@ class LoginScreen extends ConsumerWidget {
     LoginViewModel vm,
     LoginState state,
     BuildContext context,
+    WidgetRef ref,
     bool isBuyer,
   ) {
     return Scaffold(
       body: Stack(
         fit: StackFit.expand,
         children: [
-          Image.network(
-            '$networkImageUrl/login.png',
-            fit: BoxFit.cover,
-            errorBuilder:
-                (
-                  BuildContext context,
-                  Object exception,
-                  StackTrace? stackTrace,
-                ) {
-                  return const Center(
-                    child: Icon(
-                      Icons.broken_image,
-                      color: AppColors.textIconGrey,
-                      size: 50.0,
-                    ),
-                  );
-                },
-          ),
+          Image.asset(AppAssets.images.login.path, fit: BoxFit.cover),
           BottomTextBuilder.buildMobileBottomText(),
           Center(
             child: SingleChildScrollView(
@@ -109,7 +92,8 @@ class LoginScreen extends ConsumerWidget {
                               )
                             : null,
                         onPressed: () {
-                          vm.login(context);
+                          FocusManager.instance.primaryFocus?.unfocus();
+                          vm.login(context, ref);
                         },
                         onChanged1: vm.updateEmail,
                         onChanged2: vm.updatePassword,
@@ -157,6 +141,7 @@ class LoginScreen extends ConsumerWidget {
     LoginViewModel vm,
     LoginState state,
     BuildContext context,
+    WidgetRef ref,
     bool isBuyer,
   ) {
     final double webContentWidth = screenSize.width * 0.34;
@@ -178,7 +163,7 @@ class LoginScreen extends ConsumerWidget {
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(imageBorderRadius),
                       image: DecorationImage(
-                        image: NetworkImage('$networkImageUrl/login.png'),
+                        image: AssetImage(AppAssets.images.login.path),
                         fit: BoxFit.cover,
                       ),
                     ),
@@ -250,7 +235,8 @@ class LoginScreen extends ConsumerWidget {
                                     : null,
 
                                 onPressed: () {
-                                  vm.login(context);
+                                  FocusManager.instance.primaryFocus?.unfocus();
+                                  vm.login(context, ref);
                                 },
                                 onChanged1: vm.updateEmail,
                                 onChanged2: vm.updatePassword,

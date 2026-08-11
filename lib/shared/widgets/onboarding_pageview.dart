@@ -46,7 +46,6 @@ class OnboardingPageView extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final viewModel = ref.watch(onboardingViewModelProvider);
-    // final role = ref.watch(userRoleProvider);
     final localUser = ref.watch(localUserControllerProvider);
     final role = localUser.role;
     final isBuyer = role == UserRole.buyer.name;
@@ -57,20 +56,18 @@ class OnboardingPageView extends ConsumerWidget {
         behavior: MyCustomScrollBehavior(),
         child: PageView.builder(
           controller: viewModel.pageController,
-          itemCount:
-              isBuyer
-                  ? viewModel.buyerOnboardingData.length
-                  : isSeller
-                  ? viewModel.sellerOnboardingData.length
-                  : viewModel.riderOnboardingData.length,
+          itemCount: isBuyer
+              ? viewModel.buyerOnboardingData.length
+              : isSeller
+              ? viewModel.sellerOnboardingData.length
+              : viewModel.riderOnboardingData.length,
           onPageChanged: viewModel.onPageChanged,
           itemBuilder: (context, index) {
-            final data =
-                isBuyer
-                    ? viewModel.buyerOnboardingData[index]
-                    : isSeller
-                    ? viewModel.sellerOnboardingData[index]
-                    : viewModel.riderOnboardingData[index];
+            final data = isBuyer
+                ? viewModel.buyerOnboardingData[index]
+                : isSeller
+                ? viewModel.sellerOnboardingData[index]
+                : viewModel.riderOnboardingData[index];
             return StreamBuilder<Object>(
               stream: null,
               builder: (context, snapshot) {
@@ -86,7 +83,7 @@ class OnboardingPageView extends ConsumerWidget {
                       ),
                     ),
                     const SizedBox(height: 10),
-                    Image.network(
+                    Image.asset(
                       data['image']!,
                       height: imageHeight,
                       width: imageWidth,
@@ -94,12 +91,11 @@ class OnboardingPageView extends ConsumerWidget {
                     const SizedBox(height: 15),
                     SmoothPageIndicator(
                       controller: viewModel.pageController,
-                      count:
-                          isBuyer
-                              ? viewModel.buyerOnboardingData.length
-                              : isSeller
-                              ? viewModel.sellerOnboardingData.length
-                              : viewModel.riderOnboardingData.length,
+                      count: isBuyer
+                          ? viewModel.buyerOnboardingData.length
+                          : isSeller
+                          ? viewModel.sellerOnboardingData.length
+                          : viewModel.riderOnboardingData.length,
                       effect: ExpandingDotsEffect(
                         dotColor: AppColors.sliderDotColor,
                         activeDotColor: AppColors.accentOrange,

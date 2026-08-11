@@ -17,29 +17,29 @@ class NotificationBody extends ConsumerWidget {
 
     final List<String> notifications = [
       "Push Notification",
-      "Promotional Notifications",
+      "SMS Notifications",
       "Email Notifications",
     ];
 
     final Map<String, String> notificationSubTitle = {
       "Push Notification":
           'Receive notifications about new deliveries and updates',
-      "Promotional Notifications":
-          'Get notified about special offers and bonuses',
+      "SMS Notifications":
+          'Get notified via text message about security alerts and updates',
       "Email Notifications":
           'Receive weekly summaries and important updates via email',
     };
 
     final Map<String, bool> switchValues = {
       "Push Notification": state.pushNotify,
-      "Promotional Notifications": state.promoNotify,
+      "SMS Notifications": state.smsNotify,
       "Email Notifications": state.emailNotify,
     };
 
     final Map<String, void Function(bool)> switchToggles = {
-      "Push Notification": viewModel.toggleSwitch1,
-      "Promotional Notifications": viewModel.toggleSwitch2,
-      "Email Notifications": viewModel.toggleSwitch3,
+      "Push Notification": viewModel.togglePush,
+      "SMS Notifications": viewModel.toggleSms,
+      "Email Notifications": viewModel.toggleEmail,
     };
 
     return Expanded(
@@ -72,15 +72,24 @@ class NotificationBody extends ConsumerWidget {
                       ),
                     ),
                   ),
-                  trailing: CustomSwitch(
-                    value: switchValues[settingTitle]!,
-                    onChanged: switchToggles[settingTitle]!,
-                    thumbColour: AppColors.accentWhite,
-                    activeColor: AppColors.switchGreen,
-                    inactiveColor: AppColors.accentGrey,
-                    height: 26,
-                    width: 49,
-                    thumbDiameter: 20,
+                  trailing: AbsorbPointer(
+                    absorbing: !state.isEditMode,
+                    child: Opacity(
+                      opacity: state.isEditMode ? 1.0 : 0.5,
+                      child: CustomSwitch(
+                        value: switchValues[settingTitle]!,
+                        onChanged: (val) {
+                          if (state.isEditMode)
+                            switchToggles[settingTitle]!(val);
+                        },
+                        thumbColour: AppColors.accentWhite,
+                        activeColor: AppColors.switchGreen,
+                        inactiveColor: AppColors.accentGrey,
+                        height: 26,
+                        width: 49,
+                        thumbDiameter: 20,
+                      ),
+                    ),
                   ),
                   contentPadding: EdgeInsets.zero,
                 ),

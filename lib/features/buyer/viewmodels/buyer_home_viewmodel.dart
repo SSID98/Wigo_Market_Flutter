@@ -12,8 +12,6 @@ class BuyerHomeState {
   final bool shouldClearSearch;
   final List<Product> allProducts;
 
-  // NOTE: OverlayEntry management MUST stay in the UI (context)
-
   BuyerHomeState({
     this.searchQuery = '',
     this.isSearchFieldVisible = false,
@@ -62,7 +60,6 @@ class BuyerHomeViewModel extends StateNotifier<BuyerHomeState> {
       categoryName: 'Gaming',
       stock: 0,
     ),
-    // ... (rest of your products)
     Product(
       imageUrl: '$networkImageUrl/wristwatch.png',
       price: 10027,
@@ -95,15 +92,6 @@ class BuyerHomeViewModel extends StateNotifier<BuyerHomeState> {
     ),
   ];
 
-  // List<Product> get filteredProducts {
-  //   if (state.searchQuery.isEmpty) {
-  //     return state.allProducts;
-  //   }
-  //   final query = state.searchQuery.toLowerCase();
-  //   return state.allProducts.where((product) {
-  //     return product.productName.toLowerCase().contains(query);
-  //   }).toList();
-  // }
   @override
   void dispose() {
     _searchDebounce?.cancel();

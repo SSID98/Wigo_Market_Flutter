@@ -3,7 +3,6 @@ import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import '../../../../core/constants/app_colors.dart';
-import '../../../../core/constants/url.dart';
 import '../../../../core/utils/helper_methods_classes.dart';
 import '../../../../gen/assets.gen.dart';
 
@@ -16,19 +15,7 @@ class FooterSection extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Image.network(
-          '$networkImageUrl/logo3.png',
-          errorBuilder:
-              (BuildContext context, Object exception, StackTrace? stackTrace) {
-                return const Center(
-                  child: Icon(
-                    Icons.broken_image,
-                    color: AppColors.textIconGrey,
-                    size: 50.0,
-                  ),
-                );
-              },
-        ),
+        Image.asset(AppAssets.images.logo3.path),
         const SizedBox(height: 20),
         _buildTextProperties(
           'Empowering campus communities through smart commerce and Easy Buying and Selling.',

@@ -98,7 +98,6 @@ class VehicleAndDocumentsScreen extends HookConsumerWidget {
   ) {
     final state = ref.watch(riderVehicleProfileViewmodelProvider);
     final vm = ref.read(riderVehicleProfileViewmodelProvider.notifier);
-    final bool isVehicle = state.type.toLowerCase() != 'feet';
 
     return Column(
       children: [
@@ -124,24 +123,10 @@ class VehicleAndDocumentsScreen extends HookConsumerWidget {
                   ),
                 ],
               ),
-
               if (isReadOnly)
                 _buildCustomButton(onPressed: vm.enterEditMode)
-              // IconButton(
-              //   icon: AppAssets.icons.edit.svg(),
-              //   tooltip: 'Edit profile',
-              //   onPressed: vm.enterEditMode,
-              // )
               else if (state.hasProfile)
                 _buildCustomButton(onPressed: vm.exitEditMode, isEdit: false),
-              // IconButton(
-              //   icon: const Icon(
-              //     Icons.close_rounded,
-              //     color: AppColors.textRed,
-              //   ),
-              //   tooltip: 'Cancel editing',
-              //   onPressed: vm.exitEditMode,
-              // ),
             ],
           ),
         ),
@@ -154,10 +139,8 @@ class VehicleAndDocumentsScreen extends HookConsumerWidget {
                 const SizedBox(height: 5),
                 _buildVehicleInfoSection(context, ref, isReadOnly),
                 const SizedBox(height: 30),
-                if (isVehicle || isReadOnly) ...[
-                  _buildDocumentVerificationSection(context, ref, isReadOnly),
-                  const SizedBox(height: 30),
-                ],
+                _buildDocumentVerificationSection(context, ref, isReadOnly),
+                const SizedBox(height: 30),
                 _buildWorkingDaysSection(context, ref, isReadOnly),
                 const SizedBox(height: 15),
               ],
@@ -233,9 +216,6 @@ class VehicleAndDocumentsScreen extends HookConsumerWidget {
   }
 
   Widget _buildWebLayout(BuildContext context, WidgetRef ref, bool isReadOnly) {
-    final state = ref.watch(riderVehicleProfileViewmodelProvider);
-    final bool isVehicle = state.type.toLowerCase() != 'feet';
-
     return Expanded(
       child: SingleChildScrollView(
         child: Column(
@@ -256,10 +236,7 @@ class VehicleAndDocumentsScreen extends HookConsumerWidget {
             ),
 
             Card(
-              margin: EdgeInsets.only(
-                bottom: (isVehicle || isReadOnly) ? 20 : 150,
-                top: 20,
-              ),
+              margin: const EdgeInsets.only(bottom: 20, top: 20),
               shadowColor: Colors.white70.withValues(alpha: 0.06),
               color: AppColors.backgroundWhite,
               elevation: 1,
@@ -271,14 +248,8 @@ class VehicleAndDocumentsScreen extends HookConsumerWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    if (isVehicle || isReadOnly) ...[
-                      _buildDocumentVerificationSection(
-                        context,
-                        ref,
-                        isReadOnly,
-                      ),
-                      const SizedBox(height: 28),
-                    ],
+                    _buildDocumentVerificationSection(context, ref, isReadOnly),
+                    const SizedBox(height: 28),
                     _buildWorkingDaysSection(context, ref, isReadOnly),
                     const SizedBox(height: 16),
                   ],
@@ -299,14 +270,22 @@ class VehicleAndDocumentsScreen extends HookConsumerWidget {
     final isWeb = context.isWeb;
     final vm = ref.read(riderVehicleProfileViewmodelProvider.notifier);
     final state = ref.watch(riderVehicleProfileViewmodelProvider);
-    bool isEnabled = !isReadOnly && state.type.toLowerCase() != 'feet';
-    final hasError =
-        state.hasSubmitted && state.type.isEmpty ||
-        state.hasSubmitted && state.plateNumber.isEmpty ||
-        state.hasSubmitted && state.make.isEmpty ||
-        state.hasSubmitted && state.model.isEmpty ||
-        state.hasSubmitted && state.color.isEmpty ||
-        state.hasSubmitted && state.year.isEmpty;
+
+    final bool isBasicMode = [
+      'feet',
+      'bicycle',
+    ].contains(state.type.toLowerCase());
+
+    final bool hasVehicleFieldError =
+        !isBasicMode &&
+        (state.hasSubmitted && state.plateNumber.isEmpty ||
+            state.hasSubmitted && state.make.isEmpty ||
+            state.hasSubmitted && state.model.isEmpty ||
+            state.hasSubmitted && state.color.isEmpty ||
+            state.hasSubmitted && state.year.isEmpty);
+
+    final bool hasError =
+        (state.hasSubmitted && state.type.isEmpty) || hasVehicleFieldError;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -326,7 +305,6 @@ class VehicleAndDocumentsScreen extends HookConsumerWidget {
               ),
               if (isWeb) ...[
                 const SizedBox(height: 20),
-
                 if (isReadOnly)
                   IconButton(
                     icon: AppAssets.icons.edit.svg(),
@@ -374,9 +352,7 @@ class VehicleAndDocumentsScreen extends HookConsumerWidget {
                                     color: AppColors.primaryDarkGreen,
                                   ),
                                 );
-
                                 if (!context.mounted) return;
-
                                 if (ok) {
                                   showSuccessBanner(
                                     "Vehicle information updated successfully",
@@ -404,11 +380,12 @@ class VehicleAndDocumentsScreen extends HookConsumerWidget {
             ],
           ),
         ),
+
         GridView.builder(
-          padding: EdgeInsets.only(top: 10),
+          padding: const EdgeInsets.only(top: 10),
           shrinkWrap: true,
           physics: const NeverScrollableScrollPhysics(),
-          itemCount: 6,
+          itemCount: isBasicMode ? 1 : 6,
           gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
             crossAxisCount: isWeb ? 2 : 1,
             crossAxisSpacing: isWeb ? 13 : 0,
@@ -420,9 +397,7 @@ class VehicleAndDocumentsScreen extends HookConsumerWidget {
               case 0:
                 return CustomDropdownField(
                   label: 'Means of Transportation',
-                  items: isReadOnly
-                      ? []
-                      : const ['Feet', 'Bicycle', 'Car', 'Motor Bike', 'Bus'],
+                  items: const ['Feet', 'Bicycle', 'Car', 'Motor Bike', 'Bus'],
                   hintText: 'Car',
                   prefixIcon: AppAssets.icons.car.svg(),
                   labelTextColor: AppColors.textBlack,
@@ -430,41 +405,37 @@ class VehicleAndDocumentsScreen extends HookConsumerWidget {
                   value: vm.selectedTransportMode,
                   onChanged: isReadOnly ? null : vm.updateTransportMode,
                   hasError:
-                      !isReadOnly &&
-                      isEnabled &&
-                      state.hasSubmitted &&
-                      state.type.isEmpty,
+                      !isReadOnly && state.hasSubmitted && state.type.isEmpty,
                   errorMessage:
-                      !isReadOnly &&
-                          isEnabled &&
-                          state.hasSubmitted &&
-                          state.type.isEmpty
+                      !isReadOnly && state.hasSubmitted && state.type.isEmpty
                       ? "This field is required"
                       : null,
                 );
+
               case 1:
                 return CustomTextField(
                   controller: vm.plateNumberController,
-                  enabled: isEnabled,
+                  enabled: !isReadOnly,
                   hintText: 'MRT12345',
                   label: 'Licence Plate Number',
                   prefixIcon: AppAssets.icons.mail.path,
                   onChanged: vm.updatePlateNumber,
                   hasError:
-                      isEnabled &&
+                      !isReadOnly &&
                       state.hasSubmitted &&
                       state.plateNumber.isEmpty,
                   errorMessage:
-                      isEnabled &&
+                      !isReadOnly &&
                           state.hasSubmitted &&
                           state.plateNumber.isEmpty
                       ? "This field is required"
                       : null,
                 );
+
               case 2:
                 return CustomTextField(
                   controller: vm.makeController,
-                  enabled: isEnabled,
+                  enabled: !isReadOnly,
                   hintText: 'Toyota',
                   label: 'Make',
                   prefixIcon: AppAssets.icons.menu.path,
@@ -472,16 +443,17 @@ class VehicleAndDocumentsScreen extends HookConsumerWidget {
                   iconWidth: 18,
                   onChanged: vm.updateMake,
                   hasError:
-                      isEnabled && state.hasSubmitted && state.make.isEmpty,
+                      !isReadOnly && state.hasSubmitted && state.make.isEmpty,
                   errorMessage:
-                      isEnabled && state.hasSubmitted && state.make.isEmpty
+                      !isReadOnly && state.hasSubmitted && state.make.isEmpty
                       ? "This field is required"
                       : null,
                 );
+
               case 3:
                 return CustomTextField(
                   controller: vm.modelController,
-                  enabled: isEnabled,
+                  enabled: !isReadOnly,
                   hintText: 'Corolla LE',
                   label: 'Model',
                   prefixIcon: AppAssets.icons.menu.path,
@@ -489,16 +461,17 @@ class VehicleAndDocumentsScreen extends HookConsumerWidget {
                   iconWidth: 18,
                   onChanged: vm.updateModel,
                   hasError:
-                      isEnabled && state.hasSubmitted && state.model.isEmpty,
+                      !isReadOnly && state.hasSubmitted && state.model.isEmpty,
                   errorMessage:
-                      isEnabled && state.hasSubmitted && state.model.isEmpty
+                      !isReadOnly && state.hasSubmitted && state.model.isEmpty
                       ? "This field is required"
                       : null,
                 );
+
               case 4:
                 return CustomTextField(
                   controller: vm.colorController,
-                  enabled: isEnabled,
+                  enabled: !isReadOnly,
                   hintText: 'Red',
                   label: 'Color',
                   prefixIcon: AppAssets.icons.menu.path,
@@ -506,27 +479,29 @@ class VehicleAndDocumentsScreen extends HookConsumerWidget {
                   iconHeight: 18,
                   iconWidth: 18,
                   hasError:
-                      isEnabled && state.hasSubmitted && state.color.isEmpty,
+                      !isReadOnly && state.hasSubmitted && state.color.isEmpty,
                   errorMessage:
-                      isEnabled && state.hasSubmitted && state.color.isEmpty
+                      !isReadOnly && state.hasSubmitted && state.color.isEmpty
                       ? "This field is required"
                       : null,
                 );
+
               case 5:
                 return CustomTextField(
                   controller: vm.yearController,
-                  enabled: isEnabled,
+                  enabled: !isReadOnly,
                   hintText: '2003',
                   label: 'Year',
                   prefixIcon: AppAssets.icons.calender.path,
                   onChanged: vm.updateYear,
                   hasError:
-                      isEnabled && state.hasSubmitted && state.year.isEmpty,
+                      !isReadOnly && state.hasSubmitted && state.year.isEmpty,
                   errorMessage:
-                      isEnabled && state.hasSubmitted && state.year.isEmpty
+                      !isReadOnly && state.hasSubmitted && state.year.isEmpty
                       ? "This field is required"
                       : null,
                 );
+
               default:
                 return const SizedBox.shrink();
             }
@@ -542,6 +517,13 @@ class VehicleAndDocumentsScreen extends HookConsumerWidget {
     bool isReadOnly,
   ) {
     final isWeb = context.isWeb;
+    final state = ref.watch(riderVehicleProfileViewmodelProvider);
+
+    final bool isBasicMode = [
+      'feet',
+      'bicycle',
+    ].contains(state.type.toLowerCase());
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -568,7 +550,10 @@ class VehicleAndDocumentsScreen extends HookConsumerWidget {
           Padding(
             padding: const EdgeInsets.only(right: 25),
             child: Text(
-              "Note*  Ensure document is clearly visible and readable, All corners of the document should be visible, Avoid glare, shadows, or blurry images, Document should be current and not expired",
+              "Note*  Ensure document is clearly visible and readable, "
+              "All corners of the document should be visible, "
+              "Avoid glare, shadows, or blurry images, "
+              "Document should be current and not expired",
               style: GoogleFonts.hind(
                 fontSize: isWeb ? 14 : 12,
                 fontWeight: FontWeight.w400,
@@ -579,7 +564,19 @@ class VehicleAndDocumentsScreen extends HookConsumerWidget {
         ],
         const SizedBox(height: 16),
 
-        if (isWeb)
+        if (isBasicMode)
+          if (isWeb)
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Expanded(child: _buildNINBlock(context, ref, isReadOnly)),
+                const SizedBox(width: 13),
+                const Expanded(child: SizedBox()),
+              ],
+            )
+          else
+            _buildNINBlock(context, ref, isReadOnly)
+        else if (isWeb)
           Column(
             children: [
               Row(
@@ -595,7 +592,6 @@ class VehicleAndDocumentsScreen extends HookConsumerWidget {
                 ],
               ),
               const SizedBox(height: 16),
-
               Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [

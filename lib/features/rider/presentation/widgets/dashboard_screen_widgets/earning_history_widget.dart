@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:wigo_flutter/core/constants/dashboard_helpers.dart';
 import 'package:wigo_flutter/gen/assets.gen.dart';
@@ -17,14 +18,13 @@ class EarningHistoryWidget extends ConsumerWidget {
     final isWeb = MediaQuery.of(context).size.width > 600;
     return dashboardState.earningHistory.when(
       data: (transactions) {
-        final double cardHeight =
-            transactions.isEmpty
-                ? isWeb
-                    ? 893
-                    : 353.0
-                : isWeb
-                ? 893
-                : 419.0;
+        final double cardHeight = transactions.isEmpty
+            ? isWeb
+                  ? 893
+                  : 353.0
+            : isWeb
+            ? 893
+            : 419.0;
         return ClipRRect(
           borderRadius: BorderRadius.circular(10),
           child: SizedBox(
@@ -92,6 +92,39 @@ class EarningHistoryWidget extends ConsumerWidget {
                         itemCount: transactions.length,
                         itemBuilder: (context, index) {
                           final trx = transactions[index];
+                          final displayDate = trx.deliveredAt ?? trx.date;
+                          final leadingIcon = trx.isDelivered
+                              ? AppAssets.icons.received.svg(
+                                  height: 35,
+                                  width: 35,
+                                )
+                              : trx.isCancelled
+                              ? AppAssets.icons.rejected.svg(
+                                  height: 35,
+                                  width: 35,
+                                )
+                              : AppAssets.icons.pending.svg(
+                                  height: 35,
+                                  width: 35,
+                                );
+
+                          final title = trx.isDelivered
+                              ? 'Received'
+                              : trx.isCancelled
+                              ? 'Cancelled'
+                              : trx.status;
+
+                          final chipColor = trx.isDelivered
+                              ? AppColors.textStatusGreen
+                              : trx.isCancelled
+                              ? AppColors.textRed
+                              : AppColors.textYellow;
+
+                          final chipLabel = trx.isDelivered
+                              ? 'Successful'
+                              : trx.isCancelled
+                              ? 'Cancelled'
+                              : trx.status;
                           return Card(
                             margin: const EdgeInsets.symmetric(vertical: 6),
                             elevation: 8,
@@ -101,23 +134,9 @@ class EarningHistoryWidget extends ConsumerWidget {
                             ),
                             child: ListTile(
                               horizontalTitleGap: 10,
-                              leading:
-                                  trx.status == "Received"
-                                      ? AppAssets.icons.received.svg(
-                                        height: 35,
-                                        width: 35,
-                                      )
-                                      : trx.status == "Pending"
-                                      ? AppAssets.icons.pending.svg(
-                                        height: 35,
-                                        width: 35,
-                                      )
-                                      : AppAssets.icons.rejected.svg(
-                                        height: 35,
-                                        width: 35,
-                                      ),
+                              leading: leadingIcon,
                               title: Text(
-                                trx.status,
+                                title,
                                 style: GoogleFonts.hind(
                                   fontWeight: FontWeight.w500,
                                   color: AppColors.textBlackGrey,
@@ -129,7 +148,9 @@ class EarningHistoryWidget extends ConsumerWidget {
                                 children: [
                                   const SizedBox(height: 5),
                                   Text(
-                                    formatDateWithTime(trx.date),
+                                    displayDate != null
+                                        ? formatDateWithTime(displayDate)
+                                        : '—',
                                     style: GoogleFonts.hind(
                                       fontSize: 12,
                                       color: AppColors.textIconGrey,
@@ -139,6 +160,7 @@ class EarningHistoryWidget extends ConsumerWidget {
                                 ],
                               ),
                               trailing: Column(
+                                mainAxisSize: MainAxisSize.min,
                                 children: [
                                   Text(
                                     formatAmount(trx.amount),
@@ -152,27 +174,11 @@ class EarningHistoryWidget extends ConsumerWidget {
                                   StatusChip(
                                     width: 80,
                                     alignment: Alignment.center,
-                                    statusColor:
-                                        trx.status == "Received"
-                                            ? AppColors.textStatusGreen
-                                            : trx.status == "Pending"
-                                            ? AppColors.textYellow
-                                            : AppColors.textRed,
-                                    containerColor:
-                                        trx.status == "Received"
-                                            ? AppColors.textStatusGreen
-                                                .withValues(alpha: 0.1)
-                                            : trx.status == "Pending"
-                                            ? AppColors.textYellow.withValues(
-                                              alpha: 0.1,
-                                            )
-                                            : AppColors.textRed.withValues(
-                                              alpha: 0.1,
-                                            ),
-                                    status:
-                                        trx.status == "Received"
-                                            ? 'Successful'
-                                            : trx.status,
+                                    statusColor: chipColor,
+                                    containerColor: chipColor.withValues(
+                                      alpha: 0.1,
+                                    ),
+                                    status: chipLabel,
                                   ),
                                 ],
                               ),
@@ -187,7 +193,9 @@ class EarningHistoryWidget extends ConsumerWidget {
           ),
         );
       },
-      loading: () => const Center(child: CircularProgressIndicator()),
+      loading: () => const Center(
+        child: SpinKitDualRing(color: AppColors.primaryDarkGreen),
+      ),
       error: (e, _) => Center(child: Text("Error: $e")),
     );
   }

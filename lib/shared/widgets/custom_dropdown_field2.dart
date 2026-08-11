@@ -39,6 +39,7 @@ class CustomDropdownField2<T> extends ConsumerStatefulWidget {
   final bool hasError;
   final Color? prefixIconColor;
   final String? errorMessage;
+  final double? dropdownFieldHeight;
 
   const CustomDropdownField2({
     super.key,
@@ -75,6 +76,7 @@ class CustomDropdownField2<T> extends ConsumerStatefulWidget {
     this.hasError = false,
     this.prefixIconColor,
     this.errorMessage,
+    this.dropdownFieldHeight,
   });
 
   @override
@@ -117,109 +119,117 @@ class _CustomDropdownFieldState2<T>
               widget.onTap!();
             }
           },
-          child: DropdownButtonFormField2<T>(
-            isExpanded: true,
-            valueListenable: widget.value,
-            menuItemStyleData: MenuItemStyleData(
-              padding:
-                  widget.menuItemPadding ?? EdgeInsets.only(left: 13, right: 5),
-            ),
-            dropdownStyleData: DropdownStyleData(
-              width: widget.dropMenuWidth,
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(widget.radius ?? 8),
-                color: AppColors.backgroundWhite,
+          child: SizedBox(
+            height: widget.dropdownFieldHeight,
+            child: DropdownButtonFormField2<T>(
+              isExpanded: true,
+              valueListenable: widget.value,
+              menuItemStyleData: MenuItemStyleData(
+                padding:
+                    widget.menuItemPadding ??
+                    EdgeInsets.only(left: 13, right: 5),
               ),
-              offset: const Offset(0, 0),
-            ),
-            buttonStyleData: FormFieldButtonStyleData(
-              height: widget.sizeBoxHeight,
-            ),
-            iconStyleData: IconStyleData(
-              icon: AppAssets.icons.arrowDown.svg(
-                height: widget.iconHeight ?? 20,
-                width: widget.iconWidth ?? 20,
-                colorFilter: widget.iconColorFilter,
-              ),
-              iconSize: 0,
-              openMenuIcon: AppAssets.icons.arrowDown.svg(
-                height: widget.iconHeight ?? 20,
-                width: widget.iconWidth ?? 20,
-                colorFilter: widget.iconColorFilter,
-              ),
-            ),
-            hint: Text(
-              widget.hintText ?? '',
-              style: GoogleFonts.hind(
-                fontWeight: widget.hintFontWeight ?? FontWeight.w400,
-                color: widget.hintTextColor ?? AppColors.textIconGrey,
-                fontSize: widget.hintFontSize ?? 14,
-              ),
-            ),
-            decoration: InputDecoration(
-              contentPadding: EdgeInsets.only(right: 10),
-              prefixIconConstraints: const BoxConstraints(),
-              prefixIcon: currentPrefixIcon != null
-                  ? Padding(
-                      padding: const EdgeInsets.only(left: 17.0),
-                      child: currentPrefixIcon!,
-                    )
-                  : null,
-              fillColor: widget.hasError
-                  ? AppColors.accentLightRed
-                  : (widget.fillColor ?? AppColors.textFieldColor),
-              filled: true,
-              enabledBorder: OutlineInputBorder(
-                borderSide: BorderSide(
-                  color: widget.errorMessage != null
-                      ? AppColors.accentRed
-                      : (widget.enabledBorderColor ?? Colors.transparent),
+              dropdownStyleData: DropdownStyleData(
+                width: widget.dropMenuWidth,
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(widget.radius ?? 8),
+                  color: AppColors.backgroundWhite,
                 ),
-                borderRadius: BorderRadius.circular(widget.radius ?? 8.0),
+                offset: const Offset(0, 0),
               ),
-              focusedBorder: OutlineInputBorder(
-                borderSide: BorderSide(
-                  color: widget.errorMessage != null
-                      ? AppColors.accentRed
-                      : (widget.focusedBorderColor ?? Colors.transparent),
+              buttonStyleData: FormFieldButtonStyleData(
+                height: widget.sizeBoxHeight,
+              ),
+              iconStyleData: IconStyleData(
+                icon: AppAssets.icons.arrowDown.svg(
+                  height: widget.iconHeight ?? 20,
+                  width: widget.iconWidth ?? 20,
+                  colorFilter: widget.iconColorFilter,
                 ),
-                borderRadius: BorderRadius.circular(widget.radius ?? 8.0),
+                iconSize: 0,
+                openMenuIcon: AppAssets.icons.arrowDown.svg(
+                  height: widget.iconHeight ?? 20,
+                  width: widget.iconWidth ?? 20,
+                  colorFilter: widget.iconColorFilter,
+                ),
               ),
-              errorBorder: OutlineInputBorder(
-                borderSide: BorderSide(color: AppColors.accentRed, width: 1.0),
-                borderRadius: BorderRadius.circular(widget.radius ?? 8.0),
+              hint: Text(
+                widget.hintText ?? '',
+                style: GoogleFonts.hind(
+                  fontWeight: widget.hintFontWeight ?? FontWeight.w400,
+                  color: widget.hintTextColor ?? AppColors.textIconGrey,
+                  fontSize: widget.hintFontSize ?? 14,
+                ),
               ),
-            ),
-            items: widget.items
-                .map(
-                  (e) => DropdownItem<T>(
-                    value: e,
-                    child: Padding(
-                      padding:
-                          widget.padding ?? const EdgeInsets.only(top: 4.0),
-                      child: Text(
-                        widget.itemLabelBuilder(e),
-                        overflow: TextOverflow.ellipsis,
-                        style: GoogleFonts.hind(
-                          fontWeight: FontWeight.w400,
-                          color: widget.itemTextColor ?? AppColors.textBlack,
-                          fontSize: widget.itemsFontSize ?? 14,
+              decoration: InputDecoration(
+                contentPadding: EdgeInsets.only(right: 10),
+                prefixIconConstraints: const BoxConstraints(),
+                prefixIcon: currentPrefixIcon != null
+                    ? Padding(
+                        padding: const EdgeInsets.only(left: 17.0),
+                        child: currentPrefixIcon!,
+                      )
+                    : null,
+                fillColor: widget.hasError
+                    ? AppColors.accentLightRed
+                    : (widget.fillColor ?? AppColors.textFieldColor),
+                filled: true,
+                enabledBorder: OutlineInputBorder(
+                  borderSide: BorderSide(
+                    color: widget.errorMessage != null
+                        ? AppColors.accentRed
+                        : (widget.enabledBorderColor ?? Colors.transparent),
+                  ),
+                  borderRadius: BorderRadius.circular(widget.radius ?? 8.0),
+                ),
+                focusedBorder: OutlineInputBorder(
+                  borderSide: BorderSide(
+                    color: widget.errorMessage != null
+                        ? AppColors.accentRed
+                        : (widget.focusedBorderColor ?? Colors.transparent),
+                  ),
+                  borderRadius: BorderRadius.circular(widget.radius ?? 8.0),
+                ),
+                errorBorder: OutlineInputBorder(
+                  borderSide: BorderSide(
+                    color: AppColors.accentRed,
+                    width: 1.0,
+                  ),
+                  borderRadius: BorderRadius.circular(widget.radius ?? 8.0),
+                ),
+              ),
+              items: widget.items
+                  .map(
+                    (e) => DropdownItem<T>(
+                      value: e,
+                      child: Padding(
+                        padding:
+                            widget.padding ?? const EdgeInsets.only(top: 4.0),
+                        child: Text(
+                          widget.itemLabelBuilder(e),
+                          overflow: TextOverflow.ellipsis,
+                          style: GoogleFonts.hind(
+                            fontWeight: FontWeight.w400,
+                            color: widget.itemTextColor ?? AppColors.textBlack,
+                            fontSize: widget.itemsFontSize ?? 14,
+                          ),
                         ),
                       ),
                     ),
-                  ),
-                )
-                .toList(),
-            onChanged: (val) {
-              final castVal = val as T?;
-              setState(() => selectedItem = castVal);
-              widget.onChanged?.call(castVal);
-            },
-            validator: (val) {
-              if (val == null) return 'Please select a value';
-              if (val is String && val.isEmpty) return 'Please select a value';
-              return null;
-            },
+                  )
+                  .toList(),
+              onChanged: (val) {
+                final castVal = val;
+                setState(() => selectedItem = castVal);
+                widget.onChanged?.call(castVal);
+              },
+              validator: (val) {
+                if (val == null) return 'Please select a value';
+                if (val is String && val.isEmpty)
+                  return 'Please select a value';
+                return null;
+              },
+            ),
           ),
         ),
         if (widget.hasError && widget.errorMessage != null)

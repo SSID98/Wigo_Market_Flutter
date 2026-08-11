@@ -20,33 +20,30 @@ class EarningOverviewWidget extends ConsumerWidget {
     final isWeb = MediaQuery.of(context).size.width > 600;
     Widget buildEarningAmount(AsyncValue<String> asyncValue, Color color) {
       return asyncValue.when(
-        data:
-            (amount) => Text(
-              amount,
-              style: GoogleFonts.notoSans(
-                fontSize: isWeb ? 32 : 24.0,
-                fontWeight: FontWeight.w600,
-                color: color,
-              ),
-            ),
-        loading:
-            () => SizedBox(
-              width: 50,
-              height: 20,
-              child: LinearProgressIndicator(
-                backgroundColor: color.withValues(alpha: 0.3),
-                valueColor: AlwaysStoppedAnimation(color),
-              ),
-            ),
-        error:
-            (e, _) => Text(
-              "Error",
-              style: GoogleFonts.hind(
-                fontSize: 16.0,
-                fontWeight: FontWeight.w500,
-                color: AppColors.accentRed,
-              ),
-            ),
+        data: (amount) => Text(
+          amount,
+          style: GoogleFonts.notoSans(
+            fontSize: isWeb ? 32 : 24.0,
+            fontWeight: FontWeight.w600,
+            color: color,
+          ),
+        ),
+        loading: () => SizedBox(
+          width: 50,
+          height: 20,
+          child: LinearProgressIndicator(
+            backgroundColor: color.withValues(alpha: 0.3),
+            valueColor: AlwaysStoppedAnimation(color),
+          ),
+        ),
+        error: (e, _) => Text(
+          "Error",
+          style: GoogleFonts.hind(
+            fontSize: 16.0,
+            fontWeight: FontWeight.w500,
+            color: AppColors.accentRed,
+          ),
+        ),
       );
     }
 
@@ -164,21 +161,18 @@ class EarningOverviewWidget extends ConsumerWidget {
                         width: 16.17,
                         height: 19.96,
                       ),
-                      watermarkIcon:
-                          isWeb
-                              ? AppAssets.icons.totalEarningWeb.svg(
-                                width: 90,
-                                height: 90,
-                              )
-                              : AppAssets.icons.totalEarning.svg(height: 67),
-                      borderColor:
-                          isWeb
-                              ? AppColors.webTotalEarningGreen
-                              : AppColors.textGreen,
-                      titleColor:
-                          isWeb
-                              ? AppColors.webTotalEarningGreen
-                              : AppColors.textGreen,
+                      watermarkIcon: isWeb
+                          ? AppAssets.icons.totalEarningWeb.svg(
+                              width: 90,
+                              height: 90,
+                            )
+                          : AppAssets.icons.totalEarning.svg(height: 67),
+                      borderColor: isWeb
+                          ? AppColors.webTotalEarningGreen
+                          : AppColors.textGreen,
+                      titleColor: isWeb
+                          ? AppColors.webTotalEarningGreen
+                          : AppColors.textGreen,
                       stackLeft: isWeb ? 3 : 7,
                       stackBottom: 2,
                     );
@@ -194,7 +188,9 @@ class EarningOverviewWidget extends ConsumerWidget {
                 onPressed: () {
                   Navigator.push(
                     context,
-                    MaterialPageRoute(builder: (_) => WalletWithdrawalScreen()),
+                    MaterialPageRoute(
+                      builder: (_) => WalletWithdrawalScreen(isSeller: false),
+                    ),
                   );
                 },
                 fontSize: 12,

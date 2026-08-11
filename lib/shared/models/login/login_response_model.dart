@@ -14,7 +14,9 @@ class LoginResponseModel {
   final String address;
   final String image;
   final Map<String, dynamic>? dispatchProfile;
+  final Map<String, dynamic>? store;
   final bool hasWallet;
+  final bool hasWithdrawalPin;
 
   LoginResponseModel({
     required this.id,
@@ -32,7 +34,9 @@ class LoginResponseModel {
     required this.address,
     required this.image,
     this.dispatchProfile,
+    this.store,
     required this.hasWallet,
+    this.hasWithdrawalPin = false,
   });
 
   LoginResponseModel copyWith({
@@ -51,7 +55,9 @@ class LoginResponseModel {
     String? address,
     String? image,
     Map<String, dynamic>? dispatchProfile,
+    Map<String, dynamic>? store,
     bool? hasWallet,
+    bool? hasWithdrawalPin,
   }) {
     return LoginResponseModel(
       token: token ?? this.token,
@@ -69,7 +75,9 @@ class LoginResponseModel {
       address: address ?? this.address,
       image: image ?? this.image,
       dispatchProfile: dispatchProfile ?? this.dispatchProfile,
+      store: store ?? this.store,
       hasWallet: hasWallet ?? this.hasWallet,
+      hasWithdrawalPin: hasWithdrawalPin ?? this.hasWithdrawalPin,
     );
   }
 
@@ -88,10 +96,12 @@ class LoginResponseModel {
       city: userData["city"] ?? "",
       mobile: userData["mobile"] ?? "",
       state: userData["state"] ?? "",
-      address: userData["address"] ?? "",
+      address: userData["residentialAddress"] ?? "",
       image: userData["image"] ?? "",
       dispatchProfile: userData["dispatchProfile"] as Map<String, dynamic>?,
+      store: userData["store"] as Map<String, dynamic>?,
       hasWallet: userData["hasWallet"] ?? false,
+      hasWithdrawalPin: userData["hasWithdrawalPin"] ?? false,
     );
   }
 }

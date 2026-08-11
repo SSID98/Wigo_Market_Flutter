@@ -7,8 +7,8 @@ import 'package:wigo_flutter/features/seller/viewmodels/business_info_viewmodel.
 import 'package:wigo_flutter/shared/widgets/custom_banner.dart';
 import 'package:wigo_flutter/shared/widgets/custom_button.dart';
 
-import '../../../../core/constants/url.dart';
 import '../../../../core/local/local_user_controller.dart';
+import '../../../../gen/assets.gen.dart';
 import '../widgets/business_info_formfields.dart';
 
 class BusinessInfoScreen extends ConsumerWidget {
@@ -37,8 +37,8 @@ class BusinessInfoScreen extends ConsumerWidget {
       backgroundColor: AppColors.backgroundWhite,
       body: Stack(
         children: [
-          Image.network(
-            '$networkImageUrl/onboardingRiderMobile.png',
+          Image.asset(
+            AppAssets.images.onboardingRiderMobile.path,
             fit: BoxFit.cover,
             color: AppColors.backGroundOverlay,
             colorBlendMode: BlendMode.overlay,
@@ -143,8 +143,8 @@ class BusinessInfoScreen extends ConsumerWidget {
     return Scaffold(
       body: Stack(
         children: [
-          Image.network(
-            '$networkImageUrl/onboardingRiderWeb.png',
+          Image.asset(
+            AppAssets.images.onboardingRiderWeb.path,
             fit: BoxFit.cover,
             color: AppColors.backGroundOverlay,
             colorBlendMode: BlendMode.overlay,

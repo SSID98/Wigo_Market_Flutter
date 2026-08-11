@@ -48,7 +48,7 @@ class LoginViewModel extends StateNotifier<LoginState> {
     state = state.copyWith(hasSubmitted: true, errorMessage: errorMessage);
   }
 
-  Future<bool> login(BuildContext context) async {
+  Future<bool> login(BuildContext context, WidgetRef ref) async {
     validateOnSubmit();
 
     final passwordError = FormValidators.validateSignupPassword(state.password);
@@ -73,7 +73,7 @@ class LoginViewModel extends StateNotifier<LoginState> {
             .read(localUserControllerProvider.notifier)
             .loginAfterOnboarding(response.activeRole);
 
-        ref.read(authStateProvider.notifier).login(response);
+        ref.read(authStateProvider.notifier).login(response, ref);
 
         return true;
       } catch (e) {

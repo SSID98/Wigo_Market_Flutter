@@ -8,7 +8,6 @@ import 'package:wigo_flutter/shared/widgets/custom_button.dart';
 import 'package:wigo_flutter/shared/widgets/custom_loading_overlay.dart';
 
 import '../../core/constants/app_colors.dart';
-import '../../core/constants/url.dart';
 import '../../core/local/local_user_controller.dart';
 import '../models/user_role.dart';
 
@@ -53,12 +52,12 @@ class WelcomeScreen extends ConsumerWidget {
         children: [
           Padding(
             padding: const EdgeInsets.only(top: 148.0),
-            child: Image.network(
+            child: Image.asset(
               isRider
-                  ? '$networkImageUrl/welcomeRiderMobile.png'
+                  ? AppAssets.images.welcomeRiderMobile.path
                   : isSeller
-                  ? '$networkImageUrl/sellerMobileWelcome.png'
-                  : '$networkImageUrl/buyerWelcomeMobile.png',
+                  ? AppAssets.images.sellerMobileWelcome.path
+                  : AppAssets.images.buyerWelcomeMobile.path,
               fit: BoxFit.contain,
               errorBuilder:
                   (
@@ -254,23 +253,7 @@ class WelcomeScreen extends ConsumerWidget {
                 child: SizedBox(
                   width: webContentWidth,
                   height: webContentHeight,
-                  child: Image.network(
-                    '$networkImageUrl/welcomeRiderWeb.png',
-                    errorBuilder:
-                        (
-                          BuildContext context,
-                          Object exception,
-                          StackTrace? stackTrace,
-                        ) {
-                          return const Center(
-                            child: Icon(
-                              Icons.broken_image,
-                              color: AppColors.textIconGrey,
-                              size: 50.0,
-                            ),
-                          );
-                        },
-                  ),
+                  child: Image.asset(AppAssets.images.welcomeRiderWeb.path),
                 ),
               ),
             ),

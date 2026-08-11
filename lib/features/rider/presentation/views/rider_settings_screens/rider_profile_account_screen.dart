@@ -353,7 +353,7 @@ class RiderProfileAndAccountScreen extends HookConsumerWidget {
           backgroundImage: backgroundImage,
           showLeftTexts: isWeb,
           showEmail: isWeb,
-          showBottomText: isReadOnly && !isWeb,
+          showBottomText: false,
           isEditMode: !isReadOnly,
           isUploadingPhoto: state.isUploadingPhoto,
           photoUploadFailed: state.photoUploadFailed,

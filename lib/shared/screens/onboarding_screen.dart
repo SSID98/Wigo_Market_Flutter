@@ -5,7 +5,6 @@ import 'package:wigo_flutter/shared/viewmodels/onboarding_viewmodel.dart';
 import 'package:wigo_flutter/shared/widgets/onboarding_pageview.dart';
 
 import '../../core/constants/app_colors.dart';
-import '../../core/constants/url.dart';
 import '../../core/local/local_user_controller.dart';
 import '../../gen/assets.gen.dart';
 import '../models/user_role.dart';
@@ -56,25 +55,11 @@ class OnboardingScreen extends ConsumerWidget {
       body: SafeArea(
         child: Stack(
           children: [
-            Image.network(
-              '$networkImageUrl/onboardingRiderMobile.png',
+            Image.asset(
+              AppAssets.images.onboardingRiderMobile.path,
               fit: BoxFit.cover,
               color: AppColors.backGroundOverlay,
               colorBlendMode: BlendMode.overlay,
-              errorBuilder:
-                  (
-                    BuildContext context,
-                    Object exception,
-                    StackTrace? stackTrace,
-                  ) {
-                    return const Center(
-                      child: Icon(
-                        Icons.broken_image,
-                        color: AppColors.textIconGrey,
-                        size: 50.0,
-                      ),
-                    );
-                  },
             ),
             Padding(
               padding: const EdgeInsets.only(top: 105.0),
@@ -159,8 +144,8 @@ class OnboardingScreen extends ConsumerWidget {
       body: SafeArea(
         child: Stack(
           children: [
-            Image.network(
-              '$networkImageUrl/onboardingRiderWeb.png',
+            Image.asset(
+              AppAssets.images.onboardingRiderWeb.path,
               fit: BoxFit.cover,
               color: AppColors.backGroundOverlay,
               colorBlendMode: BlendMode.overlay,

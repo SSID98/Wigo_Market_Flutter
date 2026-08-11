@@ -1,66 +1,119 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:wigo_flutter/core/utils/context_extensions.dart';
 import 'package:wigo_flutter/features/rider/presentation/widgets/dashboard_screen_widgets/earning_history_widget.dart';
 import 'package:wigo_flutter/features/seller/presentation/widgets/dashboard_widgets/business_analytics_widget.dart';
 import 'package:wigo_flutter/features/seller/presentation/widgets/dashboard_widgets/getting_started_widget.dart';
 import 'package:wigo_flutter/features/seller/presentation/widgets/dashboard_widgets/quick_action_widget.dart';
 import 'package:wigo_flutter/features/seller/presentation/widgets/dashboard_widgets/recent_earnings_widget.dart';
 import 'package:wigo_flutter/features/seller/presentation/widgets/dashboard_widgets/recent_orders_widget.dart';
-import 'package:wigo_flutter/shared/widgets/custom_button.dart';
 
 import '../../../../../core/constants/app_colors.dart';
+import '../../../../core/auth/auth_state.dart';
 import '../../../../core/auth/auth_state_notifier.dart';
 import '../../../../gen/assets.gen.dart';
 import '../../../rider/presentation/widgets/dashboard_screen_widgets/account_setup_status_widget.dart';
+import '../../viewmodels/seller_dashboard_viewmodel.dart';
 
 class SellerDashboardScreen extends ConsumerWidget {
   const SellerDashboardScreen({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    // final viewModel = ref.watch(sellerDashboardViewModelProvider.notifier);
+    final viewModel = ref.watch(sellerDashboardViewModelProvider.notifier);
     // final state = ref.watch(sellerDashboardViewModelProvider);
     final screenSize = MediaQuery.of(context).size;
-    final isWeb = MediaQuery.of(context).size.width > 600;
-    final steps = [
+    final authState = ref.watch(authStateProvider);
+    final user = authState.status == AuthStatus.loggedIn
+        ? authState.user
+        : null;
+    final hasWallet = user?.hasWallet ?? false;
+    final hasWalletPin = user?.hasWithdrawalPin ?? false;
+    final hasStore = user?.store != null;
+    final paymentStatus = hasWallet && hasWalletPin
+        ? SetupStatus.completed
+        : SetupStatus.pending;
+    final storeStatus = hasStore ? SetupStatus.completed : SetupStatus.pending;
+    final bothCompleted = hasWallet == true && hasWalletPin == true && hasStore;
+    final double setupProgress = bothCompleted
+        ? 1.0
+        : hasWallet
+        ? 0.7
+        : 0.2;
+
+    final steps = _buildSteps(
+      paymentStatus: paymentStatus,
+      storeStatus: storeStatus,
+      paymentOntap: () {},
+    );
+
+    return context.isWeb
+        ? _buildWebLayout(
+            screenSize,
+            ref,
+            context,
+            steps,
+            setupProgress,
+            bothCompleted,
+            viewModel,
+          )
+        : _buildMobileLayout(
+            screenSize,
+            ref,
+            context,
+            steps,
+            setupProgress,
+            bothCompleted,
+            viewModel,
+          );
+  }
+
+  List<AccountSetupStep> _buildSteps({
+    required SetupStatus paymentStatus,
+    required SetupStatus storeStatus,
+    required void Function()? paymentOntap,
+  }) {
+    return [
       AccountSetupStep(
         title: 'Personal \nInformation',
         iconAsset: AppAssets.icons.vehicleDoc.svg(
-          height: isWeb ? 42.76 : 25.22,
-          width: isWeb ? 49 : 28.9,
+          height: kIsWeb ? 42.76 : 25.22,
+          width: kIsWeb ? 49 : 28.9,
         ),
         status: SetupStatus.completed,
         onTap: () {},
       ),
       AccountSetupStep(
-        title: 'Business/shop \nInformation',
-        iconAsset: AppAssets.icons.businessInfo.svg(
-          height: isWeb ? 42.76 : 25.22,
-          width: isWeb ? 49 : 28.9,
-        ),
-        status: SetupStatus.pending,
-        onTap: () {},
-      ),
-      AccountSetupStep(
         title: 'Payment \nInformation',
         iconAsset: AppAssets.icons.payInfo.svg(
-          height: isWeb ? 42.76 : 25.22,
-          width: isWeb ? 49 : 28.9,
+          height: kIsWeb ? 42.76 : 25.22,
+          width: kIsWeb ? 49 : 28.9,
         ),
-        status: SetupStatus.pending,
+        status: paymentStatus,
+        onTap: paymentOntap,
+      ),
+      AccountSetupStep(
+        title: 'Business/shop \nInformation',
+        iconAsset: AppAssets.icons.businessInfo.svg(
+          height: kIsWeb ? 42.76 : 25.22,
+          width: kIsWeb ? 49 : 28.9,
+        ),
+        status: storeStatus,
         onTap: () {},
       ),
     ];
-    return isWeb
-        ? _buildWebLayout(screenSize, ref, steps)
-        : _buildMobileLayout(screenSize, ref, steps);
   }
 
   Widget _buildMobileLayout(
     Size screenSize,
     WidgetRef ref,
+    BuildContext context,
     List<AccountSetupStep> steps,
+    double setupProgress,
+    bool bothCompleted,
+    SellerDashboardViewModel viewModel,
   ) {
     return SingleChildScrollView(
       child: Padding(
@@ -71,17 +124,18 @@ class SellerDashboardScreen extends ConsumerWidget {
           children: [
             const SizedBox(height: 10),
             _buildHeader(ref: ref),
-            AccountSetup(
-              title: 'Complete Your Account Setup',
-              subtitle:
-                  'You\'re almost there! Add your store details and payment info to start selling on WIGOMARKET.',
-              steps: steps,
-              progress: 0.4,
-              isSeller: true,
-              // optional; omit to compute automatically
-              onCompletePressed: () {},
-              isWeb: false,
-            ),
+            if (!bothCompleted)
+              AccountSetup(
+                title: 'Complete Your Account Setup',
+                subtitle:
+                    'You\'re almost there! Add your store details and payment info to start selling on WIGOMARKET.',
+                steps: steps,
+                progress: 0.4,
+                isSeller: true,
+                onCompletePressed: () =>
+                    viewModel.navigateToSellerPaymentSetup(context, ref),
+                isWeb: false,
+              ),
             BusinessAnalyticsWidget(),
             QuickActionWidget(),
             RecentOrdersWidget(),
@@ -97,7 +151,11 @@ class SellerDashboardScreen extends ConsumerWidget {
   Widget _buildWebLayout(
     Size screenSize,
     WidgetRef ref,
+    BuildContext context,
     List<AccountSetupStep> steps,
+    double setupProgress,
+    bool bothCompleted,
+    SellerDashboardViewModel viewModel,
   ) {
     return SafeArea(
       child: Padding(
@@ -108,17 +166,18 @@ class SellerDashboardScreen extends ConsumerWidget {
             children: [
               _buildHeader(ref: ref),
               const SizedBox(height: 10.0),
-              AccountSetup(
-                title: 'Complete Your Account Setup',
-                subtitle:
-                    'You\'re almost there! Add your store details and payment info to start selling on WIGOMARKET.',
-                steps: steps,
-                progress: 0.4,
-                // optional; omit to compute automatically
-                onCompletePressed: () {},
-                isSeller: true,
-                isWeb: true,
-              ),
+              if (!bothCompleted)
+                AccountSetup(
+                  title: 'Complete Your Account Setup',
+                  subtitle:
+                      'You\'re almost there! Add your store details and payment info to start selling on WIGOMARKET.',
+                  steps: steps,
+                  progress: setupProgress,
+                  onCompletePressed: () =>
+                      viewModel.navigateToSellerPaymentSetup(context, ref),
+                  isSeller: true,
+                  isWeb: true,
+                ),
               Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -171,14 +230,6 @@ class SellerDashboardScreen extends ConsumerWidget {
             fontWeight: FontWeight.w400,
             color: AppColors.textBlackGrey,
           ),
-        ),
-        CustomButton(
-          text: 'Logout',
-          fontSize: 16,
-          fontWeight: FontWeight.w600,
-          onPressed: () {
-            ref.read(authStateProvider.notifier).logout();
-          },
         ),
       ],
     );

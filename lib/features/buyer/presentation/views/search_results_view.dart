@@ -4,7 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import '../../../../core/constants/app_colors.dart';
-import '../../../../core/constants/url.dart';
+import '../../../../gen/assets.gen.dart';
 import '../../viewmodels/buyer_home_viewmodel.dart';
 import '../widgets/product_card.dart';
 
@@ -52,23 +52,24 @@ class SearchResultsView extends ConsumerWidget {
           ),
           const SizedBox(height: 10),
           Center(
-            child: Image.network(
-              '$networkImageUrl/searchFailed.png',
+            child: Image.asset(
+              AppAssets.images.searchFailed.path,
               height: isWeb ? 237 : 137,
               width: isWeb ? 321 : 185,
-              errorBuilder: (
-                BuildContext context,
-                Object exception,
-                StackTrace? stackTrace,
-              ) {
-                return const Center(
-                  child: Icon(
-                    Icons.broken_image,
-                    color: AppColors.textIconGrey,
-                    size: 50.0,
-                  ),
-                );
-              },
+              errorBuilder:
+                  (
+                    BuildContext context,
+                    Object exception,
+                    StackTrace? stackTrace,
+                  ) {
+                    return const Center(
+                      child: Icon(
+                        Icons.broken_image,
+                        color: AppColors.textIconGrey,
+                        size: 50.0,
+                      ),
+                    );
+                  },
             ),
           ),
           if (!isWeb) const SizedBox(height: 10),

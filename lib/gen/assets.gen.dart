@@ -876,14 +876,257 @@ class $AssetsIconsGen {
   ];
 }
 
+class $AssetsImagesGen {
+  const $AssetsImagesGen();
+
+  /// File path: assets/images/Search_empty.png
+  AssetGenImage get searchEmpty =>
+      const AssetGenImage('assets/images/Search_empty.png');
+
+  /// File path: assets/images/addProductBgMobile.png
+  AssetGenImage get addProductBgMobile =>
+      const AssetGenImage('assets/images/addProductBgMobile.png');
+
+  /// File path: assets/images/addProductBgWeb.png
+  AssetGenImage get addProductBgWeb =>
+      const AssetGenImage('assets/images/addProductBgWeb.png');
+
+  /// File path: assets/images/box.png
+  AssetGenImage get box => const AssetGenImage('assets/images/box.png');
+
+  /// File path: assets/images/buyerOnboarding1.png
+  AssetGenImage get buyerOnboarding1 =>
+      const AssetGenImage('assets/images/buyerOnboarding1.png');
+
+  /// File path: assets/images/buyerOnboarding2.png
+  AssetGenImage get buyerOnboarding2 =>
+      const AssetGenImage('assets/images/buyerOnboarding2.png');
+
+  /// File path: assets/images/buyerWelcomeMobile.png
+  AssetGenImage get buyerWelcomeMobile =>
+      const AssetGenImage('assets/images/buyerWelcomeMobile.png');
+
+  /// File path: assets/images/buyerWelcomeWeb.png
+  AssetGenImage get buyerWelcomeWeb =>
+      const AssetGenImage('assets/images/buyerWelcomeWeb.png');
+
+  /// File path: assets/images/login.png
+  AssetGenImage get login => const AssetGenImage('assets/images/login.png');
+
+  /// File path: assets/images/logo3.png
+  AssetGenImage get logo3 => const AssetGenImage('assets/images/logo3.png');
+
+  /// File path: assets/images/noOrders.png
+  AssetGenImage get noOrders =>
+      const AssetGenImage('assets/images/noOrders.png');
+
+  /// File path: assets/images/noProductAdded.png
+  AssetGenImage get noProductAdded =>
+      const AssetGenImage('assets/images/noProductAdded.png');
+
+  /// File path: assets/images/onboarding1.png
+  AssetGenImage get onboarding1 =>
+      const AssetGenImage('assets/images/onboarding1.png');
+
+  /// File path: assets/images/onboarding2.png
+  AssetGenImage get onboarding2 =>
+      const AssetGenImage('assets/images/onboarding2.png');
+
+  /// File path: assets/images/onboardingRiderMobile.png
+  AssetGenImage get onboardingRiderMobile =>
+      const AssetGenImage('assets/images/onboardingRiderMobile.png');
+
+  /// File path: assets/images/onboardingRiderWeb.png
+  AssetGenImage get onboardingRiderWeb =>
+      const AssetGenImage('assets/images/onboardingRiderWeb.png');
+
+  /// File path: assets/images/orderDetailBg.png
+  AssetGenImage get orderDetailBg =>
+      const AssetGenImage('assets/images/orderDetailBg.png');
+
+  /// File path: assets/images/productOverlay.png
+  AssetGenImage get productOverlay =>
+      const AssetGenImage('assets/images/productOverlay.png');
+
+  /// File path: assets/images/searchFailed.png
+  AssetGenImage get searchFailed =>
+      const AssetGenImage('assets/images/searchFailed.png');
+
+  /// File path: assets/images/selfDeliver.png
+  AssetGenImage get selfDeliver =>
+      const AssetGenImage('assets/images/selfDeliver.png');
+
+  /// File path: assets/images/sellYourProducts.png
+  AssetGenImage get sellYourProducts =>
+      const AssetGenImage('assets/images/sellYourProducts.png');
+
+  /// File path: assets/images/sellerMobileWelcome.png
+  AssetGenImage get sellerMobileWelcome =>
+      const AssetGenImage('assets/images/sellerMobileWelcome.png');
+
+  /// File path: assets/images/sellerOnboarding1.png
+  AssetGenImage get sellerOnboarding1 =>
+      const AssetGenImage('assets/images/sellerOnboarding1.png');
+
+  /// File path: assets/images/sellerOnboarding2.png
+  AssetGenImage get sellerOnboarding2 =>
+      const AssetGenImage('assets/images/sellerOnboarding2.png');
+
+  /// File path: assets/images/sellerWebWelcome.png
+  AssetGenImage get sellerWebWelcome =>
+      const AssetGenImage('assets/images/sellerWebWelcome.png');
+
+  /// File path: assets/images/successful.png
+  AssetGenImage get successful =>
+      const AssetGenImage('assets/images/successful.png');
+
+  /// File path: assets/images/taskEmpty.png
+  AssetGenImage get taskEmpty =>
+      const AssetGenImage('assets/images/taskEmpty.png');
+
+  /// File path: assets/images/visa.png
+  AssetGenImage get visa => const AssetGenImage('assets/images/visa.png');
+
+  /// File path: assets/images/welcomeRiderMobile.png
+  AssetGenImage get welcomeRiderMobile =>
+      const AssetGenImage('assets/images/welcomeRiderMobile.png');
+
+  /// File path: assets/images/welcomeRiderWeb.png
+  AssetGenImage get welcomeRiderWeb =>
+      const AssetGenImage('assets/images/welcomeRiderWeb.png');
+
+  /// List of all assets
+  List<AssetGenImage> get values => [
+    searchEmpty,
+    addProductBgMobile,
+    addProductBgWeb,
+    box,
+    buyerOnboarding1,
+    buyerOnboarding2,
+    buyerWelcomeMobile,
+    buyerWelcomeWeb,
+    login,
+    logo3,
+    noOrders,
+    noProductAdded,
+    onboarding1,
+    onboarding2,
+    onboardingRiderMobile,
+    onboardingRiderWeb,
+    orderDetailBg,
+    productOverlay,
+    searchFailed,
+    selfDeliver,
+    sellYourProducts,
+    sellerMobileWelcome,
+    sellerOnboarding1,
+    sellerOnboarding2,
+    sellerWebWelcome,
+    successful,
+    taskEmpty,
+    visa,
+    welcomeRiderMobile,
+    welcomeRiderWeb,
+  ];
+}
+
 class AppAssets {
   const AppAssets._();
 
   static const String aEnv = '.env';
   static const $AssetsIconsGen icons = $AssetsIconsGen();
+  static const $AssetsImagesGen images = $AssetsImagesGen();
 
   /// List of all assets
   static List<String> get values => [aEnv];
+}
+
+class AssetGenImage {
+  const AssetGenImage(
+    this._assetName, {
+    this.size,
+    this.flavors = const {},
+    this.animation,
+  });
+
+  final String _assetName;
+
+  final Size? size;
+  final Set<String> flavors;
+  final AssetGenImageAnimation? animation;
+
+  Image image({
+    Key? key,
+    AssetBundle? bundle,
+    ImageFrameBuilder? frameBuilder,
+    ImageErrorWidgetBuilder? errorBuilder,
+    String? semanticLabel,
+    bool excludeFromSemantics = false,
+    double? scale,
+    double? width,
+    double? height,
+    Color? color,
+    Animation<double>? opacity,
+    BlendMode? colorBlendMode,
+    BoxFit? fit,
+    AlignmentGeometry alignment = Alignment.center,
+    ImageRepeat repeat = ImageRepeat.noRepeat,
+    Rect? centerSlice,
+    bool matchTextDirection = false,
+    bool gaplessPlayback = true,
+    bool isAntiAlias = false,
+    String? package,
+    FilterQuality filterQuality = FilterQuality.medium,
+    int? cacheWidth,
+    int? cacheHeight,
+  }) {
+    return Image.asset(
+      _assetName,
+      key: key,
+      bundle: bundle,
+      frameBuilder: frameBuilder,
+      errorBuilder: errorBuilder,
+      semanticLabel: semanticLabel,
+      excludeFromSemantics: excludeFromSemantics,
+      scale: scale,
+      width: width,
+      height: height,
+      color: color,
+      opacity: opacity,
+      colorBlendMode: colorBlendMode,
+      fit: fit,
+      alignment: alignment,
+      repeat: repeat,
+      centerSlice: centerSlice,
+      matchTextDirection: matchTextDirection,
+      gaplessPlayback: gaplessPlayback,
+      isAntiAlias: isAntiAlias,
+      package: package,
+      filterQuality: filterQuality,
+      cacheWidth: cacheWidth,
+      cacheHeight: cacheHeight,
+    );
+  }
+
+  ImageProvider provider({AssetBundle? bundle, String? package}) {
+    return AssetImage(_assetName, bundle: bundle, package: package);
+  }
+
+  String get path => _assetName;
+
+  String get keyName => _assetName;
+}
+
+class AssetGenImageAnimation {
+  const AssetGenImageAnimation({
+    required this.isAnimation,
+    required this.duration,
+    required this.frames,
+  });
+
+  final bool isAnimation;
+  final Duration duration;
+  final int frames;
 }
 
 class SvgGenImage {

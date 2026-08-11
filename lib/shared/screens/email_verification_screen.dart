@@ -4,7 +4,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/svg.dart';
 
 import '../../../../core/constants/app_colors.dart';
-import '../../core/constants/url.dart';
 import '../../core/local/local_user_controller.dart';
 import '../../core/utils/context_extensions.dart';
 import '../../core/utils/helper_methods_classes.dart';
@@ -60,8 +59,8 @@ class EmailVerificationScreen extends ConsumerWidget {
       backgroundColor: AppColors.backgroundWhite,
       body: Stack(
         children: [
-          Image.network(
-            '$networkImageUrl/onboardingRiderMobile.png',
+          Image.asset(
+            AppAssets.images.onboardingRiderMobile.path,
             fit: BoxFit.cover,
             color: AppColors.backGroundOverlay,
             colorBlendMode: BlendMode.overlay,
@@ -123,9 +122,11 @@ class EmailVerificationScreen extends ConsumerWidget {
                           email: maskedEmail,
                           onChanged: notifier.updateOtpCode,
                           onPressed: () async {
+                            FocusManager.instance.primaryFocus?.unfocus();
                             await notifier.verifyCode(
                               email: email,
                               context: context,
+                              ref: ref,
                             );
                             if (ref
                                 .read(emailVerificationProvider)
@@ -168,8 +169,8 @@ class EmailVerificationScreen extends ConsumerWidget {
       body: SafeArea(
         child: Stack(
           children: [
-            Image.network(
-              '$networkImageUrl/onboardingRiderWeb.png',
+            Image.asset(
+              AppAssets.images.onboardingRiderWeb.path,
               fit: BoxFit.cover,
               color: AppColors.backGroundOverlay,
               colorBlendMode: BlendMode.overlay,

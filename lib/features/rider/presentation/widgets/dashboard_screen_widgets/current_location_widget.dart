@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import '../../../../../core/constants/app_colors.dart';
@@ -51,7 +52,9 @@ class CurrentLocationWidget extends ConsumerWidget {
                         : '$networkImageUrl/mapMobile.png',
                   );
                 },
-                loading: () => const Center(child: CircularProgressIndicator()),
+                loading: () => const Center(
+                  child: SpinKitDualRing(color: AppColors.primaryDarkGreen),
+                ),
                 error: (e, _) => Center(child: Text("Error: $e")),
               ),
             ],

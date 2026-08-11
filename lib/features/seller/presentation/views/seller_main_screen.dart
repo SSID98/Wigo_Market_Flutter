@@ -11,7 +11,7 @@ import '../../../../gen/assets.gen.dart';
 import '../../../../shared/widgets/dashboard_widgets/custom_app_bar.dart';
 import '../../../../shared/widgets/dashboard_widgets/web_side_bar.dart';
 import '../../../rider/viewmodels/global_navigation_viewmodel.dart';
-import 'earning_transactions_screen.dart';
+import 'seller_wallet_screens/earning_transactions_screen.dart';
 
 class SellerMainScreen extends ConsumerStatefulWidget {
   const SellerMainScreen({super.key});

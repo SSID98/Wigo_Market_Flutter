@@ -1,17 +1,24 @@
+import 'dart:async';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/legacy.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:wigo_flutter/features/rider/models/wallet_state.dart';
+import 'package:wigo_flutter/features/seller/presentation/views/seller_wallet_screens/seller_wallet_main_screen.dart';
 
+import '../../../core/auth/auth_state_notifier.dart';
 import '../../../core/constants/app_colors.dart';
+import '../../../core/local/secure_storage.dart';
 import '../../../core/network/network.dart';
+import '../../../core/utils/helper_methods_classes.dart';
 import '../../../core/utils/validation_utils.dart';
 import '../../../shared/models/bank_model.dart';
 import '../../../shared/widgets/custom_banner.dart';
 import '../../../shared/widgets/custom_loading_overlay.dart';
 import '../models/bank_details.dart';
 import '../service/rider_api_service.dart';
+import 'global_navigation_viewmodel.dart';
 
 class EditBankAccountViewModel extends StateNotifier<WalletState> {
   final Reader read;
@@ -21,14 +28,23 @@ class EditBankAccountViewModel extends StateNotifier<WalletState> {
   final phoneNumberController = TextEditingController();
   final ValueNotifier<Bank?> selectedBankName = ValueNotifier(null);
 
-  // void init() {
-  //   selectedBankName.value = state.selectedBankDetails?.selectedBank;
-  // }
+  BankDetails? _originalEditBankDetails;
+
+  bool _walletFetchScheduledOrDone = false;
+
+  Timer? walletRetryTimer;
 
   EditBankAccountViewModel(this.read, {RiderApiService? apiService})
     : _apiService = apiService ?? read(riderApiServiceProvider),
-      super(const WalletState(bankDetailsList: [])) {
-    fetchWallet();
+      super(
+        WalletState(
+          bankDetailsList: const [],
+          hasWallet: read(authStateProvider).user?.hasWallet ?? false,
+          hasWithdrawalPin:
+              read(authStateProvider).user?.hasWithdrawalPin ?? false,
+        ),
+      ) {
+    _persistWalletSetupStatusToStorage();
   }
 
   @override
@@ -39,28 +55,99 @@ class EditBankAccountViewModel extends StateNotifier<WalletState> {
     super.dispose();
   }
 
-  // EditBankAccountViewModel()
-  //   : super(
-  //       WalletState(
-  //         bankDetailsList: [
-  //           BankDetails.empty('1').copyWith(isDefault: true),
-  //           BankDetails.empty('2'),
-  //           BankDetails.empty('3'),
-  //         ],
-  //       ),
-  //     );
+  Future<void> _persistFlag(String key, bool value) async {
+    final userId = read(authStateProvider).user?.id;
+    if (userId == null) return;
+    final storage = SecureStorage();
+    await storage.storeData(key: userKey(key, userId), data: value.toString());
+  }
 
-  // void navigateToOverview() {
-  //   state = state.copyWith(walletScreenState: WalletScreenState.overview);
-  // }
+  Future<void> _persistWalletSetupStatusToStorage() async {
+    await _persistFlag('hasWallet', state.hasWallet);
+    await _persistFlag('hasWithdrawalPin', state.hasWithdrawalPin);
+  }
 
-  // void _syncBankNotifier() {
-  //   final bankFromState = state.selectedBankDetails?.selectedBank;
-  //
-  //   if (selectedBankName.value != bankFromState) {
-  //     selectedBankName.value = bankFromState;
-  //   }
-  // }
+  Future<void> markPinAsCreated() async {
+    state = state.copyWith(hasWithdrawalPin: true);
+    await _persistFlag('hasWithdrawalPin', true);
+    try {
+      await read(authStateProvider.notifier).init();
+      syncWalletSetupFlagsFromAuth();
+    } catch (_) {
+      // Non-fatal — local state & storage are already correct.
+    }
+  }
+
+  void syncWalletSetupFlagsFromAuth() {
+    final authUser = read(authStateProvider).user;
+    if (authUser == null) return;
+    final authHasWallet = authUser.hasWallet;
+    final authHasPin = authUser.hasWithdrawalPin;
+
+    if (authHasWallet != state.hasWallet ||
+        authHasPin != state.hasWithdrawalPin) {
+      state = state.copyWith(
+        hasWallet: authHasWallet,
+        hasWithdrawalPin: authHasPin,
+      );
+      _persistWalletSetupStatusToStorage();
+    }
+  }
+
+  void ensureWalletFetched() {
+    Future.microtask(() {
+      syncWalletSetupFlagsFromAuth();
+
+      if (_walletFetchScheduledOrDone) return;
+      if (!state.hasWallet) return;
+      _walletFetchScheduledOrDone = true;
+      _attemptWalletFetch();
+    });
+  }
+
+  Future<void> _attemptWalletFetch() async {
+    final success = await fetchWallet();
+    if (!success) {
+      walletRetryTimer = Timer(const Duration(seconds: 5), _attemptWalletFetch);
+    }
+  }
+
+  Future<bool> fetchWallet() async {
+    state = state.copyWith(fetchWalletLoading: true, errorMessage: null);
+
+    final response = await _apiService.getWallet();
+
+    if (response.isSuccess && response.data != null) {
+      final data = response.data!;
+      final accountsRaw = data['bankAccounts'] as List<dynamic>? ?? [];
+
+      final parsedList = accountsRaw.map((acc) {
+        return BankDetails(
+          id: acc['_id'],
+          selectedBank: Bank(
+            id: 0,
+            code: acc['bankCode'] ?? '',
+            name: acc['bankName'],
+          ),
+          accountNumber: acc['accountNumber'],
+          accountHolderName: acc['accountName'],
+          phoneNumber: acc['phoneNumber'],
+          isDefault: acc['isDefault'] ?? false,
+        );
+      }).toList();
+
+      state = state.copyWith(
+        fetchWalletLoading: false,
+        hasWallet: true,
+        bankDetailsList: parsedList,
+      );
+      return true;
+    } else {
+      // Network/server hiccup — NOT evidence the wallet doesn't exist.
+      state = state.copyWith(fetchWalletLoading: false);
+      return false;
+    }
+  }
 
   Future<void> fetchBanks(BuildContext context) async {
     await runWithOverlay(context, () async {
@@ -71,6 +158,7 @@ class EditBankAccountViewModel extends StateNotifier<WalletState> {
         if (result.isSuccess && result.data != null) {
           final banks = result.data;
           state = state.copyWith(banks: banks, isLoading: false);
+          _syncSelectedBankWithFetchedList();
         } else {
           state = state.copyWith(
             isLoading: false,
@@ -98,16 +186,6 @@ class EditBankAccountViewModel extends StateNotifier<WalletState> {
           bankCode: state.selectedBankDetails?.selectedBank?.code ?? '',
         );
 
-        debugPrint(
-          "Account Number: ${state.selectedBankDetails?.accountNumber}",
-        );
-        debugPrint(
-          "Bank Code: ${state.selectedBankDetails?.selectedBank?.code}",
-        );
-        debugPrint(
-          "Bank Name: ${state.selectedBankDetails?.selectedBank?.name}",
-        );
-
         if (result.isSuccess && result.data != null) {
           final response = result.data!;
 
@@ -121,10 +199,6 @@ class EditBankAccountViewModel extends StateNotifier<WalletState> {
 
           accountNameController.text =
               state.selectedBankDetails?.accountHolderName ?? '';
-
-          debugPrint(
-            "Account Name: ${state.selectedBankDetails?.accountHolderName}",
-          );
 
           state = state.copyWith(isLoading: false);
         } else {
@@ -194,42 +268,9 @@ class EditBankAccountViewModel extends StateNotifier<WalletState> {
     state = state.copyWith(isDefault: value ?? false);
   }
 
-  Future<void> fetchWallet() async {
-    state = state.copyWith(fetchWalletLoading: true, errorMessage: null);
-
-    final response = await _apiService.getWallet();
-
-    if (response.isSuccess && response.data != null) {
-      final data = response.data!;
-      final accountsRaw = data['bankAccounts'] as List<dynamic>? ?? [];
-
-      final parsedList = accountsRaw.map((acc) {
-        return BankDetails(
-          id: acc['_id'],
-          // selectedBank: acc['bankName'],
-          selectedBank: Bank(id: 0, code: 'bankCode', name: acc['bankName']),
-          accountNumber: acc['accountNumber'],
-          accountHolderName: acc['accountName'],
-          phoneNumber: acc['phoneNumber'],
-          isDefault: acc['isDefault'],
-        );
-      }).toList();
-
-      state = state.copyWith(
-        fetchWalletLoading: false,
-        hasWallet: true,
-        bankDetailsList: parsedList,
-      );
-    } else {
-      state = state.copyWith(
-        fetchWalletLoading: false,
-        hasWallet: false,
-        bankDetailsList: [],
-      );
-    }
-  }
-
   void startEditBankAccount(BankDetails bankDetails) {
+    _originalEditBankDetails = bankDetails;
+
     accountNumberController.text = bankDetails.isEmpty
         ? ''
         : bankDetails.accountNumber;
@@ -239,15 +280,15 @@ class EditBankAccountViewModel extends StateNotifier<WalletState> {
     phoneNumberController.text = bankDetails.isEmpty
         ? ''
         : bankDetails.phoneNumber;
-    selectedBankName.value = bankDetails.isEmpty
-        ? null
-        : bankDetails.selectedBank;
 
     state = state.copyWith(
       selectedBankDetails: bankDetails,
       isDefault: !bankDetails.isEmpty && bankDetails.isDefault,
+      hasSubmitted: false,
       walletScreenState: WalletScreenState.editBankAccount,
     );
+
+    _syncSelectedBankWithFetchedList();
   }
 
   bool validateOnSubmit() {
@@ -285,37 +326,95 @@ class EditBankAccountViewModel extends StateNotifier<WalletState> {
       "phoneNumber": phoneNumberController.text,
     };
 
+    final wasWalletCreation = !state.hasWallet;
     bool isSuccess = false;
 
     if (!state.hasWallet) {
       // 1. No wallet exists, call create
       final res = await _apiService.createWallet(payload);
       isSuccess = res.isSuccess;
+      if (isSuccess) {
+        state = state.copyWith(hasWallet: true);
+        _persistFlag('hasWallet', true);
+        try {
+          await read(authStateProvider.notifier).init();
+          syncWalletSetupFlagsFromAuth();
+        } catch (_) {}
+      }
     } else if (state.selectedBankDetails?.isEmpty ?? true) {
       // 2. Wallet exists, adding a new account
       final res = await _apiService.addBankAccount(payload);
       isSuccess = res.isSuccess;
-
-      // If they checked default, we might need to set it after adding
       if (isSuccess && state.isDefault) {
-        // In a real app, you'd extract the new ID from the response to set it.
-        // For now, refreshing the wallet gets the updated data.
+        await fetchWallet();
+        final newAccount = state.bankDetailsList
+            .cast<BankDetails?>()
+            .firstWhere(
+              (b) =>
+                  b != null &&
+                  b.accountNumber == accountNumberController.text &&
+                  b.selectedBank?.name == (selectedBankName.value?.name ?? ''),
+              orElse: () => null,
+            );
+        if (newAccount != null && !newAccount.isDefault) {
+          final defaultRes = await _apiService.setDefaultBankAccount(
+            newAccount.id,
+          );
+          isSuccess = defaultRes.isSuccess;
+        }
       }
     } else {
-      // 3. Existing account "Edit" - Primarily handling the default checkbox
-      // If the API had an update endpoint, it would go here.
-      if (state.isDefault && state.selectedBankDetails != null) {
-        final res = await _apiService.setDefaultBankAccount(
+      // 3. Editing an existing account — partial update only
+      final original = _originalEditBankDetails;
+      final updatePayload = <String, dynamic>{};
+
+      if (original == null ||
+          accountNameController.text != original.accountHolderName) {
+        updatePayload['accountName'] = accountNameController.text;
+      }
+      if (original == null ||
+          accountNumberController.text != original.accountNumber) {
+        updatePayload['accountNumber'] = accountNumberController.text;
+      }
+      if (original == null ||
+          selectedBankName.value?.name != original.selectedBank?.name) {
+        if (selectedBankName.value != null) {
+          updatePayload['bankName'] = selectedBankName.value!.name;
+          updatePayload['bankCode'] = selectedBankName.value!.code;
+        }
+      }
+      if (original == null ||
+          phoneNumberController.text != original.phoneNumber) {
+        updatePayload['phoneNumber'] = phoneNumberController.text;
+      }
+
+      isSuccess = true;
+
+      if (updatePayload.isNotEmpty) {
+        final res = await _apiService.updateBankAccount(
           state.selectedBankDetails!.id,
+          updatePayload,
         );
         isSuccess = res.isSuccess;
-      } else {
-        isSuccess = true; // No actual endpoint to update fields provided
+      }
+
+      if (isSuccess && state.isDefault && !(original?.isDefault ?? false)) {
+        final defaultRes = await _apiService.setDefaultBankAccount(
+          state.selectedBankDetails!.id,
+        );
+        isSuccess = defaultRes.isSuccess;
       }
     }
 
     if (isSuccess) {
-      await fetchWallet(); // Refresh list
+      _originalEditBankDetails = null;
+      await fetchWallet();
+      state = state.copyWith(
+        selectedBankDetails: null,
+        walletScreenState: (wasWalletCreation && !state.hasWithdrawalPin)
+            ? WalletScreenState.setupPin
+            : WalletScreenState.addBankAccount,
+      );
       return true;
     } else {
       state = state.copyWith(
@@ -327,55 +426,89 @@ class EditBankAccountViewModel extends StateNotifier<WalletState> {
   }
 
   void setWalletScreenState(WalletScreenState newState) {
-    state = state.copyWith(walletScreenState: newState);
+    state = state.copyWith(
+      walletScreenState: newState,
+      selectedBankDetails: newState == WalletScreenState.editBankAccount
+          ? state.selectedBankDetails
+          : null,
+    );
   }
 
-  // void startEditBankAccount(BankDetails bankDetails) {
-  //   state = state.copyWith(
-  //     selectedBankDetails: bankDetails,
-  //     walletScreenState: WalletScreenState.editBankAccount,
-  //   );
-  // }
+  void setSellerWalletScreenState(SellerWalletScreenState newState) {
+    state = state.copyWith(
+      sellerWalletScreenState: newState,
+      selectedBankDetails: newState == SellerWalletScreenState.editBankAccount
+          ? state.selectedBankDetails
+          : null,
+    );
+  }
+
+  void _syncSelectedBankWithFetchedList() {
+    final targetName = state.selectedBankDetails?.selectedBank?.name;
+
+    if (targetName == null || targetName.isEmpty || state.banks.isEmpty) {
+      selectedBankName.value = null;
+      return;
+    }
+
+    final matches = state.banks.where(
+      (b) => b.name.toLowerCase() == targetName.toLowerCase(),
+    );
+    final match = matches.isNotEmpty ? matches.first : null;
+
+    selectedBankName.value = match;
+
+    if (match != null) {
+      state = state.copyWith(
+        selectedBankDetails: state.selectedBankDetails?.copyWith(
+          selectedBank: match,
+        ),
+      );
+    }
+  }
+
+  Future<void> navigateToPaymentSetup(BuildContext context) async {
+    await runWithOverlay(context, () async {
+      await Future.delayed(const Duration(seconds: 1), () {
+        syncWalletSetupFlagsFromAuth();
+
+        final hasWallet = state.hasWallet;
+        final hasPin = state.hasWithdrawalPin;
+
+        final targetState = (hasWallet && !hasPin)
+            ? WalletScreenState.setupPin
+            : WalletScreenState.addBankAccount;
+
+        setWalletScreenState(targetState);
+        read(globalNavigationViewModelProvider.notifier).setIndex(3);
+      });
+    }, spinner: SpinKitDualRing(color: AppColors.primaryDarkGreen));
+  }
+
+  Future<void> navigateToSellerPaymentSetup(BuildContext context) async {
+    await runWithOverlay(context, () async {
+      await Future.delayed(const Duration(seconds: 1), () {
+        syncWalletSetupFlagsFromAuth();
+
+        final hasWallet = state.hasWallet;
+        final hasPin = state.hasWithdrawalPin;
+
+        final targetState = (hasWallet && !hasPin)
+            ? SellerWalletScreenState.setupPin
+            : SellerWalletScreenState.addBankAccount;
+
+        setSellerWalletScreenState(targetState);
+        read(globalNavigationViewModelProvider.notifier).setIndex(3);
+      });
+    }, spinner: SpinKitDualRing(color: AppColors.primaryDarkGreen));
+  }
 
   void cancelEditBankAccount() {
+    _originalEditBankDetails = null;
     state = state.copyWith(
       selectedBankDetails: null,
       walletScreenState: WalletScreenState.addBankAccount,
     );
-  }
-
-  void updateBankDetails({
-    required String bankId,
-    required Bank newBankName,
-    required String newAccountNumber,
-    required String newAccountHolderName,
-    required String newPhoneNumber,
-    required bool newIsDefault,
-    // required WidgetRef ref,
-    // required WalletScreenState returnToState,
-  }) {
-    final updatedList = state.bankDetailsList.map((bank) {
-      if (bank.id == bankId) {
-        return bank.copyWith(
-          selectedBank: newBankName,
-          accountNumber: newAccountNumber,
-          accountHolderName: newAccountHolderName,
-          phoneNumber: newPhoneNumber,
-          isDefault: newIsDefault,
-          isEmpty: false,
-        );
-      } else if (newIsDefault == true) {
-        return bank.copyWith(isDefault: false);
-      }
-      return bank;
-    }).toList();
-
-    state = state.copyWith(
-      bankDetailsList: updatedList,
-      selectedBankDetails: null,
-      // walletScreenState: returnToState,
-    );
-    // ref.invalidate(editBankAccountProvider);
   }
 
   Future<void> clearBankDetails(String bankId, BuildContext context) async {
@@ -390,6 +523,10 @@ class EditBankAccountViewModel extends StateNotifier<WalletState> {
           isLoading: false,
           errorMessage: "Failed to delete account.",
         );
+        if (!context.mounted) return;
+        if (response.errorDescription != null) {
+          showErrorBanner(response.errorDescription!, context);
+        }
       }
     }, spinner: SpinKitDualRing(color: AppColors.primaryDarkGreen));
   }
@@ -401,60 +538,29 @@ class EditBankAccountViewModel extends StateNotifier<WalletState> {
     );
   }
 
-  // void clearBankDetails(String bankId) {
-  //   final clearedBankWasDefault = state.bankDetailsList
-  //       .firstWhere((b) => b.id == bankId)
-  //       .isDefault;
-  //
-  //   final updatedList = state.bankDetailsList.map((bank) {
-  //     if (bank.id == bankId) {
-  //       return BankDetails.empty(bankId);
-  //     }
-  //     return bank;
-  //   }).toList();
-  //
-  //   if (clearedBankWasDefault) {
-  //     final firstTile = updatedList.firstWhere(
-  //       (b) => b.id == '1',
-  //       orElse: () => updatedList.first,
-  //     );
-  //     if (firstTile.isEmpty) {
-  //       final listWithNewDefault = updatedList.map((bank) {
-  //         if (bank.id == firstTile.id) {
-  //           return bank.copyWith(isDefault: true);
-  //         }
-  //         return bank.copyWith(isDefault: false);
-  //       }).toList();
-  //       state = state.copyWith(
-  //         bankDetailsList: listWithNewDefault,
-  //         walletScreenState: WalletScreenState.addBankAccount,
-  //       );
-  //       return;
-  //     }
-  //   }
-  // }
-
-  // BankDetails? getDefaultBankAccount() {
-  //   // Find the first bank account that is marked as default.
-  //   final defaultBank = state.bankDetailsList.cast<BankDetails?>().firstWhere(
-  //     (bank) => bank != null && bank.isDefault,
-  //     orElse: () => null,
-  //   );
-  //
-  //   // If we find a default bank but it's empty, we should treat it as needing setup.
-  //   if (defaultBank != null && defaultBank.isEmpty) {
-  //     return null;
-  //   }
-  //
-  //   return defaultBank;
-  // }
-
   void navigateBackToList(WidgetRef ref) {
     ref.read(editBankAccountProvider.notifier).cancelEditBankAccount();
   }
 }
 
 final editBankAccountProvider =
-    StateNotifierProvider<EditBankAccountViewModel, WalletState>(
-      (ref) => EditBankAccountViewModel(ref.read),
-    );
+    StateNotifierProvider<EditBankAccountViewModel, WalletState>((ref) {
+      ref.watch(authStateProvider.select((s) => s.user?.id));
+
+      final notifier = EditBankAccountViewModel(ref.read);
+
+      ref.listen<({bool? hasWallet, bool? hasWithdrawalPin})>(
+        authStateProvider.select(
+          (s) => (
+            hasWallet: s.user?.hasWallet,
+            hasWithdrawalPin: s.user?.hasWithdrawalPin,
+          ),
+        ),
+        (previous, next) {
+          Future.microtask(() => notifier.syncWalletSetupFlagsFromAuth());
+        },
+        fireImmediately: true,
+      );
+
+      return notifier;
+    });

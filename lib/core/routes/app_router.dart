@@ -23,6 +23,7 @@ import '../../features/buyer/presentation/views/cart_details_screens/buyer_cart_
 import '../../features/buyer/presentation/views/cart_details_screens/customer_info_screen.dart';
 import '../../features/buyer/presentation/views/cart_details_screens/delivery_details_screen.dart';
 import '../../features/buyer/presentation/views/cart_details_screens/order_confirmation_screen.dart';
+import '../../features/rider/navigation/rider_main_screen.dart';
 import '../../features/rider/presentation/views/rider_settings_screens/rider_settings_main_screen.dart';
 import '../../shared/screens/account_creation_screen.dart';
 import '../../shared/screens/change_password_screen.dart';
@@ -33,7 +34,6 @@ import '../../shared/screens/onboarding_screen.dart';
 import '../../shared/screens/payment_method_setup_screen.dart';
 import '../../shared/screens/reset_password_email_verification_screen.dart';
 import '../../shared/screens/reset_password_enter_email_screen.dart';
-import '../../shared/screens/rider_main_screen.dart';
 import '../../shared/screens/role_selection_screen.dart';
 import '../../shared/screens/welcome_screen.dart';
 import '../auth/auth_state.dart';

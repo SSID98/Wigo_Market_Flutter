@@ -9,7 +9,6 @@ import 'package:wigo_flutter/shared/widgets/custom_dropdown_field2.dart';
 import 'package:wigo_flutter/shared/widgets/custom_loading_overlay.dart';
 
 import '../../core/constants/app_colors.dart';
-import '../../core/constants/url.dart';
 import '../../core/local/local_user_controller.dart';
 import '../models/bank_model.dart';
 import '../viewmodels/bank_viewmodel.dart';
@@ -40,8 +39,8 @@ class PaymentMethodSetupScreen extends HookConsumerWidget {
         child: SingleChildScrollView(
           child: Stack(
             children: [
-              Image.network(
-                '$networkImageUrl/onboardingRiderMobile.png',
+              Image.asset(
+                AppAssets.images.onboardingRiderMobile.path,
                 fit: BoxFit.cover,
                 color: AppColors.backGroundOverlay,
                 colorBlendMode: BlendMode.overlay,
@@ -120,8 +119,8 @@ class PaymentMethodSetupScreen extends HookConsumerWidget {
       body: SafeArea(
         child: Stack(
           children: [
-            Image.network(
-              '$networkImageUrl/onboardingRiderWeb.png',
+            Image.asset(
+              AppAssets.images.onboardingRiderWeb.path,
               fit: BoxFit.cover,
               color: AppColors.backGroundOverlay,
               colorBlendMode: BlendMode.overlay,

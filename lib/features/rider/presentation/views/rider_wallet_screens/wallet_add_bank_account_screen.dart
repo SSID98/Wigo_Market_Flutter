@@ -77,16 +77,36 @@ class AddBankAccountScreen extends ConsumerWidget {
               ),
             ),
             const SizedBox(height: 25),
-            ...bankList.map(
-              (bank) => BankDetailsTile(
-                bank: bank,
+            ...bankList.asMap().entries.map(
+              (entry) => BankDetailsTile(
+                key: ValueKey(entry.value.id),
+                bank: entry.value,
                 isWeb: isWeb,
                 showDelete: true,
-                onEdit: () => notifier.startEditBankAccount(bank),
-                onClear: () =>
-                    _showClearConfirmationDialog(context, notifier, bank.id),
+                position: entry.key + 1,
+                onEdit: () => notifier.startEditBankAccount(entry.value),
+                onClear: () => _showClearConfirmationDialog(
+                  context,
+                  notifier,
+                  entry.value.id,
+                ),
               ),
             ),
+            if (bankList.length < 3) ...[
+              const SizedBox(height: 20),
+              CustomButton(
+                text: 'Add Bank Account',
+                onPressed: () => notifier.startEditBankAccount(
+                  BankDetails.empty(
+                    DateTime.now().millisecondsSinceEpoch.toString(),
+                  ),
+                ),
+                fontSize: isWeb ? 18 : 14,
+                fontWeight: FontWeight.w500,
+                height: isWeb ? 48 : 40,
+                width: double.infinity,
+              ),
+            ],
           ],
         ),
       ),

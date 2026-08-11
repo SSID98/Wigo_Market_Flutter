@@ -6,7 +6,6 @@ import 'package:wigo_flutter/shared/viewmodels/reset_password_viewmodel.dart';
 import 'package:wigo_flutter/shared/widgets/bottom_text.dart';
 
 import '../../core/constants/app_colors.dart';
-import '../../core/constants/url.dart';
 import '../../core/utils/context_extensions.dart';
 import '../../core/utils/helper_methods_classes.dart';
 import '../../gen/assets.gen.dart';
@@ -43,8 +42,8 @@ class ResetPasswordEmailVerificationScreen extends ConsumerWidget {
       body: Stack(
         fit: StackFit.expand,
         children: [
-          Image.network(
-            '$networkImageUrl/login.png',
+          Image.asset(
+            AppAssets.images.login.path,
             fit: BoxFit.cover,
             errorBuilder:
                 (
@@ -135,7 +134,7 @@ class ResetPasswordEmailVerificationScreen extends ConsumerWidget {
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(imageBorderRadius),
                         image: DecorationImage(
-                          image: NetworkImage('$networkImageUrl/login.png'),
+                          image: AssetImage(AppAssets.images.login.path),
                           fit: BoxFit.cover,
                         ),
                       ),
