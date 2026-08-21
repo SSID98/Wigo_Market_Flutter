@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:wigo_flutter/core/utils/helper_methods_classes.dart';
@@ -300,6 +301,7 @@ class ProductVariantScreen extends ConsumerWidget {
               onChanged: (val) => vm.updateSellingPrice(val),
               controller: controllers["sellingPrice"],
               keyboardType: TextInputType.number,
+              inputFormatters: [FilteringTextInputFormatter.digitsOnly],
             );
           case 3:
             return CustomTextField(
@@ -308,6 +310,7 @@ class ProductVariantScreen extends ConsumerWidget {
               contentPadding: EdgeInsets.only(left: 10),
               onChanged: (val) => vm.updateStockQuantity(val),
               keyboardType: TextInputType.number,
+              inputFormatters: [FilteringTextInputFormatter.digitsOnly],
               controller: controllers["stockQuantity"],
             );
           case 4:

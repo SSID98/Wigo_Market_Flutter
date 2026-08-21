@@ -318,3 +318,5 @@ final searchFocusProvider = Provider<FocusNode>((ref) {
   ref.onDispose(node.dispose);
   return node;
 });
+
+final specsPageProvider = StateProvider<int>((ref) => 1);

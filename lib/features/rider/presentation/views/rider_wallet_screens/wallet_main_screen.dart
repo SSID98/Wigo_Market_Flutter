@@ -2,12 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:wigo_flutter/features/rider/presentation/views/rider_wallet_screens/wallet_add_bank_account_screen.dart';
-import 'package:wigo_flutter/features/rider/presentation/views/rider_wallet_screens/wallet_edit_bank_account_screen.dart';
 import 'package:wigo_flutter/features/rider/presentation/views/rider_wallet_screens/wallet_overview_transactions_screen.dart';
-import 'package:wigo_flutter/features/rider/presentation/views/rider_wallet_screens/wallet_payment_methods_screen.dart';
-import 'package:wigo_flutter/features/rider/presentation/views/rider_wallet_screens/wallet_withdrawal_screen.dart';
 import 'package:wigo_flutter/features/rider/viewmodels/edit_bank_account_viewmodel.dart';
+import 'package:wigo_flutter/shared/screens/wallet_screens/wallet_add_bank_account_screen.dart';
+import 'package:wigo_flutter/shared/screens/wallet_screens/wallet_edit_bank_account_screen.dart';
+import 'package:wigo_flutter/shared/screens/wallet_screens/wallet_payment_methods_screen.dart';
+import 'package:wigo_flutter/shared/screens/wallet_screens/wallet_withdrawal_screen.dart';
 import 'package:wigo_flutter/shared/widgets/custom_button.dart';
 
 import '../../../../../core/constants/app_colors.dart';

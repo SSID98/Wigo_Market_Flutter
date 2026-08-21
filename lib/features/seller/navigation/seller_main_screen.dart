@@ -5,43 +5,37 @@ import 'package:wigo_flutter/features/seller/presentation/views/order_management
 import 'package:wigo_flutter/features/seller/presentation/views/product_management_screen.dart';
 import 'package:wigo_flutter/features/seller/presentation/views/seller_dashboard_screen.dart';
 import 'package:wigo_flutter/features/seller/presentation/views/seller_settings_screens/seller_settings_main_screen.dart';
+import 'package:wigo_flutter/features/seller/presentation/views/seller_wallet_screens/seller_wallet_main_screen.dart';
 
-import '../../../../core/constants/app_colors.dart';
-import '../../../../gen/assets.gen.dart';
-import '../../../../shared/widgets/dashboard_widgets/custom_app_bar.dart';
-import '../../../../shared/widgets/dashboard_widgets/web_side_bar.dart';
-import '../../../rider/viewmodels/global_navigation_viewmodel.dart';
-import 'seller_wallet_screens/earning_transactions_screen.dart';
+import '../../../core/constants/app_colors.dart';
+import '../../../core/utils/context_extensions.dart';
+import '../../../gen/assets.gen.dart';
+import '../../../shared/widgets/dashboard_widgets/custom_app_bar.dart';
+import '../../../shared/widgets/dashboard_widgets/web_side_bar.dart';
+import '../../rider/viewmodels/global_navigation_viewmodel.dart';
 
-class SellerMainScreen extends ConsumerStatefulWidget {
+final sellerNavigatorKeysProvider = Provider<List<GlobalKey<NavigatorState>>>((
+  ref,
+) {
+  return List.generate(5, (_) => GlobalKey<NavigatorState>());
+});
+
+class SellerMainScreen extends ConsumerWidget {
   const SellerMainScreen({super.key});
 
   @override
-  ConsumerState<SellerMainScreen> createState() => _SellerMainScreenState();
-}
-
-class _SellerMainScreenState extends ConsumerState<SellerMainScreen> {
-  final List<GlobalKey<NavigatorState>> _navigatorKeys = [
-    GlobalKey<NavigatorState>(),
-    GlobalKey<NavigatorState>(),
-    GlobalKey<NavigatorState>(),
-    GlobalKey<NavigatorState>(),
-    GlobalKey<NavigatorState>(),
-    GlobalKey<NavigatorState>(),
-  ];
-
-  @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final navigatorKeys = ref.watch(sellerNavigatorKeysProvider);
     final navState = ref.watch(globalNavigationViewModelProvider);
     final navNotifier = ref.read(globalNavigationViewModelProvider.notifier);
-    final isWeb = MediaQuery.of(context).size.width > 600;
+    final isWeb = context.isWeb;
     const hiddenAppBarIndices = [4];
 
     return PopScope(
       canPop: false,
       onPopInvokedWithResult: (didPop, result) async {
         final currentNavigator =
-            _navigatorKeys[navState.currentIndex].currentState!;
+            navigatorKeys[navState.currentIndex].currentState!;
         if (currentNavigator.canPop()) {
           currentNavigator.pop();
           return;
@@ -67,14 +61,31 @@ class _SellerMainScreenState extends ConsumerState<SellerMainScreen> {
                           child: IndexedStack(
                             index: navState.currentIndex,
                             children: [
-                              _buildNavigator(0, SellerDashboardScreen()),
-                              _buildNavigator(1, OrderManagementScreen()),
-                              _buildNavigator(2, ProductManagementScreen()),
+                              _buildNavigator(
+                                0,
+                                SellerDashboardScreen(),
+                                navigatorKeys,
+                              ),
+                              _buildNavigator(
+                                1,
+                                OrderManagementScreen(),
+                                navigatorKeys,
+                              ),
+                              _buildNavigator(
+                                2,
+                                ProductManagementScreen(),
+                                navigatorKeys,
+                              ),
                               _buildNavigator(
                                 3,
-                                EarningsAndTransactionsScreen(),
+                                SellerWalletMainScreen(),
+                                navigatorKeys,
                               ),
-                              _buildNavigator(4, SellerSettingsMainScreen()),
+                              _buildNavigator(
+                                4,
+                                SellerSettingsMainScreen(),
+                                navigatorKeys,
+                              ),
                             ],
                           ),
                         ),
@@ -86,24 +97,34 @@ class _SellerMainScreenState extends ConsumerState<SellerMainScreen> {
             : IndexedStack(
                 index: navState.currentIndex,
                 children: [
-                  _buildNavigator(0, SellerDashboardScreen()),
-                  _buildNavigator(1, OrderManagementScreen()),
-                  _buildNavigator(2, ProductManagementScreen()),
-                  _buildNavigator(3, EarningsAndTransactionsScreen()),
-                  _buildNavigator(4, SellerSettingsMainScreen()),
+                  _buildNavigator(0, SellerDashboardScreen(), navigatorKeys),
+                  _buildNavigator(1, OrderManagementScreen(), navigatorKeys),
+                  _buildNavigator(2, ProductManagementScreen(), navigatorKeys),
+                  _buildNavigator(3, SellerWalletMainScreen(), navigatorKeys),
+                  _buildNavigator(4, SellerSettingsMainScreen(), navigatorKeys),
                 ],
               ),
 
         bottomNavigationBar: !isWeb
-            ? _buildBottomNavBar(context, navState, navNotifier)
+            ? _buildBottomNavBar(
+                context,
+                ref,
+                navState,
+                navNotifier,
+                navigatorKeys,
+              )
             : null,
       ),
     );
   }
 
-  Widget _buildNavigator(int index, Widget child) {
+  Widget _buildNavigator(
+    int index,
+    Widget child,
+    List<GlobalKey<NavigatorState>> navigatorKeys,
+  ) {
     return Navigator(
-      key: _navigatorKeys[index],
+      key: navigatorKeys[index],
       onGenerateRoute: (settings) {
         return MaterialPageRoute(builder: (_) => child);
       },
@@ -112,8 +133,10 @@ class _SellerMainScreenState extends ConsumerState<SellerMainScreen> {
 
   Widget _buildBottomNavBar(
     BuildContext context,
+    WidgetRef ref,
     GlobalNavigationState navState,
     GlobalNavigationViewModel navNotifier,
+    List<GlobalKey<NavigatorState>> navigatorKeys,
   ) {
     List<String> icons = [
       AppAssets.icons.home2.path,
@@ -130,9 +153,9 @@ class _SellerMainScreenState extends ConsumerState<SellerMainScreen> {
           backgroundColor: AppColors.backgroundWhite,
           currentIndex: navState.currentIndex,
           onTap: (value) {
-            if (value < _navigatorKeys.length) {
+            if (value < navigatorKeys.length) {
               if (navState.currentIndex == value) {
-                _navigatorKeys[value].currentState?.popUntil((r) => r.isFirst);
+                navigatorKeys[value].currentState?.popUntil((r) => r.isFirst);
               } else {
                 ref
                     .read(globalNavigationViewModelProvider.notifier)

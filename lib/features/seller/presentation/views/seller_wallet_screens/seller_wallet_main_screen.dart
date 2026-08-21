@@ -3,12 +3,12 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:wigo_flutter/core/utils/context_extensions.dart';
-import 'package:wigo_flutter/features/rider/presentation/views/rider_wallet_screens/wallet_add_bank_account_screen.dart';
-import 'package:wigo_flutter/features/rider/presentation/views/rider_wallet_screens/wallet_edit_bank_account_screen.dart';
-import 'package:wigo_flutter/features/rider/presentation/views/rider_wallet_screens/wallet_payment_methods_screen.dart';
-import 'package:wigo_flutter/features/rider/presentation/views/rider_wallet_screens/wallet_withdrawal_screen.dart';
 import 'package:wigo_flutter/features/rider/viewmodels/edit_bank_account_viewmodel.dart';
 import 'package:wigo_flutter/features/seller/presentation/views/seller_wallet_screens/earning_transactions_screen.dart';
+import 'package:wigo_flutter/shared/screens/wallet_screens/wallet_add_bank_account_screen.dart';
+import 'package:wigo_flutter/shared/screens/wallet_screens/wallet_edit_bank_account_screen.dart';
+import 'package:wigo_flutter/shared/screens/wallet_screens/wallet_payment_methods_screen.dart';
+import 'package:wigo_flutter/shared/screens/wallet_screens/wallet_withdrawal_screen.dart';
 import 'package:wigo_flutter/shared/widgets/custom_button.dart';
 
 import '../../../../../core/constants/app_colors.dart';
@@ -162,7 +162,7 @@ class SellerWalletMainScreen extends ConsumerWidget {
       height: isWeb ? 48 : 36,
       color: AppColors.backgroundWhite,
       child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        mainAxisAlignment: MainAxisAlignment.spaceAround,
         children: List.generate(filters.length, (index) {
           final filter = filters[index];
           return _buildFilterTab(filter, filterNames[filter]!, notifier, isWeb);
@@ -181,27 +181,32 @@ class SellerWalletMainScreen extends ConsumerWidget {
       builder: (context, ref, child) {
         final state = ref.watch(editBankAccountProvider);
         final isSelected = _getEarningFilter(state) == filter;
-        return GestureDetector(
-          onTap: () async {
-            if (filter == EarningFilter.paymentMethods) {
-              notifier.navigateToSellerPaymentSetup(context);
-            } else {
-              notifier.setSellerWalletScreenState(
-                _getWalletScreenStateForFilter(filter, state),
-              );
-            }
-          },
-          child: Container(
-            color: isSelected
-                ? AppColors.primaryLightGreen
-                : Colors.transparent,
-            padding: const EdgeInsets.symmetric(horizontal: 26, vertical: 10),
-            child: Text(
-              name,
-              style: GoogleFonts.hind(
-                fontWeight: FontWeight.w500,
-                fontSize: isWeb ? 18 : 12,
-                color: AppColors.textDarkDarkerGreen,
+        return Expanded(
+          child: GestureDetector(
+            onTap: () async {
+              if (filter == EarningFilter.paymentMethods) {
+                notifier.navigateToSellerPaymentSetup(context);
+              } else {
+                notifier.setSellerWalletScreenState(
+                  _getWalletScreenStateForFilter(filter, state),
+                );
+              }
+            },
+            child: Container(
+              color: isSelected
+                  ? AppColors.primaryLightGreen
+                  : Colors.transparent,
+              padding: const EdgeInsets.symmetric(horizontal: 46, vertical: 10),
+              child: Center(
+                child: Text(
+                  name,
+                  overflow: TextOverflow.ellipsis,
+                  style: GoogleFonts.hind(
+                    fontWeight: FontWeight.w500,
+                    fontSize: isWeb ? 18 : 13,
+                    color: AppColors.textDarkDarkerGreen,
+                  ),
+                ),
               ),
             ),
           ),

@@ -36,12 +36,8 @@ class SellerDashboardScreen extends ConsumerWidget {
         ? SetupStatus.completed
         : SetupStatus.pending;
     final storeStatus = hasStore ? SetupStatus.completed : SetupStatus.pending;
-    final bothCompleted = hasWallet == true && hasWalletPin == true && hasStore;
-    final double setupProgress = bothCompleted
-        ? 1.0
-        : hasWallet
-        ? 0.7
-        : 0.2;
+    final walletCompleted = hasWallet == true;
+    final double setupProgress = walletCompleted ? 0.1 : 0.7;
 
     final steps = _buildSteps(
       paymentStatus: paymentStatus,
@@ -56,7 +52,7 @@ class SellerDashboardScreen extends ConsumerWidget {
             context,
             steps,
             setupProgress,
-            bothCompleted,
+            walletCompleted,
             viewModel,
           )
         : _buildMobileLayout(
@@ -65,7 +61,7 @@ class SellerDashboardScreen extends ConsumerWidget {
             context,
             steps,
             setupProgress,
-            bothCompleted,
+            walletCompleted,
             viewModel,
           );
   }
@@ -112,7 +108,7 @@ class SellerDashboardScreen extends ConsumerWidget {
     BuildContext context,
     List<AccountSetupStep> steps,
     double setupProgress,
-    bool bothCompleted,
+    bool walletCompleted,
     SellerDashboardViewModel viewModel,
   ) {
     return SingleChildScrollView(
@@ -124,13 +120,13 @@ class SellerDashboardScreen extends ConsumerWidget {
           children: [
             const SizedBox(height: 10),
             _buildHeader(ref: ref),
-            if (!bothCompleted)
+            if (!walletCompleted)
               AccountSetup(
                 title: 'Complete Your Account Setup',
                 subtitle:
                     'You\'re almost there! Add your store details and payment info to start selling on WIGOMARKET.',
                 steps: steps,
-                progress: 0.4,
+                progress: setupProgress,
                 isSeller: true,
                 onCompletePressed: () =>
                     viewModel.navigateToSellerPaymentSetup(context, ref),
@@ -154,7 +150,7 @@ class SellerDashboardScreen extends ConsumerWidget {
     BuildContext context,
     List<AccountSetupStep> steps,
     double setupProgress,
-    bool bothCompleted,
+    bool walletCompleted,
     SellerDashboardViewModel viewModel,
   ) {
     return SafeArea(
@@ -166,7 +162,7 @@ class SellerDashboardScreen extends ConsumerWidget {
             children: [
               _buildHeader(ref: ref),
               const SizedBox(height: 10.0),
-              if (!bothCompleted)
+              if (!walletCompleted)
                 AccountSetup(
                   title: 'Complete Your Account Setup',
                   subtitle:

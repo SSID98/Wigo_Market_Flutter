@@ -7,12 +7,13 @@ import 'package:wigo_flutter/shared/widgets/custom_banner.dart';
 import 'package:wigo_flutter/shared/widgets/custom_button.dart';
 import 'package:wigo_flutter/shared/widgets/custom_text_field.dart';
 
-import '../../../../../core/constants/app_colors.dart';
-import '../../../../../core/utils/context_extensions.dart';
-import '../../../../../core/utils/validation_utils.dart';
-import '../../../../../gen/assets.gen.dart';
-import '../../../models/wallet_state.dart';
-import '../../../viewmodels/wallet_withdrawal_viewmodel.dart';
+import '../../../core/constants/app_colors.dart';
+import '../../../core/utils/context_extensions.dart';
+import '../../../core/utils/validation_utils.dart';
+import '../../../features/rider/models/wallet_state.dart';
+import '../../../features/rider/viewmodels/wallet_withdrawal_viewmodel.dart';
+import '../../../features/seller/presentation/views/seller_wallet_screens/seller_wallet_main_screen.dart';
+import '../../../gen/assets.gen.dart';
 
 class PaymentMethodScreen extends ConsumerWidget {
   const PaymentMethodScreen({super.key});
@@ -240,6 +241,9 @@ class PaymentMethodScreen extends ConsumerWidget {
                     Navigator.of(dialogContext).pop();
                     notifier.setWalletScreenState(
                       WalletScreenState.addBankAccount,
+                    );
+                    notifier.setSellerWalletScreenState(
+                      SellerWalletScreenState.addBankAccount,
                     );
                   },
                   fontSize: context.isWeb ? 18 : 12,

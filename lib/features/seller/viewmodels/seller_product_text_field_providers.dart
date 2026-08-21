@@ -41,5 +41,14 @@ final multipleProductTextControllersProvider =
         "productDescription": TextEditingController(
           text: state.productDescription,
         ),
+        "oS": TextEditingController(text: state.oS ?? ''),
+        "processorType": TextEditingController(text: state.processorType ?? ''),
+        "displayResolution": TextEditingController(
+          text: state.displayResolution ?? '',
+        ),
+        "screenSize": TextEditingController(text: state.screenSize ?? ''),
+        "dimensions": TextEditingController(text: state.dimensions ?? ''),
+        "graphicsCard": TextEditingController(text: state.graphicsCard ?? ''),
+        "battery": TextEditingController(text: state.battery ?? ''),
       };
     });

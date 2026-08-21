@@ -10,8 +10,8 @@ import 'package:wigo_flutter/features/buyer/presentation/views/privacy_policy_sc
 import 'package:wigo_flutter/features/buyer/presentation/views/refund_policy_screen.dart';
 import 'package:wigo_flutter/features/buyer/presentation/views/saved_product_view.dart';
 import 'package:wigo_flutter/features/buyer/presentation/views/search_results_view.dart';
+import 'package:wigo_flutter/features/seller/navigation/seller_main_screen.dart';
 import 'package:wigo_flutter/features/seller/presentation/views/business_info_screen.dart';
-import 'package:wigo_flutter/features/seller/presentation/views/seller_main_screen.dart';
 import 'package:wigo_flutter/shared/screens/support_screen.dart';
 import 'package:wigo_flutter/splash_screen.dart';
 

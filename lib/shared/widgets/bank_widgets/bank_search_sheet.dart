@@ -35,7 +35,6 @@ class BankSearchSheetState extends State<BankSearchSheet> {
           children: [
             const SizedBox(height: 10),
 
-            // 🔍 Search Field
             Padding(
               padding: const EdgeInsets.all(12.0),
               child: CustomSearchField(
@@ -45,7 +44,7 @@ class BankSearchSheetState extends State<BankSearchSheet> {
                 borderColor: AppColors.borderColor1,
                 hintStyle: WidgetStateProperty.all(
                   GoogleFonts.hind(
-                    fontSize: 16,
+                    fontSize: 14,
                     fontWeight: FontWeight.w400,
                     color: AppColors.textBlackGrey,
                   ),
@@ -56,23 +55,6 @@ class BankSearchSheetState extends State<BankSearchSheet> {
                 },
               ),
             ),
-            // Padding(
-            //   padding: const EdgeInsets.all(12),
-            //   child: TextField(
-            //     decoration: InputDecoration(
-            //       hintText: 'Search bank...',
-            //       prefixIcon: Icon(Icons.search),
-            //       border: OutlineInputBorder(
-            //         borderRadius: BorderRadius.circular(8),
-            //       ),
-            //     ),
-            //     onChanged: (val) {
-            //       setState(() => query = val);
-            //     },
-            //   ),
-            // ),
-
-            // 📋 List
             Expanded(
               child: ListView.builder(
                 itemCount: filteredBanks.length,
@@ -83,7 +65,7 @@ class BankSearchSheetState extends State<BankSearchSheet> {
                     title: Text(
                       bank.name,
                       style: GoogleFonts.hind(
-                        fontSize: 16,
+                        fontSize: 14,
                         fontWeight: FontWeight.w400,
                         color: AppColors.textBlackGrey,
                       ),

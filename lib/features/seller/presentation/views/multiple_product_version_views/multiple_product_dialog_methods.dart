@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -75,7 +76,7 @@ Future<void> showColorPalette({
               final hex =
                   '#${tempColor.toARGB32().toRadixString(16).padLeft(8, '0').substring(2).toUpperCase()}';
               onColorPicked(hex);
-              Navigator.of(dialogContext).pop(); // Close dialog
+              Navigator.of(dialogContext).pop();
             },
           ),
         ],
@@ -167,7 +168,6 @@ Future<void> showEditVariantDialog(
                       context: context,
                       isWeb: isWeb,
                       onSelect: (name, hex) {
-                        //Update the LOCAL dialog state
                         setDialogState(() {
                           localColorName = name;
                           localColorHex = hex;
@@ -176,8 +176,6 @@ Future<void> showEditVariantDialog(
                     ),
                   ],
                 ),
-
-                //size
                 if (!localIsCustomSize) ...[
                   MenuAnchor(
                     builder: (context, controller, child) {
@@ -208,8 +206,18 @@ Future<void> showEditVariantDialog(
                 ] else ...[
                   _dialogInputRow("Custom Size", sizeController),
                 ],
-                _dialogInputRow("Price (₦)", priceController),
-                _dialogInputRow("Stock Qty", stockController),
+                _dialogInputRow(
+                  "Price (₦)",
+                  priceController,
+                  keyboardType: TextInputType.number,
+                  inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+                ),
+                _dialogInputRow(
+                  "Stock Qty",
+                  stockController,
+                  keyboardType: TextInputType.number,
+                  inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+                ),
                 _dialogInputRow("SKU", skuController),
 
                 const SizedBox(height: 20),
@@ -307,7 +315,12 @@ Widget _dialogRow({
   );
 }
 
-Widget _dialogInputRow(String label, TextEditingController controller) {
+Widget _dialogInputRow(
+  String label,
+  TextEditingController controller, {
+  TextInputType? keyboardType,
+  List<TextInputFormatter>? inputFormatters,
+}) {
   return IntrinsicHeight(
     child: Container(
       decoration: BoxDecoration(
@@ -344,6 +357,8 @@ Widget _dialogInputRow(String label, TextEditingController controller) {
             child: TextField(
               controller: controller,
               decoration: const InputDecoration(border: InputBorder.none),
+              keyboardType: keyboardType,
+              inputFormatters: inputFormatters,
             ),
           ),
         ],

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:wigo_flutter/features/seller/presentation/views/multiple_product_version_views/product_variant_screen.dart';
 import 'package:wigo_flutter/features/seller/viewmodels/mulitple_products_viewmodel.dart';
@@ -12,7 +13,7 @@ import '../../../../../core/utils/helper_methods_classes.dart';
 import '../../../../../gen/assets.gen.dart';
 import '../../../../../shared/widgets/custom_text_field.dart';
 import '../../../models/multiple_products_state.dart';
-import '../../../models/product_category.dart';
+import '../../../viewmodels/categories_provider.dart';
 import '../../../viewmodels/seller_product_task_viewmodel.dart';
 import '../../widgets/step_progress_indicator.dart';
 
@@ -28,7 +29,7 @@ class MultipleProductInfoScreen extends ConsumerWidget {
       canPop: true,
       onPopInvokedWithResult: (didPop, result) {
         if (didPop) {
-          resetMultipleProductFlow(ref);
+          vm.reset();
         }
       },
       child: Padding(
@@ -79,8 +80,8 @@ class MultipleProductInfoScreen extends ConsumerWidget {
       return '${state.category} > ${state.subCategory}';
     }
 
+    final categoriesAsync = ref.watch(categoriesProvider);
     final query = ref.watch(categorySearchQueryProvider);
-    final filteredCategories = filterCategories(allCategories, query);
     final searchController = ref.watch(searchControllerProvider);
     final isSearching = query.isNotEmpty;
     final controllers = ref.watch(multipleProductTextControllersProvider);
@@ -160,19 +161,17 @@ class MultipleProductInfoScreen extends ConsumerWidget {
                             return MenuAnchor(
                               builder: (context, controller, child) {
                                 return GestureDetector(
-                                  onTap: () {
-                                    controller.isOpen
-                                        ? controller.close()
-                                        : controller.open();
-                                  },
+                                  onTap: () => controller.isOpen
+                                      ? controller.close()
+                                      : controller.open(),
                                   child: AbsorbPointer(
                                     child: CustomTextField(
                                       enabled: false,
                                       label: 'Category',
                                       hintText: getCategoryDisplay(state),
-                                      hintTextColor: state.category != null
-                                          ? AppColors.textBlack
-                                          : AppColors.textBodyText,
+                                      hintTextColor: state.category == null
+                                          ? AppColors.textBodyText
+                                          : AppColors.textBlack,
                                       contentPadding: EdgeInsets.only(
                                         left: 10,
                                         top: 15,
@@ -187,33 +186,17 @@ class MultipleProductInfoScreen extends ConsumerWidget {
                                   ),
                                 );
                               },
-                              style: MenuStyle(
-                                backgroundColor: WidgetStateProperty.all(
-                                  AppColors.backgroundWhite,
-                                ),
-                                elevation: WidgetStateProperty.all(6),
-                                shape: WidgetStateProperty.all(
-                                  RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(8),
-                                  ),
-                                ),
-                                padding: WidgetStateProperty.all(
-                                  const EdgeInsets.symmetric(
-                                    vertical: 8,
-                                    horizontal: 16,
-                                  ),
-                                ),
-                              ),
+                              style: anchorMenuStyle(),
                               menuChildren: [
                                 Builder(
                                   builder: (menuContext) {
-                                    final controller = MenuController.maybeOf(
-                                      menuContext,
-                                    );
+                                    final menuController =
+                                        MenuController.maybeOf(menuContext);
                                     return Column(
                                       crossAxisAlignment:
                                           CrossAxisAlignment.start,
                                       children: [
+                                        // Header
                                         Padding(
                                           padding: const EdgeInsets.all(8.0),
                                           child: Row(
@@ -229,22 +212,19 @@ class MultipleProductInfoScreen extends ConsumerWidget {
                                                   fontSize: 16,
                                                 ),
                                               ),
-                                              const SizedBox(width: 15),
                                               GestureDetector(
+                                                onTap: () =>
+                                                    menuController?.close(),
                                                 child: const Icon(
                                                   Icons.close,
                                                   size: 30,
                                                 ),
-                                                onTap: () {
-                                                  controller?.close();
-                                                },
                                               ),
                                             ],
                                           ),
                                         ),
-                                        Divider(),
+                                        const Divider(),
                                         const SizedBox(height: 10),
-                                        // 1. Embedded Search Field
                                         Padding(
                                           padding: const EdgeInsets.symmetric(
                                             horizontal: 8.0,
@@ -257,19 +237,17 @@ class MultipleProductInfoScreen extends ConsumerWidget {
                                               searchController:
                                                   searchController,
                                               hintText: 'Search for a category',
-                                              onChanged: (val) {
-                                                ref
-                                                        .read(
-                                                          categorySearchQueryProvider
-                                                              .notifier,
-                                                        )
-                                                        .state =
-                                                    val;
-                                              },
+                                              onChanged: (val) =>
+                                                  ref
+                                                          .read(
+                                                            categorySearchQueryProvider
+                                                                .notifier,
+                                                          )
+                                                          .state =
+                                                      val,
                                             ),
                                           ),
                                         ),
-
                                         const SizedBox(height: 8),
                                         Text(
                                           "All Categories",
@@ -280,164 +258,267 @@ class MultipleProductInfoScreen extends ConsumerWidget {
                                           ),
                                         ),
                                         const SizedBox(height: 8),
-                                        if (filteredCategories.isEmpty)
-                                          Padding(
+                                        categoriesAsync.when(
+                                          loading: () => const Padding(
                                             padding: EdgeInsets.all(16),
-                                            child: Text(
-                                              "No such categories found",
-                                              style: GoogleFonts.hind(
-                                                color: AppColors.textBodyText,
-                                                fontWeight: FontWeight.w600,
-                                                fontSize: 16,
+                                            child: Center(
+                                              child: SpinKitDualRing(
+                                                color:
+                                                    AppColors.primaryDarkGreen,
                                               ),
                                             ),
-                                          )
-                                        else
-                                          Column(
-                                            children: filteredCategories.map((
-                                              cat,
-                                            ) {
-                                              final isExpanded =
-                                                  isSearching ||
-                                                  ref.watch(
-                                                        expandedCategoryProvider,
-                                                      ) ==
-                                                      cat.name;
-
-                                              if (cat.subCategories.isEmpty) {
-                                                return MenuItemButton(
-                                                  child: Text(
-                                                    cat.name,
+                                          ),
+                                          error: (e, _) => Padding(
+                                            padding: const EdgeInsets.all(16),
+                                            child: Column(
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.start,
+                                              children: [
+                                                Text(
+                                                  "Failed to load categories",
+                                                  style: GoogleFonts.hind(
+                                                    color: AppColors.textRed,
+                                                    fontWeight: FontWeight.w600,
+                                                    fontSize: 14,
+                                                  ),
+                                                ),
+                                                const SizedBox(height: 4),
+                                                Text(
+                                                  e.toString(),
+                                                  style: GoogleFonts.hind(
+                                                    color: AppColors.textRed,
+                                                    fontSize: 12,
+                                                  ),
+                                                ),
+                                                TextButton.icon(
+                                                  onPressed: () =>
+                                                      ref.invalidate(
+                                                        categoriesProvider,
+                                                      ),
+                                                  icon: const Icon(
+                                                    Icons.refresh,
+                                                    size: 16,
+                                                  ),
+                                                  label: Text(
+                                                    "Retry",
                                                     style: GoogleFonts.hind(
-                                                      fontSize: 16,
-                                                      fontWeight:
-                                                          FontWeight.w500,
                                                       color: AppColors
-                                                          .textBlackGrey,
+                                                          .primaryDarkGreen,
                                                     ),
                                                   ),
-                                                  onPressed: () {
-                                                    vm.selectCategory(
+                                                ),
+                                              ],
+                                            ),
+                                          ),
+                                          data: (categories) {
+                                            final filtered =
+                                                filterCategoryNodes(
+                                                  categories,
+                                                  query,
+                                                );
+
+                                            if (filtered.isEmpty) {
+                                              return Padding(
+                                                padding: const EdgeInsets.all(
+                                                  16,
+                                                ),
+                                                child: Column(
+                                                  crossAxisAlignment:
+                                                      CrossAxisAlignment.start,
+                                                  children: [
+                                                    Text(
+                                                      query.isEmpty
+                                                          ? "No categories available"
+                                                          : "No categories match \"$query\"",
+                                                      style: GoogleFonts.hind(
+                                                        color: AppColors
+                                                            .textBodyText,
+                                                        fontWeight:
+                                                            FontWeight.w500,
+                                                        fontSize: 14,
+                                                      ),
+                                                    ),
+                                                    if (query.isEmpty) ...[
+                                                      const SizedBox(height: 8),
+                                                      TextButton.icon(
+                                                        onPressed: () =>
+                                                            ref.invalidate(
+                                                              categoriesProvider,
+                                                            ),
+                                                        icon: const Icon(
+                                                          Icons.refresh,
+                                                          size: 16,
+                                                          color: AppColors
+                                                              .primaryDarkGreen,
+                                                        ),
+                                                        label: Text(
+                                                          "Refresh",
+                                                          style: GoogleFonts.hind(
+                                                            color: AppColors
+                                                                .primaryDarkGreen,
+                                                          ),
+                                                        ),
+                                                      ),
+                                                    ],
+                                                  ],
+                                                ),
+                                              );
+                                            }
+
+                                            return Column(
+                                              children: filtered.map((cat) {
+                                                final isExpanded =
+                                                    isSearching ||
+                                                    ref.watch(
+                                                          expandedCategoryProvider,
+                                                        ) ==
+                                                        cat.name;
+
+                                                if (!cat.hasChildren) {
+                                                  return MenuItemButton(
+                                                    child: Text(
                                                       cat.name,
-                                                      null,
-                                                    );
-                                                    searchController.clear();
-                                                    ref
+                                                      style: GoogleFonts.hind(
+                                                        fontSize: 16,
+                                                        fontWeight:
+                                                            FontWeight.w500,
+                                                        color: AppColors
+                                                            .textBlackGrey,
+                                                      ),
+                                                    ),
+                                                    onPressed: () {
+                                                      vm.selectCategory(
+                                                        cat.name,
+                                                        null,
+                                                        categoryId: cat.id,
+                                                        specSchema:
+                                                            cat.specSchema,
+                                                      );
+                                                      searchController.clear();
+                                                      ref
+                                                              .read(
+                                                                categorySearchQueryProvider
+                                                                    .notifier,
+                                                              )
+                                                              .state =
+                                                          '';
+                                                      menuController?.close();
+                                                    },
+                                                  );
+                                                }
+
+                                                return Column(
+                                                  children: [
+                                                    InkWell(
+                                                      onTap: () {
+                                                        ref
                                                             .read(
-                                                              categorySearchQueryProvider
+                                                              expandedCategoryProvider
                                                                   .notifier,
                                                             )
-                                                            .state =
-                                                        '';
-                                                  },
-                                                );
-                                              }
-                                              //else
-                                              return Column(
-                                                children: [
-                                                  InkWell(
-                                                    child: Container(
-                                                      decoration: BoxDecoration(
-                                                        borderRadius:
-                                                            BorderRadius.circular(
-                                                              4,
-                                                            ),
-                                                        color: isExpanded
-                                                            ? AppColors
-                                                                  .tableHeader
-                                                            : Colors
-                                                                  .transparent,
-                                                      ),
-                                                      child: Padding(
-                                                        padding:
-                                                            const EdgeInsets.only(
-                                                              top: 15,
-                                                              bottom: 15,
-                                                              left: 12,
-                                                              right: 12,
-                                                            ),
-                                                        child: Row(
-                                                          children: [
-                                                            Expanded(
-                                                              child: Text(
-                                                                cat.name,
-                                                                style: GoogleFonts.hind(
-                                                                  fontSize: 16,
-                                                                  fontWeight:
-                                                                      FontWeight
-                                                                          .w500,
-                                                                  color: AppColors
-                                                                      .textBlackGrey,
+                                                            .state = isExpanded
+                                                            ? null
+                                                            : cat.name;
+                                                      },
+                                                      child: Container(
+                                                        decoration: BoxDecoration(
+                                                          borderRadius:
+                                                              BorderRadius.circular(
+                                                                4,
+                                                              ),
+                                                          color: isExpanded
+                                                              ? AppColors
+                                                                    .tableHeader
+                                                              : Colors
+                                                                    .transparent,
+                                                        ),
+                                                        child: Padding(
+                                                          padding:
+                                                              const EdgeInsets.symmetric(
+                                                                vertical: 15,
+                                                                horizontal: 12,
+                                                              ),
+                                                          child: Row(
+                                                            children: [
+                                                              Expanded(
+                                                                child: Text(
+                                                                  cat.name,
+                                                                  style: GoogleFonts.hind(
+                                                                    fontSize:
+                                                                        16,
+                                                                    fontWeight:
+                                                                        FontWeight
+                                                                            .w500,
+                                                                    color: AppColors
+                                                                        .textBlackGrey,
+                                                                  ),
                                                                 ),
                                                               ),
-                                                            ),
-                                                            const SizedBox(
-                                                              width: 50,
-                                                            ),
-                                                            Icon(
-                                                              isExpanded
-                                                                  ? Icons
-                                                                        .keyboard_arrow_up
-                                                                  : Icons
-                                                                        .keyboard_arrow_down,
-                                                            ),
-                                                          ],
-                                                        ),
-                                                      ),
-                                                    ),
-                                                    onTap: () {
-                                                      ref
-                                                          .read(
-                                                            expandedCategoryProvider
-                                                                .notifier,
-                                                          )
-                                                          .state = isExpanded
-                                                          ? null
-                                                          : cat.name;
-                                                    },
-                                                  ),
-
-                                                  if (isExpanded)
-                                                    ...cat.subCategories.map(
-                                                      (sub) => Padding(
-                                                        padding:
-                                                            const EdgeInsets.only(
-                                                              left: 16,
-                                                            ),
-                                                        child: MenuItemButton(
-                                                          child: Text(
-                                                            sub,
-                                                            style: GoogleFonts.hind(
-                                                              fontSize: 16,
-                                                              fontWeight:
-                                                                  FontWeight
-                                                                      .w500,
-                                                              color: AppColors
-                                                                  .textBodyText,
-                                                            ),
+                                                              const SizedBox(
+                                                                width: 50,
+                                                              ),
+                                                              Icon(
+                                                                isExpanded
+                                                                    ? Icons
+                                                                          .keyboard_arrow_up
+                                                                    : Icons
+                                                                          .keyboard_arrow_down,
+                                                              ),
+                                                            ],
                                                           ),
-                                                          onPressed: () {
-                                                            vm.selectCategory(
-                                                              cat.name,
-                                                              sub,
-                                                            );
-                                                            searchController
-                                                                .clear();
-                                                            ref
-                                                                    .read(
-                                                                      categorySearchQueryProvider
-                                                                          .notifier,
-                                                                    )
-                                                                    .state =
-                                                                '';
-                                                          },
                                                         ),
                                                       ),
                                                     ),
-                                                ],
-                                              );
-                                            }).toList(),
-                                          ),
+                                                    if (isExpanded)
+                                                      ...cat.children.map(
+                                                        (sub) => Padding(
+                                                          padding:
+                                                              const EdgeInsets.only(
+                                                                left: 16,
+                                                              ),
+                                                          child: MenuItemButton(
+                                                            child: Text(
+                                                              sub.name,
+                                                              style: GoogleFonts.hind(
+                                                                fontSize: 16,
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .w500,
+                                                                color: AppColors
+                                                                    .textBodyText,
+                                                              ),
+                                                            ),
+                                                            onPressed: () {
+                                                              // Sub inherits parent specSchema from API
+                                                              vm.selectCategory(
+                                                                cat.name,
+                                                                sub.name,
+                                                                categoryId:
+                                                                    sub.id,
+                                                                specSchema: sub
+                                                                    .specSchema,
+                                                              );
+                                                              searchController
+                                                                  .clear();
+                                                              ref
+                                                                      .read(
+                                                                        categorySearchQueryProvider
+                                                                            .notifier,
+                                                                      )
+                                                                      .state =
+                                                                  '';
+                                                              menuController
+                                                                  ?.close();
+                                                            },
+                                                          ),
+                                                        ),
+                                                      ),
+                                                  ],
+                                                );
+                                              }).toList(),
+                                            );
+                                          },
+                                        ),
                                       ],
                                     );
                                   },
@@ -473,7 +554,10 @@ class MultipleProductInfoScreen extends ConsumerWidget {
                 fontWeight: FontWeight.w500,
                 height: 48,
                 width: double.infinity,
-                onPressed: (state.productName.isEmpty || state.category == null)
+                onPressed:
+                    (state.productName.isEmpty ||
+                        state.category == null ||
+                        state.productDescription.isEmpty)
                     ? null
                     : () {
                         Navigator.push(

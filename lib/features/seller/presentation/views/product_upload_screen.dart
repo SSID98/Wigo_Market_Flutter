@@ -1,12 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:wigo_flutter/core/utils/context_extensions.dart';
 import 'package:wigo_flutter/features/seller/presentation/views/single_product_version_view/laptops_desktop_specs_screen.dart';
 import 'package:wigo_flutter/features/seller/presentation/views/single_product_version_view/mobile_specs_screen.dart';
+import 'package:wigo_flutter/shared/widgets/custom_banner.dart';
 import 'package:wigo_flutter/shared/widgets/custom_button.dart';
 
 import '../../../../core/constants/app_colors.dart';
 import '../../../../gen/assets.gen.dart';
+import '../../viewmodels/mulitple_products_viewmodel.dart';
 import '../../viewmodels/single_product_viewmodel.dart';
 import '../../viewmodels/upload_file_viewmodel.dart';
 import '../widgets/step_progress_indicator.dart';
@@ -20,7 +23,7 @@ class ProductUploadScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final isWeb = MediaQuery.of(context).size.width > 800;
+    final isWeb = context.isWeb;
     return Padding(
       padding: const EdgeInsets.all(16),
       child: Column(
@@ -28,9 +31,7 @@ class ProductUploadScreen extends ConsumerWidget {
           Row(
             children: [
               GestureDetector(
-                onTap: () {
-                  Navigator.pop(context);
-                },
+                onTap: () => Navigator.pop(context),
                 child: isWeb
                     ? AppAssets.icons.squareArrowBack.svg()
                     : AppAssets.icons.addproductBackArrow.svg(),
@@ -55,12 +56,90 @@ class ProductUploadScreen extends ConsumerWidget {
     );
   }
 
+  bool _needsMobile(WidgetRef ref) => isMultiProduct
+      ? ref.read(multipleProductsProvider.notifier).needsMobileSpecsScreen
+      : ref.read(singleProductProvider.notifier).needsMobileSpecsScreen;
+
+  bool _needsComputer(WidgetRef ref) => isMultiProduct
+      ? ref.read(multipleProductsProvider.notifier).needsComputerSpecsScreen
+      : ref.read(singleProductProvider.notifier).needsComputerSpecsScreen;
+
+  bool _needsSpecs(WidgetRef ref) => _needsMobile(ref) || _needsComputer(ref);
+
+  int _totalSteps(WidgetRef ref) =>
+      _needsSpecs(ref) ? 3 : (isMultiProduct ? 3 : 2);
+
+  Future<void> _handleNext(BuildContext context, WidgetRef ref) async {
+    final mainImage = ref.read(uploadProvider('cover_image'));
+    final extraFiles = ref.read(uploadProvider('extra_images'));
+    final videoFiles = ref.read(uploadProvider('product_video'));
+    if (mainImage.isEmpty || mainImage[0]?.isUploadComplete != true) {
+      showErrorBanner("Please upload a main product image", context);
+      return;
+    }
+
+    final anyUploading = [
+      mainImage,
+      extraFiles,
+      videoFiles,
+    ].expand((l) => l).any((f) => f?.isUploading == true);
+    if (anyUploading) {
+      showErrorBanner("Please wait for all uploads to complete", context);
+      return;
+    }
+
+    if (_needsMobile(ref)) {
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (_) => MobileSpecsScreen(isMultiProduct: isMultiProduct),
+        ),
+      );
+      return;
+    }
+    if (_needsComputer(ref)) {
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (_) =>
+              LaptopsAndDesktopSpecsScreen(isMultiProduct: isMultiProduct),
+        ),
+      );
+      return;
+    }
+    await _publish(context, ref);
+  }
+
+  Future<void> _publish(BuildContext context, WidgetRef ref) async {
+    final bool success = isMultiProduct && context.mounted
+        ? await ref.read(multipleProductsProvider.notifier).submit(context, ref)
+        : context.mounted
+        ? await ref.read(singleProductProvider.notifier).submit(context, ref)
+        : false;
+
+    if (success && context.mounted) {
+      Navigator.pushAndRemoveUntil(
+        context,
+        MaterialPageRoute(builder: (_) => const ProductManagementScreen()),
+        (route) => false,
+      );
+      showSuccessBanner("Product created successfully", context);
+      isMultiProduct
+          ? ref.invalidate(multipleProductsProvider)
+          : ref.invalidate(singleProductProvider);
+      ref.invalidate(uploadProvider);
+    }
+  }
+
   Widget _buildBody(bool isWeb, WidgetRef ref, BuildContext context) {
     final mainImage = ref.watch(uploadProvider('cover_image'));
     final mainImageNotifier = ref.read(uploadProvider('cover_image').notifier);
-    final singleProductVm = ref.read(singleProductProvider.notifier);
+    final errorMessage = isMultiProduct
+        ? ref.watch(multipleProductsProvider).errorMessage
+        : ref.watch(singleProductProvider).errorMessage;
+
     Future.microtask(() {
-      mainImageNotifier.init(1); // Only 1 box for this identity
+      mainImageNotifier.init(1);
       return null;
     });
 
@@ -86,19 +165,44 @@ class ProductUploadScreen extends ConsumerWidget {
                   ),
                   StepProgressIndicator(
                     currentStep: isMultiProduct ? 3 : 2,
-                    totalSteps:
-                        singleProductVm.needsComputerSpecsScreen ||
-                            singleProductVm.needsMobileSpecsScreen
-                        ? 3
-                        : isMultiProduct
-                        ? 3
-                        : 2,
+                    totalSteps: _totalSteps(ref),
                     isWeb: isWeb,
                   ),
                 ],
               ),
             ),
             const Divider(),
+
+            if (errorMessage != null)
+              Container(
+                width: double.infinity,
+                color: AppColors.accentRed.withValues(alpha: 0.1),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 16,
+                  vertical: 10,
+                ),
+                child: Row(
+                  children: [
+                    const Icon(
+                      Icons.error_outline,
+                      color: AppColors.accentRed,
+                      size: 18,
+                    ),
+                    const SizedBox(width: 8),
+                    Expanded(
+                      child: Text(
+                        errorMessage,
+                        style: GoogleFonts.hind(
+                          color: AppColors.accentRed,
+                          fontSize: 13,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+
             Expanded(
               child: SingleChildScrollView(
                 padding: const EdgeInsets.only(
@@ -137,7 +241,7 @@ class ProductUploadScreen extends ConsumerWidget {
                     const SizedBox(height: 20),
                     _buildInstructionCard(isWeb),
                     const SizedBox(height: 20),
-                    _buildMovieUploadSection(isWeb, ref),
+                    _buildVideoUploadSection(isWeb, ref),
                   ],
                 ),
               ),
@@ -146,39 +250,15 @@ class ProductUploadScreen extends ConsumerWidget {
             Padding(
               padding: const EdgeInsets.only(left: 8.0, right: 8, bottom: 50),
               child: CustomButton(
-                text:
-                    singleProductVm.needsComputerSpecsScreen ||
-                        singleProductVm.needsMobileSpecsScreen
-                    ? "Next"
-                    : "Publish Product",
+                text: _needsSpecs(ref) ? "Next" : "Publish Product",
                 fontSize: 18,
                 fontWeight: FontWeight.w500,
                 height: 48,
                 width: double.infinity,
-                onPressed: () {
-                  if (singleProductVm.needsMobileSpecsScreen) {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (_) => MobileSpecsScreen()),
-                    );
-                  } else if (singleProductVm.needsComputerSpecsScreen) {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (_) => LaptopsAndDesktopSpecsScreen(),
-                      ),
-                    );
-                  } else {
-                    Navigator.pushAndRemoveUntil(
-                      context,
-                      MaterialPageRoute(
-                        builder: (_) => const ProductManagementScreen(),
-                      ),
-                      (route) =>
-                          false, // Clears the navigation stack so they can't "go back" to the form
-                    );
-                  }
-                },
+                onPressed: () => _handleNext(context, ref),
+                suffixIcon: _needsSpecs(ref)
+                    ? AppAssets.icons.arrowRight.svg()
+                    : null,
               ),
             ),
           ],
@@ -198,7 +278,7 @@ class ProductUploadScreen extends ConsumerWidget {
   Widget _buildGridView(bool isWeb, WidgetRef ref) {
     final imageFiles = ref.watch(uploadProvider('extra_images'));
     final imageNotifier = ref.read(uploadProvider('extra_images').notifier);
-    // Initialize once
+
     Future.microtask(() {
       imageNotifier.init(isMultiProduct ? 6 : 4);
       return null;
@@ -328,7 +408,7 @@ class ProductUploadScreen extends ConsumerWidget {
     );
   }
 
-  Widget _buildMovieUploadSection(bool isWeb, WidgetRef ref) {
+  Widget _buildVideoUploadSection(bool isWeb, WidgetRef ref) {
     final videoFiles = ref.watch(uploadProvider('product_video'));
     final videoNotifier = ref.read(uploadProvider('product_video').notifier);
 

@@ -286,6 +286,7 @@ class EditBankAccountViewModel extends StateNotifier<WalletState> {
       isDefault: !bankDetails.isEmpty && bankDetails.isDefault,
       hasSubmitted: false,
       walletScreenState: WalletScreenState.editBankAccount,
+      sellerWalletScreenState: SellerWalletScreenState.editBankAccount,
     );
 
     _syncSelectedBankWithFetchedList();
@@ -414,6 +415,9 @@ class EditBankAccountViewModel extends StateNotifier<WalletState> {
         walletScreenState: (wasWalletCreation && !state.hasWithdrawalPin)
             ? WalletScreenState.setupPin
             : WalletScreenState.addBankAccount,
+        sellerWalletScreenState: (wasWalletCreation && !state.hasWithdrawalPin)
+            ? SellerWalletScreenState.setupPin
+            : SellerWalletScreenState.addBankAccount,
       );
       return true;
     } else {
@@ -469,37 +473,33 @@ class EditBankAccountViewModel extends StateNotifier<WalletState> {
 
   Future<void> navigateToPaymentSetup(BuildContext context) async {
     await runWithOverlay(context, () async {
-      await Future.delayed(const Duration(seconds: 1), () {
-        syncWalletSetupFlagsFromAuth();
+      syncWalletSetupFlagsFromAuth();
 
-        final hasWallet = state.hasWallet;
-        final hasPin = state.hasWithdrawalPin;
+      final hasWallet = state.hasWallet;
+      final hasPin = state.hasWithdrawalPin;
 
-        final targetState = (hasWallet && !hasPin)
-            ? WalletScreenState.setupPin
-            : WalletScreenState.addBankAccount;
+      final targetState = (hasWallet && !hasPin)
+          ? WalletScreenState.setupPin
+          : WalletScreenState.addBankAccount;
 
-        setWalletScreenState(targetState);
-        read(globalNavigationViewModelProvider.notifier).setIndex(3);
-      });
+      setWalletScreenState(targetState);
+      read(globalNavigationViewModelProvider.notifier).setIndex(3);
     }, spinner: SpinKitDualRing(color: AppColors.primaryDarkGreen));
   }
 
   Future<void> navigateToSellerPaymentSetup(BuildContext context) async {
     await runWithOverlay(context, () async {
-      await Future.delayed(const Duration(seconds: 1), () {
-        syncWalletSetupFlagsFromAuth();
+      syncWalletSetupFlagsFromAuth();
 
-        final hasWallet = state.hasWallet;
-        final hasPin = state.hasWithdrawalPin;
+      final hasWallet = state.hasWallet;
+      final hasPin = state.hasWithdrawalPin;
 
-        final targetState = (hasWallet && !hasPin)
-            ? SellerWalletScreenState.setupPin
-            : SellerWalletScreenState.addBankAccount;
+      final targetState = (hasWallet && !hasPin)
+          ? SellerWalletScreenState.setupPin
+          : SellerWalletScreenState.addBankAccount;
 
-        setSellerWalletScreenState(targetState);
-        read(globalNavigationViewModelProvider.notifier).setIndex(3);
-      });
+      setSellerWalletScreenState(targetState);
+      read(globalNavigationViewModelProvider.notifier).setIndex(3);
     }, spinner: SpinKitDualRing(color: AppColors.primaryDarkGreen));
   }
 
@@ -508,6 +508,7 @@ class EditBankAccountViewModel extends StateNotifier<WalletState> {
     state = state.copyWith(
       selectedBankDetails: null,
       walletScreenState: WalletScreenState.addBankAccount,
+      sellerWalletScreenState: SellerWalletScreenState.addBankAccount,
     );
   }
 

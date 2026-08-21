@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
@@ -131,15 +133,51 @@ class NetworkService {
           data: parsedData,
         );
       } else {
+        final dynamic raw = response.data;
+        Map<String, dynamic>? errorJson;
+
+        if (raw is String) {
+          try {
+            errorJson = jsonDecode(raw) as Map<String, dynamic>;
+          } catch (_) {
+            errorJson = null;
+          }
+        } else if (raw is Map<String, dynamic>) {
+          errorJson = raw;
+        }
+
         return ResponseStatusModel<T>(
           accessStatus: ResponseStatusEnum.failed,
-          errorDescription: response.data?['message'],
+          errorDescription: errorJson?['message']?.toString(),
+          errors: (errorJson?['errors'] as List<dynamic>?)
+              ?.map((e) => e.toString())
+              .toList(),
         );
       }
     } catch (e) {
+      List<String>? extractedErrors;
+
+      if (e is DioException && e.response?.data != null) {
+        final dynamic rawData = e.response!.data;
+
+        if (rawData is Map<String, dynamic>) {
+          extractedErrors = (rawData['errors'] as List<dynamic>?)
+              ?.map((err) => err.toString())
+              .toList();
+        } else if (rawData is String) {
+          try {
+            final decoded = jsonDecode(rawData) as Map<String, dynamic>;
+            extractedErrors = (decoded['errors'] as List<dynamic>?)
+                ?.map((err) => err.toString())
+                .toList();
+          } catch (_) {}
+        }
+      }
+
       return ResponseStatusModel<T>(
         accessStatus: ResponseStatusEnum.failed,
         errorDescription: parseError(e),
+        errors: extractedErrors,
       );
     }
   }

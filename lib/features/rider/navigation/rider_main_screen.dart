@@ -7,6 +7,7 @@ import 'package:wigo_flutter/features/rider/presentation/views/rider_settings_sc
 import 'package:wigo_flutter/features/rider/presentation/views/rider_wallet_screens/wallet_main_screen.dart';
 
 import '../../../core/constants/app_colors.dart';
+import '../../../core/utils/context_extensions.dart';
 import '../../../gen/assets.gen.dart';
 import '../../../shared/widgets/dashboard_widgets/custom_app_bar.dart';
 import '../../../shared/widgets/dashboard_widgets/web_side_bar.dart';
@@ -26,7 +27,7 @@ class RiderMainScreen extends ConsumerWidget {
     final navigatorKeys = ref.watch(riderNavigatorKeysProvider);
     final navState = ref.watch(globalNavigationViewModelProvider);
     final navNotifier = ref.read(globalNavigationViewModelProvider.notifier);
-    final isWeb = MediaQuery.of(context).size.width > 600;
+    final isWeb = context.isWeb;
     const hiddenAppBarIndices = [4];
 
     return PopScope(

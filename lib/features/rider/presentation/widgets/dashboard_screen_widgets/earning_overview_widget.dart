@@ -5,9 +5,9 @@ import 'package:wigo_flutter/core/constants/app_colors.dart';
 import 'package:wigo_flutter/shared/widgets/custom_button.dart';
 
 import '../../../../../gen/assets.gen.dart';
+import '../../../../../shared/screens/wallet_screens/wallet_withdrawal_screen.dart';
 import '../../../../../shared/widgets/dashboard_widgets/earning_card.dart';
 import '../../../viewmodels/rider_dashboard_viewmodel.dart';
-import '../../views/rider_wallet_screens/wallet_withdrawal_screen.dart';
 
 class EarningOverviewWidget extends ConsumerWidget {
   const EarningOverviewWidget({super.key, this.isWallet = false});

@@ -24,6 +24,7 @@ _SingleProductState _$SingleProductStateFromJson(Map<String, dynamic> json) =>
       usbPorts: json['usbPorts'] as String?,
       networkType: json['networkType'] as String?,
       warranty: json['warranty'] as String?,
+      warrantyType: json['warrantyType'] as String?,
       battery: json['battery'] as String?,
       connectivity: json['connectivity'] as String?,
       dimensions: json['dimensions'] as String?,
@@ -39,6 +40,11 @@ _SingleProductState _$SingleProductStateFromJson(Map<String, dynamic> json) =>
               .toList() ??
           const [],
       videoPath: json['videoPath'] as String?,
+      categoryId: json['categoryId'] as String?,
+      specSchema: json['specSchema'] as String?,
+      isLoading: json['isLoading'] as bool? ?? false,
+      success: json['success'] as bool? ?? false,
+      errorMessage: json['errorMessage'] as String?,
     );
 
 Map<String, dynamic> _$SingleProductStateToJson(_SingleProductState instance) =>
@@ -59,6 +65,7 @@ Map<String, dynamic> _$SingleProductStateToJson(_SingleProductState instance) =>
       'usbPorts': instance.usbPorts,
       'networkType': instance.networkType,
       'warranty': instance.warranty,
+      'warrantyType': instance.warrantyType,
       'battery': instance.battery,
       'connectivity': instance.connectivity,
       'dimensions': instance.dimensions,
@@ -70,4 +77,9 @@ Map<String, dynamic> _$SingleProductStateToJson(_SingleProductState instance) =>
       'graphicsCard': instance.graphicsCard,
       'imagePaths': instance.imagePaths,
       'videoPath': instance.videoPath,
+      'categoryId': instance.categoryId,
+      'specSchema': instance.specSchema,
+      'isLoading': instance.isLoading,
+      'success': instance.success,
+      'errorMessage': instance.errorMessage,
     };

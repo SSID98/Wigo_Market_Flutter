@@ -1,4 +1,3 @@
-// lib/models/single_product_.dart
 import 'package:freezed_annotation/freezed_annotation.dart';
 
 part 'single_product_state.freezed.dart';
@@ -23,6 +22,7 @@ abstract class SingleProductState with _$SingleProductState {
     String? usbPorts,
     String? networkType,
     String? warranty,
+    String? warrantyType,
     String? battery,
     String? connectivity,
     String? dimensions,
@@ -34,6 +34,11 @@ abstract class SingleProductState with _$SingleProductState {
     String? graphicsCard,
     @Default([]) List<String> imagePaths,
     String? videoPath,
+    String? categoryId,
+    String? specSchema,
+    @Default(false) bool isLoading,
+    @Default(false) bool success,
+    String? errorMessage,
   }) = _SingleProductState;
 
   factory SingleProductState.fromJson(Map<String, dynamic> json) =>

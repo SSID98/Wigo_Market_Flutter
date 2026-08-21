@@ -296,7 +296,7 @@ as bool,
 /// @nodoc
 mixin _$MultipleProductsState {
 
- String get productName; String get productId; String get stockQuantity; String get sellingPrice; String get productDescription; String? get category; String? get subCategory; int get currentStep; int get totalSteps; List<String> get imagePaths; String? get videoPath; List<ProductVariant> get variants; bool get selectAll; bool get isCustomSizeMode; bool get showVariant; String? get selectedColorName; String? get selectedColorHex; String? get selectedSize;
+ String get productName; String get productId; String get stockQuantity; String get sellingPrice; String get productDescription; String? get category; String? get subCategory; int get currentStep; int get totalSteps; List<String> get imagePaths; String? get videoPath; List<ProductVariant> get variants; bool get selectAll; bool get isCustomSizeMode; bool get showVariant; String? get selectedColorName; String? get selectedColorHex; String? get selectedSize; String? get categoryId; String? get oS; String? get processorType; String? get ramSize; String? get rom; String? get cameraSpecs; String? get modelYear; String? get usbPorts; String? get networkType; String? get warranty; String? get warrantyType; String? get battery; String? get connectivity; String? get dimensions; String? get simConfig; String? get displayResolution; String? get screenSize; String? get graphicsCard; String? get specSchema; bool get isLoading; bool get success; String? get errorMessage;
 /// Create a copy of MultipleProductsState
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -309,16 +309,16 @@ $MultipleProductsStateCopyWith<MultipleProductsState> get copyWith => _$Multiple
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is MultipleProductsState&&(identical(other.productName, productName) || other.productName == productName)&&(identical(other.productId, productId) || other.productId == productId)&&(identical(other.stockQuantity, stockQuantity) || other.stockQuantity == stockQuantity)&&(identical(other.sellingPrice, sellingPrice) || other.sellingPrice == sellingPrice)&&(identical(other.productDescription, productDescription) || other.productDescription == productDescription)&&(identical(other.category, category) || other.category == category)&&(identical(other.subCategory, subCategory) || other.subCategory == subCategory)&&(identical(other.currentStep, currentStep) || other.currentStep == currentStep)&&(identical(other.totalSteps, totalSteps) || other.totalSteps == totalSteps)&&const DeepCollectionEquality().equals(other.imagePaths, imagePaths)&&(identical(other.videoPath, videoPath) || other.videoPath == videoPath)&&const DeepCollectionEquality().equals(other.variants, variants)&&(identical(other.selectAll, selectAll) || other.selectAll == selectAll)&&(identical(other.isCustomSizeMode, isCustomSizeMode) || other.isCustomSizeMode == isCustomSizeMode)&&(identical(other.showVariant, showVariant) || other.showVariant == showVariant)&&(identical(other.selectedColorName, selectedColorName) || other.selectedColorName == selectedColorName)&&(identical(other.selectedColorHex, selectedColorHex) || other.selectedColorHex == selectedColorHex)&&(identical(other.selectedSize, selectedSize) || other.selectedSize == selectedSize));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is MultipleProductsState&&(identical(other.productName, productName) || other.productName == productName)&&(identical(other.productId, productId) || other.productId == productId)&&(identical(other.stockQuantity, stockQuantity) || other.stockQuantity == stockQuantity)&&(identical(other.sellingPrice, sellingPrice) || other.sellingPrice == sellingPrice)&&(identical(other.productDescription, productDescription) || other.productDescription == productDescription)&&(identical(other.category, category) || other.category == category)&&(identical(other.subCategory, subCategory) || other.subCategory == subCategory)&&(identical(other.currentStep, currentStep) || other.currentStep == currentStep)&&(identical(other.totalSteps, totalSteps) || other.totalSteps == totalSteps)&&const DeepCollectionEquality().equals(other.imagePaths, imagePaths)&&(identical(other.videoPath, videoPath) || other.videoPath == videoPath)&&const DeepCollectionEquality().equals(other.variants, variants)&&(identical(other.selectAll, selectAll) || other.selectAll == selectAll)&&(identical(other.isCustomSizeMode, isCustomSizeMode) || other.isCustomSizeMode == isCustomSizeMode)&&(identical(other.showVariant, showVariant) || other.showVariant == showVariant)&&(identical(other.selectedColorName, selectedColorName) || other.selectedColorName == selectedColorName)&&(identical(other.selectedColorHex, selectedColorHex) || other.selectedColorHex == selectedColorHex)&&(identical(other.selectedSize, selectedSize) || other.selectedSize == selectedSize)&&(identical(other.categoryId, categoryId) || other.categoryId == categoryId)&&(identical(other.oS, oS) || other.oS == oS)&&(identical(other.processorType, processorType) || other.processorType == processorType)&&(identical(other.ramSize, ramSize) || other.ramSize == ramSize)&&(identical(other.rom, rom) || other.rom == rom)&&(identical(other.cameraSpecs, cameraSpecs) || other.cameraSpecs == cameraSpecs)&&(identical(other.modelYear, modelYear) || other.modelYear == modelYear)&&(identical(other.usbPorts, usbPorts) || other.usbPorts == usbPorts)&&(identical(other.networkType, networkType) || other.networkType == networkType)&&(identical(other.warranty, warranty) || other.warranty == warranty)&&(identical(other.warrantyType, warrantyType) || other.warrantyType == warrantyType)&&(identical(other.battery, battery) || other.battery == battery)&&(identical(other.connectivity, connectivity) || other.connectivity == connectivity)&&(identical(other.dimensions, dimensions) || other.dimensions == dimensions)&&(identical(other.simConfig, simConfig) || other.simConfig == simConfig)&&(identical(other.displayResolution, displayResolution) || other.displayResolution == displayResolution)&&(identical(other.screenSize, screenSize) || other.screenSize == screenSize)&&(identical(other.graphicsCard, graphicsCard) || other.graphicsCard == graphicsCard)&&(identical(other.specSchema, specSchema) || other.specSchema == specSchema)&&(identical(other.isLoading, isLoading) || other.isLoading == isLoading)&&(identical(other.success, success) || other.success == success)&&(identical(other.errorMessage, errorMessage) || other.errorMessage == errorMessage));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,productName,productId,stockQuantity,sellingPrice,productDescription,category,subCategory,currentStep,totalSteps,const DeepCollectionEquality().hash(imagePaths),videoPath,const DeepCollectionEquality().hash(variants),selectAll,isCustomSizeMode,showVariant,selectedColorName,selectedColorHex,selectedSize);
+int get hashCode => Object.hashAll([runtimeType,productName,productId,stockQuantity,sellingPrice,productDescription,category,subCategory,currentStep,totalSteps,const DeepCollectionEquality().hash(imagePaths),videoPath,const DeepCollectionEquality().hash(variants),selectAll,isCustomSizeMode,showVariant,selectedColorName,selectedColorHex,selectedSize,categoryId,oS,processorType,ramSize,rom,cameraSpecs,modelYear,usbPorts,networkType,warranty,warrantyType,battery,connectivity,dimensions,simConfig,displayResolution,screenSize,graphicsCard,specSchema,isLoading,success,errorMessage]);
 
 @override
 String toString() {
-  return 'MultipleProductsState(productName: $productName, productId: $productId, stockQuantity: $stockQuantity, sellingPrice: $sellingPrice, productDescription: $productDescription, category: $category, subCategory: $subCategory, currentStep: $currentStep, totalSteps: $totalSteps, imagePaths: $imagePaths, videoPath: $videoPath, variants: $variants, selectAll: $selectAll, isCustomSizeMode: $isCustomSizeMode, showVariant: $showVariant, selectedColorName: $selectedColorName, selectedColorHex: $selectedColorHex, selectedSize: $selectedSize)';
+  return 'MultipleProductsState(productName: $productName, productId: $productId, stockQuantity: $stockQuantity, sellingPrice: $sellingPrice, productDescription: $productDescription, category: $category, subCategory: $subCategory, currentStep: $currentStep, totalSteps: $totalSteps, imagePaths: $imagePaths, videoPath: $videoPath, variants: $variants, selectAll: $selectAll, isCustomSizeMode: $isCustomSizeMode, showVariant: $showVariant, selectedColorName: $selectedColorName, selectedColorHex: $selectedColorHex, selectedSize: $selectedSize, categoryId: $categoryId, oS: $oS, processorType: $processorType, ramSize: $ramSize, rom: $rom, cameraSpecs: $cameraSpecs, modelYear: $modelYear, usbPorts: $usbPorts, networkType: $networkType, warranty: $warranty, warrantyType: $warrantyType, battery: $battery, connectivity: $connectivity, dimensions: $dimensions, simConfig: $simConfig, displayResolution: $displayResolution, screenSize: $screenSize, graphicsCard: $graphicsCard, specSchema: $specSchema, isLoading: $isLoading, success: $success, errorMessage: $errorMessage)';
 }
 
 
@@ -329,7 +329,7 @@ abstract mixin class $MultipleProductsStateCopyWith<$Res>  {
   factory $MultipleProductsStateCopyWith(MultipleProductsState value, $Res Function(MultipleProductsState) _then) = _$MultipleProductsStateCopyWithImpl;
 @useResult
 $Res call({
- String productName, String productId, String stockQuantity, String sellingPrice, String productDescription, String? category, String? subCategory, int currentStep, int totalSteps, List<String> imagePaths, String? videoPath, List<ProductVariant> variants, bool selectAll, bool isCustomSizeMode, bool showVariant, String? selectedColorName, String? selectedColorHex, String? selectedSize
+ String productName, String productId, String stockQuantity, String sellingPrice, String productDescription, String? category, String? subCategory, int currentStep, int totalSteps, List<String> imagePaths, String? videoPath, List<ProductVariant> variants, bool selectAll, bool isCustomSizeMode, bool showVariant, String? selectedColorName, String? selectedColorHex, String? selectedSize, String? categoryId, String? oS, String? processorType, String? ramSize, String? rom, String? cameraSpecs, String? modelYear, String? usbPorts, String? networkType, String? warranty, String? warrantyType, String? battery, String? connectivity, String? dimensions, String? simConfig, String? displayResolution, String? screenSize, String? graphicsCard, String? specSchema, bool isLoading, bool success, String? errorMessage
 });
 
 
@@ -346,7 +346,7 @@ class _$MultipleProductsStateCopyWithImpl<$Res>
 
 /// Create a copy of MultipleProductsState
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? productName = null,Object? productId = null,Object? stockQuantity = null,Object? sellingPrice = null,Object? productDescription = null,Object? category = freezed,Object? subCategory = freezed,Object? currentStep = null,Object? totalSteps = null,Object? imagePaths = null,Object? videoPath = freezed,Object? variants = null,Object? selectAll = null,Object? isCustomSizeMode = null,Object? showVariant = null,Object? selectedColorName = freezed,Object? selectedColorHex = freezed,Object? selectedSize = freezed,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? productName = null,Object? productId = null,Object? stockQuantity = null,Object? sellingPrice = null,Object? productDescription = null,Object? category = freezed,Object? subCategory = freezed,Object? currentStep = null,Object? totalSteps = null,Object? imagePaths = null,Object? videoPath = freezed,Object? variants = null,Object? selectAll = null,Object? isCustomSizeMode = null,Object? showVariant = null,Object? selectedColorName = freezed,Object? selectedColorHex = freezed,Object? selectedSize = freezed,Object? categoryId = freezed,Object? oS = freezed,Object? processorType = freezed,Object? ramSize = freezed,Object? rom = freezed,Object? cameraSpecs = freezed,Object? modelYear = freezed,Object? usbPorts = freezed,Object? networkType = freezed,Object? warranty = freezed,Object? warrantyType = freezed,Object? battery = freezed,Object? connectivity = freezed,Object? dimensions = freezed,Object? simConfig = freezed,Object? displayResolution = freezed,Object? screenSize = freezed,Object? graphicsCard = freezed,Object? specSchema = freezed,Object? isLoading = null,Object? success = null,Object? errorMessage = freezed,}) {
   return _then(_self.copyWith(
 productName: null == productName ? _self.productName : productName // ignore: cast_nullable_to_non_nullable
 as String,productId: null == productId ? _self.productId : productId // ignore: cast_nullable_to_non_nullable
@@ -366,6 +366,28 @@ as bool,showVariant: null == showVariant ? _self.showVariant : showVariant // ig
 as bool,selectedColorName: freezed == selectedColorName ? _self.selectedColorName : selectedColorName // ignore: cast_nullable_to_non_nullable
 as String?,selectedColorHex: freezed == selectedColorHex ? _self.selectedColorHex : selectedColorHex // ignore: cast_nullable_to_non_nullable
 as String?,selectedSize: freezed == selectedSize ? _self.selectedSize : selectedSize // ignore: cast_nullable_to_non_nullable
+as String?,categoryId: freezed == categoryId ? _self.categoryId : categoryId // ignore: cast_nullable_to_non_nullable
+as String?,oS: freezed == oS ? _self.oS : oS // ignore: cast_nullable_to_non_nullable
+as String?,processorType: freezed == processorType ? _self.processorType : processorType // ignore: cast_nullable_to_non_nullable
+as String?,ramSize: freezed == ramSize ? _self.ramSize : ramSize // ignore: cast_nullable_to_non_nullable
+as String?,rom: freezed == rom ? _self.rom : rom // ignore: cast_nullable_to_non_nullable
+as String?,cameraSpecs: freezed == cameraSpecs ? _self.cameraSpecs : cameraSpecs // ignore: cast_nullable_to_non_nullable
+as String?,modelYear: freezed == modelYear ? _self.modelYear : modelYear // ignore: cast_nullable_to_non_nullable
+as String?,usbPorts: freezed == usbPorts ? _self.usbPorts : usbPorts // ignore: cast_nullable_to_non_nullable
+as String?,networkType: freezed == networkType ? _self.networkType : networkType // ignore: cast_nullable_to_non_nullable
+as String?,warranty: freezed == warranty ? _self.warranty : warranty // ignore: cast_nullable_to_non_nullable
+as String?,warrantyType: freezed == warrantyType ? _self.warrantyType : warrantyType // ignore: cast_nullable_to_non_nullable
+as String?,battery: freezed == battery ? _self.battery : battery // ignore: cast_nullable_to_non_nullable
+as String?,connectivity: freezed == connectivity ? _self.connectivity : connectivity // ignore: cast_nullable_to_non_nullable
+as String?,dimensions: freezed == dimensions ? _self.dimensions : dimensions // ignore: cast_nullable_to_non_nullable
+as String?,simConfig: freezed == simConfig ? _self.simConfig : simConfig // ignore: cast_nullable_to_non_nullable
+as String?,displayResolution: freezed == displayResolution ? _self.displayResolution : displayResolution // ignore: cast_nullable_to_non_nullable
+as String?,screenSize: freezed == screenSize ? _self.screenSize : screenSize // ignore: cast_nullable_to_non_nullable
+as String?,graphicsCard: freezed == graphicsCard ? _self.graphicsCard : graphicsCard // ignore: cast_nullable_to_non_nullable
+as String?,specSchema: freezed == specSchema ? _self.specSchema : specSchema // ignore: cast_nullable_to_non_nullable
+as String?,isLoading: null == isLoading ? _self.isLoading : isLoading // ignore: cast_nullable_to_non_nullable
+as bool,success: null == success ? _self.success : success // ignore: cast_nullable_to_non_nullable
+as bool,errorMessage: freezed == errorMessage ? _self.errorMessage : errorMessage // ignore: cast_nullable_to_non_nullable
 as String?,
   ));
 }
@@ -451,10 +473,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String productName,  String productId,  String stockQuantity,  String sellingPrice,  String productDescription,  String? category,  String? subCategory,  int currentStep,  int totalSteps,  List<String> imagePaths,  String? videoPath,  List<ProductVariant> variants,  bool selectAll,  bool isCustomSizeMode,  bool showVariant,  String? selectedColorName,  String? selectedColorHex,  String? selectedSize)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String productName,  String productId,  String stockQuantity,  String sellingPrice,  String productDescription,  String? category,  String? subCategory,  int currentStep,  int totalSteps,  List<String> imagePaths,  String? videoPath,  List<ProductVariant> variants,  bool selectAll,  bool isCustomSizeMode,  bool showVariant,  String? selectedColorName,  String? selectedColorHex,  String? selectedSize,  String? categoryId,  String? oS,  String? processorType,  String? ramSize,  String? rom,  String? cameraSpecs,  String? modelYear,  String? usbPorts,  String? networkType,  String? warranty,  String? warrantyType,  String? battery,  String? connectivity,  String? dimensions,  String? simConfig,  String? displayResolution,  String? screenSize,  String? graphicsCard,  String? specSchema,  bool isLoading,  bool success,  String? errorMessage)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _MultipleProductsState() when $default != null:
-return $default(_that.productName,_that.productId,_that.stockQuantity,_that.sellingPrice,_that.productDescription,_that.category,_that.subCategory,_that.currentStep,_that.totalSteps,_that.imagePaths,_that.videoPath,_that.variants,_that.selectAll,_that.isCustomSizeMode,_that.showVariant,_that.selectedColorName,_that.selectedColorHex,_that.selectedSize);case _:
+return $default(_that.productName,_that.productId,_that.stockQuantity,_that.sellingPrice,_that.productDescription,_that.category,_that.subCategory,_that.currentStep,_that.totalSteps,_that.imagePaths,_that.videoPath,_that.variants,_that.selectAll,_that.isCustomSizeMode,_that.showVariant,_that.selectedColorName,_that.selectedColorHex,_that.selectedSize,_that.categoryId,_that.oS,_that.processorType,_that.ramSize,_that.rom,_that.cameraSpecs,_that.modelYear,_that.usbPorts,_that.networkType,_that.warranty,_that.warrantyType,_that.battery,_that.connectivity,_that.dimensions,_that.simConfig,_that.displayResolution,_that.screenSize,_that.graphicsCard,_that.specSchema,_that.isLoading,_that.success,_that.errorMessage);case _:
   return orElse();
 
 }
@@ -472,10 +494,10 @@ return $default(_that.productName,_that.productId,_that.stockQuantity,_that.sell
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String productName,  String productId,  String stockQuantity,  String sellingPrice,  String productDescription,  String? category,  String? subCategory,  int currentStep,  int totalSteps,  List<String> imagePaths,  String? videoPath,  List<ProductVariant> variants,  bool selectAll,  bool isCustomSizeMode,  bool showVariant,  String? selectedColorName,  String? selectedColorHex,  String? selectedSize)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String productName,  String productId,  String stockQuantity,  String sellingPrice,  String productDescription,  String? category,  String? subCategory,  int currentStep,  int totalSteps,  List<String> imagePaths,  String? videoPath,  List<ProductVariant> variants,  bool selectAll,  bool isCustomSizeMode,  bool showVariant,  String? selectedColorName,  String? selectedColorHex,  String? selectedSize,  String? categoryId,  String? oS,  String? processorType,  String? ramSize,  String? rom,  String? cameraSpecs,  String? modelYear,  String? usbPorts,  String? networkType,  String? warranty,  String? warrantyType,  String? battery,  String? connectivity,  String? dimensions,  String? simConfig,  String? displayResolution,  String? screenSize,  String? graphicsCard,  String? specSchema,  bool isLoading,  bool success,  String? errorMessage)  $default,) {final _that = this;
 switch (_that) {
 case _MultipleProductsState():
-return $default(_that.productName,_that.productId,_that.stockQuantity,_that.sellingPrice,_that.productDescription,_that.category,_that.subCategory,_that.currentStep,_that.totalSteps,_that.imagePaths,_that.videoPath,_that.variants,_that.selectAll,_that.isCustomSizeMode,_that.showVariant,_that.selectedColorName,_that.selectedColorHex,_that.selectedSize);case _:
+return $default(_that.productName,_that.productId,_that.stockQuantity,_that.sellingPrice,_that.productDescription,_that.category,_that.subCategory,_that.currentStep,_that.totalSteps,_that.imagePaths,_that.videoPath,_that.variants,_that.selectAll,_that.isCustomSizeMode,_that.showVariant,_that.selectedColorName,_that.selectedColorHex,_that.selectedSize,_that.categoryId,_that.oS,_that.processorType,_that.ramSize,_that.rom,_that.cameraSpecs,_that.modelYear,_that.usbPorts,_that.networkType,_that.warranty,_that.warrantyType,_that.battery,_that.connectivity,_that.dimensions,_that.simConfig,_that.displayResolution,_that.screenSize,_that.graphicsCard,_that.specSchema,_that.isLoading,_that.success,_that.errorMessage);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -492,10 +514,10 @@ return $default(_that.productName,_that.productId,_that.stockQuantity,_that.sell
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String productName,  String productId,  String stockQuantity,  String sellingPrice,  String productDescription,  String? category,  String? subCategory,  int currentStep,  int totalSteps,  List<String> imagePaths,  String? videoPath,  List<ProductVariant> variants,  bool selectAll,  bool isCustomSizeMode,  bool showVariant,  String? selectedColorName,  String? selectedColorHex,  String? selectedSize)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String productName,  String productId,  String stockQuantity,  String sellingPrice,  String productDescription,  String? category,  String? subCategory,  int currentStep,  int totalSteps,  List<String> imagePaths,  String? videoPath,  List<ProductVariant> variants,  bool selectAll,  bool isCustomSizeMode,  bool showVariant,  String? selectedColorName,  String? selectedColorHex,  String? selectedSize,  String? categoryId,  String? oS,  String? processorType,  String? ramSize,  String? rom,  String? cameraSpecs,  String? modelYear,  String? usbPorts,  String? networkType,  String? warranty,  String? warrantyType,  String? battery,  String? connectivity,  String? dimensions,  String? simConfig,  String? displayResolution,  String? screenSize,  String? graphicsCard,  String? specSchema,  bool isLoading,  bool success,  String? errorMessage)?  $default,) {final _that = this;
 switch (_that) {
 case _MultipleProductsState() when $default != null:
-return $default(_that.productName,_that.productId,_that.stockQuantity,_that.sellingPrice,_that.productDescription,_that.category,_that.subCategory,_that.currentStep,_that.totalSteps,_that.imagePaths,_that.videoPath,_that.variants,_that.selectAll,_that.isCustomSizeMode,_that.showVariant,_that.selectedColorName,_that.selectedColorHex,_that.selectedSize);case _:
+return $default(_that.productName,_that.productId,_that.stockQuantity,_that.sellingPrice,_that.productDescription,_that.category,_that.subCategory,_that.currentStep,_that.totalSteps,_that.imagePaths,_that.videoPath,_that.variants,_that.selectAll,_that.isCustomSizeMode,_that.showVariant,_that.selectedColorName,_that.selectedColorHex,_that.selectedSize,_that.categoryId,_that.oS,_that.processorType,_that.ramSize,_that.rom,_that.cameraSpecs,_that.modelYear,_that.usbPorts,_that.networkType,_that.warranty,_that.warrantyType,_that.battery,_that.connectivity,_that.dimensions,_that.simConfig,_that.displayResolution,_that.screenSize,_that.graphicsCard,_that.specSchema,_that.isLoading,_that.success,_that.errorMessage);case _:
   return null;
 
 }
@@ -507,7 +529,7 @@ return $default(_that.productName,_that.productId,_that.stockQuantity,_that.sell
 @JsonSerializable()
 
 class _MultipleProductsState implements MultipleProductsState {
-  const _MultipleProductsState({this.productName = '', this.productId = '', this.stockQuantity = '', this.sellingPrice = '', this.productDescription = '', this.category, this.subCategory, this.currentStep = 1, this.totalSteps = 3, final  List<String> imagePaths = const [], this.videoPath, final  List<ProductVariant> variants = const [], this.selectAll = false, this.isCustomSizeMode = false, this.showVariant = false, this.selectedColorName, this.selectedColorHex, this.selectedSize}): _imagePaths = imagePaths,_variants = variants;
+  const _MultipleProductsState({this.productName = '', this.productId = '', this.stockQuantity = '', this.sellingPrice = '', this.productDescription = '', this.category, this.subCategory, this.currentStep = 1, this.totalSteps = 3, final  List<String> imagePaths = const [], this.videoPath, final  List<ProductVariant> variants = const [], this.selectAll = false, this.isCustomSizeMode = false, this.showVariant = false, this.selectedColorName, this.selectedColorHex, this.selectedSize, this.categoryId, this.oS, this.processorType, this.ramSize, this.rom, this.cameraSpecs, this.modelYear, this.usbPorts, this.networkType, this.warranty, this.warrantyType, this.battery, this.connectivity, this.dimensions, this.simConfig, this.displayResolution, this.screenSize, this.graphicsCard, this.specSchema, this.isLoading = false, this.success = false, this.errorMessage}): _imagePaths = imagePaths,_variants = variants;
   factory _MultipleProductsState.fromJson(Map<String, dynamic> json) => _$MultipleProductsStateFromJson(json);
 
 @override@JsonKey() final  String productName;
@@ -540,6 +562,28 @@ class _MultipleProductsState implements MultipleProductsState {
 @override final  String? selectedColorName;
 @override final  String? selectedColorHex;
 @override final  String? selectedSize;
+@override final  String? categoryId;
+@override final  String? oS;
+@override final  String? processorType;
+@override final  String? ramSize;
+@override final  String? rom;
+@override final  String? cameraSpecs;
+@override final  String? modelYear;
+@override final  String? usbPorts;
+@override final  String? networkType;
+@override final  String? warranty;
+@override final  String? warrantyType;
+@override final  String? battery;
+@override final  String? connectivity;
+@override final  String? dimensions;
+@override final  String? simConfig;
+@override final  String? displayResolution;
+@override final  String? screenSize;
+@override final  String? graphicsCard;
+@override final  String? specSchema;
+@override@JsonKey() final  bool isLoading;
+@override@JsonKey() final  bool success;
+@override final  String? errorMessage;
 
 /// Create a copy of MultipleProductsState
 /// with the given fields replaced by the non-null parameter values.
@@ -554,16 +598,16 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _MultipleProductsState&&(identical(other.productName, productName) || other.productName == productName)&&(identical(other.productId, productId) || other.productId == productId)&&(identical(other.stockQuantity, stockQuantity) || other.stockQuantity == stockQuantity)&&(identical(other.sellingPrice, sellingPrice) || other.sellingPrice == sellingPrice)&&(identical(other.productDescription, productDescription) || other.productDescription == productDescription)&&(identical(other.category, category) || other.category == category)&&(identical(other.subCategory, subCategory) || other.subCategory == subCategory)&&(identical(other.currentStep, currentStep) || other.currentStep == currentStep)&&(identical(other.totalSteps, totalSteps) || other.totalSteps == totalSteps)&&const DeepCollectionEquality().equals(other._imagePaths, _imagePaths)&&(identical(other.videoPath, videoPath) || other.videoPath == videoPath)&&const DeepCollectionEquality().equals(other._variants, _variants)&&(identical(other.selectAll, selectAll) || other.selectAll == selectAll)&&(identical(other.isCustomSizeMode, isCustomSizeMode) || other.isCustomSizeMode == isCustomSizeMode)&&(identical(other.showVariant, showVariant) || other.showVariant == showVariant)&&(identical(other.selectedColorName, selectedColorName) || other.selectedColorName == selectedColorName)&&(identical(other.selectedColorHex, selectedColorHex) || other.selectedColorHex == selectedColorHex)&&(identical(other.selectedSize, selectedSize) || other.selectedSize == selectedSize));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _MultipleProductsState&&(identical(other.productName, productName) || other.productName == productName)&&(identical(other.productId, productId) || other.productId == productId)&&(identical(other.stockQuantity, stockQuantity) || other.stockQuantity == stockQuantity)&&(identical(other.sellingPrice, sellingPrice) || other.sellingPrice == sellingPrice)&&(identical(other.productDescription, productDescription) || other.productDescription == productDescription)&&(identical(other.category, category) || other.category == category)&&(identical(other.subCategory, subCategory) || other.subCategory == subCategory)&&(identical(other.currentStep, currentStep) || other.currentStep == currentStep)&&(identical(other.totalSteps, totalSteps) || other.totalSteps == totalSteps)&&const DeepCollectionEquality().equals(other._imagePaths, _imagePaths)&&(identical(other.videoPath, videoPath) || other.videoPath == videoPath)&&const DeepCollectionEquality().equals(other._variants, _variants)&&(identical(other.selectAll, selectAll) || other.selectAll == selectAll)&&(identical(other.isCustomSizeMode, isCustomSizeMode) || other.isCustomSizeMode == isCustomSizeMode)&&(identical(other.showVariant, showVariant) || other.showVariant == showVariant)&&(identical(other.selectedColorName, selectedColorName) || other.selectedColorName == selectedColorName)&&(identical(other.selectedColorHex, selectedColorHex) || other.selectedColorHex == selectedColorHex)&&(identical(other.selectedSize, selectedSize) || other.selectedSize == selectedSize)&&(identical(other.categoryId, categoryId) || other.categoryId == categoryId)&&(identical(other.oS, oS) || other.oS == oS)&&(identical(other.processorType, processorType) || other.processorType == processorType)&&(identical(other.ramSize, ramSize) || other.ramSize == ramSize)&&(identical(other.rom, rom) || other.rom == rom)&&(identical(other.cameraSpecs, cameraSpecs) || other.cameraSpecs == cameraSpecs)&&(identical(other.modelYear, modelYear) || other.modelYear == modelYear)&&(identical(other.usbPorts, usbPorts) || other.usbPorts == usbPorts)&&(identical(other.networkType, networkType) || other.networkType == networkType)&&(identical(other.warranty, warranty) || other.warranty == warranty)&&(identical(other.warrantyType, warrantyType) || other.warrantyType == warrantyType)&&(identical(other.battery, battery) || other.battery == battery)&&(identical(other.connectivity, connectivity) || other.connectivity == connectivity)&&(identical(other.dimensions, dimensions) || other.dimensions == dimensions)&&(identical(other.simConfig, simConfig) || other.simConfig == simConfig)&&(identical(other.displayResolution, displayResolution) || other.displayResolution == displayResolution)&&(identical(other.screenSize, screenSize) || other.screenSize == screenSize)&&(identical(other.graphicsCard, graphicsCard) || other.graphicsCard == graphicsCard)&&(identical(other.specSchema, specSchema) || other.specSchema == specSchema)&&(identical(other.isLoading, isLoading) || other.isLoading == isLoading)&&(identical(other.success, success) || other.success == success)&&(identical(other.errorMessage, errorMessage) || other.errorMessage == errorMessage));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,productName,productId,stockQuantity,sellingPrice,productDescription,category,subCategory,currentStep,totalSteps,const DeepCollectionEquality().hash(_imagePaths),videoPath,const DeepCollectionEquality().hash(_variants),selectAll,isCustomSizeMode,showVariant,selectedColorName,selectedColorHex,selectedSize);
+int get hashCode => Object.hashAll([runtimeType,productName,productId,stockQuantity,sellingPrice,productDescription,category,subCategory,currentStep,totalSteps,const DeepCollectionEquality().hash(_imagePaths),videoPath,const DeepCollectionEquality().hash(_variants),selectAll,isCustomSizeMode,showVariant,selectedColorName,selectedColorHex,selectedSize,categoryId,oS,processorType,ramSize,rom,cameraSpecs,modelYear,usbPorts,networkType,warranty,warrantyType,battery,connectivity,dimensions,simConfig,displayResolution,screenSize,graphicsCard,specSchema,isLoading,success,errorMessage]);
 
 @override
 String toString() {
-  return 'MultipleProductsState(productName: $productName, productId: $productId, stockQuantity: $stockQuantity, sellingPrice: $sellingPrice, productDescription: $productDescription, category: $category, subCategory: $subCategory, currentStep: $currentStep, totalSteps: $totalSteps, imagePaths: $imagePaths, videoPath: $videoPath, variants: $variants, selectAll: $selectAll, isCustomSizeMode: $isCustomSizeMode, showVariant: $showVariant, selectedColorName: $selectedColorName, selectedColorHex: $selectedColorHex, selectedSize: $selectedSize)';
+  return 'MultipleProductsState(productName: $productName, productId: $productId, stockQuantity: $stockQuantity, sellingPrice: $sellingPrice, productDescription: $productDescription, category: $category, subCategory: $subCategory, currentStep: $currentStep, totalSteps: $totalSteps, imagePaths: $imagePaths, videoPath: $videoPath, variants: $variants, selectAll: $selectAll, isCustomSizeMode: $isCustomSizeMode, showVariant: $showVariant, selectedColorName: $selectedColorName, selectedColorHex: $selectedColorHex, selectedSize: $selectedSize, categoryId: $categoryId, oS: $oS, processorType: $processorType, ramSize: $ramSize, rom: $rom, cameraSpecs: $cameraSpecs, modelYear: $modelYear, usbPorts: $usbPorts, networkType: $networkType, warranty: $warranty, warrantyType: $warrantyType, battery: $battery, connectivity: $connectivity, dimensions: $dimensions, simConfig: $simConfig, displayResolution: $displayResolution, screenSize: $screenSize, graphicsCard: $graphicsCard, specSchema: $specSchema, isLoading: $isLoading, success: $success, errorMessage: $errorMessage)';
 }
 
 
@@ -574,7 +618,7 @@ abstract mixin class _$MultipleProductsStateCopyWith<$Res> implements $MultipleP
   factory _$MultipleProductsStateCopyWith(_MultipleProductsState value, $Res Function(_MultipleProductsState) _then) = __$MultipleProductsStateCopyWithImpl;
 @override @useResult
 $Res call({
- String productName, String productId, String stockQuantity, String sellingPrice, String productDescription, String? category, String? subCategory, int currentStep, int totalSteps, List<String> imagePaths, String? videoPath, List<ProductVariant> variants, bool selectAll, bool isCustomSizeMode, bool showVariant, String? selectedColorName, String? selectedColorHex, String? selectedSize
+ String productName, String productId, String stockQuantity, String sellingPrice, String productDescription, String? category, String? subCategory, int currentStep, int totalSteps, List<String> imagePaths, String? videoPath, List<ProductVariant> variants, bool selectAll, bool isCustomSizeMode, bool showVariant, String? selectedColorName, String? selectedColorHex, String? selectedSize, String? categoryId, String? oS, String? processorType, String? ramSize, String? rom, String? cameraSpecs, String? modelYear, String? usbPorts, String? networkType, String? warranty, String? warrantyType, String? battery, String? connectivity, String? dimensions, String? simConfig, String? displayResolution, String? screenSize, String? graphicsCard, String? specSchema, bool isLoading, bool success, String? errorMessage
 });
 
 
@@ -591,7 +635,7 @@ class __$MultipleProductsStateCopyWithImpl<$Res>
 
 /// Create a copy of MultipleProductsState
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? productName = null,Object? productId = null,Object? stockQuantity = null,Object? sellingPrice = null,Object? productDescription = null,Object? category = freezed,Object? subCategory = freezed,Object? currentStep = null,Object? totalSteps = null,Object? imagePaths = null,Object? videoPath = freezed,Object? variants = null,Object? selectAll = null,Object? isCustomSizeMode = null,Object? showVariant = null,Object? selectedColorName = freezed,Object? selectedColorHex = freezed,Object? selectedSize = freezed,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? productName = null,Object? productId = null,Object? stockQuantity = null,Object? sellingPrice = null,Object? productDescription = null,Object? category = freezed,Object? subCategory = freezed,Object? currentStep = null,Object? totalSteps = null,Object? imagePaths = null,Object? videoPath = freezed,Object? variants = null,Object? selectAll = null,Object? isCustomSizeMode = null,Object? showVariant = null,Object? selectedColorName = freezed,Object? selectedColorHex = freezed,Object? selectedSize = freezed,Object? categoryId = freezed,Object? oS = freezed,Object? processorType = freezed,Object? ramSize = freezed,Object? rom = freezed,Object? cameraSpecs = freezed,Object? modelYear = freezed,Object? usbPorts = freezed,Object? networkType = freezed,Object? warranty = freezed,Object? warrantyType = freezed,Object? battery = freezed,Object? connectivity = freezed,Object? dimensions = freezed,Object? simConfig = freezed,Object? displayResolution = freezed,Object? screenSize = freezed,Object? graphicsCard = freezed,Object? specSchema = freezed,Object? isLoading = null,Object? success = null,Object? errorMessage = freezed,}) {
   return _then(_MultipleProductsState(
 productName: null == productName ? _self.productName : productName // ignore: cast_nullable_to_non_nullable
 as String,productId: null == productId ? _self.productId : productId // ignore: cast_nullable_to_non_nullable
@@ -611,6 +655,28 @@ as bool,showVariant: null == showVariant ? _self.showVariant : showVariant // ig
 as bool,selectedColorName: freezed == selectedColorName ? _self.selectedColorName : selectedColorName // ignore: cast_nullable_to_non_nullable
 as String?,selectedColorHex: freezed == selectedColorHex ? _self.selectedColorHex : selectedColorHex // ignore: cast_nullable_to_non_nullable
 as String?,selectedSize: freezed == selectedSize ? _self.selectedSize : selectedSize // ignore: cast_nullable_to_non_nullable
+as String?,categoryId: freezed == categoryId ? _self.categoryId : categoryId // ignore: cast_nullable_to_non_nullable
+as String?,oS: freezed == oS ? _self.oS : oS // ignore: cast_nullable_to_non_nullable
+as String?,processorType: freezed == processorType ? _self.processorType : processorType // ignore: cast_nullable_to_non_nullable
+as String?,ramSize: freezed == ramSize ? _self.ramSize : ramSize // ignore: cast_nullable_to_non_nullable
+as String?,rom: freezed == rom ? _self.rom : rom // ignore: cast_nullable_to_non_nullable
+as String?,cameraSpecs: freezed == cameraSpecs ? _self.cameraSpecs : cameraSpecs // ignore: cast_nullable_to_non_nullable
+as String?,modelYear: freezed == modelYear ? _self.modelYear : modelYear // ignore: cast_nullable_to_non_nullable
+as String?,usbPorts: freezed == usbPorts ? _self.usbPorts : usbPorts // ignore: cast_nullable_to_non_nullable
+as String?,networkType: freezed == networkType ? _self.networkType : networkType // ignore: cast_nullable_to_non_nullable
+as String?,warranty: freezed == warranty ? _self.warranty : warranty // ignore: cast_nullable_to_non_nullable
+as String?,warrantyType: freezed == warrantyType ? _self.warrantyType : warrantyType // ignore: cast_nullable_to_non_nullable
+as String?,battery: freezed == battery ? _self.battery : battery // ignore: cast_nullable_to_non_nullable
+as String?,connectivity: freezed == connectivity ? _self.connectivity : connectivity // ignore: cast_nullable_to_non_nullable
+as String?,dimensions: freezed == dimensions ? _self.dimensions : dimensions // ignore: cast_nullable_to_non_nullable
+as String?,simConfig: freezed == simConfig ? _self.simConfig : simConfig // ignore: cast_nullable_to_non_nullable
+as String?,displayResolution: freezed == displayResolution ? _self.displayResolution : displayResolution // ignore: cast_nullable_to_non_nullable
+as String?,screenSize: freezed == screenSize ? _self.screenSize : screenSize // ignore: cast_nullable_to_non_nullable
+as String?,graphicsCard: freezed == graphicsCard ? _self.graphicsCard : graphicsCard // ignore: cast_nullable_to_non_nullable
+as String?,specSchema: freezed == specSchema ? _self.specSchema : specSchema // ignore: cast_nullable_to_non_nullable
+as String?,isLoading: null == isLoading ? _self.isLoading : isLoading // ignore: cast_nullable_to_non_nullable
+as bool,success: null == success ? _self.success : success // ignore: cast_nullable_to_non_nullable
+as bool,errorMessage: freezed == errorMessage ? _self.errorMessage : errorMessage // ignore: cast_nullable_to_non_nullable
 as String?,
   ));
 }

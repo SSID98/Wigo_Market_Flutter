@@ -3,24 +3,82 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:wigo_flutter/features/seller/viewmodels/seller_product_text_field_providers.dart';
 import 'package:wigo_flutter/features/seller/viewmodels/single_product_viewmodel.dart';
+import 'package:wigo_flutter/shared/widgets/custom_banner.dart';
 import 'package:wigo_flutter/shared/widgets/custom_button.dart';
 
 import '../../../../../core/constants/app_colors.dart';
+import '../../../../../core/utils/context_extensions.dart';
 import '../../../../../gen/assets.gen.dart';
 import '../../../../../shared/widgets/custom_text_field.dart';
-import '../../../models/single_product_state.dart';
+import '../../../viewmodels/mulitple_products_viewmodel.dart';
+import '../../../viewmodels/seller_product_task_viewmodel.dart';
+import '../../../viewmodels/upload_file_viewmodel.dart';
 import '../../widgets/step_progress_indicator.dart';
 import '../product_management_screen.dart';
-import '../seller_dashboard_screen.dart';
 
 class MobileSpecsScreen extends ConsumerWidget {
-  const MobileSpecsScreen({super.key});
+  final bool isMultiProduct;
+
+  const MobileSpecsScreen({super.key, this.isMultiProduct = false});
+
+  void _dispatch(
+    WidgetRef ref,
+    void Function(SingleProductViewModel) single,
+    void Function(MultipleProductsViewModel) multi,
+  ) {
+    if (isMultiProduct) {
+      multi(ref.read(multipleProductsProvider.notifier));
+    } else {
+      single(ref.read(singleProductProvider.notifier));
+    }
+  }
+
+  ValueNotifier<String?> _notifier(
+    WidgetRef ref,
+    ValueNotifier<String?> Function(SingleProductViewModel) single,
+    ValueNotifier<String?> Function(MultipleProductsViewModel) multi,
+  ) => isMultiProduct
+      ? multi(ref.read(multipleProductsProvider.notifier))
+      : single(ref.read(singleProductProvider.notifier));
+
+  void _validateAndAdvance(BuildContext context, WidgetRef ref) {
+    final hasOS = isMultiProduct
+        ? ref.read(multipleProductsProvider).oS?.isNotEmpty == true
+        : ref.read(singleProductProvider).oS?.isNotEmpty == true;
+    final hasRom = isMultiProduct
+        ? ref.read(multipleProductsProvider).rom?.isNotEmpty == true
+        : ref.read(singleProductProvider).rom?.isNotEmpty == true;
+
+    if (hasOS && hasRom) {
+      ref.read(specsPageProvider.notifier).state = 2;
+    } else {
+      showErrorBanner("Please fill OS and ROM before continuing", context);
+    }
+  }
+
+  Future<void> _handlePublish(BuildContext context, WidgetRef ref) async {
+    final success = isMultiProduct && context.mounted
+        ? await ref.read(multipleProductsProvider.notifier).submit(context, ref)
+        : context.mounted
+        ? await ref.read(singleProductProvider.notifier).submit(context, ref)
+        : false;
+    if (success && context.mounted) {
+      Navigator.pushAndRemoveUntil(
+        context,
+        MaterialPageRoute(builder: (_) => const ProductManagementScreen()),
+        (route) => false,
+      );
+      showSuccessBanner("Product created successfully", context);
+      isMultiProduct
+          ? ref.invalidate(multipleProductsProvider)
+          : ref.invalidate(singleProductProvider);
+      ref.invalidate(uploadProvider);
+    }
+  }
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final isWeb = MediaQuery.of(context).size.width > 800;
-    final state = ref.watch(singleProductProvider);
-    final vm = ref.read(singleProductProvider.notifier);
+    final isWeb = context.isWeb;
     final currentPage = ref.watch(specsPageProvider);
     return Padding(
       padding: const EdgeInsets.all(16),
@@ -33,7 +91,6 @@ class MobileSpecsScreen extends ConsumerWidget {
                   if (currentPage == 2) {
                     ref.read(specsPageProvider.notifier).state = 1;
                   } else {
-                    // This triggers the Inner Navigator pop handled by SellerMainScreen
                     Navigator.of(context).pop();
                   }
                 },
@@ -43,7 +100,9 @@ class MobileSpecsScreen extends ConsumerWidget {
               ),
               SizedBox(width: isWeb ? 10 : 20),
               Text(
-                "Add Single Version Product",
+                isMultiProduct
+                    ? "Add Multiple Version Product"
+                    : "Add Single Version Product",
                 style: GoogleFonts.hind(
                   color: AppColors.textBlackGrey,
                   fontWeight: FontWeight.w600,
@@ -53,7 +112,7 @@ class MobileSpecsScreen extends ConsumerWidget {
             ],
           ),
           const SizedBox(height: 25),
-          _buildBody(isWeb, state, vm, ref, context),
+          _buildBody(isWeb, ref, context, currentPage),
         ],
       ),
     );
@@ -61,12 +120,13 @@ class MobileSpecsScreen extends ConsumerWidget {
 
   Widget _buildBody(
     bool isWeb,
-    SingleProductState state,
-    SingleProductViewModel vm,
     WidgetRef ref,
     BuildContext context,
+    int currentPage,
   ) {
-    final currentPage = ref.watch(specsPageProvider);
+    final errorMessage = isMultiProduct
+        ? ref.watch(multipleProductsProvider).errorMessage
+        : ref.watch(singleProductProvider).errorMessage;
     return Expanded(
       child: Card(
         elevation: 0,
@@ -80,7 +140,7 @@ class MobileSpecsScreen extends ConsumerWidget {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Text(
-                    "Basic Product Information",
+                    "Phone Specifications",
                     style: GoogleFonts.hind(
                       color: AppColors.textVidaLocaGreen,
                       fontWeight: isWeb ? FontWeight.w700 : FontWeight.w600,
@@ -96,6 +156,35 @@ class MobileSpecsScreen extends ConsumerWidget {
               ),
             ),
             const Divider(),
+            if (errorMessage != null)
+              Container(
+                width: double.infinity,
+                color: AppColors.accentRed.withValues(alpha: 0.1),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 16,
+                  vertical: 10,
+                ),
+                child: Row(
+                  children: [
+                    const Icon(
+                      Icons.error_outline,
+                      color: AppColors.accentRed,
+                      size: 18,
+                    ),
+                    const SizedBox(width: 8),
+                    Expanded(
+                      child: Text(
+                        errorMessage,
+                        style: GoogleFonts.hind(
+                          color: AppColors.accentRed,
+                          fontSize: 13,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
             Expanded(
               child: SingleChildScrollView(
                 padding: const EdgeInsets.only(
@@ -130,7 +219,6 @@ class MobileSpecsScreen extends ConsumerWidget {
                             duration: const Duration(milliseconds: 300),
                             transitionBuilder:
                                 (Widget child, Animation<double> animation) {
-                                  // This adds a nice fade + scale effect
                                   return FadeTransition(
                                     opacity: animation,
                                     child: ScaleTransition(
@@ -161,39 +249,12 @@ class MobileSpecsScreen extends ConsumerWidget {
                 height: 48,
                 width: double.infinity,
                 onPressed: isWeb
-                    ? () {
-                        Navigator.pushAndRemoveUntil(
-                          context,
-                          MaterialPageRoute(
-                            builder: (_) => const SellerDashboardScreen(),
-                          ),
-                          (route) =>
-                              false, // Clears the navigation stack so they can't "go back" to the form
-                        );
-                      }
+                    ? () => _handlePublish(context, ref)
                     : () {
-                        final currentPage = ref.read(specsPageProvider);
-                        final specs = ref.read(singleProductProvider);
                         if (currentPage == 1) {
-                          if (specs.oS != null && specs.rom != null) {
-                            ref.read(specsPageProvider.notifier).state = 2;
-                          } else {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(
-                                content: Text("Please select OS and RAM"),
-                              ),
-                            );
-                          }
+                          _validateAndAdvance(context, ref);
                         } else {
-                          // 3. We are on Page 2, so now we navigate to the Dashboard
-                          Navigator.pushAndRemoveUntil(
-                            context,
-                            MaterialPageRoute(
-                              builder: (_) => const ProductManagementScreen(),
-                            ),
-                            (route) =>
-                                false, // Clears the navigation stack so they can't "go back" to the form
-                          );
+                          _handlePublish(context, ref);
                         }
                       },
               ),
@@ -205,16 +266,20 @@ class MobileSpecsScreen extends ConsumerWidget {
   }
 
   Widget _buildPage1(WidgetRef ref) {
-    final state = ref.watch(singleProductProvider);
-    final vm = ref.read(singleProductProvider.notifier);
-    final controllers = ref.watch(singleProductTextControllersProvider);
+    final controllers = isMultiProduct
+        ? ref.watch(multipleProductTextControllersProvider)
+        : ref.watch(singleProductTextControllersProvider);
     return Column(
       children: [
         CustomTextField(
           label: 'Operating System',
           hintText: 'e.g., Android 13, iOS 17',
           contentPadding: EdgeInsets.only(left: 10),
-          onChanged: (val) => vm.updateOS(val),
+          onChanged: (val) => _dispatch(
+            ref,
+            (vm) => vm.updateOS(val),
+            (vm) => vm.updateOS(val),
+          ),
           controller: controllers["oS"],
         ),
         const SizedBox(height: 15),
@@ -222,7 +287,11 @@ class MobileSpecsScreen extends ConsumerWidget {
           label: 'Processor Type',
           hintText: 'e.g., MediaTek Helio G99',
           contentPadding: EdgeInsets.only(left: 10),
-          onChanged: (val) => vm.updateProcessorType(val),
+          onChanged: (val) => _dispatch(
+            ref,
+            (vm) => vm.updateProcessorType(val),
+            (vm) => vm.updateProcessorType(val),
+          ),
           controller: controllers["processorType"],
         ),
         const SizedBox(height: 15),
@@ -230,40 +299,67 @@ class MobileSpecsScreen extends ConsumerWidget {
           label: 'RAM Size (Memory)',
           hintText: 'e.g., 6GB',
           items: const [
-            "2 GB",
-            "4 GB",
-            "6 GB",
-            "8 GB",
-            "12 GB",
-            "16 GB",
-            "32 GB",
-            "64 GB",
+            "1GB",
+            "2GB",
+            "3GB",
+            "4GB",
+            "6GB",
+            "8GB",
+            "12GB",
+            "16GB",
+            "18GB",
+            "24GB",
           ],
-          onChanged: vm.updateRam,
-          value: vm.selectedRam,
+          onChanged: (val) => _dispatch(
+            ref,
+            (vm) => vm.updateRam(val),
+            (vm) => vm.updateRam(val),
+          ),
+          value: _notifier(ref, (vm) => vm.selectedRam, (vm) => vm.selectedRam),
         ),
         const SizedBox(height: 15),
         CustomDropdownField(
           label: 'ROM (Internal Storage)',
           hintText: 'e.g., 128GB',
-          items: const ["32 GB", "64 GB", "128 GB", "256 GB", "512 GB"],
-          onChanged: vm.updateRom,
-          value: vm.selectedRom,
+          items: const [
+            "8GB",
+            "16GB",
+            "32GB",
+            "64GB",
+            "128GB",
+            "256GB",
+            "512GB",
+            "1TB",
+          ],
+          onChanged: (val) => _dispatch(
+            ref,
+            (vm) => vm.updateRom(val),
+            (vm) => vm.updateRom(val),
+          ),
+          value: _notifier(ref, (vm) => vm.selectedRom, (vm) => vm.selectedRom),
         ),
         const SizedBox(height: 15),
         CustomTextField(
           label: 'Display Resolution',
           hintText: 'e.g., 1080 x 2400 pixels',
-          contentPadding: EdgeInsets.only(left: 10),
-          onChanged: (val) => vm.updateDisplayResolution(val),
+          contentPadding: const EdgeInsets.only(left: 10),
+          onChanged: (val) => _dispatch(
+            ref,
+            (vm) => vm.updateDisplayResolution(val),
+            (vm) => vm.updateDisplayResolution(val),
+          ),
           controller: controllers["displayResolution"],
         ),
         const SizedBox(height: 15),
         CustomTextField(
           label: 'Screen Size (inches)',
           hintText: 'e.g., 6.5',
-          contentPadding: EdgeInsets.only(left: 10),
-          onChanged: (val) => vm.updateScreenSize(val),
+          contentPadding: const EdgeInsets.only(left: 10),
+          onChanged: (val) => _dispatch(
+            ref,
+            (vm) => vm.updateScreenSize(val),
+            (vm) => vm.updateScreenSize(val),
+          ),
           controller: controllers["screenSize"],
         ),
         const SizedBox(height: 15),
@@ -271,67 +367,153 @@ class MobileSpecsScreen extends ConsumerWidget {
           label: 'Camera Specs',
           hintText: 'e.g., 64MP Rear + 16MP Front',
           items: const [
-            "12 MP Rear + 8 MP Front",
-            "48 MP Rear + 12 MP Front",
-            "64 MP Rear + 16 MP Front",
-            "108 MP Rear + 32 MP Front",
-            "Quad Camera (64 MP + 12 MP + 8 MP + 5 MP)",
+            "8MP Rear + 5MP Front",
+            "13MP Rear + 8MP Front",
+            "16MP Rear + 8MP Front",
+            "32MP Rear + 13MP Front",
+            "48MP Rear + 16MP Front",
+            "64MP Rear + 16MP Front",
+            "108MP Rear + 32MP Front",
+            "200MP Rear + 32MP Front",
           ],
-          onChanged: vm.updateCameraSpecs,
-          value: vm.selectedCameraSpec,
+          onChanged: (val) => _dispatch(
+            ref,
+            (vm) => vm.updateCameraSpecs(val),
+            (vm) => vm.updateCameraSpecs(val),
+          ),
+          value: _notifier(
+            ref,
+            (vm) => vm.selectedCameraSpec,
+            (vm) => vm.selectedCameraSpec,
+          ),
         ),
       ],
     );
   }
 
   Widget _buildPage2(WidgetRef ref) {
-    final state = ref.watch(singleProductProvider);
-    final vm = ref.read(singleProductProvider.notifier);
-    final controllers = ref.watch(singleProductTextControllersProvider);
+    final controllers = isMultiProduct
+        ? ref.watch(multipleProductTextControllersProvider)
+        : ref.watch(singleProductTextControllersProvider);
     return Column(
       children: [
         CustomDropdownField(
           label: 'Battery Capacity',
           hintText: 'e.g., 5000 mAh',
           items: const [
+            "2000 mAh",
             "3000 mAh",
             "4000 mAh",
             "4500 mAh",
             "5000 mAh",
             "6000 mAh",
             "7000 mAh",
+            "10000 mAh",
           ],
-          onChanged: vm.updateBattery,
-          value: vm.selectedBattery,
+          onChanged: (val) => _dispatch(
+            ref,
+            (vm) => vm.updateBattery(val),
+            (vm) => vm.updateBattery(val),
+          ),
+          value: _notifier(
+            ref,
+            (vm) => vm.selectedBattery,
+            (vm) => vm.selectedBattery,
+          ),
         ),
         const SizedBox(height: 15),
         CustomDropdownField(
           label: 'Network Type',
           hintText: 'e.g., 4G LTE, 5G',
-          items: const ["3G", "4G LTE", "5G", "Wi-Fi only"],
-          onChanged: vm.updateNetworkType,
-          value: vm.selectedNetworkType,
+          items: const ["2G", "3G", "4G LTE", "5G", "Wi-Fi only"],
+          onChanged: (val) => _dispatch(
+            ref,
+            (vm) => vm.updateNetworkType(val),
+            (vm) => vm.updateNetworkType(val),
+          ),
+          value: _notifier(
+            ref,
+            (vm) => vm.selectedNetworkType,
+            (vm) => vm.selectedNetworkType,
+          ),
         ),
         const SizedBox(height: 15),
         CustomDropdownField(
           label: 'SIM Configuration',
           hintText: 'e.g., Dual Nano SIM',
           items: const [
+            "Single SIM",
+            "Dual SIM",
             "Single Nano SIM",
             "Dual Nano SIM",
-            "Hybrid Dual SIM (Nano + microSD)",
-            "eSIM + Nano SIM",
+            "Nano SIM + eSIM",
+            "eSIM only",
           ],
-          onChanged: vm.updateSimConfig,
-          value: vm.selectedSimConfig,
+          onChanged: (val) => _dispatch(
+            ref,
+            (vm) => vm.updateSimConfig(val),
+            (vm) => vm.updateSimConfig(val),
+          ),
+          value: _notifier(
+            ref,
+            (vm) => vm.selectedSimConfig,
+            (vm) => vm.selectedSimConfig,
+          ),
         ),
         const SizedBox(height: 15),
         CustomTextField(
           label: 'Dimensions (L × W × H in mm)',
           hintText: 'e.g., 160 x 75 x 8 mm',
-          contentPadding: EdgeInsets.only(left: 10),
-          onChanged: (val) => vm.updateDimensions(val),
+          contentPadding: const EdgeInsets.only(left: 10),
+          onChanged: (val) => _dispatch(
+            ref,
+            (vm) => vm.updateDimensions(val),
+            (vm) => vm.updateDimensions(val),
+          ),
           controller: controllers["dimensions"],
+        ),
+        const SizedBox(height: 15),
+        CustomDropdownField(
+          isRichText: true,
+          labelRichText: RichText(
+            text: TextSpan(
+              children: [
+                TextSpan(
+                  text: "Warranty Type ",
+                  style: GoogleFonts.hind(
+                    fontWeight: FontWeight.w500,
+                    fontSize: 16,
+                    color: AppColors.textBlackGrey,
+                  ),
+                ),
+                TextSpan(
+                  text: "(Optional)",
+                  style: GoogleFonts.hind(
+                    fontWeight: FontWeight.w500,
+                    fontSize: 16,
+                    color: AppColors.textBodyText,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          hintText: 'e.g., Seller Warranty',
+          items: const [
+            "No Warranty",
+            "Seller Warranty",
+            "Manufacturer Warranty",
+            "International Warranty",
+          ],
+          onChanged: (val) => _dispatch(
+            ref,
+            (vm) => vm.updateWarrantyType(val),
+            (vm) => vm.updateWarrantyType(val),
+          ),
+          value: _notifier(
+            ref,
+            (vm) => vm.selectedWarrantyType,
+            (vm) => vm.selectedWarrantyType,
+          ),
         ),
         const SizedBox(height: 15),
         CustomDropdownField(
@@ -359,9 +541,25 @@ class MobileSpecsScreen extends ConsumerWidget {
             ),
           ),
           hintText: 'e.g., 1 Year',
-          items: const ["6 Months", "1 Year", "2 Years", "3 Years", "5 Years"],
-          onChanged: vm.updateWarranty,
-          value: vm.selectedWarranty,
+          items: const [
+            "1 Month",
+            "3 Months",
+            "6 Months",
+            "1 Year",
+            "2 Years",
+            "3 Years",
+            "5 Years",
+          ],
+          onChanged: (val) => _dispatch(
+            ref,
+            (vm) => vm.updateWarranty(val),
+            (vm) => vm.updateWarranty(val),
+          ),
+          value: _notifier(
+            ref,
+            (vm) => vm.selectedWarranty,
+            (vm) => vm.selectedWarranty,
+          ),
         ),
       ],
     );

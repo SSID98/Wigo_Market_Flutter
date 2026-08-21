@@ -12,26 +12,24 @@ import 'package:wigo_flutter/shared/widgets/custom_button.dart';
 import 'package:wigo_flutter/shared/widgets/custom_checkbox_widget.dart';
 import 'package:wigo_flutter/shared/widgets/custom_text_field.dart';
 
-import '../../../../../core/utils/context_extensions.dart';
-import '../../../../../core/utils/validation_utils.dart';
-import '../../../../../gen/assets.gen.dart';
-import '../../../../../shared/models/bank_model.dart';
-import '../../../../../shared/widgets/bank_widgets/bank_search_modal.dart';
-import '../../../../../shared/widgets/custom_dropdown_field2.dart';
-import '../../../../../shared/widgets/custom_loading_overlay.dart';
-import '../../../models/bank_details.dart';
-import '../../../models/wallet_state.dart';
+import '../../../core/utils/context_extensions.dart';
+import '../../../core/utils/validation_utils.dart';
+import '../../../gen/assets.gen.dart';
+import '../../models/bank_model.dart';
+import '../../widgets/bank_widgets/bank_search_modal.dart';
+import '../../widgets/custom_dropdown_field2.dart';
+import '../../widgets/custom_loading_overlay.dart';
+import '../../../features/rider/models/bank_details.dart';
+import '../../../features/rider/models/wallet_state.dart';
 
 class EditBankAccountScreen extends HookConsumerWidget {
   const EditBankAccountScreen({
     super.key,
     required this.bankDetails,
-    this.returnToState,
     this.openedViaNavigator = false,
   });
 
   final BankDetails bankDetails;
-  final WalletScreenState? returnToState;
   final bool openedViaNavigator;
 
   @override

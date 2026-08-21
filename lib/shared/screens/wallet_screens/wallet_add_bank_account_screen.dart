@@ -4,9 +4,9 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:wigo_flutter/features/rider/presentation/widgets/bank_details_tile.dart';
 import 'package:wigo_flutter/features/rider/viewmodels/edit_bank_account_viewmodel.dart';
 
-import '../../../../../core/constants/app_colors.dart';
-import '../../../../../shared/widgets/custom_button.dart';
-import '../../../models/bank_details.dart';
+import '../../../core/constants/app_colors.dart';
+import '../../../features/rider/models/bank_details.dart';
+import '../../widgets/custom_button.dart';
 
 class AddBankAccountScreen extends ConsumerWidget {
   const AddBankAccountScreen({super.key, required this.isWeb});

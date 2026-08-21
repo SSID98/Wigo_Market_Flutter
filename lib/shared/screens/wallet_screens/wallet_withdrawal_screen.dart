@@ -3,22 +3,22 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
-import 'package:wigo_flutter/features/rider/presentation/views/rider_wallet_screens/wallet_edit_bank_account_screen.dart';
 import 'package:wigo_flutter/features/rider/viewmodels/edit_bank_account_viewmodel.dart';
 import 'package:wigo_flutter/features/rider/viewmodels/wallet_withdrawal_viewmodel.dart';
 import 'package:wigo_flutter/shared/models/bank_model.dart';
+import 'package:wigo_flutter/shared/screens/wallet_screens/wallet_edit_bank_account_screen.dart';
 
-import '../../../../../core/constants/app_colors.dart';
-import '../../../../../core/utils/context_extensions.dart';
-import '../../../../../core/utils/validation_utils.dart';
-import '../../../../../gen/assets.gen.dart';
-import '../../../../../shared/widgets/custom_banner.dart';
-import '../../../../../shared/widgets/custom_button.dart';
-import '../../../../../shared/widgets/custom_text_field.dart';
-import '../../../models/bank_details.dart';
-import '../../widgets/bank_details_tile.dart';
-import '../../widgets/custom_dialog.dart';
-import '../../widgets/withdraw_confirmation_card.dart';
+import '../../../core/constants/app_colors.dart';
+import '../../../core/utils/context_extensions.dart';
+import '../../../core/utils/validation_utils.dart';
+import '../../../features/rider/models/bank_details.dart';
+import '../../../features/rider/presentation/widgets/bank_details_tile.dart';
+import '../../../features/rider/presentation/widgets/custom_dialog.dart';
+import '../../../features/rider/presentation/widgets/withdraw_confirmation_card.dart';
+import '../../../gen/assets.gen.dart';
+import '../../widgets/custom_banner.dart';
+import '../../widgets/custom_button.dart';
+import '../../widgets/custom_text_field.dart';
 
 enum WithdrawalStatus { success, failure }
 
@@ -29,6 +29,7 @@ class WalletWithdrawalScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    print("WalletWithdrawalScreen launched with isSeller = $isSeller");
     final vm = ref.read(withdrawalViewModelProvider.notifier);
     ref.read(editBankAccountProvider.notifier).ensureWalletFetched();
     final state = ref.watch(withdrawalViewModelProvider);
@@ -316,7 +317,6 @@ class WalletWithdrawalScreen extends ConsumerWidget {
                                 : ref
                                       .read(editBankAccountProvider.notifier)
                                       .navigateToPaymentSetup(context);
-                            ;
                             Navigator.of(
                               context,
                             ).popUntil((route) => route.isFirst);
@@ -353,15 +353,22 @@ class WalletWithdrawalScreen extends ConsumerWidget {
                               s.hasWithdrawalPin &&
                               defaultBank != null;
 
-                          if (s.hasWithdrawalPin == false) {
-                            showErrorBanner(
-                              "Please set a withdrawal pin first",
-                              context,
-                            );
-                            return;
-                          }
+                          // if () {
+                          //
+                          //   return;
+                          // }
 
                           if (!canEditDirectly) {
+                            s.hasWallet == false
+                                ? showErrorBanner(
+                                    "Please create a bank account first",
+                                    context,
+                                  )
+                                : showErrorBanner(
+                                    "Please set a withdrawal pin first",
+                                    context,
+                                  );
+
                             isSeller
                                 ? ref
                                       .read(editBankAccountProvider.notifier)

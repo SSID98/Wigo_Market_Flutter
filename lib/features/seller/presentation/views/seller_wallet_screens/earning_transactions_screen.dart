@@ -9,9 +9,9 @@ import '../../../../../../shared/widgets/custom_search_field.dart';
 import '../../../../../../shared/widgets/pagination_widget.dart';
 import '../../../../../core/utils/context_extensions.dart';
 import '../../../../../core/utils/helper_methods_classes.dart';
+import '../../../../../shared/screens/wallet_screens/wallet_withdrawal_screen.dart';
 import '../../../../../shared/widgets/custom_button.dart';
 import '../../../../../shared/widgets/dashboard_widgets/earning_card.dart';
-import '../../../../rider/presentation/views/rider_wallet_screens/wallet_withdrawal_screen.dart';
 import '../../../models/order.dart';
 import '../../../models/order_task_state.dart';
 import '../../../viewmodels/dropdown_providers.dart';
@@ -475,7 +475,7 @@ class EarningsAndTransactionsScreen extends ConsumerWidget {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (_) => WalletWithdrawalScreen(isSeller: false),
+                      builder: (_) => WalletWithdrawalScreen(isSeller: true),
                     ),
                   );
                 },
