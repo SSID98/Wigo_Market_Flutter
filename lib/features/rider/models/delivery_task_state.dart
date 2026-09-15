@@ -35,7 +35,6 @@ extension DeliveryFilterExtension on DeliveryFilter {
     }
   }
 
-  /// The key in the GET /orders/counts response for this tab's badge number.
   String get countKey {
     switch (this) {
       case DeliveryFilter.all:
@@ -52,29 +51,19 @@ extension DeliveryFilterExtension on DeliveryFilter {
   }
 }
 
-// Sentinel that distinguishes "omitted" (keep current value) from "null"
-// (explicitly clear the field) in copyWith. Private to this file — the
-// viewmodel never needs to reference it directly.
 const _undefined = Object();
 
 class DeliveryTaskState {
   final AsyncValue<List<Delivery>> deliveries;
   final DeliveryFilter selectedFilter;
-
-  /// 0-indexed internally. Add 1 before sending to the API.
   final int currentPage;
-
   final DeliveryPagination pagination;
   final Map<DeliveryFilter, int> deliveryCounts;
-
-  /// The delivery currently shown in the web side panel. Null on mobile.
   final Delivery? selectedDelivery;
-
   final bool isActionLoading;
   final String? actionError;
-
-  /// Set after a successful confirm-delivery; cleared after the UI shows it.
   final double? lastCreditedAmount;
+  final int rowsPerPage;
 
   const DeliveryTaskState({
     this.deliveries = const AsyncValue.data([]),
@@ -86,6 +75,7 @@ class DeliveryTaskState {
     this.isActionLoading = false,
     this.actionError,
     this.lastCreditedAmount,
+    this.rowsPerPage = 10,
   });
 
   int get totalDeliveriesCount => pagination.totalOrders;
@@ -102,6 +92,7 @@ class DeliveryTaskState {
     bool? isActionLoading,
     Object? actionError = _undefined,
     Object? lastCreditedAmount = _undefined,
+    int? rowsPerPage,
   }) {
     return DeliveryTaskState(
       deliveries: deliveries ?? this.deliveries,
@@ -119,6 +110,7 @@ class DeliveryTaskState {
       lastCreditedAmount: identical(lastCreditedAmount, _undefined)
           ? this.lastCreditedAmount
           : lastCreditedAmount as double?,
+      rowsPerPage: rowsPerPage ?? this.rowsPerPage,
     );
   }
 }

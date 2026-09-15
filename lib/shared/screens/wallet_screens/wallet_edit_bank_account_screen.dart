@@ -20,7 +20,6 @@ import '../../widgets/bank_widgets/bank_search_modal.dart';
 import '../../widgets/custom_dropdown_field2.dart';
 import '../../widgets/custom_loading_overlay.dart';
 import '../../../features/rider/models/bank_details.dart';
-import '../../../features/rider/models/wallet_state.dart';
 
 class EditBankAccountScreen extends HookConsumerWidget {
   const EditBankAccountScreen({

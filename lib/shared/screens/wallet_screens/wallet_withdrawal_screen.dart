@@ -29,7 +29,6 @@ class WalletWithdrawalScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    print("WalletWithdrawalScreen launched with isSeller = $isSeller");
     final vm = ref.read(withdrawalViewModelProvider.notifier);
     ref.read(editBankAccountProvider.notifier).ensureWalletFetched();
     final state = ref.watch(withdrawalViewModelProvider);

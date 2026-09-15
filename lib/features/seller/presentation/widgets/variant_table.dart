@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:wigo_flutter/core/utils/context_extensions.dart';
 import 'package:wigo_flutter/features/seller/viewmodels/mulitple_products_viewmodel.dart';
 
 import '../../../../core/constants/app_colors.dart';
@@ -19,7 +20,7 @@ class VariantTable extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final isWeb = MediaQuery.of(context).size.width > 600;
+    final isWeb = context.isWeb;
     final state = ref.watch(multipleProductsProvider);
     final vm = ref.read(multipleProductsProvider.notifier);
     final variants = state.variants;

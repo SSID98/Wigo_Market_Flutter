@@ -92,7 +92,6 @@ class CustomAppBar extends ConsumerWidget implements PreferredSizeWidget {
             ),
       actions: [
         if (isWeb) ...[
-          // Web-specific actions
           Padding(
             padding: EdgeInsets.only(left: 200.0, right: 10),
             child: Container(
@@ -115,9 +114,7 @@ class CustomAppBar extends ConsumerWidget implements PreferredSizeWidget {
                       ),
                       child: IconButton(
                         icon: AppAssets.icons.notification.svg(),
-                        onPressed: () {
-                          // Handle notifications
-                        },
+                        onPressed: () {},
                       ),
                     ),
                     const SizedBox(width: 10),
@@ -264,9 +261,7 @@ class CustomAppBar extends ConsumerWidget implements PreferredSizeWidget {
                   ),
                   child: IconButton(
                     icon: AppAssets.icons.notification.svg(),
-                    onPressed: () {
-                      // Handle notifications
-                    },
+                    onPressed: () {},
                   ),
                 ),
           const SizedBox(width: 6),

@@ -5,6 +5,7 @@ import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:wigo_flutter/core/utils/context_extensions.dart';
 import 'package:wigo_flutter/shared/widgets/custom_banner.dart';
 import 'package:wigo_flutter/shared/widgets/pagination_widget.dart';
 
@@ -24,7 +25,14 @@ class DeliveryTaskScreen extends HookConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final state = ref.watch(deliveryTaskProvider);
     final notifier = ref.read(deliveryTaskProvider.notifier);
-    final isWeb = MediaQuery.of(context).size.width > 800;
+    final isWeb = context.isWeb;
+
+    useEffect(() {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        ref.read(deliveryTaskProvider.notifier).init();
+      });
+      return null;
+    }, const []);
 
     useEffect(() {
       final timer = Timer.periodic(const Duration(seconds: 30), (_) {
@@ -39,15 +47,6 @@ class DeliveryTaskScreen extends HookConsumerWidget {
     ref.listen(deliveryTaskProvider.select((s) => s.actionError), (_, error) {
       if (error != null && context.mounted) {
         showErrorBanner(error, context);
-        // ScaffoldMessenger.of(context)
-        //   ..hideCurrentSnackBar()
-        //   ..showSnackBar(
-        //     SnackBar(
-        //       content: Text(error),
-        //       backgroundColor: Colors.red.shade700,
-        //       behavior: SnackBarBehavior.floating,
-        //     ),
-        //   );
         notifier.clearActionError();
       }
     });
@@ -202,6 +201,9 @@ class DeliveryTaskScreen extends HookConsumerWidget {
       child: Container(
         color: AppColors.backgroundWhite,
         child: PaginationWidget(
+          labelPerPage: 'Orders per page',
+          rowsPerPage: state.rowsPerPage,
+          onSelected: (rows) => notifier.setRowsPerPage(rows),
           totalPages: state.totalPages,
           currentPage: state.currentPage + 1,
           isDeliveries: true,

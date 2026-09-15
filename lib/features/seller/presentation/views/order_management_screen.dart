@@ -26,7 +26,10 @@ class OrderManagementScreen extends ConsumerWidget {
     final notifier = ref.read(orderTaskProvider.notifier);
     final totalPages = (state.totalOrdersCount / state.rowsPerPage).ceil();
     final currentPage = state.currentPage + 1;
-    final isWeb = MediaQuery.of(context).size.width > 800;
+    final isWeb = MediaQuery
+        .of(context)
+        .size
+        .width > 800;
 
     return SingleChildScrollView(
       padding: const EdgeInsets.all(16.0),
@@ -54,7 +57,8 @@ class OrderManagementScreen extends ConsumerWidget {
             ),
           ],
           const SizedBox(height: 20),
-          if (isWeb) OrderHeaderWeb() else OrderHeaderMobile(),
+          if (isWeb) OrderHeaderWeb() else
+            OrderHeaderMobile(),
           const SizedBox(height: 20),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -128,19 +132,17 @@ class OrderManagementScreen extends ConsumerWidget {
     );
   }
 
-  Widget _buildOrderList(
-    bool isWeb,
-    List<Order> orders,
-    int totalPages,
-    int currentPage,
-    int count,
-    void Function()? onPressedBack,
-    void Function()? onPressedEnd,
-    void Function()? onPressedForward,
-    void Function()? onPressedStart,
-    OrderTaskState state,
-    OrderTaskViewmodel vm,
-  ) {
+  Widget _buildOrderList(bool isWeb,
+      List<Order> orders,
+      int totalPages,
+      int currentPage,
+      int count,
+      void Function()? onPressedBack,
+      void Function()? onPressedEnd,
+      void Function()? onPressedForward,
+      void Function()? onPressedStart,
+      OrderTaskState state,
+      OrderTaskViewmodel vm,) {
     return Card(
       margin: EdgeInsets.only(top: isWeb ? 40 : 10),
       elevation: 0,
@@ -172,19 +174,17 @@ class OrderManagementScreen extends ConsumerWidget {
                       width: isWeb ? 384 : 172,
                       fit: BoxFit.cover,
                       errorBuilder:
-                          (
-                            BuildContext context,
-                            Object exception,
-                            StackTrace? stackTrace,
-                          ) {
-                            return const Center(
-                              child: Icon(
-                                Icons.broken_image,
-                                color: AppColors.textIconGrey,
-                                size: 50.0,
-                              ),
-                            );
-                          },
+                          (BuildContext context,
+                          Object exception,
+                          StackTrace? stackTrace,) {
+                        return const Center(
+                          child: Icon(
+                            Icons.broken_image,
+                            color: AppColors.textIconGrey,
+                            size: 50.0,
+                          ),
+                        );
+                      },
                     ),
                     const SizedBox(height: 25.0),
                     Text(
@@ -243,6 +243,9 @@ class OrderManagementScreen extends ConsumerWidget {
             Container(
               color: AppColors.backgroundWhite,
               child: PaginationWidget(
+                onSelected: (s) {},
+                labelPerPage: "Orders per page",
+                rowsPerPage: 10,
                 isEarning: true,
                 showPage: true,
                 totalPages: totalPages,
@@ -267,7 +270,10 @@ class OrderHeaderWeb extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final vm = ref.read(orderTaskProvider.notifier);
-    final isWeb = MediaQuery.of(context).size.width > 800;
+    final isWeb = MediaQuery
+        .of(context)
+        .size
+        .width > 800;
     return Row(
       children: [
         _buildDateDropdown(
@@ -302,7 +308,8 @@ class OrderHeaderWeb extends ConsumerWidget {
         if (value == 'today') onToday();
         if (value == 'custom') onCustom();
       },
-      itemBuilder: (_) => [
+      itemBuilder: (_) =>
+      [
         const PopupMenuItem(value: 'today', child: Text("Today")),
         const PopupMenuItem(value: 'custom', child: Text("Custom date")),
       ],
@@ -330,7 +337,6 @@ class OrderHeaderMobile extends ConsumerWidget {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            //Filters
             MenuAnchor(
               crossAxisUnconstrained: true,
               alignmentOffset: const Offset(-14, 15),
@@ -340,15 +346,14 @@ class OrderHeaderMobile extends ConsumerWidget {
                     if (!controller.isOpen) {
                       ref.read(orderTaskProvider.notifier).syncTempWithActive();
 
-                      ref.read(expandedIdProvider.notifier).state = null;
+                      ref
+                          .read(expandedIdProvider.notifier)
+                          .state = null;
 
                       controller.open();
                     } else {
                       controller.close();
                     }
-                    // ref.read(expandedIdProvider.notifier).state =
-                    //     null;
-                    // controller.isOpen ? controller.close() : controller.open();
                   },
                   child: FilterButton(
                     label: 'Filters',
@@ -417,14 +422,14 @@ class OrderHeaderMobile extends ConsumerWidget {
                                             );
                                             return Dialog(
                                               backgroundColor:
-                                                  Colors.transparent,
+                                              Colors.transparent,
                                               insetPadding:
-                                                  const EdgeInsets.symmetric(
-                                                    horizontal: 20,
-                                                  ),
+                                              const EdgeInsets.symmetric(
+                                                horizontal: 20,
+                                              ),
                                               child: CustomMultiDatePicker(
                                                 initialSelectedDates:
-                                                    state.tempSelectedDates,
+                                                state.tempSelectedDates,
                                                 onDateToggled: (date) {
                                                   vm.toggleDateSelection(date);
                                                 },
@@ -443,7 +448,6 @@ class OrderHeaderMobile extends ConsumerWidget {
                                 ),
                               ],
 
-                              //status filter
                               Padding(
                                 padding: EdgeInsets.only(
                                   top: expandedSection == 'status' ? 10 : 0,
@@ -455,7 +459,7 @@ class OrderHeaderMobile extends ConsumerWidget {
                                   isExpanded: expandedSection == 'status',
                                   isSelected: false,
                                   newColor:
-                                      state.tempSelectedStatuses.isNotEmpty
+                                  state.tempSelectedStatuses.isNotEmpty
                                       ? Colors.transparent
                                       : expandedSection == 'status'
                                       ? AppColors.tableHeader
@@ -466,7 +470,8 @@ class OrderHeaderMobile extends ConsumerWidget {
                                 ...OrderFilter.values
                                     .where((e) => e != OrderFilter.all)
                                     .map(
-                                      (status) => GestureDetector(
+                                      (status) =>
+                                      GestureDetector(
                                         onTap: () =>
                                             vm.toggleStatusSelection(status),
                                         child: Container(
@@ -475,8 +480,8 @@ class OrderHeaderMobile extends ConsumerWidget {
                                               4,
                                             ),
                                             color:
-                                                state.tempSelectedStatuses
-                                                    .contains(status)
+                                            state.tempSelectedStatuses
+                                                .contains(status)
                                                 ? AppColors.tableHeader
                                                 : Colors.transparent,
                                           ),
@@ -490,8 +495,8 @@ class OrderHeaderMobile extends ConsumerWidget {
                                             ),
                                             child: Row(
                                               mainAxisAlignment:
-                                                  MainAxisAlignment
-                                                      .spaceBetween,
+                                              MainAxisAlignment
+                                                  .spaceBetween,
                                               children: [
                                                 Text(
                                                   status.displayName,
@@ -499,7 +504,7 @@ class OrderHeaderMobile extends ConsumerWidget {
                                                     fontSize: 16,
                                                     fontWeight: FontWeight.w500,
                                                     color:
-                                                        AppColors.textBodyText,
+                                                    AppColors.textBodyText,
                                                   ),
                                                 ),
                                                 CustomCheckbox2(
@@ -514,10 +519,10 @@ class OrderHeaderMobile extends ConsumerWidget {
                                                   size: 16,
                                                   checkSize: 12,
                                                   borderColor:
-                                                      state.tempSelectedStatuses
-                                                          .contains(status)
+                                                  state.tempSelectedStatuses
+                                                      .contains(status)
                                                       ? AppColors
-                                                            .primaryDarkGreen
+                                                      .primaryDarkGreen
                                                       : AppColors.borderColor,
                                                   checkColor: AppColors
                                                       .primaryDarkGreen,
@@ -527,7 +532,7 @@ class OrderHeaderMobile extends ConsumerWidget {
                                           ),
                                         ),
                                       ),
-                                    ),
+                                ),
                               Padding(
                                 padding: EdgeInsets.only(
                                   top: expandedSection == 'orderType' ? 10 : 0,
@@ -594,7 +599,6 @@ class OrderHeaderMobile extends ConsumerWidget {
 
             const SizedBox(width: 12),
 
-            //Sort By
             MenuAnchor(
               crossAxisUnconstrained: true,
               alignmentOffset: const Offset(-40, 15),
@@ -604,7 +608,9 @@ class OrderHeaderMobile extends ConsumerWidget {
                     if (!controller.isOpen) {
                       ref.read(orderTaskProvider.notifier).syncTempWithActive();
 
-                      ref.read(expandedIdProvider.notifier).state = null;
+                      ref
+                          .read(expandedIdProvider.notifier)
+                          .state = null;
 
                       controller.open();
                     } else {
@@ -707,8 +713,8 @@ class OrderHeaderMobile extends ConsumerWidget {
           borderRadius: BorderRadius.circular(4),
           color: isSelected
               ? isExpanded
-                    ? AppColors.tableHeader
-                    : Colors.transparent
+              ? AppColors.tableHeader
+              : Colors.transparent
               : newColor,
         ),
         child: Padding(

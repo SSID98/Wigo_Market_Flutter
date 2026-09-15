@@ -433,6 +433,16 @@ class RiderProfileAndAccountScreen extends HookConsumerWidget {
                   hintTextColor: AppColors.textBlackGrey,
                   enabled: !isReadOnly,
                   onChanged: vm.updateNextOfKinName,
+                  hasError:
+                      !isReadOnly &&
+                      state.hasSubmitted &&
+                      state.nextOfKinName.trim().isEmpty,
+                  errorMessage:
+                      !isReadOnly &&
+                          state.hasSubmitted &&
+                          state.nextOfKinName.trim().isEmpty
+                      ? 'This field is required'
+                      : null,
                 );
 
               case 4:
@@ -442,6 +452,16 @@ class RiderProfileAndAccountScreen extends HookConsumerWidget {
                   enabled: !isReadOnly,
                   onChanged: vm.updateNextOfKinMobile,
                   contentPadding: EdgeInsets.only(bottom: isWeb ? 3.5 : 0),
+                  hasError:
+                      !isReadOnly &&
+                      state.hasSubmitted &&
+                      state.nextOfKinMobile.trim().isEmpty,
+                  errorMessage:
+                      !isReadOnly &&
+                          state.hasSubmitted &&
+                          state.nextOfKinMobile.trim().isEmpty
+                      ? 'This field is required'
+                      : null,
                 );
 
               // case 5:

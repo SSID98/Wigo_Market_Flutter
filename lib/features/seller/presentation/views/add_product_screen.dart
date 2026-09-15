@@ -2,7 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:wigo_flutter/core/constants/app_colors.dart';
-import 'package:wigo_flutter/features/seller/presentation/views/single_product_version_view/single_product_info_screen.dart';
+import 'package:wigo_flutter/core/utils/context_extensions.dart';
+import 'package:wigo_flutter/features/seller/presentation/views/product_management_screens/single_product_info_screen.dart';
 import 'package:wigo_flutter/shared/widgets/custom_button.dart';
 
 import '../../../../gen/assets.gen.dart';
@@ -13,7 +14,7 @@ class AddProductScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final isWeb = MediaQuery.of(context).size.width > 800;
+    final isWeb = context.isWeb;
     return SingleChildScrollView(
       padding: const EdgeInsets.all(16),
       child: Column(

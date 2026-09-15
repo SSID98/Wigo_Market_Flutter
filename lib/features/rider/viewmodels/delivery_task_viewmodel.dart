@@ -6,23 +6,17 @@ import '../models/delivery_model.dart';
 import '../models/delivery_task_state.dart';
 import '../service/rider_api_service.dart';
 
-// Private sentinel — distinguishes "not provided" from explicit null in copyWith.
 const _keep = Object();
 
 class DeliveryTaskViewModel extends StateNotifier<DeliveryTaskState> {
   final Reader read;
   final RiderApiService api;
 
-  static const int _pageSize = 10;
-
   DeliveryTaskViewModel(this.read, {RiderApiService? apiService})
     : api = apiService ?? read(riderApiServiceProvider),
-      super(const DeliveryTaskState()) {
-    _init();
-  }
+      super(const DeliveryTaskState());
 
-  Future<void> _init() async {
-    // Fire both in parallel so the UI is ready as fast as possible.
+  Future<void> init() async {
     await Future.wait([fetchOrders(), refreshCounts()]);
   }
 
@@ -33,8 +27,8 @@ class DeliveryTaskViewModel extends StateNotifier<DeliveryTaskState> {
 
     try {
       final result = await api.getOrders(
-        page: state.currentPage + 1, // API is 1-indexed
-        limit: _pageSize,
+        page: state.currentPage + 1,
+        limit: state.rowsPerPage,
         tab: state.selectedFilter.tabParam,
       );
 
@@ -44,8 +38,6 @@ class DeliveryTaskViewModel extends StateNotifier<DeliveryTaskState> {
         final freshOrders = result.data!.orders;
         final pagination = result.data!.pagination;
 
-        // If the web side-panel delivery was claimed by another rider during
-        // a silent poll, auto-clear it so the rider isn't looking at stale info.
         final selectedId = state.selectedDelivery?.id;
         final selectedStillExists =
             selectedId == null || freshOrders.any((o) => o.id == selectedId);
@@ -108,17 +100,6 @@ class DeliveryTaskViewModel extends StateNotifier<DeliveryTaskState> {
     state = state.copyWith(selectedDelivery: delivery);
   }
 
-  // ─── Actions ───────────────────────────────────────────────────────────────
-  //
-  // Status progression (maps to API endpoints):
-  //
-  //   pending_assignment ──[selectOrder]──► assigned
-  //   assigned           ──[updateOrderStatus('picked_up')]──► picked_up
-  //   picked_up          ──[updateOrderStatus('in_transit')]──► in_transit
-  //   in_transit         ──[confirmDelivery]──► delivered + wallet credited
-
-  /// Step 1 — Atomically claims a pending_assignment order for this rider.
-  /// If two riders request the same order simultaneously, only one succeeds
   Future<bool> selectOrder(String orderId) async {
     return _runAction(() async {
       final result = await api.selectOrder(orderId);
@@ -132,8 +113,6 @@ class DeliveryTaskViewModel extends StateNotifier<DeliveryTaskState> {
     });
   }
 
-  /// Steps 2 & 3 — Intermediate status transitions.
-  /// [status]: 'picked_up' (step 2) or 'in_transit' (step 3).
   Future<bool> updateOrderStatus(String orderId, String status) async {
     return _runAction(() async {
       final result = await api.updateOrderStatus(
@@ -149,12 +128,6 @@ class DeliveryTaskViewModel extends StateNotifier<DeliveryTaskState> {
     });
   }
 
-  /// Step 4 — Confirms parcel handoff to the customer.
-  /// Atomically marks the order as delivered and credits the delivery fee
-  /// to the rider's wallet. Idempotent — safe to call more than once.
-  ///
-  /// Returns (success, creditedAmount). creditedAmount is null if the
-  /// backend reported credited: false.
   Future<(bool, double?)> confirmDelivery(String orderId) async {
     state = state.copyWith(isActionLoading: true, actionError: _keep);
 
@@ -219,6 +192,11 @@ class DeliveryTaskViewModel extends StateNotifier<DeliveryTaskState> {
   bool _fail(String message) {
     state = state.copyWith(isActionLoading: false, actionError: message);
     return false;
+  }
+
+  Future<void> setRowsPerPage(int rows) async {
+    state = state.copyWith(rowsPerPage: rows, currentPage: 0);
+    await fetchOrders();
   }
 }
 

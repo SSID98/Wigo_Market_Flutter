@@ -11,10 +11,9 @@ import '../../../../../core/utils/context_extensions.dart';
 import '../../../../../gen/assets.gen.dart';
 import '../../../../../shared/widgets/custom_text_field.dart';
 import '../../../viewmodels/mulitple_products_viewmodel.dart';
-import '../../../viewmodels/seller_product_task_viewmodel.dart';
 import '../../../viewmodels/upload_file_viewmodel.dart';
 import '../../widgets/step_progress_indicator.dart';
-import '../product_management_screen.dart';
+import '../product_management_screens/product_management_screen.dart';
 
 class MobileSpecsScreen extends ConsumerWidget {
   final bool isMultiProduct;

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:wigo_flutter/core/utils/context_extensions.dart';
 import 'package:wigo_flutter/features/seller/models/seller_product_model.dart';
 import 'package:wigo_flutter/features/seller/models/seller_product_task_state.dart';
 import 'package:wigo_flutter/features/seller/presentation/widgets/hide_delete_product_dialog.dart';
@@ -13,6 +14,8 @@ import '../../../../shared/widgets/custom_checkbox_2.dart';
 import '../../../buyer/presentation/widgets/icon_text_row.dart';
 import '../../viewmodels/dropdown_providers.dart';
 import '../../viewmodels/seller_product_task_viewmodel.dart';
+import '../views/product_management_screens/product_detail_screen.dart';
+import '../views/single_product_version_view/edit_product_screen.dart';
 
 class SellerProductCard extends ConsumerWidget {
   final SellerProduct product;
@@ -21,7 +24,7 @@ class SellerProductCard extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final isWeb = MediaQuery.of(context).size.width > 600;
+    final isWeb = context.isWeb;
     final state = ref.watch(sellerProductTaskProvider);
     final vm = ref.read(sellerProductTaskProvider.notifier);
     return Card(
@@ -89,7 +92,7 @@ class SellerProductCard extends ConsumerWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    product.productName,
+                    product.title,
                     overflow: TextOverflow.ellipsis,
                     style: GoogleFonts.hind(
                       fontSize: 14,
@@ -101,15 +104,18 @@ class SellerProductCard extends ConsumerWidget {
                   const SizedBox(height: 10),
                   Row(
                     children: [
-                      _buildRichText(
-                        label: 'SKU',
-                        info: product.productId,
-                        isIconGrey: true,
-                      ),
-                      const SizedBox(width: 12),
+                      if (product.sku != null) ...[
+                        _buildRichText(
+                          label: 'SKU',
+                          info: product.sku!,
+                          isIconGrey: true,
+                        ),
+                        const SizedBox(width: 12),
+                      ],
+
                       _buildRichText(
                         label: 'Variant',
-                        info: product.variant,
+                        info: product.variantCount.toString(),
                         hasIcon: true,
                         isBolder: true,
                       ),
@@ -129,14 +135,14 @@ class SellerProductCard extends ConsumerWidget {
                       const SizedBox(width: 12),
                       _buildRichText(
                         label: 'Sold',
-                        info: product.sold,
+                        info: product.sold.toString(),
                         hasIcon: true,
                         isBolder: true,
                       ),
                       const SizedBox(width: 12),
                       _buildRichText(
                         label: 'Stock',
-                        info: product.stock,
+                        info: product.stock.toString(),
                         hasIcon: true,
                         isBolder: true,
                       ),
@@ -168,7 +174,8 @@ class SellerProductCard extends ConsumerWidget {
                       SizedBox(
                         height: 24,
                         child: IconTextRow(
-                          text: "${product.rating}/5.0 (${product.reviews})",
+                          text:
+                              "${product.rating.average}/5.0 (${product.rating.count})",
                           icon: AppAssets.icons.star.svg(
                             height: isWeb ? 14 : 12,
                             colorFilter: ColorFilter.mode(
@@ -193,7 +200,10 @@ class SellerProductCard extends ConsumerWidget {
           top: 4,
           right: 5,
           child: Container(
-            decoration: BoxDecoration(color: AppColors.sliderDotColor),
+            decoration: BoxDecoration(
+              color: AppColors.sliderDotColor,
+              borderRadius: BorderRadius.circular(2.22),
+            ),
             width: 14,
             height: 20,
             child: Align(
@@ -232,12 +242,13 @@ class SellerProductCard extends ConsumerWidget {
                   MenuItemButton(
                     leadingIcon: AppAssets.icons.viewOrder.svg(),
                     onPressed: () {
-                      // Navigator.push(
-                      //   context,
-                      //   MaterialPageRoute(
-                      //     builder: (_) => OrderDetailScreen(order: d),
-                      //   ),
-                      // );
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (_) =>
+                              ProductDetailScreen(productId: product.id),
+                        ),
+                      );
                     },
                     child: Text(
                       "View Detail",
@@ -251,7 +262,13 @@ class SellerProductCard extends ConsumerWidget {
 
                   MenuItemButton(
                     leadingIcon: AppAssets.icons.updateStats.svg(),
-                    onPressed: () {},
+                    onPressed: () => Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (_) =>
+                            EditProductScreen(productId: product.id),
+                      ),
+                    ),
                     child: Text(
                       "Edit Product",
                       style: GoogleFonts.hind(
@@ -263,19 +280,25 @@ class SellerProductCard extends ConsumerWidget {
                   ),
 
                   MenuItemButton(
-                    leadingIcon: AppAssets.icons.hideProduct.svg(),
+                    leadingIcon: product.status == 'hidden'
+                        ? const Icon(Icons.visibility_outlined, size: 18)
+                        : AppAssets.icons.hideProduct.svg(),
                     onPressed: () {
                       DialogUtils.showHideDeleteProductDialog(
                         context,
                         isWeb,
                         vm,
                         state,
-                        isHideProduct: true,
                         sellerProduct: product,
+                        action: product.status == 'hidden'
+                            ? ProductDialogAction.unhideSingle
+                            : ProductDialogAction.hideSingle,
                       );
                     },
                     child: Text(
-                      "Hide Product",
+                      product.status == 'hidden'
+                          ? "Unhide Product"
+                          : "Hide Product",
                       style: GoogleFonts.hind(
                         fontSize: 16,
                         fontWeight: FontWeight.w500,
@@ -285,7 +308,16 @@ class SellerProductCard extends ConsumerWidget {
                   ),
                   MenuItemButton(
                     leadingIcon: AppAssets.icons.delete.svg(),
-                    onPressed: () {},
+                    onPressed: () {
+                      DialogUtils.showHideDeleteProductDialog(
+                        context,
+                        isWeb,
+                        vm,
+                        state,
+                        sellerProduct: product,
+                        action: ProductDialogAction.deleteSingle,
+                      );
+                    },
                     child: Text(
                       "Delete Product",
                       style: GoogleFonts.hind(
@@ -305,12 +337,12 @@ class SellerProductCard extends ConsumerWidget {
           top: 10,
           left: 10,
           child: CustomCheckbox2(
-            value: state.selectedProductIds.contains(product.productId),
-            onChanged: (val) => vm.toggleProductSelection(product.productId),
+            value: state.selectedProductIds.contains(product.id),
+            onChanged: (val) => vm.toggleProductSelection(product.id),
             borderRadius: 2,
             size: 16,
             checkSize: 13,
-            borderColor: state.selectedProductIds.contains(product.productId)
+            borderColor: state.selectedProductIds.contains(product.id)
                 ? AppColors.primaryDarkGreen
                 : AppColors.borderColor1,
             checkColor: AppColors.primaryDarkGreen,

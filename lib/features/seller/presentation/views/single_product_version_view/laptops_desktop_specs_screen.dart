@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:wigo_flutter/features/seller/presentation/views/product_management_screen.dart';
+import 'package:wigo_flutter/features/seller/presentation/views/product_management_screens/product_management_screen.dart';
 import 'package:wigo_flutter/features/seller/viewmodels/single_product_viewmodel.dart';
 import 'package:wigo_flutter/shared/widgets/custom_button.dart';
 
@@ -11,20 +11,14 @@ import '../../../../../gen/assets.gen.dart';
 import '../../../../../shared/widgets/custom_banner.dart';
 import '../../../../../shared/widgets/custom_text_field.dart';
 import '../../../viewmodels/mulitple_products_viewmodel.dart';
-import '../../../viewmodels/seller_product_task_viewmodel.dart';
 import '../../../viewmodels/seller_product_text_field_providers.dart';
 import '../../../viewmodels/upload_file_viewmodel.dart';
 import '../../widgets/step_progress_indicator.dart';
 
 class LaptopsAndDesktopSpecsScreen extends ConsumerWidget {
-  final bool showPage2;
   final bool isMultiProduct;
 
-  const LaptopsAndDesktopSpecsScreen({
-    super.key,
-    this.showPage2 = false,
-    this.isMultiProduct = false,
-  });
+  const LaptopsAndDesktopSpecsScreen({super.key, this.isMultiProduct = false});
 
   void _dispatch(
     WidgetRef ref,

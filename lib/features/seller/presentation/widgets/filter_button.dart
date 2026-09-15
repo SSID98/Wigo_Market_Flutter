@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:wigo_flutter/core/utils/context_extensions.dart';
 
 import '../../../../core/constants/app_colors.dart';
 import '../../../../gen/assets.gen.dart';
@@ -12,7 +13,7 @@ class FilterButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final isWeb = MediaQuery.of(context).size.width > 800;
+    final isWeb = context.isWeb;
     return Container(
       height: 40,
       width: isWeb ? 140 : 170,

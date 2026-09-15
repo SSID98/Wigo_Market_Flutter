@@ -79,8 +79,9 @@ class NotificationBody extends ConsumerWidget {
                       child: CustomSwitch(
                         value: switchValues[settingTitle]!,
                         onChanged: (val) {
-                          if (state.isEditMode)
+                          if (state.isEditMode) {
                             switchToggles[settingTitle]!(val);
+                          }
                         },
                         thumbColour: AppColors.accentWhite,
                         activeColor: AppColors.switchGreen,

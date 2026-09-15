@@ -161,6 +161,9 @@ class WalletOverviewAndTransactionsScreen extends ConsumerWidget {
                 color: AppColors.backgroundWhite,
                 child: PaginationWidget(
                   isEarning: true,
+                  rowsPerPage: state.rowsPerPage,
+                  labelPerPage: 'Earnings per page',
+                  onSelected: (selected) => notifier.setRowsPerPage(selected),
                   totalPages: state.totalPages,
                   currentPage: state.currentPage,
                   count: state.totalOrdersCount,

@@ -14,7 +14,7 @@ import '../../viewmodels/single_product_viewmodel.dart';
 import '../../viewmodels/upload_file_viewmodel.dart';
 import '../widgets/step_progress_indicator.dart';
 import '../widgets/upload_box2.dart';
-import 'product_management_screen.dart';
+import 'product_management_screens/product_management_screen.dart';
 
 class ProductUploadScreen extends ConsumerWidget {
   final bool isMultiProduct;

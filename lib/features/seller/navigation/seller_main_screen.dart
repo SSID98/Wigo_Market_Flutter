@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:wigo_flutter/features/seller/presentation/views/order_management_screen.dart';
-import 'package:wigo_flutter/features/seller/presentation/views/product_management_screen.dart';
+import 'package:wigo_flutter/features/seller/presentation/views/product_management_screens/product_management_screen.dart';
 import 'package:wigo_flutter/features/seller/presentation/views/seller_dashboard_screen.dart';
 import 'package:wigo_flutter/features/seller/presentation/views/seller_settings_screens/seller_settings_main_screen.dart';
 import 'package:wigo_flutter/features/seller/presentation/views/seller_wallet_screens/seller_wallet_main_screen.dart';

@@ -4,13 +4,14 @@ import 'package:wigo_flutter/gen/assets.gen.dart';
 import 'package:wigo_flutter/shared/widgets/custom_button.dart';
 
 import '../../../../../core/constants/app_colors.dart';
+import '../../../../../core/utils/context_extensions.dart';
 
 class GettingStartedWidget extends StatelessWidget {
   const GettingStartedWidget({super.key});
 
   @override
   Widget build(BuildContext context) {
-    final isWeb = MediaQuery.of(context).size.width > 600;
+    final isWeb = context.isWeb;
     return Card(
       color: AppColors.backgroundWhite,
       elevation: 0,

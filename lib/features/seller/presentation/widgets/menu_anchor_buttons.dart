@@ -10,10 +10,11 @@ Widget buildMenuItem({
   required itemText,
   Widget? trailingIcon,
   bool isNotAccordion = false,
+  bool isSelected = false,
 }) {
   return MenuItemButton(
     onPressed: onPressed,
-    trailingIcon: trailingIcon,
+    trailingIcon: isSelected ? trailingIcon : const SizedBox(width: 16),
     child: Padding(
       padding: EdgeInsets.only(left: isNotAccordion ? 0 : 35),
       child: Text(
@@ -21,8 +22,9 @@ Widget buildMenuItem({
         style: GoogleFonts.hind(
           fontSize: 16,
           fontWeight: FontWeight.w500,
-          color:
-              isNotAccordion ? AppColors.textBlackGrey : AppColors.textBodyText,
+          color: isNotAccordion
+              ? AppColors.textBlackGrey
+              : AppColors.textBodyText,
         ),
       ),
     ),
@@ -37,7 +39,9 @@ Widget buildMenuButton({
   bool isSelected = true,
   Color? newColor,
   void Function()? onTap,
+  String? selectedValue,
 }) {
+  final hasValue = selectedValue != null && selectedValue.isNotEmpty;
   return InkWell(
     onTap:
         onTap ??
@@ -48,12 +52,11 @@ Widget buildMenuButton({
     child: Container(
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(4),
-        color:
-            isSelected
-                ? isExpanded
-                    ? AppColors.tableHeader
-                    : Colors.transparent
-                : newColor,
+        color: isSelected
+            ? isExpanded
+                  ? AppColors.tableHeader
+                  : Colors.transparent
+            : newColor,
       ),
       child: Padding(
         padding: const EdgeInsets.only(
@@ -65,13 +68,27 @@ Widget buildMenuButton({
         child: Row(
           children: [
             Expanded(
-              child: Text(
-                menuText,
-                style: GoogleFonts.hind(
-                  fontSize: 16,
-                  fontWeight: FontWeight.w500,
-                  color: AppColors.textBlackGrey,
-                ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    menuText,
+                    style: GoogleFonts.hind(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w500,
+                      color: AppColors.textBlackGrey,
+                    ),
+                  ),
+                  if (hasValue)
+                    Text(
+                      selectedValue,
+                      style: GoogleFonts.hind(
+                        fontSize: 11,
+                        fontWeight: FontWeight.w500,
+                        color: AppColors.primaryDarkGreen,
+                      ),
+                    ),
+                ],
               ),
             ),
             const SizedBox(width: 100),

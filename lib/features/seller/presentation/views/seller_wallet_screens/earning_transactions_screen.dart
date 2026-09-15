@@ -268,6 +268,9 @@ class EarningsAndTransactionsScreen extends ConsumerWidget {
             Container(
               color: AppColors.backgroundWhite,
               child: PaginationWidget(
+                labelPerPage: "Earnings per page",
+                onSelected: (s) {},
+                rowsPerPage: 10,
                 isEarning: true,
                 showPage: true,
                 totalPages: totalPages,

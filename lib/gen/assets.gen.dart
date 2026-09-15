@@ -39,6 +39,10 @@ class $AssetsIconsGen {
   SvgGenImage get addProductBgOverlayy =>
       const SvgGenImage('assets/icons/addProductBgOverlayy.svg');
 
+  /// File path: assets/icons/addProductFrontArrow.svg
+  SvgGenImage get addProductFrontArrow =>
+      const SvgGenImage('assets/icons/addProductFrontArrow.svg');
+
   /// File path: assets/icons/addproductBackArrow.svg
   SvgGenImage get addproductBackArrow =>
       const SvgGenImage('assets/icons/addproductBackArrow.svg');
@@ -692,6 +696,7 @@ class $AssetsIconsGen {
     addProd,
     addProductBgOverlay,
     addProductBgOverlayy,
+    addProductFrontArrow,
     addproductBackArrow,
     arrowDown,
     arrowLeft,
@@ -944,6 +949,10 @@ class $AssetsImagesGen {
   AssetGenImage get orderDetailBg =>
       const AssetGenImage('assets/images/orderDetailBg.png');
 
+  /// File path: assets/images/productDetailBg.png
+  AssetGenImage get productDetailBg =>
+      const AssetGenImage('assets/images/productDetailBg.png');
+
   /// File path: assets/images/productOverlay.png
   AssetGenImage get productOverlay =>
       const AssetGenImage('assets/images/productOverlay.png');
@@ -1014,6 +1023,7 @@ class $AssetsImagesGen {
     onboardingRiderMobile,
     onboardingRiderWeb,
     orderDetailBg,
+    productDetailBg,
     productOverlay,
     searchFailed,
     selfDeliver,

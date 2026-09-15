@@ -322,9 +322,4 @@ final singleProductProvider =
       return SingleProductViewModel(ref.read(sellerApiServiceProvider));
     });
 
-// void resetSingleProductFlow(WidgetRef ref) {
-//   ref.read(singleProductProvider.notifier).reset();
-//   ref.read(expandedCategoryProvider.notifier).state = null;
-//   ref.read(isCategoryOpenProvider.notifier).state = false;
-//   ref.read(categorySearchQueryProvider.notifier).state = '';
-// }
+final specsPageProvider = StateProvider<int>((ref) => 1);

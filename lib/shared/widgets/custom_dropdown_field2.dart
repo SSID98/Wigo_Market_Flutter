@@ -225,8 +225,9 @@ class _CustomDropdownFieldState2<T>
               },
               validator: (val) {
                 if (val == null) return 'Please select a value';
-                if (val is String && val.isEmpty)
+                if (val is String && val.isEmpty) {
                   return 'Please select a value';
+                }
                 return null;
               },
             ),

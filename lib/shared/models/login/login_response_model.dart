@@ -17,6 +17,8 @@ class LoginResponseModel {
   final Map<String, dynamic>? store;
   final bool hasWallet;
   final bool hasWithdrawalPin;
+  final String nextOfKinName;
+  final String nextOfKinMobile;
 
   LoginResponseModel({
     required this.id,
@@ -37,6 +39,8 @@ class LoginResponseModel {
     this.store,
     required this.hasWallet,
     this.hasWithdrawalPin = false,
+    this.nextOfKinName = '',
+    this.nextOfKinMobile = '',
   });
 
   LoginResponseModel copyWith({
@@ -58,6 +62,8 @@ class LoginResponseModel {
     Map<String, dynamic>? store,
     bool? hasWallet,
     bool? hasWithdrawalPin,
+    String? nextOfKinName,
+    String? nextOfKinMobile,
   }) {
     return LoginResponseModel(
       token: token ?? this.token,
@@ -78,11 +84,16 @@ class LoginResponseModel {
       store: store ?? this.store,
       hasWallet: hasWallet ?? this.hasWallet,
       hasWithdrawalPin: hasWithdrawalPin ?? this.hasWithdrawalPin,
+      nextOfKinName: nextOfKinName ?? this.nextOfKinName,
+      nextOfKinMobile: nextOfKinMobile ?? this.nextOfKinMobile,
     );
   }
 
   factory LoginResponseModel.fromJson(Map<String, dynamic> json) {
     final userData = json.containsKey('user') ? json['user'] : json;
+    final nextOfKinMap = userData["nextOfKin"] is Map<String, dynamic>
+        ? userData["nextOfKin"] as Map<String, dynamic>
+        : null;
     return LoginResponseModel(
       id: userData["_id"] ?? "",
       status: userData["status"] ?? "",
@@ -102,6 +113,8 @@ class LoginResponseModel {
       store: userData["store"] as Map<String, dynamic>?,
       hasWallet: userData["hasWallet"] ?? false,
       hasWithdrawalPin: userData["hasWithdrawalPin"] ?? false,
+      nextOfKinName: nextOfKinMap?["nextOfKin"]["name"] ?? "",
+      nextOfKinMobile: nextOfKinMap?["nextOfKin"]["mobile"] ?? "",
     );
   }
 }

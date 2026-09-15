@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:wigo_flutter/features/seller/presentation/views/multiple_product_version_views/product_variant_screen.dart';
 import 'package:wigo_flutter/features/seller/viewmodels/mulitple_products_viewmodel.dart';
@@ -16,6 +15,7 @@ import '../../../models/multiple_products_state.dart';
 import '../../../viewmodels/categories_provider.dart';
 import '../../../viewmodels/seller_product_task_viewmodel.dart';
 import '../../widgets/step_progress_indicator.dart';
+import '../product_management_screens/product_management_screen.dart';
 
 class MultipleProductInfoScreen extends ConsumerWidget {
   const MultipleProductInfoScreen({super.key});
@@ -259,15 +259,8 @@ class MultipleProductInfoScreen extends ConsumerWidget {
                                         ),
                                         const SizedBox(height: 8),
                                         categoriesAsync.when(
-                                          loading: () => const Padding(
-                                            padding: EdgeInsets.all(16),
-                                            child: Center(
-                                              child: SpinKitDualRing(
-                                                color:
-                                                    AppColors.primaryDarkGreen,
-                                              ),
-                                            ),
-                                          ),
+                                          loading: () =>
+                                              const CategoryDropdownShimmer(),
                                           error: (e, _) => Padding(
                                             padding: const EdgeInsets.all(16),
                                             child: Column(

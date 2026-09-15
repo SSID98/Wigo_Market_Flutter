@@ -197,6 +197,8 @@ class RiderPersonalProfileViewModel
         mobile: user.mobile,
         residentialAddress: user.address,
         residentialState: user.state,
+        nextOfKinName: user.nextOfKinName,
+        nextOfKinMobile: user.nextOfKinMobile,
         city: user.city,
         image: user.image,
         filteredCities: nigeriaStatesAndCities[user.state] ?? [],

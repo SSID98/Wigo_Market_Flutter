@@ -12,68 +12,48 @@ import '../../rider/viewmodels/edit_bank_account_viewmodel.dart';
 import '../../rider/viewmodels/global_navigation_viewmodel.dart';
 import '../models/seller_dashboard_state.dart';
 import '../presentation/views/seller_wallet_screens/seller_wallet_main_screen.dart';
+import '../services/seller_api_service.dart';
 
 class SellerDashboardViewModel extends StateNotifier<SellerDashboardState> {
   final Reader read;
+  final SellerApiService api;
 
-  SellerDashboardViewModel(this.read) : super(const SellerDashboardState()) {
+  SellerDashboardViewModel(this.read, {SellerApiService? apiService})
+    : api = apiService ?? read(sellerApiServiceProvider),
+      super(const SellerDashboardState()) {
     _initiateDashboardDataLoad();
   }
 
   void _initiateDashboardDataLoad() {
-    _fetchTotalSales();
-    _fetchPendingOrders();
-    _fetchCompletedOrders();
-    _fetchActiveProduct();
+    _fetchAnalytics();
     _fetchEarningHistory();
   }
 
-  Future<void> _fetchTotalSales() async {
-    state = state.copyWith(totalSales: const AsyncValue.loading());
-    try {
-      // Simulate API call
-      await Future.delayed(const Duration(seconds: 1));
-      const String value = "₦30,000";
-      state = state.copyWith(totalSales: AsyncValue.data(value));
-    } catch (e, st) {
-      state = state.copyWith(totalSales: AsyncValue.error(e, st));
+  Future<void> _fetchAnalytics() async {
+    state = state.copyWith(analytics: const AsyncValue.loading());
+
+    final result = await api.getAnalytics(period: 'today,weekly,monthly');
+
+    if (result.isSuccess && result.data != null) {
+      state = state.copyWith(analytics: AsyncValue.data(result.data!));
+    } else {
+      final error = Exception(
+        result.errorDescription ?? 'Failed to load analytics',
+      );
+      state = state.copyWith(
+        analytics: AsyncValue.error(error, StackTrace.current),
+      );
     }
   }
 
-  Future<void> _fetchPendingOrders() async {
-    state = state.copyWith(pendingOrders: const AsyncValue.loading());
-    try {
-      // Simulate API call
-      await Future.delayed(const Duration(seconds: 1));
-      const String value = "50";
-      state = state.copyWith(pendingOrders: AsyncValue.data(value));
-    } catch (e, st) {
-      state = state.copyWith(pendingOrders: AsyncValue.error(e, st));
-    }
-  }
+  Future<void> refreshAnalytics() => _fetchAnalytics();
 
-  Future<void> _fetchCompletedOrders() async {
-    state = state.copyWith(completedOrders: const AsyncValue.loading());
-    try {
-      // Simulate API call
-      await Future.delayed(const Duration(seconds: 1));
-      const String value = "50";
-      state = state.copyWith(completedOrders: AsyncValue.data(value));
-    } catch (e, st) {
-      state = state.copyWith(completedOrders: AsyncValue.error(e, st));
-    }
-  }
-
-  Future<void> _fetchActiveProduct() async {
-    state = state.copyWith(activeProduct: const AsyncValue.loading());
-    try {
-      // Simulate API call
-      await Future.delayed(const Duration(seconds: 1));
-      const String value = "50";
-      state = state.copyWith(activeProduct: AsyncValue.data(value));
-    } catch (e, st) {
-      state = state.copyWith(activeProduct: AsyncValue.error(e, st));
-    }
+  void setPeriod(String period) {
+    assert(
+      ['today', 'weekly', 'monthly'].contains(period),
+      'period must be one of: today, weekly, monthly',
+    );
+    state = state.copyWith(selectedPeriod: period);
   }
 
   Future<void> _fetchEarningHistory() async {
@@ -126,19 +106,6 @@ class SellerDashboardViewModel extends StateNotifier<SellerDashboardState> {
       });
     }, spinner: SpinKitDualRing(color: AppColors.primaryDarkGreen));
   }
-
-  // Future<List<SetupStep>> fetchSetupSteps() async {
-  //   final response = await http.get(
-  //     Uri.parse('https://api.example.com/account/setup'),
-  //   );
-  //
-  //   if (response.statusCode == 200) {
-  //     final List data = jsonDecode(response.body);
-  //     return data.map((item) => SetupStep.fromJson(item)).toList();
-  //   } else {
-  //     throw Exception('Failed to load setup steps');
-  //   }
-  // }
 }
 
 final sellerDashboardViewModelProvider =

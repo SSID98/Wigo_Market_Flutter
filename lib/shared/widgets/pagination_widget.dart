@@ -1,12 +1,12 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:wigo_flutter/features/rider/viewmodels/wallet_overview_transaction_viewmodel.dart';
+import 'package:wigo_flutter/core/utils/context_extensions.dart';
 
 import '../../../../core/constants/app_colors.dart';
 import '../../../../gen/assets.gen.dart';
 
-class PaginationWidget extends ConsumerWidget {
+class PaginationWidget extends StatelessWidget {
   const PaginationWidget({
     super.key,
     required this.totalPages,
@@ -16,9 +16,12 @@ class PaginationWidget extends ConsumerWidget {
     required this.onPressedEnd,
     required this.onPressedForward,
     required this.onPressedStart,
+    required this.onSelected,
+    required this.rowsPerPage,
     this.isDeliveries = false,
     this.isEarning = false,
     this.showPage = false,
+    required this.labelPerPage,
   });
 
   final int totalPages, currentPage, count;
@@ -27,15 +30,16 @@ class PaginationWidget extends ConsumerWidget {
       onPressedForward,
       onPressedEnd;
   final bool isEarning, isDeliveries, showPage;
+  final Function(int) onSelected;
+  final int rowsPerPage;
+  final String labelPerPage;
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  Widget build(BuildContext context) {
     if (count == 0) {
       return const SizedBox.shrink();
     }
-    final state = ref.watch(walletOverviewTransactionProvider);
-    final notifier = ref.read(walletOverviewTransactionProvider.notifier);
-    final isWeb = MediaQuery.of(context).size.width > 800;
+    final isWeb = context.isWeb;
     return Padding(
       padding: EdgeInsets.symmetric(vertical: 5.0, horizontal: isWeb ? 12 : 0),
       child: Row(
@@ -53,7 +57,7 @@ class PaginationWidget extends ConsumerWidget {
             Row(
               children: [
                 Text(
-                  "Rows per page",
+                  labelPerPage,
                   style: GoogleFonts.hind(
                     fontSize: isWeb ? 16 : 13,
                     fontWeight: FontWeight.w500,
@@ -61,78 +65,40 @@ class PaginationWidget extends ConsumerWidget {
                   ),
                 ),
                 SizedBox(width: isWeb ? 15 : 7),
-                Container(
-                  height: 30,
-                  width: 60,
-                  // padding: const EdgeInsets.symmetric(horizontal: 8),
-                  decoration: BoxDecoration(
-                    color: AppColors.backgroundWhite,
-                    borderRadius: BorderRadius.circular(5),
-                    border: Border.all(color: AppColors.borderColor1, width: 1),
-                  ),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      // Current value
-                      Padding(
-                        padding: const EdgeInsets.only(
-                          left: 4.0,
-                          right: 4.0,
-                          top: 3,
-                        ),
-                        child: Text(
-                          state.rowsPerPage.toString(),
+                InkWell(
+                  onTap: () => _showRowsPerPagePicker(context, isWeb),
+                  borderRadius: BorderRadius.circular(5),
+                  child: Container(
+                    height: 32,
+                    padding: const EdgeInsets.symmetric(horizontal: 10),
+                    decoration: BoxDecoration(
+                      color: AppColors.backgroundWhite,
+                      borderRadius: BorderRadius.circular(5),
+                      border: Border.all(
+                        color: AppColors.borderColor1,
+                        width: 1,
+                      ),
+                    ),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Text(
+                          rowsPerPage.toString(),
                           style: GoogleFonts.hind(
                             fontSize: isWeb ? 16 : 14,
                             fontWeight: FontWeight.w500,
                             color: AppColors.textEdufacilisBlack,
                           ),
                         ),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.only(bottom: 6.0),
-                        child: Column(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            SizedBox(
-                              height: 9,
-                              width: 13,
-                              child: GestureDetector(
-                                onTap:
-                                    state.rowsPerPage < 10
-                                        ? () => notifier.setRowsPerPage(
-                                          state.rowsPerPage + 1,
-                                        )
-                                        : null,
-                                child: Icon(
-                                  Icons.keyboard_arrow_up,
-                                  size: 16,
-                                  color: AppColors.textBlackGrey,
-                                ),
-                              ),
-                            ),
-                            SizedBox(
-                              height: 9,
-                              width: 13,
-                              child: GestureDetector(
-                                onTap:
-                                    state.rowsPerPage > 1
-                                        ? () => notifier.setRowsPerPage(
-                                          state.rowsPerPage - 1,
-                                        )
-                                        : null,
-                                child: Icon(
-                                  Icons.keyboard_arrow_down,
-                                  size: 16,
-                                  color: AppColors.textBlackGrey,
-                                ),
-                              ),
-                            ),
-                          ],
+                        const SizedBox(width: 4),
+                        Icon(
+                          Icons.arrow_drop_down,
+                          size: 18,
+                          color: AppColors.textBlackGrey,
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
                 ),
               ],
@@ -206,6 +172,94 @@ class PaginationWidget extends ConsumerWidget {
             ),
         ],
       ),
+    );
+  }
+
+  void _showRowsPerPagePicker(BuildContext context, bool isWeb) {
+    final options = List<int>.generate(10, (index) => index + 1);
+    int selectedValue = rowsPerPage;
+
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: AppColors.backgroundWhite,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
+      ),
+      builder: (BuildContext context) {
+        return SizedBox(
+          height: 250,
+          child: Column(
+            children: [
+              Padding(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 16,
+                  vertical: 8,
+                ),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    TextButton(
+                      onPressed: () => Navigator.pop(context),
+                      child: Text(
+                        'Cancel',
+                        style: GoogleFonts.hind(color: AppColors.textBlackGrey),
+                      ),
+                    ),
+                    Text(
+                      'Select $labelPerPage',
+                      style: GoogleFonts.hind(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 16,
+                        color: AppColors.textEdufacilisBlack,
+                      ),
+                    ),
+                    TextButton(
+                      onPressed: () {
+                        onSelected(selectedValue);
+                        Navigator.pop(context);
+                      },
+                      child: Text(
+                        'Done',
+                        style: GoogleFonts.hind(
+                          fontWeight: FontWeight.bold,
+                          color: AppColors.primaryDarkGreen,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              const Divider(height: 1),
+
+              Expanded(
+                child: CupertinoPicker(
+                  itemExtent: 40.0,
+                  scrollController: FixedExtentScrollController(
+                    initialItem: options
+                        .indexOf(rowsPerPage)
+                        .clamp(0, options.length - 1),
+                  ),
+                  onSelectedItemChanged: (index) {
+                    selectedValue = options[index];
+                  },
+                  children: options.map((val) {
+                    return Center(
+                      child: Text(
+                        '$val',
+                        style: GoogleFonts.hind(
+                          fontSize: 18,
+                          fontWeight: FontWeight.w600,
+                          color: AppColors.textEdufacilisBlack,
+                        ),
+                      ),
+                    );
+                  }).toList(),
+                ),
+              ),
+            ],
+          ),
+        );
+      },
     );
   }
 

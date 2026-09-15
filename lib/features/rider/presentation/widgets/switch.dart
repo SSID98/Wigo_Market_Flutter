@@ -13,6 +13,7 @@ class CustomSwitch extends StatelessWidget {
     this.activeColor,
     this.inactiveColor,
     this.thumbColour,
+    this.borderColor,
     this.duration = const Duration(milliseconds: 180),
   });
 
@@ -24,6 +25,7 @@ class CustomSwitch extends StatelessWidget {
   final Color? activeColor;
   final Color? inactiveColor;
   final Color? thumbColour;
+  final Color? borderColor;
   final Duration duration;
 
   void _toggle() => onChanged(!value);
@@ -31,13 +33,12 @@ class CustomSwitch extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final active = value;
-    final trackColor =
-        active
-            ? activeColor ?? Theme.of(context).colorScheme.primary
-            : inactiveColor ??
-                Theme.of(
-                  context,
-                ).colorScheme.surfaceContainerHighest.withValues(alpha: 0.9);
+    final trackColor = active
+        ? activeColor ?? Theme.of(context).colorScheme.primary
+        : inactiveColor ??
+              Theme.of(
+                context,
+              ).colorScheme.surfaceContainerHighest.withValues(alpha: 0.9);
 
     final thumbColor = thumbColour ?? Theme.of(context).colorScheme.onPrimary;
 
@@ -58,6 +59,7 @@ class CustomSwitch extends StatelessWidget {
           decoration: BoxDecoration(
             color: trackColor,
             borderRadius: BorderRadius.circular(height / 2),
+            border: Border.all(color: borderColor ?? Colors.transparent),
           ),
           child: Align(
             alignment: active ? Alignment.centerRight : Alignment.centerLeft,
