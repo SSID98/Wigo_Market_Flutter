@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:wigo_flutter/core/utils/context_extensions.dart';
 import 'package:wigo_flutter/features/rider/viewmodels/edit_bank_account_viewmodel.dart';
 import 'package:wigo_flutter/features/seller/presentation/views/seller_wallet_screens/earning_transactions_screen.dart';
@@ -14,6 +15,7 @@ import 'package:wigo_flutter/shared/widgets/custom_button.dart';
 import '../../../../../core/constants/app_colors.dart';
 import '../../../../../gen/assets.gen.dart';
 import '../../../../rider/models/wallet_state.dart';
+import '../../../../rider/viewmodels/global_navigation_viewmodel.dart';
 
 enum EarningFilter { earnings, paymentMethods }
 
@@ -26,14 +28,32 @@ enum SellerWalletScreenState {
   editBankAccount,
 }
 
-class SellerWalletMainScreen extends ConsumerWidget {
+class SellerWalletMainScreen extends HookConsumerWidget {
   const SellerWalletMainScreen({super.key});
+
+  static const int _tabIndex = 3;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final navState = ref.watch(globalNavigationViewModelProvider);
+    final isCurrentTab = navState.currentIndex == _tabIndex;
+
+    final hasLoaded = useRef(false);
+
+    useEffect(() {
+      if (isCurrentTab && !hasLoaded.value) {
+        hasLoaded.value = true;
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          if (context.mounted) {
+            ref.read(editBankAccountProvider.notifier).ensureWalletFetched();
+          }
+        });
+      }
+      return null;
+    }, [isCurrentTab]);
+
     final state = ref.watch(editBankAccountProvider);
     final notifier = ref.read(editBankAccountProvider.notifier);
-    notifier.ensureWalletFetched();
     final isWeb = context.isWeb;
 
     return Scaffold(

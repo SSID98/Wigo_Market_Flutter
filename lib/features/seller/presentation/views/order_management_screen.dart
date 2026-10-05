@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:wigo_flutter/core/utils/context_extensions.dart';
 import 'package:wigo_flutter/features/seller/viewmodels/order_task_viewmodel.dart';
 
@@ -10,6 +11,7 @@ import '../../../../../shared/widgets/custom_search_field.dart';
 import '../../../../../shared/widgets/pagination_widget.dart';
 import '../../../../shared/widgets/custom_button.dart';
 import '../../../../shared/widgets/custom_checkbox_2.dart';
+import '../../../rider/viewmodels/global_navigation_viewmodel.dart';
 import '../../models/order_task_state.dart';
 import '../../navigation/seller_tab_navigation.dart';
 import '../../viewmodels/dropdown_providers.dart';
@@ -83,11 +85,30 @@ String? _sortSelectedValue(OrderTaskState state) {
   return null;
 }
 
-class OrderManagementScreen extends ConsumerWidget {
+class OrderManagementScreen extends HookConsumerWidget {
   const OrderManagementScreen({super.key});
+
+  static const int _tabIndex = 1;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final navState = ref.watch(globalNavigationViewModelProvider);
+    final isCurrentTab = navState.currentIndex == _tabIndex;
+
+    final hasLoaded = useRef(false);
+
+    useEffect(() {
+      if (isCurrentTab && !hasLoaded.value) {
+        hasLoaded.value = true;
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          if (context.mounted) {
+            ref.read(orderTaskProvider.notifier).loadOrders();
+          }
+        });
+      }
+      return null;
+    }, [isCurrentTab]);
+
     final state = ref.watch(orderTaskProvider);
     final notifier = ref.read(orderTaskProvider.notifier);
     final totalPages = state.totalOrdersCount == 0

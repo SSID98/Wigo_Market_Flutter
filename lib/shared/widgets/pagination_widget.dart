@@ -17,6 +17,7 @@ class PaginationWidget extends StatelessWidget {
     required this.onPressedForward,
     required this.onPressedStart,
     required this.onSelected,
+    this.rowsPerPageOptions = const [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
     required this.rowsPerPage,
     this.isDeliveries = false,
     this.isEarning = false,
@@ -32,6 +33,7 @@ class PaginationWidget extends StatelessWidget {
   final bool isEarning, isDeliveries, showPage;
   final Function(int) onSelected;
   final int rowsPerPage;
+  final List<int> rowsPerPageOptions;
   final String labelPerPage;
 
   @override
@@ -176,7 +178,8 @@ class PaginationWidget extends StatelessWidget {
   }
 
   void _showRowsPerPagePicker(BuildContext context, bool isWeb) {
-    final options = List<int>.generate(10, (index) => index + 1);
+    final options = ({...rowsPerPageOptions, rowsPerPage}.toList()
+      ..sort());
     int selectedValue = rowsPerPage;
 
     showModalBottomSheet(
@@ -263,11 +266,9 @@ class PaginationWidget extends StatelessWidget {
     );
   }
 
-  Widget _buildPaginationIconContainer(
-    void Function()? onPressed,
-    Widget icon,
-    double size,
-  ) {
+  Widget _buildPaginationIconContainer(void Function()? onPressed,
+      Widget icon,
+      double size,) {
     return Container(
       padding: EdgeInsets.zero,
       constraints: BoxConstraints(),

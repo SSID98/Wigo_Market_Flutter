@@ -2,9 +2,12 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/feedback_models/response_status_model.dart';
 import '../../../core/network/network.dart';
+import '../models/earnings_formatters.dart';
+import '../models/order.dart';
 import '../models/order_details_model.dart';
 import '../models/order_enums.dart';
 import '../models/seller_analytics_model.dart';
+import '../models/seller_earnings_models.dart';
 
 class SellerApiService {
   final NetworkService _networkService;
@@ -184,6 +187,18 @@ class SellerApiService {
     );
   }
 
+  Future<ResponseStatusModel<List<Order>>> getRecentOrders() {
+    return _networkService.request<List<Order>>(
+      () => _networkService.get('/store/orders/recent'),
+      parser: (json) {
+        final data = Map<String, dynamic>.from(json['data'] as Map);
+        return (data['orders'] as List? ?? const [])
+            .map((e) => Order.fromJson(Map<String, dynamic>.from(e as Map)))
+            .toList();
+      },
+    );
+  }
+
   Future<ResponseStatusModel<JsonMap>> updateOrderStatus(
     String id,
     OrderFilter status, {
@@ -213,6 +228,56 @@ class SellerApiService {
       parser: (json) => ContactCustomerResult.fromJson(
         Map<String, dynamic>.from(json['data'] as Map),
       ),
+    );
+  }
+
+  ///Earnings
+  Future<ResponseStatusModel<EarningsPage>> getEarnings({
+    String? search,
+    DateTime? dateFrom,
+    DateTime? dateTo,
+    String? status,
+    String sortBy = 'date',
+    String sortOrder = 'desc',
+    int page = 1,
+    int limit = 10,
+    bool includeSummary = true,
+  }) {
+    return _networkService.request<EarningsPage>(
+      () => _networkService.get(
+        '/store/earnings',
+        query: {
+          if (search != null && search.isNotEmpty) 'search': search,
+          if (dateFrom != null) 'dateFrom': formatApiDate(dateFrom),
+          if (dateTo != null) 'dateTo': formatApiDate(dateTo),
+          if (status != null && status.isNotEmpty) 'status': status,
+          'sortBy': sortBy,
+          'sortOrder': sortOrder,
+          'page': page,
+          'limit': limit,
+          'summary': includeSummary,
+        },
+      ),
+      parser: (json) =>
+          EarningsPage.fromJson(Map<String, dynamic>.from(json['data'] as Map)),
+    );
+  }
+
+  Future<ResponseStatusModel<List<RecentEarning>>> getRecentEarnings({
+    int limit = 5,
+  }) {
+    return _networkService.request<List<RecentEarning>>(
+      () => _networkService.get(
+        '/store/earnings/recent',
+        query: {'limit': limit},
+      ),
+      parser: (json) {
+        final data = Map<String, dynamic>.from(json['data'] as Map);
+        return (data['earnings'] as List? ?? const [])
+            .whereType<Map>()
+            .map((e) => RecentEarning.fromJson(Map<String, dynamic>.from(e)))
+            .toList();
+      },
     );
   }
 }

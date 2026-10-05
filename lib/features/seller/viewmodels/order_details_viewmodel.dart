@@ -1,4 +1,5 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:wigo_flutter/features/seller/viewmodels/recent_orders_live_viewmodel.dart';
 
 import '../models/order_details_model.dart';
 import '../models/order_enums.dart';
@@ -33,7 +34,7 @@ class OrderActions {
         .read(orderTaskProvider.notifier)
         .updateOrderStatus(orderId, status, reason: reason);
     _ref.invalidate(orderDetailProvider(orderId));
-    _ref.invalidate(recentOrdersProvider);
+    _ref.read(recentOrdersLiveProvider.notifier).refresh();
     return error;
   }
 

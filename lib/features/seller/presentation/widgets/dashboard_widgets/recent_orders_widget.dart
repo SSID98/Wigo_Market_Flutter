@@ -3,11 +3,11 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:wigo_flutter/core/constants/app_colors.dart';
 import 'package:wigo_flutter/core/utils/context_extensions.dart';
-import 'package:wigo_flutter/features/seller/viewmodels/order_task_viewmodel.dart';
 
 import '../../../../../gen/assets.gen.dart';
 import '../../../models/order.dart';
 import '../../../navigation/seller_tab_navigation.dart';
+import '../../../viewmodels/recent_orders_live_viewmodel.dart';
 import '../order_shimmer.dart';
 import '../order_table.dart';
 
@@ -17,7 +17,7 @@ class RecentOrdersWidget extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final isWeb = context.isWeb;
-    final recentOrders = ref.watch(recentOrdersProvider);
+    final recentOrders = ref.watch(recentOrdersLiveProvider);
 
     final cardHeight = isWeb ? 290.0 : 380.0;
 

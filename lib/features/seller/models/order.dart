@@ -44,13 +44,15 @@ class Order {
       id: json['id'] as String? ?? '',
       orderNumber: json['orderNumber'] as String? ?? '',
       date:
-          DateTime.tryParse(json['orderDate'] as String? ?? '') ??
+      DateTime.tryParse(json['orderDate'] as String? ?? '') ??
           DateTime.now(),
       customerId: customer['id'] as String? ?? '',
       customerName: customer['name'] as String? ?? 'Unknown customer',
       customerEmail: customer['email'] as String? ?? '',
       customerPhone: customer['mobile'] as String? ?? '',
-      itemsCount: (json['itemsCount'] as num?)?.toInt() ?? 0,
+      itemsCount: (json['itemsCount'] as num?)?.toInt() ??
+          (json['items'] as num?)?.toInt() ??
+          0,
       amount: (json['amount'] as num?)?.toDouble() ?? 0,
       currency: json['currency'] as String? ?? 'NGN',
       deliveryType: DeliveryTypeExtension.fromString(
@@ -63,7 +65,7 @@ class Order {
       allowedActions: (json['allowedActions'] as List? ?? const [])
           .map(
             (e) => AllowedAction.fromJson(Map<String, dynamic>.from(e as Map)),
-          )
+      )
           .toList(),
     );
   }

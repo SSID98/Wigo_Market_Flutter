@@ -8,9 +8,7 @@ import '../models/order_task_state.dart';
 import '../services/seller_api_service.dart';
 
 class OrderTaskViewmodel extends StateNotifier<OrderTaskState> {
-  OrderTaskViewmodel(this._api) : super(const OrderTaskState()) {
-    _loadOrders();
-  }
+  OrderTaskViewmodel(this._api) : super(const OrderTaskState());
 
   final SellerApiService _api;
   Timer? _searchDebounce;
@@ -21,7 +19,7 @@ class OrderTaskViewmodel extends StateNotifier<OrderTaskState> {
     super.dispose();
   }
 
-  Future<void> _loadOrders({bool resetPage = false}) async {
+  Future<void> loadOrders({bool resetPage = false}) async {
     if (resetPage) {
       state = state.copyWith(currentPage: 0);
     }
@@ -81,19 +79,19 @@ class OrderTaskViewmodel extends StateNotifier<OrderTaskState> {
     }
   }
 
-  Future<void> refresh() => _loadOrders();
+  Future<void> refresh() => loadOrders();
 
   void setCategory(OrderCategory category) {
     if (category == state.category) return;
     state = state.copyWith(category: category);
-    _loadOrders(resetPage: true);
+    loadOrders(resetPage: true);
   }
 
   void onSearchChanged(String query) {
     state = state.copyWith(searchQuery: query);
     _searchDebounce?.cancel();
     _searchDebounce = Timer(const Duration(milliseconds: 450), () {
-      _loadOrders(resetPage: true);
+      loadOrders(resetPage: true);
     });
   }
 
@@ -117,31 +115,31 @@ class OrderTaskViewmodel extends StateNotifier<OrderTaskState> {
     state = state.copyWith(
       activeStatuses: Set.from(state.tempSelectedStatuses),
     );
-    _loadOrders(resetPage: true);
+    loadOrders(resetPage: true);
   }
 
   void setSingleStatusFilter(OrderFilter? status) {
     state = state.copyWith(activeStatuses: status == null ? {} : {status});
-    _loadOrders(resetPage: true);
+    loadOrders(resetPage: true);
   }
 
   void goToPage(int page) {
     final totalPages = (state.totalOrdersCount / state.rowsPerPage).ceil();
     if (page >= 0 && page <= (totalPages - 1)) {
       state = state.copyWith(currentPage: page);
-      _loadOrders();
+      loadOrders();
     }
   }
 
   void setRowsPerPage(int rows) {
     if (rows <= 0 || rows == state.rowsPerPage) return;
     state = state.copyWith(rowsPerPage: rows, currentPage: 0);
-    _loadOrders();
+    loadOrders();
   }
 
   void setTodayFilter() {
     state = state.copyWith(dateFilterType: DateFilterType.today);
-    _loadOrders(resetPage: true);
+    loadOrders(resetPage: true);
   }
 
   void clearDateFilter() {
@@ -150,7 +148,7 @@ class OrderTaskViewmodel extends StateNotifier<OrderTaskState> {
       activeSelectedDates: {},
       tempSelectedDates: {},
     );
-    _loadOrders(resetPage: true);
+    loadOrders(resetPage: true);
   }
 
   DateTime _normalize(DateTime date) =>
@@ -185,18 +183,18 @@ class OrderTaskViewmodel extends StateNotifier<OrderTaskState> {
           ? DateFilterType.all
           : DateFilterType.custom,
     );
-    _loadOrders(resetPage: true);
+    loadOrders(resetPage: true);
   }
 
   void setDeliveryType(DeliveryType type) {
     state = state.copyWith(deliveryType: type);
-    _loadOrders(resetPage: true);
+    loadOrders(resetPage: true);
   }
 
   void setSort(String sortBy, String sortOrder) {
     if (sortBy == state.sortBy && sortOrder == state.sortOrder) return;
     state = state.copyWith(sortBy: sortBy, sortOrder: sortOrder);
-    _loadOrders(resetPage: true);
+    loadOrders(resetPage: true);
   }
 
   Future<String?> updateOrderStatus(
@@ -245,21 +243,4 @@ final orderByIdProvider = Provider.family<Order?, String>((ref, orderId) {
     if (order.id == orderId) return order;
   }
   return null;
-});
-
-final recentOrdersProvider = FutureProvider.autoDispose<List<Order>>((
-  ref,
-) async {
-  final api = ref.read(sellerApiServiceProvider);
-  final response = await api.getOrders(
-    category: 'all',
-    sortBy: 'date',
-    sortOrder: 'desc',
-    page: 1,
-    limit: 5,
-  );
-  if (response.isSuccess && response.data != null) {
-    return response.data!.orders;
-  }
-  throw Exception(response.errorDescription ?? 'Failed to load recent orders');
 });
