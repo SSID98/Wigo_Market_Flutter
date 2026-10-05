@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:mapbox_maps_flutter/mapbox_maps_flutter.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:wigo_flutter/core/constants/app_colors.dart';
 
@@ -17,13 +18,14 @@ Future<void> main() async {
   final prefs = await SharedPreferences.getInstance();
   final storage = SecureStorage();
   final session = SessionManager(storage);
+  MapboxOptions.setAccessToken(dotenv.env['MAPBOX_ACCESS_TOKEN']!);
   await session.init();
   runApp(
     ProviderScope(
       overrides: [
         sessionManagerProvider.overrideWithValue(session),
         localUserControllerProvider.overrideWith(
-          (ref) => LocalUserController(prefs),
+              (ref) => LocalUserController(prefs),
         ),
       ],
       child: WigoApp(),
@@ -44,10 +46,14 @@ class WigoApp extends ConsumerWidget {
       theme: ThemeData(
         fontFamily: 'Hind',
         scaffoldBackgroundColor: AppColors.backgroundLight,
-        colorScheme: ColorScheme.fromSeed(seedColor: AppColors.radioBlue),
+        colorScheme: ColorScheme.fromSeed(
+          seedColor: AppColors.primaryDarkGreen,
+        ),
         useMaterial3: true,
-        textSelectionTheme: const TextSelectionThemeData(
+        textSelectionTheme: TextSelectionThemeData(
           cursorColor: AppColors.primaryDarkGreen,
+          selectionHandleColor: AppColors.primaryDarkGreen,
+          selectionColor: AppColors.primaryDarkGreen.withValues(alpha: 0.5),
         ),
         radioTheme: RadioThemeData(
           fillColor: WidgetStateColor.resolveWith((states) {

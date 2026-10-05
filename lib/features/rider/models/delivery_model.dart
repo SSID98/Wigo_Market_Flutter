@@ -1,3 +1,5 @@
+import 'map_models.dart';
+
 class DeliveryProduct {
   final String productId;
   final String name;
@@ -56,20 +58,63 @@ class DeliveryPickup {
   final String store;
   final String address;
   final String mobile;
+  final double? lat;
+  final double? lng;
 
   const DeliveryPickup({
     required this.id,
     required this.store,
     required this.address,
+    this.lat,
+    this.lng,
     required this.mobile,
   });
+
+  GeoPoint? get geoPoint {
+    if (lat == null || lng == null) return null;
+    return GeoPoint(lat: lat!, lng: lng!);
+  }
 
   factory DeliveryPickup.fromJson(Map<String, dynamic> json) => DeliveryPickup(
     id: json['id'] as String? ?? '',
     store: json['store'] as String? ?? '',
     address: json['address'] as String? ?? '',
     mobile: json['mobile'] as String? ?? '',
+    lat: (json['lat'] as num?)?.toDouble(),
+    lng: (json['lng'] as num?)?.toDouble(),
   );
+}
+
+class DeliveryDropoff {
+  final String address;
+  final String mobile;
+  final double? lat;
+  final double? lng;
+
+  const DeliveryDropoff({
+    required this.address,
+    required this.mobile,
+    this.lat,
+    this.lng,
+  });
+
+  GeoPoint? get geoPoint {
+    if (lat == null || lng == null) return null;
+    return GeoPoint(lat: lat!, lng: lng!);
+  }
+
+  const DeliveryDropoff.addressOnly(String address)
+    : this(address: address, mobile: '');
+
+  static const empty = DeliveryDropoff(address: '', mobile: '');
+
+  factory DeliveryDropoff.fromJson(Map<String, dynamic> json) =>
+      DeliveryDropoff(
+        address: json['address'] as String? ?? '',
+        mobile: json['mobile'] as String? ?? '',
+        lat: (json['lat'] as num?)?.toDouble(),
+        lng: (json['lng'] as num?)?.toDouble(),
+      );
 }
 
 class OrderCounts {
@@ -108,18 +153,23 @@ class ConfirmDeliveryResult {
   final bool credited;
   final double amount;
   final double walletBalance;
+  final String? reason;
 
   const ConfirmDeliveryResult({
     required this.credited,
     required this.amount,
     required this.walletBalance,
+    this.reason,
   });
+
+  bool get isAwaitingCustomer => reason == 'awaiting_customer_confirmation';
 
   factory ConfirmDeliveryResult.fromJson(Map<String, dynamic> json) =>
       ConfirmDeliveryResult(
         credited: json['credited'] as bool? ?? false,
         amount: (json['amount'] as num? ?? 0).toDouble(),
         walletBalance: (json['walletBalance'] as num? ?? 0).toDouble(),
+        reason: json['reason'] as String?,
       );
 }
 
@@ -177,40 +227,25 @@ class OrdersResponse {
 }
 
 class Delivery {
-  /// MongoDB _id — used in every API call body.
   final String id;
 
-  /// Human-readable order number e.g. "#WM1201" — used in the UI.
   final String orderNumber;
 
   final DateTime? createdAt;
   final DeliveryCustomer? customer;
 
-  /// Primary pickup location (vendor/store).
   final DeliveryPickup? pickup;
 
-  /// All pickup locations for multi-store orders.
   final List<DeliveryPickup> pickups;
-
-  /// Delivery (dropoff) address — a plain string from the API.
-  final String dropoff;
-
+  final DeliveryDropoff dropoff;
   final List<DeliveryProduct> products;
-
-  /// Pre-computed item count from the API — avoids summing product quantities
-  /// client-side. Falls back to summing products if nul
   final int? itemsCount;
-
   final double itemsTotal;
   final double deliveryFee;
   final double total;
   final String currency;
   final String deliveryMethod;
-
-  /// Raw API value: pending_assignment | assigned | picked_up |
-  ///                in_transit | delivered | failed
   final String deliveryStatus;
-
   final String orderStatus;
   final DateTime? estimatedDeliveryTime;
   final String? deliveryNotes;
@@ -236,12 +271,12 @@ class Delivery {
     this.deliveryNotes,
   });
 
-  /// Alias for [orderNumber]. Use in the UI wherever "order ID" is displayed.
   String get orderId => orderNumber;
 
   String get customerName => customer?.name ?? 'Unknown Customer';
 
-  String get customerPhone => customer?.phone ?? '';
+  String get customerPhone =>
+      customer?.phone.isNotEmpty == true ? customer!.phone : dropoff.mobile;
 
   double get fee => deliveryFee;
 
@@ -249,7 +284,7 @@ class Delivery {
 
   String get pickupLocation => pickup?.address ?? 'Pickup location unavailable';
 
-  String get deliveryLocation => dropoff;
+  String get deliveryLocation => dropoff.address;
 
   String get items {
     final count =
@@ -257,6 +292,10 @@ class Delivery {
     if (count == 0) return 'No items';
     return '$count item${count == 1 ? '' : 's'}';
   }
+
+  GeoPoint? get pickupGeoPoint => pickup?.geoPoint;
+
+  GeoPoint? get dropoffGeoPoint => dropoff.geoPoint;
 
   bool get isPendingAssignment => deliveryStatus == 'pending_assignment';
 
@@ -275,8 +314,6 @@ class Delivery {
 
   bool get isTerminal => isDelivered || isFailed;
 
-  /// Maps raw API deliveryStatus values to the display strings used by
-  /// _buildStatusTag in DeliveryCard and DeliveryDetailCard.
   String get displayStatus {
     switch (deliveryStatus) {
       case 'pending_assignment':
@@ -298,6 +335,19 @@ class Delivery {
 
   factory Delivery.fromJson(Map<String, dynamic> json) {
     final rawId = json['orderId'] as String? ?? '';
+
+    DeliveryDropoff dropoff;
+    final dropoffJson = json['dropoff'];
+    if (dropoffJson is Map) {
+      dropoff = DeliveryDropoff.fromJson(
+        Map<String, dynamic>.from(dropoffJson),
+      );
+    } else if (dropoffJson is String) {
+      dropoff = DeliveryDropoff.addressOnly(dropoffJson);
+    } else {
+      dropoff = DeliveryDropoff.empty;
+    }
+
     return Delivery(
       id: rawId,
       orderNumber: json['orderNumber'] as String? ?? _fallbackNumber(rawId),
@@ -317,7 +367,7 @@ class Delivery {
             (p) => DeliveryPickup.fromJson(Map<String, dynamic>.from(p as Map)),
           )
           .toList(),
-      dropoff: json['dropoff'] as String? ?? '',
+      dropoff: dropoff,
       products: (json['products'] as List<dynamic>? ?? [])
           .map(
             (p) =>

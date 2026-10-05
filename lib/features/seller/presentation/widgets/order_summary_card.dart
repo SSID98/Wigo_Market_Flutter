@@ -3,19 +3,12 @@ import 'package:google_fonts/google_fonts.dart';
 
 import '../../../../core/constants/app_colors.dart';
 import '../../../../core/constants/dashboard_helpers.dart';
-import '../../models/order.dart';
+import '../../models/order_details_model.dart';
 
 class OrderSummaryCard extends StatelessWidget {
-  final String imageUrl;
-  final Order order;
-  final String productName;
+  final OrderItemDetail item;
 
-  const OrderSummaryCard({
-    super.key,
-    required this.imageUrl,
-    required this.order,
-    required this.productName,
-  });
+  const OrderSummaryCard({super.key, required this.item});
 
   @override
   Widget build(BuildContext context) {
@@ -43,33 +36,37 @@ class OrderSummaryCard extends StatelessWidget {
                   elevation: 0,
                   child: Padding(
                     padding: const EdgeInsets.all(4.0),
-                    child: Image.network(
-                      imageUrl,
-                      height: 24,
-                      width: 24,
-                      errorBuilder: (
-                        BuildContext context,
-                        Object exception,
-                        StackTrace? stackTrace,
-                      ) {
-                        return const Center(
-                          child: Icon(
-                            Icons.broken_image,
+                    child: item.image.isNotEmpty
+                        ? Image.network(
+                            item.image,
+                            height: 24,
+                            width: 24,
+                            errorBuilder: (context, exception, stackTrace) {
+                              return const Center(
+                                child: Icon(
+                                  Icons.broken_image,
+                                  color: AppColors.textIconGrey,
+                                  size: 24.0,
+                                ),
+                              );
+                            },
+                          )
+                        : const Icon(
+                            Icons.image_outlined,
                             color: AppColors.textIconGrey,
-                            size: 50.0,
+                            size: 24,
                           ),
-                        );
-                      },
-                    ),
                   ),
                 ),
                 const SizedBox(width: 6),
-                Text(
-                  productName,
-                  style: GoogleFonts.hind(
-                    fontWeight: FontWeight.w500,
-                    fontSize: 14,
-                    color: AppColors.textBodyText,
+                Expanded(
+                  child: Text(
+                    item.title,
+                    style: GoogleFonts.hind(
+                      fontWeight: FontWeight.w500,
+                      fontSize: 14,
+                      color: AppColors.textBodyText,
+                    ),
                   ),
                 ),
               ],
@@ -80,14 +77,14 @@ class OrderSummaryCard extends StatelessWidget {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  _buildRichText(title: 'Qty', value: order.item),
+                  _buildRichText(title: 'Qty', value: '${item.quantity}'),
                   _buildRichText(
                     title: 'Price/Unit',
-                    value: formatAmount(order.amount),
+                    value: formatAmount(item.unitPrice),
                   ),
                   _buildRichText(
                     title: 'Subtotal',
-                    value: formatAmount(order.amount),
+                    value: formatAmount(item.subtotal),
                   ),
                 ],
               ),

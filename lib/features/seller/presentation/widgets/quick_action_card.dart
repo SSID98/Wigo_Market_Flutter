@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:wigo_flutter/core/constants/app_colors.dart';
+import 'package:wigo_flutter/core/utils/context_extensions.dart';
 
 class QuickActionCard extends StatelessWidget {
   final String text;
@@ -24,7 +25,7 @@ class QuickActionCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final isWeb = MediaQuery.of(context).size.width > 600;
+    final isWeb = context.isWeb;
     return GestureDetector(
       onTap: onTap,
       child: SizedBox(

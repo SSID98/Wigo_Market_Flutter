@@ -2,116 +2,101 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-import '../../../../core/constants/app_colors.dart';
-import '../../models/order_task_state.dart';
-import '../../viewmodels/order_task_viewmodel.dart';
+import '../../../../../core/constants/app_colors.dart';
+import '../../../../../shared/widgets/custom_button.dart';
+import '../../models/allowed_action_model.dart';
+import '../../models/order_enums.dart';
+import 'order_details_widgets/order_status_actions.dart';
 
-class UpdateOrderStatusDialog extends ConsumerStatefulWidget {
-  final String orderId;
-  final OrderFilter currentStatus;
-
+class UpdateOrderStatusDialog extends ConsumerWidget {
   const UpdateOrderStatusDialog({
     super.key,
+    required this.pageContext,
     required this.orderId,
-    required this.currentStatus,
+    required this.currentStatusLabel,
+    required this.allowedActions,
   });
 
-  @override
-  ConsumerState<UpdateOrderStatusDialog> createState() =>
-      _UpdateOrderStatusDialogState();
-}
-
-class _UpdateOrderStatusDialogState
-    extends ConsumerState<UpdateOrderStatusDialog> {
-  late OrderFilter selectedStatus;
+  final BuildContext pageContext;
+  final String orderId;
+  final String currentStatusLabel;
+  final List<AllowedAction> allowedActions;
 
   @override
-  void initState() {
-    super.initState();
-    selectedStatus = widget.currentStatus;
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    final statuses =
-        OrderFilter.values.where((e) => e != OrderFilter.all).toList();
-    final isWeb = MediaQuery.of(context).size.width > 600;
-    return Dialog(
-      insetPadding: EdgeInsets.symmetric(horizontal: 18),
-      backgroundColor: AppColors.backgroundWhite,
+  Widget build(BuildContext context, WidgetRef ref) {
+    return AlertDialog(
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-      child: Padding(
-        padding: const EdgeInsets.all(24),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              "Update Order Status",
-              style: GoogleFonts.hind(
-                fontSize: isWeb ? 18 : 16,
-                fontWeight: FontWeight.w600,
-                color: AppColors.textNeutral950,
-              ),
-            ),
-
-            const SizedBox(height: 20),
-
-            GridView.builder(
-              shrinkWrap: true,
-              itemCount: statuses.length,
-              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 3,
-                mainAxisSpacing: 25,
-                crossAxisSpacing: 12,
-                childAspectRatio: 2.6,
-              ),
-              itemBuilder: (context, index) {
-                final status = statuses[index];
-
-                final isSelected = selectedStatus == status;
-
-                return GestureDetector(
-                  onTap: () {
-                    setState(() {
-                      selectedStatus = status;
-                    });
-                    //
-                    // ref
-                    //     .read(orderTaskProvider.notifier)
-                    //     .updateOrderStatus(widget.orderId, status);
-                    Future.delayed(const Duration(milliseconds: 300), () {
-                      ref
-                          .read(orderTaskProvider.notifier)
-                          .updateOrderStatus(widget.orderId, status);
-                      if (!context.mounted) return;
-                      Navigator.pop(context);
-                    });
-                  },
-                  child: Container(
-                    alignment: Alignment.center,
-                    decoration: BoxDecoration(
-                      color:
-                          isSelected
-                              ? AppColors.primaryLightGreen
-                              : AppColors.backgroundLight,
-                      borderRadius: BorderRadius.circular(50),
-                    ),
-                    child: Text(
-                      status.displayName,
-                      style: GoogleFonts.hind(
-                        fontSize: isWeb ? 18 : 13,
-                        fontWeight: FontWeight.w500,
-                        color: AppColors.textBlackGrey,
-                      ),
-                    ),
-                  ),
-                );
-              },
-            ),
-          ],
+      backgroundColor: AppColors.backgroundWhite,
+      title: Text(
+        'Update Order Status',
+        style: GoogleFonts.hind(
+          fontSize: 20,
+          fontWeight: FontWeight.w600,
+          color: AppColors.textBlackGrey,
         ),
       ),
+      content: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            'Current status: $currentStatusLabel',
+            style: GoogleFonts.hind(
+              fontSize: 14,
+              color: AppColors.textBodyText,
+            ),
+          ),
+          const SizedBox(height: 16),
+          if (allowedActions.isEmpty)
+            Text(
+              'No further status changes are available for this order.',
+              style: GoogleFonts.hind(
+                fontSize: 14,
+                color: AppColors.textBodyText,
+              ),
+            )
+          else
+            ...allowedActions.map(
+              (action) => Padding(
+                padding: const EdgeInsets.only(bottom: 10),
+                child: SizedBox(
+                  width: double.infinity,
+                  child: CustomButton(
+                    text: action.label,
+                    fontSize: 14,
+                    fontWeight: FontWeight.w500,
+                    height: 42,
+                    borderRadius: 6,
+                    textColor: action.status == OrderFilter.cancelled
+                        ? AppColors.textRed
+                        : AppColors.textWhite,
+                    buttonColor: action.status == OrderFilter.cancelled
+                        ? AppColors.backgroundLight
+                        : AppColors.primaryDarkGreen,
+                    onPressed: () async {
+                      Navigator.of(context).pop();
+                      await handleStatusSelection(
+                        pageContext,
+                        ref,
+                        orderId: orderId,
+                        action: action,
+                      );
+                    },
+                  ),
+                ),
+              ),
+            ),
+        ],
+      ),
+      actions: [
+        TextButton(
+          onPressed: () => Navigator.of(context).pop(),
+          child: Text(
+            'Close',
+            style: GoogleFonts.hind(color: AppColors.textBodyText),
+          ),
+        ),
+      ],
     );
   }
 }

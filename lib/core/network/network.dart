@@ -131,6 +131,7 @@ class NetworkService {
         return ResponseStatusModel<T>(
           accessStatus: ResponseStatusEnum.success,
           data: parsedData,
+          statusCode: response.statusCode,
         );
       } else {
         final dynamic raw = response.data;
@@ -152,25 +153,30 @@ class NetworkService {
           errors: (errorJson?['errors'] as List<dynamic>?)
               ?.map((e) => e.toString())
               .toList(),
+          statusCode: response.statusCode,
         );
       }
     } catch (e) {
       List<String>? extractedErrors;
+      int? statusCode;
 
-      if (e is DioException && e.response?.data != null) {
-        final dynamic rawData = e.response!.data;
+      if (e is DioException) {
+        statusCode = e.response?.statusCode;
+        if (e.response?.data != null) {
+          final dynamic rawData = e.response!.data;
 
-        if (rawData is Map<String, dynamic>) {
-          extractedErrors = (rawData['errors'] as List<dynamic>?)
-              ?.map((err) => err.toString())
-              .toList();
-        } else if (rawData is String) {
-          try {
-            final decoded = jsonDecode(rawData) as Map<String, dynamic>;
-            extractedErrors = (decoded['errors'] as List<dynamic>?)
+          if (rawData is Map<String, dynamic>) {
+            extractedErrors = (rawData['errors'] as List<dynamic>?)
                 ?.map((err) => err.toString())
                 .toList();
-          } catch (_) {}
+          } else if (rawData is String) {
+            try {
+              final decoded = jsonDecode(rawData) as Map<String, dynamic>;
+              extractedErrors = (decoded['errors'] as List<dynamic>?)
+                  ?.map((err) => err.toString())
+                  .toList();
+            } catch (_) {}
+          }
         }
       }
 
@@ -178,6 +184,7 @@ class NetworkService {
         accessStatus: ResponseStatusEnum.failed,
         errorDescription: parseError(e),
         errors: extractedErrors,
+        statusCode: statusCode,
       );
     }
   }

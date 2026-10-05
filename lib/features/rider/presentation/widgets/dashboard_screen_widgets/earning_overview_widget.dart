@@ -68,7 +68,7 @@ class EarningOverviewWidget extends ConsumerWidget {
             Text(
               "Earning Overview",
               style: GoogleFonts.hind(
-                fontSize: isWeb ? 20 : 16,
+                fontSize: 20,
                 fontWeight: FontWeight.w600,
                 color: AppColors.textBlackGrey,
               ),

@@ -1,19 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:wigo_flutter/core/utils/context_extensions.dart';
 import 'package:wigo_flutter/core/utils/helper_methods_classes.dart';
-import 'package:wigo_flutter/features/seller/presentation/views/order_detail_screen.dart';
-import 'package:wigo_flutter/shared/widgets/custom_button.dart';
 
 import '../../../../core/constants/app_colors.dart';
 import '../../../../core/constants/dashboard_helpers.dart';
 import '../../../../gen/assets.gen.dart';
-import '../../../../shared/widgets/custom_checkbox_2.dart';
-import '../../../../shared/widgets/custom_text_field.dart';
 import '../../models/order.dart';
-import '../../models/order_task_state.dart';
+import '../../models/order_enums.dart';
 import '../../viewmodels/dropdown_providers.dart';
-import '../../viewmodels/order_task_viewmodel.dart';
+import '../views/order_detail_screen.dart';
+import 'contact_customer_dialog.dart';
+import 'order_details_widgets/order_status_actions.dart';
 import 'order_status_container.dart';
 
 enum ActionMenuView { main, updateStatus }
@@ -34,9 +33,7 @@ class OrderTable extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final isWeb = MediaQuery.of(context).size.width > 600;
-    final state = ref.watch(orderTaskProvider);
-    final notifier = ref.read(orderTaskProvider.notifier);
+    final isWeb = context.isWeb;
     final expandedId = ref.watch(expandedIdProvider);
     return SingleChildScrollView(
       scrollDirection: Axis.horizontal,
@@ -52,19 +49,19 @@ class OrderTable extends ConsumerWidget {
             ),
             child: Row(
               children: [
-                if (isExpanded)
-                  Padding(
-                    padding: const EdgeInsets.only(left: 10.0),
-                    child: CustomCheckbox2(
-                      value: state.selectStatus,
-                      onChanged: notifier.toggleSelectStatus,
-                      borderRadius: 2,
-                      size: 16,
-                      checkSize: 10,
-                      borderColor: AppColors.borderColor,
-                      checkColor: AppColors.primaryDarkGreen,
-                    ),
-                  ),
+                // if (isExpanded)
+                //   Padding(
+                //     padding: const EdgeInsets.only(left: 10.0),
+                //     child: CustomCheckbox2(
+                //       value: state.selectStatus,
+                //       onChanged: notifier.toggleSelectStatus,
+                //       borderRadius: 2,
+                //       size: 16,
+                //       checkSize: 10,
+                //       borderColor: AppColors.borderColor,
+                //       checkColor: AppColors.primaryDarkGreen,
+                //     ),
+                //   ),
                 SizedBox(
                   width: isWeb ? 180.0 : 130.0,
                   child: Padding(
@@ -198,25 +195,25 @@ class OrderTable extends ConsumerWidget {
               ),
               child: Row(
                 children: [
-                  if (isExpanded)
-                    Padding(
-                      padding: const EdgeInsets.only(left: 10.0),
-                      child: CustomCheckbox2(
-                        value: state.selectStatus,
-                        onChanged: notifier.toggleSelectStatus,
-                        borderRadius: 2,
-                        size: 16,
-                        checkSize: 10,
-                        borderColor: AppColors.borderColor,
-                        checkColor: AppColors.primaryDarkGreen,
-                      ),
-                    ),
+                  // if (isExpanded)
+                  //   Padding(
+                  //     padding: const EdgeInsets.only(left: 10.0),
+                  //     child: CustomCheckbox2(
+                  //       value: state.selectStatus,
+                  //       onChanged: notifier.toggleSelectStatus,
+                  //       borderRadius: 2,
+                  //       size: 16,
+                  //       checkSize: 10,
+                  //       borderColor: AppColors.borderColor,
+                  //       checkColor: AppColors.primaryDarkGreen,
+                  //     ),
+                  //   ),
                   SizedBox(
                     width: isWeb ? 180.0 : 130.0,
                     child: Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 16.0),
                       child: Text(
-                        d.orderId,
+                        d.orderNumber,
                         style: _getStyle(
                           isHeader: false,
                           color: AppColors.textBlackGrey,
@@ -250,7 +247,7 @@ class OrderTable extends ConsumerWidget {
                   SizedBox(
                     width: isWeb ? 130.0 : 80.0,
                     child: Text(
-                      d.item,
+                      '${d.itemsCount} item${d.itemsCount == 1 ? '' : 's'}',
                       style: _getStyle(
                         isHeader: false,
                         color: AppColors.textBodyText,
@@ -324,154 +321,13 @@ class OrderTable extends ConsumerWidget {
                               );
                             },
                             style: anchorMenuStyle(),
-                            menuChildren: [
-                              MenuItemButton(
-                                leadingIcon: AppAssets.icons.viewOrder.svg(),
-                                onPressed: () {
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder: (_) =>
-                                          OrderDetailScreen(order: d),
-                                    ),
-                                  );
-                                },
-                                child: Text(
-                                  "View Order",
-                                  style: GoogleFonts.hind(
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.w500,
-                                    color: AppColors.textBlackGrey,
-                                  ),
-                                ),
-                              ),
-
-                              //update status
-                              isWeb
-                                  ? _buildUpdateStatusSubmenuWeb(d, ref)
-                                  : Padding(
-                                      padding: EdgeInsets.only(
-                                        top: expandedId == d.orderId ? 10 : 0,
-                                      ),
-                                      child: InkWell(
-                                        onTap: () {
-                                          final notifier = ref.read(
-                                            expandedIdProvider.notifier,
-                                          );
-                                          notifier.state =
-                                              (expandedId == d.orderId)
-                                              ? null
-                                              : d.orderId;
-                                        },
-                                        child: Container(
-                                          decoration: BoxDecoration(
-                                            borderRadius: BorderRadius.circular(
-                                              4,
-                                            ),
-                                            color: expandedId == d.orderId
-                                                ? AppColors.tableHeader
-                                                : Colors.transparent,
-                                          ),
-                                          child: Padding(
-                                            padding: const EdgeInsets.only(
-                                              top: 15,
-                                              bottom: 15,
-                                              left: 12,
-                                              right: 12,
-                                            ),
-                                            child: Row(
-                                              children: [
-                                                AppAssets.icons.updateStats
-                                                    .svg(),
-                                                const SizedBox(width: 12),
-                                                Expanded(
-                                                  child: Text(
-                                                    "Update Status",
-                                                    style: GoogleFonts.hind(
-                                                      fontSize: 16,
-                                                      fontWeight:
-                                                          FontWeight.w500,
-                                                      color: AppColors
-                                                          .textBlackGrey,
-                                                    ),
-                                                  ),
-                                                ),
-                                                const SizedBox(width: 50),
-                                                Icon(
-                                                  expandedId == d.orderId
-                                                      ? Icons
-                                                            .keyboard_arrow_up_rounded
-                                                      : Icons
-                                                            .keyboard_arrow_down_rounded,
-                                                ),
-                                              ],
-                                            ),
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                              if (expandedId == d.orderId)
-                                ...OrderFilter.values
-                                    .where((e) => e != OrderFilter.all)
-                                    .map(
-                                      (status) => MenuItemButton(
-                                        onPressed: () {
-                                          // 1. Update the status in your backend/state
-                                          ref
-                                              .read(orderTaskProvider.notifier)
-                                              .updateOrderStatus(
-                                                d.orderId,
-                                                status,
-                                              );
-                                        },
-                                        child: Padding(
-                                          padding: const EdgeInsets.only(
-                                            left: 35,
-                                          ),
-                                          child: Text(
-                                            status.displayName,
-                                            style: GoogleFonts.hind(
-                                              fontSize: 16,
-                                              fontWeight: FontWeight.w500,
-                                              color: AppColors.textBodyText,
-                                            ),
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                              MenuItemButton(
-                                leadingIcon: AppAssets.icons.contactCusto.svg(),
-                                onPressed: () => _showContactCustomerDialog(
-                                  context,
-                                  isWeb,
-                                  d,
-                                ),
-                                child: Text(
-                                  "Contact Customer",
-                                  style: GoogleFonts.hind(
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.w500,
-                                    color: AppColors.textBlackGrey,
-                                  ),
-                                ),
-                              ),
-                              Padding(
-                                padding: const EdgeInsets.only(left: 1.0),
-                                child: MenuItemButton(
-                                  leadingIcon: AppAssets.icons.cancelSquare
-                                      .svg(),
-                                  onPressed: () {},
-                                  child: Text(
-                                    "Cancel Order",
-                                    style: GoogleFonts.hind(
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.w500,
-                                      color: AppColors.textBlackGrey,
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            ],
+                            menuChildren: _buildActionMenuItems(
+                              context,
+                              ref,
+                              isWeb,
+                              d,
+                              expandedId,
+                            ),
                           ),
                         ),
                       ),
@@ -485,8 +341,119 @@ class OrderTable extends ConsumerWidget {
     );
   }
 
-  Widget _buildUpdateStatusSubmenuWeb(Order order, WidgetRef ref) {
-    final notifier = ref.read(orderTaskProvider.notifier);
+  List<Widget> _buildActionMenuItems(
+    BuildContext context,
+    WidgetRef ref,
+    bool isWeb,
+    Order d,
+    String? expandedId,
+  ) {
+    final cancelAction = d.allowedActions
+        .where((a) => a.status == OrderFilter.cancelled)
+        .toList();
+
+    return [
+      MenuItemButton(
+        leadingIcon: AppAssets.icons.viewOrder.svg(),
+        onPressed: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (_) => OrderDetailScreen(orderId: d.id)),
+          );
+        },
+        child: Text(
+          "View Order",
+          style: GoogleFonts.hind(
+            fontSize: 16,
+            fontWeight: FontWeight.w500,
+            color: AppColors.textBlackGrey,
+          ),
+        ),
+      ),
+
+      if (d.allowedActions.isNotEmpty)
+        isWeb
+            ? _buildUpdateStatusSubmenuWeb(d, ref, context)
+            : _buildUpdateStatusAccordionMobile(d, ref, context, expandedId),
+
+      if (expandedId == d.id)
+        ...d.allowedActions.map(
+          (action) => MenuItemButton(
+            onPressed: () {
+              ref.read(expandedIdProvider.notifier).state = null;
+              handleStatusSelection(
+                context,
+                ref,
+                orderId: d.id,
+                action: action,
+              );
+            },
+            child: Padding(
+              padding: const EdgeInsets.only(left: 35),
+              child: Text(
+                action.label,
+                style: GoogleFonts.hind(
+                  fontSize: 16,
+                  fontWeight: FontWeight.w500,
+                  color: AppColors.textBodyText,
+                ),
+              ),
+            ),
+          ),
+        ),
+
+      MenuItemButton(
+        leadingIcon: AppAssets.icons.contactCusto.svg(),
+        onPressed: () {
+          showContactCustomerDialog(
+            context,
+            ref,
+            isWeb: isWeb,
+            orderId: d.id,
+            orderNumber: d.orderNumber,
+            customerName: d.customerName,
+            customerPhone: d.customerPhone,
+          );
+        },
+        child: Text(
+          "Contact Customer",
+          style: GoogleFonts.hind(
+            fontSize: 16,
+            fontWeight: FontWeight.w500,
+            color: AppColors.textBlackGrey,
+          ),
+        ),
+      ),
+
+      if (cancelAction.isNotEmpty)
+        Padding(
+          padding: const EdgeInsets.only(left: 1.0),
+          child: MenuItemButton(
+            leadingIcon: AppAssets.icons.cancelSquare.svg(),
+            onPressed: () => handleStatusSelection(
+              context,
+              ref,
+              orderId: d.id,
+              action: cancelAction.first,
+            ),
+            child: Text(
+              "Cancel Order",
+              style: GoogleFonts.hind(
+                fontSize: 16,
+                fontWeight: FontWeight.w500,
+                color: AppColors.textBlackGrey,
+              ),
+            ),
+          ),
+        ),
+    ];
+  }
+
+  Widget _buildUpdateStatusSubmenuWeb(
+    Order order,
+    WidgetRef ref,
+    BuildContext context,
+  ) {
     final isOpen = ref.watch(submenuOpenProvider);
     return Container(
       decoration: BoxDecoration(
@@ -494,12 +461,8 @@ class OrderTable extends ConsumerWidget {
         color: isOpen ? AppColors.tableHeader : Colors.transparent,
       ),
       child: SubmenuButton(
-        onOpen: () {
-          ref.watch(submenuOpenProvider.notifier).state = true;
-        },
-        onClose: () {
-          ref.watch(submenuOpenProvider.notifier).state = false;
-        },
+        onOpen: () => ref.watch(submenuOpenProvider.notifier).state = true,
+        onClose: () => ref.watch(submenuOpenProvider.notifier).state = false,
         submenuIcon: WidgetStateProperty.all(
           Padding(
             padding: const EdgeInsets.only(left: 50.0),
@@ -507,16 +470,20 @@ class OrderTable extends ConsumerWidget {
           ),
         ),
         leadingIcon: AppAssets.icons.updateStats.svg(),
-        menuChildren: OrderFilter.values
-            .where((e) => e != OrderFilter.all)
+        menuChildren: order.allowedActions
             .map(
-              (status) => MenuItemButton(
+              (action) => MenuItemButton(
                 onPressed: () {
-                  notifier.updateOrderStatus(order.orderId, status);
                   ref.read(submenuOpenProvider.notifier).state = false;
+                  handleStatusSelection(
+                    context,
+                    ref,
+                    orderId: order.id,
+                    action: action,
+                  );
                 },
                 child: Text(
-                  status.displayName,
+                  action.label,
                   style: GoogleFonts.hind(
                     fontSize: 16,
                     fontWeight: FontWeight.w500,
@@ -538,168 +505,57 @@ class OrderTable extends ConsumerWidget {
     );
   }
 
-  Future<void> _showContactCustomerDialog(
-    BuildContext context,
-    bool isWeb,
+  Widget _buildUpdateStatusAccordionMobile(
     Order order,
-  ) async {
-    return showDialog(
-      context: context,
-      barrierDismissible: false,
-      builder: (dialogContext) {
-        return AlertDialog(
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(10),
+    WidgetRef ref,
+    BuildContext context,
+    String? expandedId,
+  ) {
+    return Padding(
+      padding: EdgeInsets.only(top: expandedId == order.id ? 10 : 0),
+      child: InkWell(
+        onTap: () {
+          final notifier = ref.read(expandedIdProvider.notifier);
+          notifier.state = (expandedId == order.id) ? null : order.id;
+        },
+        child: Container(
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(4),
+            color: expandedId == order.id
+                ? AppColors.tableHeader
+                : Colors.transparent,
           ),
-          backgroundColor: AppColors.backgroundWhite,
-          titlePadding: EdgeInsets.only(top: 16, left: 16),
-          insetPadding: EdgeInsets.symmetric(horizontal: 16),
-          title: Row(
-            children: [
-              AppAssets.icons.contactCusto.svg(),
-              const SizedBox(width: 8),
-              Text(
-                "Contact Customer",
-                style: GoogleFonts.hind(
-                  fontSize: 22,
-                  fontWeight: FontWeight.w500,
-                  color: AppColors.textBlackGrey,
-                ),
-              ),
-              const Spacer(),
-              IconButton(
-                padding: EdgeInsets.only(right: isWeb ? 0 : 25),
-                icon: const Icon(Icons.close),
-                onPressed: () {
-                  Navigator.of(dialogContext).pop();
-                },
-              ),
-            ],
-          ),
-          contentPadding: EdgeInsets.only(left: 16, right: 16, bottom: 40),
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Container(
-                height: 72,
-                width: double.infinity,
-                padding: const EdgeInsets.fromLTRB(10, 10, 15, 10),
-                decoration: BoxDecoration(
-                  color: AppColors.backgroundLight,
-                  borderRadius: BorderRadius.circular(4),
-                ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        _buildRichTextRow(
-                          label: 'Customer',
-                          info: order.customerName,
-                        ),
-                        if (isWeb)
-                          _buildRichTextRow(
-                            label: 'OrderID',
-                            info: order.orderId,
-                          ),
-                      ],
-                    ),
-                    const SizedBox(height: 8),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        if (!isWeb)
-                          _buildRichTextRow(
-                            label: 'OrderID',
-                            info: order.orderId,
-                          ),
-                        _buildRichTextRow(
-                          label: 'Phone',
-                          info: order.customerPhone,
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
-              ),
-              const SizedBox(height: 20),
-              Text(
-                "Need to clarify an order, delivery time, or product issue? Send a message directly to the buyer.",
-                style: GoogleFonts.hind(
-                  fontSize: 14,
-                  fontWeight: FontWeight.w400,
-                  color: AppColors.textBlackGrey,
-                ),
-              ),
-              const SizedBox(height: 16),
-              CustomTextField(
-                hintText: 'Type your message here...',
-                fillColor: AppColors.backgroundLight,
-                contentPadding: EdgeInsets.all(16),
-                minLines: 6,
-                maxLines: 8,
-              ),
-              const SizedBox(height: 24),
-              const Divider(),
-              const SizedBox(height: 24),
-              Row(
-                children: [
-                  Expanded(
-                    child: CustomButton(
-                      text: 'Cancel',
+          child: Padding(
+            padding: const EdgeInsets.only(
+              top: 15,
+              bottom: 15,
+              left: 12,
+              right: 12,
+            ),
+            child: Row(
+              children: [
+                AppAssets.icons.updateStats.svg(),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: Text(
+                    "Update Status",
+                    style: GoogleFonts.hind(
                       fontSize: 16,
                       fontWeight: FontWeight.w500,
-                      height: 48,
-                      borderRadius: 6,
-                      textColor: AppColors.textBlackGrey,
-                      buttonColor: AppColors.backgroundLight,
-                      width: double.infinity,
-                      onPressed: () {},
+                      color: AppColors.textBlackGrey,
                     ),
                   ),
-                  const SizedBox(width: 20),
-                  Expanded(
-                    child: CustomButton(
-                      text: 'Send',
-                      fontSize: 16,
-                      fontWeight: FontWeight.w500,
-                      height: 48,
-                      borderRadius: 6,
-                      width: double.infinity,
-                      onPressed: () {},
-                    ),
-                  ),
-                ],
-              ),
-            ],
-          ),
-        );
-      },
-    );
-  }
-
-  Widget _buildRichTextRow({required String label, required String info}) {
-    return RichText(
-      text: TextSpan(
-        children: [
-          TextSpan(
-            text: '$label: ',
-            style: GoogleFonts.hind(
-              fontSize: 14,
-              fontWeight: FontWeight.w500,
-              color: AppColors.textBlackGrey,
+                ),
+                const SizedBox(width: 50),
+                Icon(
+                  expandedId == order.id
+                      ? Icons.keyboard_arrow_up_rounded
+                      : Icons.keyboard_arrow_down_rounded,
+                ),
+              ],
             ),
           ),
-          TextSpan(
-            text: info,
-            style: GoogleFonts.hind(
-              fontSize: 14,
-              fontWeight: FontWeight.w400,
-              color: AppColors.textBlackGrey,
-            ),
-          ),
-        ],
+        ),
       ),
     );
   }

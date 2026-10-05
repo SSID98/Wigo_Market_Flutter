@@ -6,7 +6,6 @@ import 'package:wigo_flutter/core/utils/context_extensions.dart';
 import 'package:wigo_flutter/features/seller/models/seller_product_model.dart';
 import 'package:wigo_flutter/features/seller/models/seller_product_task_state.dart';
 import 'package:wigo_flutter/features/seller/presentation/views/add_product_screen.dart';
-import 'package:wigo_flutter/features/seller/viewmodels/order_task_viewmodel.dart';
 import 'package:wigo_flutter/features/seller/viewmodels/seller_product_task_viewmodel.dart';
 
 import '../../../../../../core/constants/app_colors.dart';
@@ -476,46 +475,45 @@ class OrderHeaderWeb extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final vm = ref.read(orderTaskProvider.notifier);
-    final isWeb = MediaQuery.of(context).size.width > 800;
+    // final vm = ref.read(orderTaskProvider.notifier);
+    // final isWeb = MediaQuery.of(context).size.width > 800;
     return Row(
       children: [
-        _buildDateDropdown(
-          onToday: vm.setTodayFilter,
-          isWeb: isWeb,
-          onCustom: () async {
-            final picked = await showDatePicker(
-              context: context,
-              firstDate: DateTime(2020),
-              lastDate: DateTime.now(),
-              initialDate: DateTime.now(),
-            );
-            if (picked != null) vm.setCustomDate(picked);
-          },
-        ),
-
+        // _buildDateDropdown(
+        //   onToday: vm.setTodayFilter,
+        //   isWeb: isWeb,
+        //   onCustom: () async {
+        //     final picked = await showDatePicker(
+        //       context: context,
+        //       firstDate: DateTime(2020),
+        //       lastDate: DateTime.now(),
+        //       initialDate: DateTime.now(),
+        //     );
+        //     if (picked != null) vm.setCustomDate(picked);
+        //   },
+        // ),
         const SizedBox(width: 12),
       ],
     );
   }
 
-  Widget _buildDateDropdown({
-    required VoidCallback onToday,
-    required VoidCallback onCustom,
-    required bool isWeb,
-  }) {
-    return PopupMenuButton<String>(
-      child: FilterButton(label: "Date"),
-      onSelected: (value) {
-        if (value == 'today') onToday();
-        if (value == 'custom') onCustom();
-      },
-      itemBuilder: (_) => [
-        const PopupMenuItem(value: 'today', child: Text("Today")),
-        const PopupMenuItem(value: 'custom', child: Text("Custom date")),
-      ],
-    );
-  }
+  // Widget _buildDateDropdown({
+  //   required VoidCallback onToday,
+  //   required VoidCallback onCustom,
+  //   required bool isWeb,
+  // }) {
+  //   return PopupMenuButton<String>(
+  //     child: FilterButton(label: "Date"),
+  //     onSelected: (value) {
+  //       if (value == 'today') onToday();
+  //       if (value == 'custom') onCustom();
+  //     },
+  //     itemBuilder: (_) => [
+  //       const PopupMenuItem(value: 'today', child: Text("Today")),
+  //       const PopupMenuItem(value: 'custom', child: Text("Custom date")),
+  //     ],
+  //   );
+  // }
 
   //
   // Widget _buildStatusDropdown({

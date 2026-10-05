@@ -27,17 +27,27 @@ class SellerProductCard extends ConsumerWidget {
     final isWeb = context.isWeb;
     final state = ref.watch(sellerProductTaskProvider);
     final vm = ref.read(sellerProductTaskProvider.notifier);
-    return Card(
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(8),
-        side: const BorderSide(color: AppColors.borderColor, width: 1),
-      ),
-      elevation: 0,
-      margin: EdgeInsets.only(bottom: 15),
-      color: AppColors.backgroundWhite,
-      child: Padding(
-        padding: const EdgeInsets.all(8.0),
-        child: _buildMobileCard(isWeb, ref, context, state, vm),
+    return InkWell(
+      onTap: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (_) => ProductDetailScreen(productId: product.id),
+          ),
+        );
+      },
+      child: Card(
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(8),
+          side: const BorderSide(color: AppColors.borderColor, width: 1),
+        ),
+        elevation: 0,
+        margin: EdgeInsets.only(bottom: 15),
+        color: AppColors.backgroundWhite,
+        child: Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: _buildMobileCard(isWeb, ref, context, state, vm),
+        ),
       ),
     );
   }

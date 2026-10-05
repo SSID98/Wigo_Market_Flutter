@@ -11,6 +11,7 @@ import '../../../core/utils/context_extensions.dart';
 import '../../../gen/assets.gen.dart';
 import '../../../shared/widgets/dashboard_widgets/custom_app_bar.dart';
 import '../../../shared/widgets/dashboard_widgets/web_side_bar.dart';
+import '../presentation/views/rider_tracking_screen.dart';
 import '../viewmodels/global_navigation_viewmodel.dart';
 
 final riderNavigatorKeysProvider = Provider<List<GlobalKey<NavigatorState>>>((
@@ -70,7 +71,11 @@ class RiderMainScreen extends ConsumerWidget {
                                 DeliveryTaskScreen(),
                                 navigatorKeys,
                               ),
-                              _buildNavigator(2, Placeholder(), navigatorKeys),
+                              _buildNavigator(
+                                2,
+                                TrackingScreen(),
+                                navigatorKeys,
+                              ),
                               _buildNavigator(
                                 3,
                                 WalletMainScreen(),
@@ -94,7 +99,7 @@ class RiderMainScreen extends ConsumerWidget {
                 children: [
                   _buildNavigator(0, RiderDashboardScreen(), navigatorKeys),
                   _buildNavigator(1, DeliveryTaskScreen(), navigatorKeys),
-                  _buildNavigator(2, Placeholder(), navigatorKeys),
+                  _buildNavigator(2, TrackingScreen(), navigatorKeys),
                   _buildNavigator(3, WalletMainScreen(), navigatorKeys),
                   _buildNavigator(4, RiderSettingsMainScreen(), navigatorKeys),
                 ],

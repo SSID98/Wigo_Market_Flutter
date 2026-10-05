@@ -6,6 +6,7 @@ import '../../../shared/models/bank_model.dart';
 import '../models/delivery_model.dart';
 import '../models/earning_history_model.dart';
 import '../models/earning_overview_model.dart';
+import '../models/map_models.dart';
 
 class RiderApiService {
   final NetworkService _networkService;
@@ -45,9 +46,8 @@ class RiderApiService {
   Future<ResponseStatusModel<OrdersResponse>> getMyDeliveries({
     int page = 1,
     int limit = 10,
-    String? tab, // 'ongoing' | 'completed' | 'cancelled'
-    String?
-    status, // 'assigned' | 'picked_up' | 'in_transit' | 'delivered' | 'failed'
+    String? tab,
+    String? status,
   }) async {
     return _networkService.request<OrdersResponse>(
       () => _networkService.get(
@@ -60,6 +60,27 @@ class RiderApiService {
         },
       ),
       parser: (json) => OrdersResponse.fromJson(json["data"]),
+    );
+  }
+
+  Future<ResponseStatusModel<Delivery?>> getActiveOrder() async {
+    return _networkService.request<Delivery?>(
+      () => _networkService.get('/delivery-agent/orders/active'),
+      parser: (data) {
+        final orderMap = (data['data'] as Map<String, dynamic>)['order'];
+        if (orderMap == null) return null;
+        return Delivery.fromJson(Map<String, dynamic>.from(orderMap as Map));
+      },
+    );
+  }
+
+  Future<ResponseStatusModel<Delivery>> getOrderById(String orderId) async {
+    return _networkService.request<Delivery>(
+      () => _networkService.get('/delivery-agent/orders/$orderId'),
+      parser: (data) {
+        final orderMap = (data['data'] as Map<String, dynamic>)['order'] as Map;
+        return Delivery.fromJson(Map<String, dynamic>.from(orderMap));
+      },
     );
   }
 
@@ -114,7 +135,7 @@ class RiderApiService {
   Future<ResponseStatusModel<EarningsHistoryResponse>> getEarningsHistory({
     int page = 1,
     int limit = 10,
-    String status = 'delivered', // delivered | cancelled | all
+    String status = 'delivered',
     String? search,
     int? month,
     int? year,
@@ -328,6 +349,83 @@ class RiderApiService {
   ) async {
     return _networkService.request<JsonMap>(
       () => _networkService.put('/notifications/preferences', data: data),
+    );
+  }
+
+  ///location/tracking
+  Future<ResponseStatusModel<JsonMap>> getRoute({
+    required String orderId,
+    required double startLat,
+    required double startLng,
+  }) async {
+    return _networkService.request<JsonMap>(
+      () => _networkService.post(
+        '/location/route',
+        data: {'orderId': orderId, 'startLat': startLat, 'startLng': startLng},
+      ),
+    );
+  }
+
+  Future<ResponseStatusModel<LocationUpdateResponse>> updateLocation({
+    required String orderId,
+    required double latitude,
+    required double longitude,
+    double accuracy = 0,
+    double speed = 0,
+    double heading = 0,
+  }) async {
+    return _networkService.request<LocationUpdateResponse>(
+      () => _networkService.post(
+        '/location/update',
+        data: {
+          'orderId': orderId,
+          'latitude': latitude,
+          'longitude': longitude,
+          'accuracy': accuracy,
+          'speed': speed,
+          'heading': heading,
+        },
+      ),
+      parser: (data) => LocationUpdateResponse.fromJson(data),
+    );
+  }
+
+  Future<ResponseStatusModel<JsonMap>> updateLocationStatus({
+    required String orderId,
+    required String status,
+    double? latitude,
+    double? longitude,
+  }) async {
+    return _networkService.request<JsonMap>(
+      () => _networkService.put(
+        '/location/status',
+        data: {
+          'orderId': orderId,
+          'status': status,
+          if (latitude != null) 'latitude': latitude,
+          if (longitude != null) 'longitude': longitude,
+        },
+      ),
+    );
+  }
+
+  Future<ResponseStatusModel<JsonMap>> getCurrentLocation(
+    String orderId,
+  ) async {
+    return _networkService.request<JsonMap>(
+      () => _networkService.get('/location/current/$orderId'),
+    );
+  }
+
+  Future<ResponseStatusModel<JsonMap>> getLocationHistory(
+    String orderId, {
+    int limit = 50,
+  }) async {
+    return _networkService.request<JsonMap>(
+      () => _networkService.get(
+        '/location/history/$orderId',
+        query: {'limit': limit},
+      ),
     );
   }
 

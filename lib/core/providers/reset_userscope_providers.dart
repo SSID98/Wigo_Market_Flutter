@@ -1,5 +1,6 @@
 import 'package:flutter_riverpod/misc.dart';
 import 'package:wigo_flutter/features/seller/viewmodels/mulitple_products_viewmodel.dart';
+import 'package:wigo_flutter/features/seller/viewmodels/seller_dashboard_viewmodel.dart';
 
 import '../../features/rider/navigation/rider_main_screen.dart';
 import '../../features/rider/viewmodels/global_navigation_viewmodel.dart';
@@ -24,4 +25,5 @@ void resetUserScopedProviders(Invalidator invalidate) {
   invalidate(singleProductProvider);
   invalidate(multipleProductsProvider);
   invalidate(uploadProvider);
+  invalidate(sellerDashboardViewModelProvider);
 }

@@ -1,150 +1,79 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'order.dart';
+import 'order_details_model.dart';
+import 'order_enums.dart';
 
-enum OrderFilter {
-  all,
-  pending,
-  confirmed,
-  preparing,
-  pickUpReady,
-  inTransit,
-  delivered,
-  cancelled,
-}
-
-enum DeliveryType { all, delivery, pickUp }
-
-enum DateFilterType { all, today, custom }
+export 'order_enums.dart';
 
 class OrderTaskState {
   final AsyncValue<List<Order>> orders;
-  final OrderFilter selectedFilter;
+  final OrderCategory category;
   final DeliveryType deliveryType;
+  final DateFilterType dateFilterType;
   final int currentPage;
   final int totalOrdersCount;
-  final Map<OrderFilter, int> orderCounts;
+  final OrderCounts categoryCounts;
   final int rowsPerPage;
-  final DateFilterType dateFilterType;
-  final DateTime? customDate;
-  final bool selectStatus;
-  final Set<OrderFilter> tempSelectedStatuses; // What is checked in the UI
-  final Set<OrderFilter> activeStatuses; // What is actually filtering the table
+  final Set<OrderFilter> tempSelectedStatuses;
+  final Set<OrderFilter> activeStatuses;
   final Set<DateTime> tempSelectedDates;
   final Set<DateTime> activeSelectedDates;
-
-  // final WalletScreenState walletScreenState;
+  final String searchQuery;
+  final String sortBy;
+  final String sortOrder;
 
   const OrderTaskState({
     this.orders = const AsyncValue.data([]),
-    this.selectedFilter = OrderFilter.all,
+    this.category = OrderCategory.all,
     this.deliveryType = DeliveryType.all,
     this.dateFilterType = DateFilterType.all,
-    this.customDate,
     this.currentPage = 0,
     this.totalOrdersCount = 0,
-    this.orderCounts = const {},
+    this.categoryCounts = const OrderCounts(),
     this.rowsPerPage = 10,
-    this.selectStatus = false,
     this.tempSelectedStatuses = const {},
     this.activeStatuses = const {},
     this.tempSelectedDates = const {},
     this.activeSelectedDates = const {},
-    // this.walletScreenState = WalletScreenState.overview,
+    this.searchQuery = '',
+    this.sortBy = 'date',
+    this.sortOrder = 'desc',
   });
 
   OrderTaskState copyWith({
     AsyncValue<List<Order>>? orders,
-    OrderFilter? selectedFilter,
-    DateFilterType? dateFilterType,
+    OrderCategory? category,
     DeliveryType? deliveryType,
-    DateTime? customDate,
+    DateFilterType? dateFilterType,
     int? currentPage,
     int? totalOrdersCount,
-    Map<OrderFilter, int>? orderCounts,
+    OrderCounts? categoryCounts,
     int? rowsPerPage,
-    bool? selectStatus,
     Set<OrderFilter>? tempSelectedStatuses,
     Set<OrderFilter>? activeStatuses,
     Set<DateTime>? tempSelectedDates,
     Set<DateTime>? activeSelectedDates,
-    // WalletScreenState? walletScreenState,
+    String? searchQuery,
+    String? sortBy,
+    String? sortOrder,
   }) {
     return OrderTaskState(
       orders: orders ?? this.orders,
-      selectedFilter: selectedFilter ?? this.selectedFilter,
+      category: category ?? this.category,
+      deliveryType: deliveryType ?? this.deliveryType,
       dateFilterType: dateFilterType ?? this.dateFilterType,
-      customDate: customDate ?? this.customDate,
       currentPage: currentPage ?? this.currentPage,
       totalOrdersCount: totalOrdersCount ?? this.totalOrdersCount,
-      orderCounts: orderCounts ?? this.orderCounts,
+      categoryCounts: categoryCounts ?? this.categoryCounts,
       rowsPerPage: rowsPerPage ?? this.rowsPerPage,
-      selectStatus: selectStatus ?? this.selectStatus,
-      deliveryType: deliveryType ?? this.deliveryType,
       tempSelectedStatuses: tempSelectedStatuses ?? this.tempSelectedStatuses,
       activeStatuses: activeStatuses ?? this.activeStatuses,
       tempSelectedDates: tempSelectedDates ?? this.tempSelectedDates,
       activeSelectedDates: activeSelectedDates ?? this.activeSelectedDates,
-      // walletScreenState: walletScreenState ?? this.walletScreenState,
-    );
-  }
-}
-
-extension OrderFilterExtension on OrderFilter {
-  //Backend (JSON)
-  String get toJsonString => name;
-
-  String get displayName {
-    switch (this) {
-      case OrderFilter.pickUpReady:
-        return 'Pick up Ready';
-      case OrderFilter.inTransit:
-        return 'In Transit';
-      case OrderFilter.pending:
-        return 'Pending';
-      case OrderFilter.delivered:
-        return 'Delivered';
-      case OrderFilter.cancelled:
-        return 'Cancelled';
-      case OrderFilter.confirmed:
-        return 'Confirmed';
-      case OrderFilter.preparing:
-        return 'Preparing';
-      default:
-        // Capitalizes the first letter: "pending" -> "Pending"
-        return name[0].toUpperCase() + name.substring(1);
-    }
-  }
-
-  // convert Backend String -> Enum
-  static OrderFilter fromString(String status) {
-    return OrderFilter.values.firstWhere(
-      (e) => e.name.toLowerCase() == status.replaceAll(' ', '').toLowerCase(),
-      orElse: () => OrderFilter.pending,
-    );
-  }
-}
-
-extension DeliveryTypeExtension on DeliveryType {
-  //Backend (JSON)
-  String get toJsonString => name;
-
-  String get displayName {
-    switch (this) {
-      case DeliveryType.pickUp:
-        return 'Pick up';
-      case DeliveryType.delivery:
-        return 'Delivery';
-      default:
-        return name[0].toUpperCase() + name.substring(1);
-    }
-  }
-
-  // convert Backend String -> Enum
-  static DeliveryType fromString(String type) {
-    return DeliveryType.values.firstWhere(
-      (e) => e.name.toLowerCase() == type.replaceAll(' ', '').toLowerCase(),
-      orElse: () => DeliveryType.delivery,
+      searchQuery: searchQuery ?? this.searchQuery,
+      sortBy: sortBy ?? this.sortBy,
+      sortOrder: sortOrder ?? this.sortOrder,
     );
   }
 }

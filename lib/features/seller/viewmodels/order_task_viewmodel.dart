@@ -1,108 +1,100 @@
+import 'dart:async';
+
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/legacy.dart';
-import 'package:wigo_flutter/features/seller/models/order_task_state.dart';
 
 import '../models/order.dart';
+import '../models/order_task_state.dart';
+import '../services/seller_api_service.dart';
 
 class OrderTaskViewmodel extends StateNotifier<OrderTaskState> {
-  OrderTaskViewmodel() : super(const OrderTaskState()) {
+  OrderTaskViewmodel(this._api) : super(const OrderTaskState()) {
     _loadOrders();
   }
 
-  final int _pageSize = 10;
-  late List<Order> _allOrders;
+  final SellerApiService _api;
+  Timer? _searchDebounce;
 
-  Future<void> _loadOrders() async {
+  @override
+  void dispose() {
+    _searchDebounce?.cancel();
+    super.dispose();
+  }
+
+  Future<void> _loadOrders({bool resetPage = false}) async {
+    if (resetPage) {
+      state = state.copyWith(currentPage: 0);
+    }
     state = state.copyWith(orders: const AsyncValue.loading());
     try {
-      await Future.delayed(const Duration(milliseconds: 500));
-      _allOrders = _mockOrders;
-      _updateCounts();
-      _applyFilterAndPagination();
+      final statusParam = state.activeStatuses.isEmpty
+          ? null
+          : state.activeStatuses.map((s) => s.toJsonString).join(',');
+
+      final orderTypeParam = state.deliveryType == DeliveryType.all
+          ? null
+          : state.deliveryType.displayName;
+
+      DateTime? dateFrom;
+      DateTime? dateTo;
+      if (state.dateFilterType == DateFilterType.today) {
+        final now = DateTime.now();
+        dateFrom = DateTime(now.year, now.month, now.day);
+        dateTo = dateFrom;
+      } else if (state.dateFilterType == DateFilterType.custom &&
+          state.activeSelectedDates.isNotEmpty) {
+        final sorted = state.activeSelectedDates.toList()..sort();
+        dateFrom = sorted.first;
+        dateTo = sorted.length > 1 ? sorted.last : _normalize(DateTime.now());
+      }
+
+      final response = await _api.getOrders(
+        category: state.category.apiValue,
+        status: statusParam,
+        orderType: orderTypeParam,
+        dateFrom: dateFrom,
+        dateTo: dateTo,
+        search: state.searchQuery.isEmpty ? null : state.searchQuery,
+        sortBy: state.sortBy,
+        sortOrder: state.sortOrder,
+        page: state.currentPage + 1,
+        limit: state.rowsPerPage,
+      );
+
+      final page = response.data;
+      if (response.isSuccess && page != null) {
+        state = state.copyWith(
+          orders: AsyncValue.data(page.orders),
+          totalOrdersCount: page.pagination.total,
+          categoryCounts: page.counts,
+        );
+      } else {
+        state = state.copyWith(
+          orders: AsyncValue.error(
+            response.errorDescription ?? 'Failed to load orders',
+            StackTrace.current,
+          ),
+        );
+      }
     } catch (e, st) {
       state = state.copyWith(orders: AsyncValue.error(e, st));
     }
   }
 
-  void _updateCounts() {
-    final Map<OrderFilter, int> newCounts = {
-      OrderFilter.all: _allOrders.length,
-      OrderFilter.pending: _allOrders
-          .where((d) => d.status == OrderFilter.pending)
-          .length,
-      OrderFilter.confirmed: _allOrders
-          .where((d) => d.status == OrderFilter.confirmed)
-          .length,
-      OrderFilter.preparing: _allOrders
-          .where((d) => d.status == OrderFilter.preparing)
-          .length,
-      OrderFilter.pickUpReady: _allOrders
-          .where((d) => d.status == OrderFilter.pickUpReady)
-          .length,
-      OrderFilter.cancelled: _allOrders
-          .where((d) => d.status == OrderFilter.cancelled)
-          .length,
-      OrderFilter.inTransit: _allOrders
-          .where((d) => d.status == OrderFilter.inTransit)
-          .length,
-      OrderFilter.delivered: _allOrders
-          .where((d) => d.status == OrderFilter.delivered)
-          .length,
-    };
-    state = state.copyWith(orderCounts: newCounts);
+  Future<void> refresh() => _loadOrders();
+
+  void setCategory(OrderCategory category) {
+    if (category == state.category) return;
+    state = state.copyWith(category: category);
+    _loadOrders(resetPage: true);
   }
 
-  void _applyFilterAndPagination() {
-    // Start with the full list
-    List<Order> filtered = List.from(_allOrders);
-
-    // 1. Status Filter
-    if (state.activeStatuses.isNotEmpty &&
-        !state.activeStatuses.contains(OrderFilter.all)) {
-      filtered = filtered
-          .where((d) => state.activeStatuses.contains(d.status))
-          .toList();
-    }
-
-    // 2. Apply Date Filter (Today)
-    if (state.dateFilterType == DateFilterType.today) {
-      final now = DateTime.now();
-      filtered = filtered
-          .where(
-            (d) =>
-                d.date.year == now.year &&
-                d.date.month == now.month &&
-                d.date.day == now.day,
-          )
-          .toList();
-    }
-
-    // 3. Apply Date Filter (Custom)
-    if (state.activeSelectedDates.isNotEmpty) {
-      filtered = filtered.where((order) {
-        return state.activeSelectedDates.contains(_normalize(order.date));
-      }).toList();
-    }
-
-    // 4. NEW: Delivery/Order Type Filter
-    if (state.deliveryType != DeliveryType.all) {
-      filtered = filtered
-          .where((d) => d.deliveryType == state.deliveryType)
-          .toList();
-    }
-
-    // 5. Pagination (Always last)
-    final startIndex = state.currentPage * _pageSize;
-    final endIndex = (state.currentPage + 1) * _pageSize;
-    final paginated = filtered.sublist(
-      startIndex,
-      endIndex > filtered.length ? filtered.length : endIndex,
-    );
-
-    state = state.copyWith(
-      orders: AsyncValue.data(paginated),
-      totalOrdersCount: filtered.length,
-    );
+  void onSearchChanged(String query) {
+    state = state.copyWith(searchQuery: query);
+    _searchDebounce?.cancel();
+    _searchDebounce = Timer(const Duration(milliseconds: 450), () {
+      _loadOrders(resetPage: true);
+    });
   }
 
   void syncTempWithActive() {
@@ -121,56 +113,44 @@ class OrderTaskViewmodel extends StateNotifier<OrderTaskState> {
     state = state.copyWith(tempSelectedStatuses: currentSet);
   }
 
-  // 2. The "Apply Now" button logic
   void applyFilters() {
     state = state.copyWith(
       activeStatuses: Set.from(state.tempSelectedStatuses),
-      currentPage: 0,
     );
-    _applyFilterAndPagination();
+    _loadOrders(resetPage: true);
   }
 
-  // void setFilter(OrderFilter filter) {
-  //   state = state.copyWith(selectedFilter: filter, currentPage: 0);
-  //   _applyFilterAndPagination();
-  // }
-
-  void toggleSelectStatus(bool? value) {
-    state = state.copyWith(selectStatus: value ?? false);
+  void setSingleStatusFilter(OrderFilter? status) {
+    state = state.copyWith(activeStatuses: status == null ? {} : {status});
+    _loadOrders(resetPage: true);
   }
 
   void goToPage(int page) {
-    if (page >= 0 && page <= (state.totalOrdersCount / _pageSize).ceil() - 1) {
+    final totalPages = (state.totalOrdersCount / state.rowsPerPage).ceil();
+    if (page >= 0 && page <= (totalPages - 1)) {
       state = state.copyWith(currentPage: page);
-      _applyFilterAndPagination();
+      _loadOrders();
     }
   }
 
-  void setTodayFilter() {
-    state = state.copyWith(
-      dateFilterType: DateFilterType.today,
-      customDate: null,
-      currentPage: 0,
-    );
-    _applyFilterAndPagination();
+  void setRowsPerPage(int rows) {
+    if (rows <= 0 || rows == state.rowsPerPage) return;
+    state = state.copyWith(rowsPerPage: rows, currentPage: 0);
+    _loadOrders();
   }
 
-  void setCustomDate(DateTime date) {
-    state = state.copyWith(
-      dateFilterType: DateFilterType.custom,
-      customDate: date,
-      currentPage: 0,
-    );
-    _applyFilterAndPagination();
+  void setTodayFilter() {
+    state = state.copyWith(dateFilterType: DateFilterType.today);
+    _loadOrders(resetPage: true);
   }
 
   void clearDateFilter() {
     state = state.copyWith(
       dateFilterType: DateFilterType.all,
-      customDate: null,
-      currentPage: 0,
+      activeSelectedDates: {},
+      tempSelectedDates: {},
     );
-    _applyFilterAndPagination();
+    _loadOrders(resetPage: true);
   }
 
   DateTime _normalize(DateTime date) =>
@@ -182,6 +162,10 @@ class OrderTaskViewmodel extends StateNotifier<OrderTaskState> {
 
     if (currentSet.contains(normalized)) {
       currentSet.remove(normalized);
+    } else if (currentSet.length >= 2) {
+      currentSet
+        ..clear()
+        ..add(normalized);
     } else {
       currentSet.add(normalized);
     }
@@ -197,130 +181,85 @@ class OrderTaskViewmodel extends StateNotifier<OrderTaskState> {
   void applyDateFilters() {
     state = state.copyWith(
       activeSelectedDates: Set.from(state.tempSelectedDates),
-      // If dates are selected, we change the filter type to 'custom' or a new 'multiple' type
       dateFilterType: state.tempSelectedDates.isEmpty
           ? DateFilterType.all
           : DateFilterType.custom,
-      currentPage: 0,
     );
-    _applyFilterAndPagination();
-  }
-
-  void updateOrderStatus(String orderId, OrderFilter newStatus) {
-    _allOrders = _allOrders.map((order) {
-      if (order.orderId == orderId) {
-        return order.copyWith(status: newStatus);
-      }
-      return order;
-    }).toList();
-
-    _updateCounts();
-    _applyFilterAndPagination();
+    _loadOrders(resetPage: true);
   }
 
   void setDeliveryType(DeliveryType type) {
-    state = state.copyWith(
-      deliveryType: type,
-      currentPage: 0, // Reset pagination when filter changes
-    );
-    _applyFilterAndPagination();
+    state = state.copyWith(deliveryType: type);
+    _loadOrders(resetPage: true);
   }
 
-  final _mockOrders = <Order>[
-    Order(
-      orderId: "#WGO-4532",
-      date: DateTime.now().subtract(const Duration(hours: 2)),
-      customerName: "Emmanuel Adebayo",
-      item: "10 items",
-      amount: 500,
-      status: OrderFilter.pending,
-      customerPhone: '+234 809 876 5432',
-      deliveryLocation: 'Sandra 1, Block D Hostel.',
-      pickupLocation: 'Campus Cafe, Hall 2',
-      deliveryType: DeliveryType.delivery,
-    ),
-    Order(
-      orderId: "#WGO-1345",
-      date: DateTime.now().subtract(const Duration(days: 1)),
-      customerName: "Sarah Adebayo",
-      item: "1 item",
-      amount: 500,
-      status: OrderFilter.preparing,
-      customerPhone: '+234 809 876 5432',
-      deliveryLocation: 'Sandra 1, Block D Hostel.',
-      pickupLocation: 'Campus Cafe, Hall 2',
-      deliveryType: DeliveryType.delivery,
-    ),
-    Order(
-      orderId: "#WGO-1238",
-      date: DateTime.now().subtract(const Duration(days: 7)),
-      customerName: "Jane Doe",
-      item: "2 items",
-      amount: 500,
-      status: OrderFilter.cancelled,
-      customerPhone: '+234 809 876 5432',
-      deliveryLocation: 'Sandra 1, Block D Hostel.',
-      pickupLocation: 'Campus Cafe, Hall 2',
-      deliveryType: DeliveryType.pickUp,
-    ),
-    Order(
-      orderId: "#WGO-9876",
-      date: DateTime(2020, 12, 25),
-      customerName: "John Smith",
-      item: "3 items",
-      amount: 500,
-      status: OrderFilter.confirmed,
-      customerPhone: '+234 809 876 5432',
-      deliveryLocation: 'Sandra 1, Block D Hostel.',
-      pickupLocation: 'Campus Cafe, Hall 2',
-      deliveryType: DeliveryType.pickUp,
-    ),
-    Order(
-      orderId: "#WGO-9875",
-      date: DateTime.now().subtract(const Duration(hours: 8)),
-      customerName: "Peter Parker",
-      item: "3 items",
-      amount: 500,
-      status: OrderFilter.pickUpReady,
-      customerPhone: '+234 809 876 5432',
-      deliveryLocation: 'Sandra 1, Block D Hostel.',
-      pickupLocation: 'Campus Cafe, Hall 2',
-      deliveryType: DeliveryType.pickUp,
-    ),
-    Order(
-      orderId: "#WGO-9865",
-      date: DateTime.now().subtract(const Duration(hours: 8)),
-      customerName: "Abraham Lincon",
-      item: "10 items",
-      amount: 500,
-      status: OrderFilter.inTransit,
-      customerPhone: '+234 809 876 5432',
-      deliveryLocation: 'Sandra 1, Block D Hostel.',
-      pickupLocation: 'Campus Cafe, Hall 2',
-      deliveryType: DeliveryType.delivery,
-    ),
-    Order(
-      orderId: "#WGO-9865",
-      date: DateTime.now().subtract(const Duration(hours: 8)),
-      customerName: "John Jonhzzns",
-      item: "10 items",
-      amount: 500,
-      status: OrderFilter.delivered,
-      customerPhone: '+234 809 876 5432',
-      deliveryLocation: 'Sandra 1, Block D Hostel.',
-      pickupLocation: 'Campus Cafe, Hall 2',
-      deliveryType: DeliveryType.delivery,
-    ),
-  ];
+  void setSort(String sortBy, String sortOrder) {
+    if (sortBy == state.sortBy && sortOrder == state.sortOrder) return;
+    state = state.copyWith(sortBy: sortBy, sortOrder: sortOrder);
+    _loadOrders(resetPage: true);
+  }
+
+  Future<String?> updateOrderStatus(
+    String orderId,
+    OrderFilter newStatus, {
+    String? reason,
+  }) async {
+    try {
+      final response = await _api.updateOrderStatus(
+        orderId,
+        newStatus,
+        reason: reason,
+      );
+
+      if (response.isSuccess) {
+        unawaited(refresh());
+        return null;
+      }
+
+      if (response.statusCode == 409) {
+        unawaited(refresh());
+        return null;
+      }
+      if (response.statusCode == 422) {
+        unawaited(refresh());
+        return "This order's status has changed. Refresh to see the "
+            'available actions.';
+      }
+
+      return response.errorDescription ?? 'Could not update the order status.';
+    } catch (_) {
+      return 'Something went wrong updating the order. Please try again.';
+    }
+  }
 }
 
 final orderTaskProvider =
     StateNotifierProvider<OrderTaskViewmodel, OrderTaskState>(
-      (ref) => OrderTaskViewmodel(),
+      (ref) => OrderTaskViewmodel(ref.read(sellerApiServiceProvider)),
     );
 
 final orderByIdProvider = Provider.family<Order?, String>((ref, orderId) {
-  final state = ref.watch(orderTaskProvider);
+  final orders = ref.watch(orderTaskProvider).orders.value;
+  if (orders == null) return null;
+  for (final order in orders) {
+    if (order.id == orderId) return order;
+  }
+  return null;
+});
 
-  return state.orders.value?.firstWhere((o) => o.orderId == orderId);
+final recentOrdersProvider = FutureProvider.autoDispose<List<Order>>((
+  ref,
+) async {
+  final api = ref.read(sellerApiServiceProvider);
+  final response = await api.getOrders(
+    category: 'all',
+    sortBy: 'date',
+    sortOrder: 'desc',
+    page: 1,
+    limit: 5,
+  );
+  if (response.isSuccess && response.data != null) {
+    return response.data!.orders;
+  }
+  throw Exception(response.errorDescription ?? 'Failed to load recent orders');
 });

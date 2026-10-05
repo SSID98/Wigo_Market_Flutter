@@ -4,11 +4,14 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:wigo_flutter/gen/assets.gen.dart';
 
 import '../../../../../core/constants/app_colors.dart';
-import '../../../models/timeline_item_model.dart';
+import '../../../models/order_details_model.dart';
+import '../../../models/order_enums.dart';
 import 'app_section_card.dart';
 
 class OrderTimelineCard extends ConsumerWidget {
-  const OrderTimelineCard({super.key});
+  const OrderTimelineCard({super.key, required this.timeline});
+
+  final List<OrderTimelineEntry> timeline;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -25,81 +28,66 @@ class OrderTimelineCard extends ConsumerWidget {
             ),
           ),
           const SizedBox(height: 20),
-          _TimelineTile(
-            label: "Order received",
-            icon: AppAssets.icons.orderReceived.svg(),
-            item: TimelineItem(
-              stage: OrderStage.received,
-              time: "10:00 AM",
-              isCompleted: true,
+          if (timeline.isEmpty)
+            Text(
+              'No timeline available for this order.',
+              style: GoogleFonts.hind(
+                fontSize: 14,
+                color: AppColors.textBodyText,
+              ),
+            )
+          else
+            ...timeline.map(
+              (entry) =>
+                  _TimelineTile(entry: entry, isLast: entry == timeline.last),
             ),
-          ),
-          _TimelineTile(
-            label: "Order confirmed",
-            icon: AppAssets.icons.orderConfirmed.svg(),
-            item: TimelineItem(
-              stage: OrderStage.confirmed,
-              time: "10:00 AM",
-              isCompleted: true,
-            ),
-          ),
-          _TimelineTile(
-            label: "Preparing for Delivery",
-            icon: AppAssets.icons.prepForDelivery.svg(),
-            item: TimelineItem(
-              stage: OrderStage.preparing,
-              time: "10:00 AM",
-              isCompleted: true,
-            ),
-          ),
-          _TimelineTile(
-            label: "Ready for Pickup",
-            icon: AppAssets.icons.readyForPickup.svg(),
-            item: TimelineItem(
-              stage: OrderStage.ready,
-              time: "10:00 AM",
-              isCompleted: false,
-            ),
-          ),
-          _TimelineTile(
-            label: "Out for Delivery",
-            icon: AppAssets.icons.outForDelivery.svg(),
-            item: TimelineItem(
-              stage: OrderStage.outForDelivery,
-              time: "10:00 AM",
-              isCompleted: false,
-            ),
-          ),
-          _TimelineTile(
-            label: "Delivered",
-            icon: AppAssets.icons.productDelivered.svg(),
-            item: TimelineItem(
-              stage: OrderStage.delivered,
-              time: "10:00 AM",
-              isCompleted: false,
-            ),
-          ),
         ],
       ),
     );
   }
 }
 
-class _TimelineTile extends StatelessWidget {
-  final TimelineItem item;
-  final Widget icon;
-  final String label;
+Widget _iconFor(OrderFilter status) {
+  switch (status) {
+    case OrderFilter.pending:
+      return AppAssets.icons.orderReceived.svg();
+    case OrderFilter.confirmed:
+      return AppAssets.icons.orderConfirmed.svg();
+    case OrderFilter.preparing:
+      return AppAssets.icons.prepForDelivery.svg();
+    case OrderFilter.pickUpReady:
+      return AppAssets.icons.readyForPickup.svg();
+    case OrderFilter.inTransit:
+      return AppAssets.icons.outForDelivery.svg();
+    case OrderFilter.delivered:
+      return AppAssets.icons.productDelivered.svg();
+    case OrderFilter.cancelled:
+      return AppAssets.icons.cancelSquare.svg();
+    case OrderFilter.all:
+      return AppAssets.icons.orderReceived.svg();
+  }
+}
 
-  const _TimelineTile({
-    required this.item,
-    required this.icon,
-    required this.label,
-  });
+String _formatTime(DateTime? at) {
+  if (at == null) return 'Pending';
+  final hour24 = at.hour;
+  final hour12 = hour24 % 12 == 0 ? 12 : hour24 % 12;
+  final minute = at.minute.toString().padLeft(2, '0');
+  final period = hour24 >= 12 ? 'PM' : 'AM';
+  return '$hour12:$minute $period';
+}
+
+class _TimelineTile extends StatelessWidget {
+  final OrderTimelineEntry entry;
+  final bool isLast;
+
+  const _TimelineTile({required this.entry, required this.isLast});
 
   @override
   Widget build(BuildContext context) {
-    final color =
-        item.isCompleted ? Color(0xff53B483) : AppColors.sliderDotColor;
+    final color = entry.completed
+        ? const Color(0xff53B483)
+        : AppColors.sliderDotColor;
 
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -111,19 +99,18 @@ class _TimelineTile extends StatelessWidget {
               height: 18,
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
-                color: item.isCompleted ? color : Colors.transparent,
+                color: entry.completed ? color : Colors.transparent,
                 border: Border.all(color: color),
               ),
-              child:
-                  item.isCompleted
-                      ? const Icon(
-                        Icons.check,
-                        size: 14,
-                        color: AppColors.textWhite,
-                      )
-                      : null,
+              child: entry.completed
+                  ? const Icon(
+                      Icons.check,
+                      size: 14,
+                      color: AppColors.textWhite,
+                    )
+                  : null,
             ),
-            Container(width: 5, height: 50, color: color),
+            if (!isLast) Container(width: 5, height: 50, color: color),
           ],
         ),
         const SizedBox(width: 12),
@@ -142,14 +129,16 @@ class _TimelineTile extends StatelessWidget {
               padding: const EdgeInsets.all(12.0),
               child: Row(
                 children: [
-                  icon,
+                  _iconFor(entry.status),
                   const SizedBox(width: 8),
-                  Text(
-                    '$label ● ${item.time}',
-                    style: GoogleFonts.hind(
-                      fontWeight: FontWeight.w500,
-                      color: AppColors.textBodyText,
-                      fontSize: 16,
+                  Expanded(
+                    child: Text(
+                      '${entry.label} ● ${_formatTime(entry.at)}',
+                      style: GoogleFonts.hind(
+                        fontWeight: FontWeight.w500,
+                        color: AppColors.textBodyText,
+                        fontSize: 16,
+                      ),
                     ),
                   ),
                 ],

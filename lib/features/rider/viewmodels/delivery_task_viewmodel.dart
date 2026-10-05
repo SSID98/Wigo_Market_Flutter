@@ -133,30 +133,57 @@ class DeliveryTaskViewModel extends StateNotifier<DeliveryTaskState> {
 
     try {
       final result = await api.confirmDelivery(orderId);
+
       if (!mounted) return (false, null);
 
       if (result.isSuccess && result.data != null) {
-        final amount = result.data!.credited ? result.data!.amount : null;
+        final d = result.data!;
+
+        if (d.isAwaitingCustomer) {
+          state = state.copyWith(
+            isActionLoading: false,
+            selectedDelivery: null,
+          );
+
+          await Future.wait([fetchOrders(silent: true), refreshCounts()]);
+
+          return (true, null);
+        }
+
+        if (d.credited) {
+          state = state.copyWith(
+            isActionLoading: false,
+            selectedDelivery: null,
+            lastCreditedAmount: d.amount,
+          );
+
+          await Future.wait([fetchOrders(silent: true), refreshCounts()]);
+
+          return (true, d.amount);
+        }
+
         state = state.copyWith(
           isActionLoading: false,
-          selectedDelivery: null,
-          lastCreditedAmount: amount,
+          actionError: d.reason ?? 'Delivery confirmation was not completed.',
         );
-        await Future.wait([fetchOrders(silent: true), refreshCounts()]);
-        return (true, amount);
-      } else {
-        state = state.copyWith(
-          isActionLoading: false,
-          actionError: result.errorDescription ?? 'Failed to confirm delivery.',
-        );
+
         return (false, null);
       }
+
+      state = state.copyWith(
+        isActionLoading: false,
+        actionError: result.errorDescription ?? 'Failed to confirm delivery.',
+      );
+
+      return (false, null);
     } catch (_) {
       if (!mounted) return (false, null);
+
       state = state.copyWith(
         isActionLoading: false,
         actionError: 'Something went wrong. Please try again.',
       );
+
       return (false, null);
     }
   }

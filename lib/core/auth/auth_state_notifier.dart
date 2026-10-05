@@ -4,7 +4,6 @@ import 'package:flutter_riverpod/legacy.dart';
 import 'package:wigo_flutter/core/auth/auth_repository.dart';
 
 import '../../shared/models/login/login_response_model.dart';
-import '../feedback_models/response_status_model.dart';
 import '../local/session_manager.dart';
 import '../providers/reset_userscope_providers.dart';
 import 'auth_state.dart';
@@ -29,8 +28,7 @@ class AuthStateNotifier extends StateNotifier<AuthState> {
     try {
       final response = await authRepository.getMe();
 
-      if (response.accessStatus == ResponseStatusEnum.success &&
-          response.data != null) {
+      if (response.isSuccess && response.data != null) {
         state = AuthState.loggedIn(response.data!);
       } else {
         throw Exception(response.errorDescription);

@@ -14,7 +14,7 @@ import '../../../../core/auth/auth_state_notifier.dart';
 import '../../../../core/utils/helper_methods_classes.dart';
 import '../../../../gen/assets.gen.dart';
 import '../widgets/dashboard_screen_widgets/account_setup_status_widget.dart';
-import '../widgets/dashboard_screen_widgets/current_location_widget.dart';
+import '../widgets/dashboard_screen_widgets/dashboard_map_widget.dart';
 import '../widgets/dashboard_screen_widgets/earning_overview_widget.dart';
 import '../widgets/dashboard_screen_widgets/recent_deliveries_widget.dart';
 
@@ -160,7 +160,7 @@ class RiderDashboardScreen extends ConsumerWidget {
                 ),
               EarningOverviewWidget(),
               RecentDeliveriesWidget(),
-              CurrentLocationWidget(),
+              DashboardMapWidget(),
               EarningHistoryWidget(),
               const SizedBox(height: 10),
             ],
@@ -229,7 +229,7 @@ class RiderDashboardScreen extends ConsumerWidget {
                         children: [
                           EarningOverviewWidget(),
                           RecentDeliveriesWidget(),
-                          CurrentLocationWidget(),
+                          DashboardMapWidget(),
                         ],
                       ),
                     ),

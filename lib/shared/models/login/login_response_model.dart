@@ -91,9 +91,7 @@ class LoginResponseModel {
 
   factory LoginResponseModel.fromJson(Map<String, dynamic> json) {
     final userData = json.containsKey('user') ? json['user'] : json;
-    final nextOfKinMap = userData["nextOfKin"] is Map<String, dynamic>
-        ? userData["nextOfKin"] as Map<String, dynamic>
-        : null;
+    final nextOfKin = json["nextOfKin"] as Map<String, dynamic>?;
     return LoginResponseModel(
       id: userData["_id"] ?? "",
       status: userData["status"] ?? "",
@@ -113,8 +111,8 @@ class LoginResponseModel {
       store: userData["store"] as Map<String, dynamic>?,
       hasWallet: userData["hasWallet"] ?? false,
       hasWithdrawalPin: userData["hasWithdrawalPin"] ?? false,
-      nextOfKinName: nextOfKinMap?["nextOfKin"]["name"] ?? "",
-      nextOfKinMobile: nextOfKinMap?["nextOfKin"]["mobile"] ?? "",
+      nextOfKinName: nextOfKin?["name"] ?? "",
+      nextOfKinMobile: nextOfKin?["mobile"] ?? "",
     );
   }
 }

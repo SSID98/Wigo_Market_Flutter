@@ -163,7 +163,7 @@ class RecentEarningTable extends ConsumerWidget {
                       child: Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 16.0),
                         child: Text(
-                          d.orderId,
+                          d.orderNumber,
                           style: _getStyle(
                             isHeader: false,
                             color: AppColors.textBlackGrey,
@@ -175,7 +175,7 @@ class RecentEarningTable extends ConsumerWidget {
                     SizedBox(
                       width: context.isWeb ? 130.0 : 120.0,
                       child: Text(
-                        d.item,
+                        d.itemsCount.toString(),
                         style: _getStyle(
                           isHeader: false,
                           color: AppColors.textBodyText,
@@ -299,9 +299,12 @@ class RecentEarningTable extends ConsumerWidget {
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              _buildRichTextRow(label: 'OrderID', info: order.orderId),
+              _buildRichTextRow(label: 'OrderID', info: order.orderNumber),
               spacer,
-              _buildRichTextRow(label: 'Product Sold', info: order.item),
+              _buildRichTextRow(
+                label: 'Product Sold',
+                info: order.itemsCount.toString(),
+              ),
               spacer,
               _buildRichTextRow(
                 label: 'Customer Name',

@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../../../../core/constants/app_colors.dart';
 import '../../../../shared/widgets/dashboard_widgets/status_chip.dart';
-import '../../models/order_task_state.dart';
+import '../../models/order_enums.dart';
 
 class OrderStatusContainer extends StatelessWidget {
   final OrderFilter status;

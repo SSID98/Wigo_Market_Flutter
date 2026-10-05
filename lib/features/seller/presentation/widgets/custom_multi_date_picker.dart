@@ -26,10 +26,9 @@ class _CustomMultiDatePickerState extends State<CustomMultiDatePicker> {
   @override
   void initState() {
     super.initState();
-    _viewDate =
-        widget.initialSelectedDates.isNotEmpty
-            ? widget.initialSelectedDates.first
-            : DateTime.now();
+    _viewDate = widget.initialSelectedDates.isNotEmpty
+        ? widget.initialSelectedDates.first
+        : DateTime.now();
   }
 
   void _moveMonth(int offset) {
@@ -55,34 +54,27 @@ class _CustomMultiDatePickerState extends State<CustomMultiDatePicker> {
     ][month - 1];
   }
 
-  // --- UI Components ---
-
   Widget _buildHeader() {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
         _buildNavArrow(Icons.chevron_left_rounded, () => _moveMonth(-1)),
-        // Month & Year Selectors
         Row(
           children: [
             AppDropdown(
               value: _viewDate.month,
               items: List.generate(12, (i) => i + 1),
               labelBuilder: (m) => _getMonthName(m),
-              onSelected:
-                  (m) => setState(
-                    () => _viewDate = DateTime(_viewDate.year, m, 1),
-                  ),
+              onSelected: (m) =>
+                  setState(() => _viewDate = DateTime(_viewDate.year, m, 1)),
             ),
             const SizedBox(width: 8),
             AppDropdown(
               value: _viewDate.year,
               items: List.generate(10, (i) => DateTime.now().year - 6 + i),
               labelBuilder: (y) => "$y",
-              onSelected:
-                  (y) => setState(
-                    () => _viewDate = DateTime(y, _viewDate.month, 1),
-                  ),
+              onSelected: (y) =>
+                  setState(() => _viewDate = DateTime(y, _viewDate.month, 1)),
             ),
           ],
         ),
@@ -109,23 +101,22 @@ class _CustomMultiDatePickerState extends State<CustomMultiDatePicker> {
     final labels = ["Mo", "Tu", "We", "Th", "Fr", "Sa", "Su"];
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceAround,
-      children:
-          labels
-              .map(
-                (l) => SizedBox(
-                  width: 40,
-                  child: Text(
-                    l,
-                    textAlign: TextAlign.center,
-                    style: GoogleFonts.hind(
-                      fontWeight: FontWeight.w600,
-                      fontSize: 15,
-                      color: AppColors.textNeutral950,
-                    ),
-                  ),
+      children: labels
+          .map(
+            (l) => SizedBox(
+              width: 40,
+              child: Text(
+                l,
+                textAlign: TextAlign.center,
+                style: GoogleFonts.hind(
+                  fontWeight: FontWeight.w600,
+                  fontSize: 15,
+                  color: AppColors.textNeutral950,
                 ),
-              )
-              .toList(),
+              ),
+            ),
+          )
+          .toList(),
     );
   }
 
@@ -194,12 +185,11 @@ class _CustomMultiDatePickerState extends State<CustomMultiDatePicker> {
                 },
                 child: Container(
                   decoration: BoxDecoration(
-                    color:
-                        isSelected
-                            ? AppColors.buttonOrange
-                            : isCurrentMonth
-                            ? AppColors.backgroundWhite
-                            : Colors.transparent,
+                    color: isSelected
+                        ? AppColors.buttonOrange
+                        : isCurrentMonth
+                        ? AppColors.backgroundWhite
+                        : Colors.transparent,
                     borderRadius: BorderRadius.circular(4.73),
                   ),
                   alignment: Alignment.center,
@@ -207,12 +197,11 @@ class _CustomMultiDatePickerState extends State<CustomMultiDatePicker> {
                     "${date.day}",
                     style: GoogleFonts.lexend(
                       fontSize: 14.18,
-                      color:
-                          isSelected
-                              ? AppColors.textWhite
-                              : isCurrentMonth
-                              ? AppColors.textBlackGrey
-                              : AppColors.textIconGrey.withValues(alpha: 0.5),
+                      color: isSelected
+                          ? AppColors.textWhite
+                          : isCurrentMonth
+                          ? AppColors.textBlackGrey
+                          : AppColors.textIconGrey.withValues(alpha: 0.5),
                       fontWeight: FontWeight.w500,
                     ),
                   ),
@@ -223,7 +212,7 @@ class _CustomMultiDatePickerState extends State<CustomMultiDatePicker> {
           const Divider(),
           const SizedBox(height: 5),
           Text(
-            "You can choose multiple date",
+            "Select a start and end date",
             style: GoogleFonts.hind(
               fontSize: 14,
               color: AppColors.textBodyText,

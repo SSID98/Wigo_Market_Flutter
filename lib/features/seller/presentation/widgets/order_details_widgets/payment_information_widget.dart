@@ -3,9 +3,31 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:wigo_flutter/features/seller/presentation/widgets/order_details_widgets/app_section_card.dart';
 
 import '../../../../../core/constants/app_colors.dart';
+import '../../../models/order_details_model.dart';
 
 class PaymentInformationWidget extends StatelessWidget {
-  const PaymentInformationWidget({super.key});
+  const PaymentInformationWidget({super.key, required this.payment});
+
+  final PaymentInfo payment;
+
+  Color? _statusColor(String status) {
+    switch (status.toLowerCase()) {
+      case 'paid':
+        return const Color(0xff53B483);
+      case 'awaiting':
+      case 'pending':
+        return AppColors.textOrange;
+      case 'failed':
+        return AppColors.textRed;
+      default:
+        return null;
+    }
+  }
+
+  String _titleCase(String value) {
+    if (value.isEmpty) return value;
+    return value[0].toUpperCase() + value.substring(1);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -30,21 +52,29 @@ class PaymentInformationWidget extends StatelessWidget {
               ],
             ),
             const SizedBox(height: 15),
-            _buildRichText(title: 'Payment Method', value: 'Card'),
+            _buildRichText(
+              title: 'Payment Method',
+              value: _titleCase(payment.method),
+            ),
             const SizedBox(height: 10),
             _buildRichText(
               title: 'Payment Status',
-              value: 'Paid',
-              valueColor: Color(0xff53B483),
+              value: _titleCase(payment.status),
+              valueColor: _statusColor(payment.status),
               valueFontWeight: FontWeight.w500,
             ),
             const SizedBox(height: 10),
-            _buildRichText(title: 'Transaction ID', value: 'TXN123456789'),
+            _buildRichText(
+              title: 'Transaction ID',
+              value: payment.transactionId.isEmpty
+                  ? '-'
+                  : payment.transactionId,
+            ),
             const SizedBox(height: 10),
             _buildRichText(
               title: 'Payout Status',
-              value: 'Awaiting',
-              valueColor: AppColors.textOrange,
+              value: _titleCase(payment.payoutStatus),
+              valueColor: _statusColor(payment.payoutStatus),
               valueFontStyle: FontStyle.italic,
               valueFontWeight: FontWeight.w600,
             ),
